@@ -16,17 +16,14 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWord(word: Word)
 
-    @Query("SELECT SUM(numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) FROM words")
+    @Query("SELECT SUM(numberOfCorrectAnswers + numberOfWrongAnswers) FROM words")
     fun getTotalAnswers(): LiveData<Int>
 
-    @Query("SELECT AVG((numberOfCorrectAnswers * 1.0) / (numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) * 100) FROM words WHERE (numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) > 0")
+    @Query("SELECT AVG((numberOfCorrectAnswers * 1.0) / (numberOfCorrectAnswers + numberOfWrongAnswers) * 100) FROM words WHERE (numberOfCorrectAnswers + numberOfWrongAnswers) > 0")
     fun getCorrectPercentage(): LiveData<Double>
 
-    @Query("SELECT AVG((numberOfWrongAnswers * 1.0) / (numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) * 100) FROM words WHERE (numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) > 0")
+    @Query("SELECT AVG((numberOfWrongAnswers * 1.0) / (numberOfCorrectAnswers + numberOfWrongAnswers) * 100) FROM words WHERE (numberOfCorrectAnswers + numberOfWrongAnswers) > 0")
     fun getWrongPercentage(): LiveData<Double>
-
-    @Query("SELECT AVG((numberOfSkippedAnswers * 1.0) / (numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) * 100) FROM words WHERE (numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers) > 0")
-    fun getSkippedPercentage(): LiveData<Double>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(word: Word)

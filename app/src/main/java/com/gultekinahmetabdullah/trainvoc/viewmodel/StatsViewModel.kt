@@ -1,24 +1,44 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.gultekinahmetabdullah.trainvoc.classes.Word
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class StatsViewModel(private val repository: WordRepository) : ViewModel() {
+class StatsViewModel : ViewModel() {
 
-    val allWords: Flow<List<Word>> = repository.getAllWords()
+    private val _totalQuestions = MutableStateFlow(0)
+    val totalQuestions: StateFlow<Int> = _totalQuestions
 
-    fun getTotalAnswers(): LiveData<Int> = repository.getTotalAnswers()
-    fun getCorrectPercentage(): LiveData<Double> = repository.getCorrectPercentage()
-    fun getWrongPercentage(): LiveData<Double> = repository.getWrongPercentage()
-    fun getSkippedPercentage(): LiveData<Double> = repository.getSkippedPercentage()
-    fun getLeastKnownWords(): LiveData<List<Word>> = repository.getLeastKnownWords()
+    private val _correctAnswers = MutableStateFlow(0)
+    val correctAnswers: StateFlow<Int> = _correctAnswers
 
-    fun insert(word: Word) = viewModelScope.launch {
-        repository.insert(word)
+    private val _incorrectAnswers = MutableStateFlow(0)
+    val incorrectAnswers: StateFlow<Int> = _incorrectAnswers
+
+    private val _successPercentage = MutableStateFlow(0f)
+    val successPercentage: StateFlow<Float> = MutableStateFlow(0f)
+
+    fun updateStats(isCorrect: Boolean) {
+        _totalQuestions.value++
+
+        if (isCorrect) {
+            _correctAnswers.value++
+        } else {
+            _incorrectAnswers.value++
+        }
+
+        calculateSuccessPercentage()
+    }
+
+    private fun calculateSuccessPercentage() {
+        _successPercentage.value = if (_totalQuestions.value == 0) 0f
+        else (_correctAnswers.value.toFloat() / _totalQuestions.value) * 100
+    }
+
+    fun resetStats() {
+        _totalQuestions.value = 0
+        _correctAnswers.value = 0
+        _incorrectAnswers.value = 0
+        _successPercentage.value = 0f
     }
 }
