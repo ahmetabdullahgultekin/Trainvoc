@@ -10,11 +10,10 @@ data class Word(
     val meaning: String,
     val numberOfCorrectAnswers: Int = 0,
     val numberOfWrongAnswers: Int = 0,
-    val numberOfSkippedAnswers: Int = 0
 ) {
     // Computed properties using functions
     private fun getTotalAnswers(): Int =
-        numberOfCorrectAnswers + numberOfWrongAnswers + numberOfSkippedAnswers
+        numberOfCorrectAnswers + numberOfWrongAnswers
 
     fun getCorrectPercentage(): Double = if (getTotalAnswers() > 0) {
         (numberOfCorrectAnswers.toDouble() / getTotalAnswers().toDouble()) * 100
@@ -24,12 +23,6 @@ data class Word(
 
     fun getWrongPercentage(): Double = if (getTotalAnswers() > 0) {
         (numberOfWrongAnswers.toDouble() / getTotalAnswers().toDouble()) * 100
-    } else {
-        0.0
-    }
-
-    fun getSkippedPercentage(): Double = if (getTotalAnswers() > 0) {
-        (numberOfSkippedAnswers.toDouble() / getTotalAnswers().toDouble()) * 100
     } else {
         0.0
     }

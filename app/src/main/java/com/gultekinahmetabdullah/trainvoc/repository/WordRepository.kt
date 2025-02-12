@@ -12,7 +12,6 @@ class WordRepository(private val wordDao: WordDao) {
     fun getTotalAnswers(): LiveData<Int> = wordDao.getTotalAnswers()
     fun getCorrectPercentage(): LiveData<Double> = wordDao.getCorrectPercentage()
     fun getWrongPercentage(): LiveData<Double> = wordDao.getWrongPercentage()
-    fun getSkippedPercentage(): LiveData<Double> = wordDao.getSkippedPercentage()
     fun getLeastKnownWords(): LiveData<List<Word>> = wordDao.getLeastKnownWords()
 
     suspend fun insert(word: Word) {
@@ -24,6 +23,22 @@ class WordRepository(private val wordDao: WordDao) {
     suspend fun insertWord(word: Word) = wordDao.insertWord(word)
 
     suspend fun getQuizQuestions(): List<Question> {
+        val tenQuestions = mutableListOf<Question>()
+        repeat(10) {
+            val fiveWords = wordDao.getRandomFiveWords()
+            val correctWord = fiveWords.random()
+            val shuffledWords = fiveWords.shuffled()
+            tenQuestions.add(
+                Question(
+                    correctWord = correctWord,
+                    incorrectWords = shuffledWords.filter { it != correctWord },
+                )
+            )
+        }
+        return tenQuestions
+    }
+
+    suspend fun generateQuestions(): List<Question> {
         val fiveWords = wordDao.getRandomFiveWords()
         val correctWord = fiveWords.random()
         val shuffledWords = fiveWords.shuffled()

@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen
+package com.gultekinahmetabdullah.trainvoc.ui.screen.welcome
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

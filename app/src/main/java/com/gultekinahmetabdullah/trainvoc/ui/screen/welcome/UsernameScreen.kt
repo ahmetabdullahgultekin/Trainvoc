@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen
+package com.gultekinahmetabdullah.trainvoc.ui.screen.welcome
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -74,9 +74,7 @@ fun UsernameScreen(navController: NavController) {
             onClick = {
                 if (username.text.isNotBlank()) {
                     sharedPreferences.edit().putString("username", username.text).apply()
-                    navController.navigate(Route.MANAGEMENT.name) {
-                        popUpTo("username") { inclusive = true }
-                    }
+                    navController.navigate(Route.MAIN.name)
                 }
             },
             modifier = Modifier.fillMaxWidth()

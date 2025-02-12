@@ -69,6 +69,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.core.splashscreen)
+    implementation (libs.gson)
 
     // Test dependencies
     testImplementation(libs.junit)

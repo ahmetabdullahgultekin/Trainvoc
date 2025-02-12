@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen
+package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -70,7 +70,6 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
                         meaning = explanationInput.text,
                         numberOfCorrectAnswers = 0,
                         numberOfWrongAnswers = 0,
-                        numberOfSkippedAnswers = 0
                     )
                     wordViewModel.insertWord(newWord)
                     wordInput = TextFieldValue("")

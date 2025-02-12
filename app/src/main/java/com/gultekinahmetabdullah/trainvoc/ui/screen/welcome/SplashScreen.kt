@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen
+package com.gultekinahmetabdullah.trainvoc.ui.screen.welcome
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -27,14 +27,13 @@ fun SplashScreen(navController: NavController) {
     // Lottie Animation State
     val composition by
     rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_rolling_cat.json"))
-    //val progress by animateLottieCompositionAsState(composition)
 
     // Launch effect to navigate after animation
     LaunchedEffect(true) {
         delay(3000) // Wait for animation to finish
         val username = sharedPreferences.getString("username", null)
         val destination =
-            if (username.isNullOrEmpty()) Route.WELCOME.name else Route.MANAGEMENT.name
+            if (username.isNullOrEmpty()) Route.WELCOME.name else Route.MAIN.name
         navController.navigate(destination)
     }
 
@@ -44,7 +43,7 @@ fun SplashScreen(navController: NavController) {
     ) {
         LottieAnimation(
             composition = composition,
-            modifier = Modifier.size(300.dp),
+            modifier = Modifier.size(128.dp),
             iterations = 3,
         )
     }
