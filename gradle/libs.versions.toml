@@ -1,22 +1,22 @@
 [versions]
-agp = "8.5.2"
+agp = "8.8.0"
 coreSplashscreen = "1.0.1"
 gson = "2.10.1"
-kotlin = "2.0.21"
+kotlin = "2.1.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
-composeBom = "2025.01.01"
+composeBom = "2025.02.00"
 lottieCompose = "6.1.0"
 roomCommon = "2.6.1"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
-navigationRuntimeKtx = "2.8.6"
+navigationRuntimeKtx = "2.8.7"
 roomRuntime = "2.6.1"
-navigationCompose = "2.8.6"
+navigationCompose = "2.8.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

@@ -29,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,18 +45,20 @@ import com.gultekinahmetabdullah.trainvoc.classes.Word
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable
-fun QuizScreen(quizViewModel: QuizViewModel) {
+fun QuizScreen(quizViewModel: QuizViewModel, onBack: () -> Unit) {
     val question by quizViewModel.currentQuestion.collectAsState()
     val progress by quizViewModel.progress.collectAsState()
-    val hasStarted by quizViewModel.isRunning.collectAsState(initial = false)
+    val hasStarted by quizViewModel.isTimeRunning.collectAsState(initial = false)
     var selectedAnswer by remember { mutableStateOf<Word?>(null) }
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
 
+    /*
     LaunchedEffect(Unit) {
         if (!hasStarted) {
-            quizViewModel.startQuiz()
+            quizViewModel.startQuiz(quiz = quiz)
         }
     }
+     */
 
     DisposableEffect(Unit) {
         onDispose {
@@ -158,7 +159,6 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                             .scale(scaleAnim)
                             .clickable {
                                 if (selectedAnswer != null || isCorrect != null) return@clickable
-                                quizViewModel.togglePause()
                                 selectedAnswer = choice
                                 isCorrect = quizViewModel.checkAnswer(choice)
                             },
@@ -198,7 +198,6 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                         selectedAnswer = null
                         isCorrect = null
                         quizViewModel.loadNextQuestion()
-                        quizViewModel.togglePause()
                     },
                     enabled = selectedAnswer != null,
                     shape = RoundedCornerShape(12.dp),

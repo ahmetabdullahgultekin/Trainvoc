@@ -5,12 +5,12 @@ enum class Route {
     MAIN,
     SPLASH,
     QUIZ,
+    QUIZ_MENU,
     MANAGEMENT,
     USERNAME,
     WELCOME,
     HELP,
     ABOUT,
-    LOGIN,
     STATS,
     SETTINGS;
 }

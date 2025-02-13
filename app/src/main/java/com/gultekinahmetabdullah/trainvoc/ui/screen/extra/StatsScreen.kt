@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,38 +21,88 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun StatsScreen(statsViewModel: StatsViewModel) {
-    val totalQuestions by statsViewModel.totalQuestions.collectAsState()
     val correctAnswers by statsViewModel.correctAnswers.collectAsState()
     val incorrectAnswers by statsViewModel.incorrectAnswers.collectAsState()
-    val successPercentage by statsViewModel.successPercentage.collectAsState()
+    val skippedQuestions by statsViewModel.skippedQuestions.collectAsState()
+    val totalQuestions by statsViewModel.totalQuestions.collectAsState()
+    val successRate by statsViewModel.successRatio.collectAsState()
+    val failureRate by statsViewModel.failureRatio.collectAsState()
+    val skippedRate by statsViewModel.skippedRatio.collectAsState()
+    val totalTimeSpent by statsViewModel.totalTimeSpent.collectAsState()
+    val lastAnswered by statsViewModel.lastAnswered.collectAsState()
+    val scope = statsViewModel.viewModelScope
 
-    Column(
+    // StatCard titles and values variable
+    val values = remember {
+        listOf(
+            "Total Questions" to "$totalQuestions",
+            "Correct Answers" to "$correctAnswers",
+            "Incorrect Answers" to "$incorrectAnswers",
+            "Skipped Questions" to "$skippedQuestions",
+            "Success Rate" to "%.2f%%".format(successRate * 100),
+            "Failure Rate" to "%.2f%%".format(failureRate * 100),
+            "Skipped Rate" to "%.2f%%".format(skippedRate * 100),
+            "Total Score" to "${correctAnswers * 10}",
+            "Total Time Spent" to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
+            "Last Answered" to lastAnswered
+        )
+    }
+
+    /*
+    LaunchedEffect(Unit) {
+        statsViewModel.fillStats()
+    }
+     */
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Quiz Statistics", style = MaterialTheme.typography.headlineMedium)
+        item {
+            Text(text = "Quiz Statistics", style = MaterialTheme.typography.headlineMedium)
+        }
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+        items(values) { (title, value) ->
+            StatCard(title = title, value = value)
+        }
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+        item {
+            StatsBarChart(
+                correctAnswers, incorrectAnswers, skippedQuestions,
+                successRate, failureRate, skippedRate
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+        item {
+            Button(onClick = {
+                scope.launch {
+                    statsViewModel.fillStats()
+                }
+            }) {
+                Text(text = "Refresh Stats")
+            }
+        }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        StatCard(title = "Total Questions", value = "$totalQuestions")
-        StatCard(title = "Correct Answers", value = "$correctAnswers")
-        StatCard(title = "Incorrect Answers", value = "$incorrectAnswers")
-        StatCard(title = "Success Rate", value = "%.2f%%".format(successPercentage))
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        StatsBarChart(correctAnswers, incorrectAnswers)
     }
 }
 
@@ -70,17 +123,21 @@ fun StatCard(title: String, value: String) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = title, style = MaterialTheme.typography.bodyLarge)
-            Text(text = value, style = MaterialTheme.typography.headlineSmall, color = Color.Blue)
+            Text(text = title, style = MaterialTheme.typography.bodyLarge, color = Color.Black)
+            Text(text = value, style = MaterialTheme.typography.headlineSmall, color = Color.Black)
         }
     }
 }
 
 @Composable
-fun StatsBarChart(correct: Int, incorrect: Int) {
-    val total = correct + incorrect
-    val correctPercentage = if (total == 0) 0f else correct.toFloat() / total
-    val incorrectPercentage = if (total == 0) 0f else incorrect.toFloat() / total
+fun StatsBarChart(
+    correct: Int,
+    incorrect: Int,
+    skipped: Int,
+    successRate: Float,
+    failureRate: Float,
+    skippedRate: Float
+) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = "Answer Distribution", style = MaterialTheme.typography.headlineMedium)
@@ -89,14 +146,19 @@ fun StatsBarChart(correct: Int, incorrect: Int) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
-                    .weight(if (total == 0) 0.01f else correctPercentage)
+                    .weight(if (successRate <= 0f) 0.01f else successRate)
                     .height(30.dp)
                     .background(Color.Green, RoundedCornerShape(8.dp))
             )
-
             Box(
                 modifier = Modifier
-                    .weight(if (total == 0) 0.01f else incorrectPercentage)
+                    .weight(if (skippedRate <= 0f) 0.01f else skippedRate)
+                    .height(30.dp)
+                    .background(Color.Gray, RoundedCornerShape(8.dp))
+            )
+            Box(
+                modifier = Modifier
+                    .weight(if (failureRate <= 0f) 0.01f else failureRate)
                     .height(30.dp)
                     .background(Color.Red, RoundedCornerShape(8.dp))
             )
@@ -106,6 +168,7 @@ fun StatsBarChart(correct: Int, incorrect: Int) {
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = "Correct: $correct", color = Color.Green)
+            Text(text = "Skipped: $skipped", color = Color.White)
             Text(text = "Incorrect: $incorrect", color = Color.Red)
         }
     }

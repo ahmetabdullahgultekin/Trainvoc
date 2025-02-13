@@ -3,6 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.Question
+import com.gultekinahmetabdullah.trainvoc.classes.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.Word
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
 import kotlinx.coroutines.delay
@@ -16,6 +17,9 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     private val durationConst = 60
     private val progressConst = 1f
     private val scoreConst = 0
+
+    private val _quiz = MutableStateFlow<Quiz?>(null)
+    val quiz: StateFlow<Quiz?> = _quiz
 
     private val _quizQuestions = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val quizQuestions: StateFlow<List<Question>> = _quizQuestions
@@ -36,20 +40,59 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     private val _score = MutableStateFlow(scoreConst)
     val score: StateFlow<Int> = _score
 
-    private val _isRunning = MutableStateFlow(false)
-    val isRunning: StateFlow<Boolean> = _isRunning
+    private val _isTimeRunning = MutableStateFlow(false)
+    val isTimeRunning: StateFlow<Boolean> = _isTimeRunning
 
-    fun startQuiz() {
+    private val _isAnswered = MutableStateFlow(false)
+    val isAnswered: StateFlow<Boolean> = _isAnswered
+
+    private val _isQuizFinished = MutableStateFlow(false)
+    val isQuizFinished: StateFlow<Boolean> = _isQuizFinished
+
+    private val _isUserReady = MutableStateFlow(true)
+    val isUserReady: StateFlow<Boolean> = _isUserReady
+
+    /*
+    init {
+        viewModelScope.launch {
+            loadQuizQuestions()
+        }
+    }
+     */
+
+    fun startQuiz(quiz: Quiz) {
+        // If quiz has already started, then do not allow new start
+        resetQuiz()
         // Fetch 10 questions from the database until user reaches the end of the list
         // Start the timer for each question
         // Timer will decrease the timeLeft variable every second
         viewModelScope.launch {
             // Initialize the variables
-            // Reset the score
-            _score.value = scoreConst
-            _isRunning.value = true
+            // Declare the quiz type
+            _quiz.value = quiz
             // Load the first set of questions
             loadQuizQuestions()
+            loadNextQuestion()
+            // Start the quiz
+            _isTimeRunning.value = true
+            _isQuizFinished.value = false
+            // Start the timer
+            while (_timeLeft.value > 0 && !_isQuizFinished.value) {
+                // Check if the user has paused the quiz
+                while (!_isTimeRunning.value) {
+                    delay(100)
+                    continue
+                }
+                // Wait for 1 second
+                delay(1000)
+                _timeLeft.value--
+                _progress.value = _timeLeft.value / durationConst.toFloat()
+                if (_timeLeft.value == 0) {
+                    checkAnswer(null)
+                    resetQuestionVariables()
+                }
+            }
+
             /*
              * Start the quiz
              *
@@ -61,64 +104,102 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
              * Start the timer
              * Wait for the timer to finish
              */
-            while (currentIndex < _quizQuestions.value.size) {
-                // Reset the timer and progress bar
-                _timeLeft.value = durationConst
-                _progress.value = progressConst
-                // Load the next question
-                loadNextQuestion()
-                // Check if we need to load more questions
-                if (currentIndex == _quizQuestions.value.size - 3) {
-                    loadQuizQuestions()
-                }
-                // Start the timer
-                while (_timeLeft.value > 0) {
-                    // Check if the user has paused the quiz
-                    if (!_isRunning.value) {
-                        delay(100) // Check every 100ms if the quiz is resumed
-                        continue
+            /*
+            viewModelScope.launch {
+                while (currentIndex < _quizQuestions.value.size) {
+                    while (_isTimeRunning.value) {
+                        delay(100)
                     }
-                    // Wait for 1 second
-                    delay(1000)
-                    _timeLeft.value--
-                    _progress.value = _timeLeft.value / durationConst.toFloat()
+                    // Check if we need to load more questions
+                    addNewQuestions()
+                    // Reset the timer and progress bar
+                    resetQuestionVariables()
+                    // Load the next question
+                    loadNextQuestion()
                 }
             }
+
+             */
+        }
+    }
+
+    private suspend fun addNewQuestions() {
+        if (currentIndex == _quizQuestions.value.size - 3) {
+            loadQuizQuestions()
         }
     }
 
     private suspend fun loadQuizQuestions() {
-        val questions = repository.getQuizQuestions()
         // Add new questions to the dynamic list
-        _quizQuestions.value.addAll(questions)
+        _quizQuestions.value.addAll(repository.generateTenQuestions(_quiz.value!!.type))
     }
 
     fun loadNextQuestion() {
+        resetQuestionVariables()
         if (currentIndex < _quizQuestions.value.size) {
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
+            viewModelScope.launch {
+                addNewQuestions()
+            }
+            _isTimeRunning.value = true
         } else {
             _currentQuestion.value = null // Quiz finished
         }
     }
 
-    fun checkAnswer(choice: Word): Boolean {
-        val currentQuestion = _currentQuestion.value ?: return false
-        _progress.value = progressConst
-        _timeLeft.value = durationConst
-        return if (currentQuestion.correctWord == choice) {
+    fun checkAnswer(choice: Word?): Boolean? {
+        val currentQuestion = _currentQuestion.value ?: return null
+        pauseQuiz()
+        viewModelScope.launch {
+            repository.addTimeSpent(
+                _currentQuestion.value!!.correctWord.word,
+                durationConst - _timeLeft.value
+            )
+            repository.updateLastAnswered(_currentQuestion.value!!.correctWord.word)
+        }
+        if (choice == null) {
+            viewModelScope.launch {
+                repository.increaseSkippedAnswers(_currentQuestion.value!!.correctWord.word)
+            }
+            return null
+        }
+        if (currentQuestion.correctWord == choice) {
             // Correct answer
             _score.value++
-            true
+            // Update the entity stats in the database
+            viewModelScope.launch {
+                repository.increaseCorrectAnswers(_currentQuestion.value!!.correctWord.word)
+            }
+            return true
         } else {
             // Wrong answer
             _score.value--
-            false
+            // Update the entity stats in the database
+            viewModelScope.launch {
+                repository.increaseWrongAnswers(_currentQuestion.value!!.correctWord.word)
+            }
+            return false
         }
     }
 
-    fun togglePause() {
-        _isRunning.value = !_isRunning.value
+    fun resumeQuiz() {
+        _isAnswered.value = false
+        _isTimeRunning.value = true
+        _isUserReady.value = true
+    }
+
+    private fun pauseQuiz() {
+        _isTimeRunning.value = false
+        _isAnswered.value = true
+        _isUserReady.value = false
+    }
+
+    private fun resetQuestionVariables() {
+        _timeLeft.value = durationConst
+        _progress.value = progressConst
+        _isAnswered.value = false
+        _isUserReady.value = true
     }
 
     private fun resetQuiz() {
@@ -128,7 +209,12 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
         _timeLeft.value = durationConst
         _progress.value = progressConst
         _score.value = scoreConst
-        _isRunning.value = false
+        _isTimeRunning.value = false
+        _isAnswered.value = false
+        _isQuizFinished.value = true
+        _isUserReady.value = false
+        _quiz.value = null
+        _isQuizFinished.value = true
     }
 
     fun finalizeQuiz() {
