@@ -53,10 +53,12 @@ fun HomeScreen(
     onNavigateToStats: () -> Unit
 ) {
     // Lottie Animation State
-    val composition by rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_diamond.json"))
+    val composition by
+    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_diamond.json"))
     val progress by animateLottieCompositionAsState(
         composition,
-        iterations = LottieConstants.IterateForever
+        iterations = LottieConstants.IterateForever,
+        isPlaying = true,
     )
 
     // Button Scaling Animation

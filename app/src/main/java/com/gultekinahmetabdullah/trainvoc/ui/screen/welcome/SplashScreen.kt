@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.classes.Route
 import kotlinx.coroutines.delay
@@ -27,6 +28,12 @@ fun SplashScreen(navController: NavController) {
     // Lottie Animation State
     val composition by
     rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_rolling_cat.json"))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = 3,
+        isPlaying = true,
+        speed = 1f,
+    )
 
     // Launch effect to navigate after animation
     LaunchedEffect(true) {
@@ -43,8 +50,8 @@ fun SplashScreen(navController: NavController) {
     ) {
         LottieAnimation(
             composition = composition,
-            modifier = Modifier.size(128.dp),
-            iterations = 3,
+            modifier = Modifier.size(96.dp),
+            progress = { progress }
         )
     }
 }

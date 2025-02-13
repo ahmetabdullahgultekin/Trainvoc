@@ -4,12 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.gultekinahmetabdullah.trainvoc.classes.Word
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.InputStreamReader
 
 @Database(entities = [Word::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
@@ -34,12 +30,11 @@ abstract class AppDatabase : RoomDatabase() {
             /* Populate Database
             * Uncomment the following code to populate the database with words from the json file
             *
-             */
-            /*
+            *
             scope.launch(Dispatchers.IO) {
                 populateDatabase(context, instance!!.wordDao())
             }
-             */
+            */
 
             return instance!!
         }

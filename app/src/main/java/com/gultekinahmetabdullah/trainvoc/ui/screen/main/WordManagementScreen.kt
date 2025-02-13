@@ -68,8 +68,8 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
                     val newWord = Word(
                         word = wordInput.text,
                         meaning = explanationInput.text,
-                        numberOfCorrectAnswers = 0,
-                        numberOfWrongAnswers = 0,
+                        correctCount = 0,
+                        wrongCount = 0,
                     )
                     wordViewModel.insertWord(newWord)
                     wordInput = TextFieldValue("")

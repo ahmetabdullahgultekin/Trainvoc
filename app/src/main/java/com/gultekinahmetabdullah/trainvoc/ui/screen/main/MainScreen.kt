@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gultekinahmetabdullah.trainvoc.InitializeDatabase
 import com.gultekinahmetabdullah.trainvoc.classes.Route
@@ -59,6 +61,7 @@ import kotlinx.coroutines.launch
 fun MainScreen() {
 
     val navController = rememberNavController()
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -70,6 +73,7 @@ fun MainScreen() {
     val repository = WordRepository(InitializeDatabase.database.wordDao())
     val quizViewModel = QuizViewModel(repository)
     val wordViewModel = WordViewModel(repository)
+    val statsViewModel = StatsViewModel(repository)
     val isTopAppBarVisible = remember { mutableStateOf(true) }
     val isBottomBarVisible = remember { mutableStateOf(false) }
 
@@ -91,10 +95,24 @@ fun MainScreen() {
                         actionIconContentColor = MaterialTheme.colorScheme.primary
                     ),
                     navigationIcon = {
-                        IconButton(onClick = {
-                            navController.navigate(Route.HOME.name)
-                        }) {
-                            Icon(Icons.Default.Home, contentDescription = "Home")
+                        if (navBackStackEntry.value?.destination?.route == Route.HOME.name) {
+                            return@TopAppBar
+                        }
+                        if (
+                            navBackStackEntry.value?.destination?.route == Route.QUIZ.name ||
+                            navBackStackEntry.value?.destination?.route == Route.QUIZ_MENU.name
+                        ) {
+                            IconButton(onClick = {
+                                navController.popBackStack()
+                            }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                navController.navigate(Route.HOME.name)
+                            }) {
+                                Icon(Icons.Default.Home, contentDescription = "Home")
+                            }
                         }
                     },
                     actions = {
@@ -121,19 +139,22 @@ fun MainScreen() {
                     onNavigateToHelp = { navController.navigate(Route.HELP.name) },
                     onNavigateToSettings = { navController.navigate(Route.SETTINGS.name) },
                     onNavigateToStats = { navController.navigate(Route.STATS.name) },
-                    onNavigateToQuiz = { navController.navigate(Route.QUIZ.name) },
+                    onNavigateToQuiz = { navController.navigate(Route.QUIZ_MENU.name) },
+                )
+            }
+            composable(Route.QUIZ_MENU.name) {
+                QuizMenuScreen(
+                    onQuizSelected = { quiz ->
+                        quizViewModel.startQuiz(quiz)
+                        navController.navigate(Route.QUIZ.name)
+                    }
                 )
             }
             composable(Route.QUIZ.name) {
-                isBottomBarVisible.value = false
-                QuizScreen(
-                    quizViewModel = quizViewModel
-                )
+                QuizScreen(quizViewModel = quizViewModel, onBack = { navController.popBackStack() })
             }
             composable(Route.MANAGEMENT.name) {
-                WordManagementScreen(
-                    wordViewModel = wordViewModel
-                )
+                WordManagementScreen(wordViewModel = wordViewModel)
             }
             composable(Route.USERNAME.name) {
                 UsernameScreen(navController)
@@ -148,7 +169,7 @@ fun MainScreen() {
                 AboutScreen()
             }
             composable(Route.STATS.name) {
-                StatsScreen(statsViewModel = StatsViewModel())
+                StatsScreen(statsViewModel = statsViewModel)
             }
         }
     }
