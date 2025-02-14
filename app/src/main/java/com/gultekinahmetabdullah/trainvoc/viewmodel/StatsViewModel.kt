@@ -51,8 +51,8 @@ class StatsViewModel(private val repository: WordRepository) : ViewModel() {
             calculateRatios()
             _totalTimeSpent.value = repository.getTotalTimeSpent()
             // Convert the last answered time to a readable format
-            _lastAnswered.value =
-                DateFormat.getDateTimeInstance().format(repository.getLastAnswered())
+            _lastAnswered.value = if (repository.getLastAnswered() == 0L) "N/A"
+            else DateFormat.getDateTimeInstance().format(repository.getLastAnswered())
         }
     }
 

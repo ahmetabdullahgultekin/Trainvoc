@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 class WordRepository(private val wordDao: WordDao) {
 
+    suspend fun resetProgress() { wordDao.resetProgress() }
+
     suspend fun getCorrectAnswers(): Int = wordDao.getCorrectAnswers()
 
     suspend fun getWrongAnswers(): Int = wordDao.getWrongAnswers()
@@ -43,9 +45,15 @@ class WordRepository(private val wordDao: WordDao) {
     suspend fun insertWord(word: Word) = wordDao.insertWord(word)
 
     suspend fun generateTenQuestions(quizType: QuizType): MutableList<Question> {
+        println(
+            "WordRepository.generateTenQuestions: quizType = $quizType"
+        )
         val tenQuestions = mutableListOf<Question>()
         repeat(10) {
             val fiveWords = getFiveWords(quizType = quizType)
+            println(
+                "WordRepository.generateTenQuestions: fiveWords = $fiveWords"
+            )
             val correctWord = fiveWords.random()
             val shuffledWords = fiveWords.shuffled()
             tenQuestions.add(

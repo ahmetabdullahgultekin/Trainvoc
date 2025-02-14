@@ -74,8 +74,10 @@ fun MainScreen() {
     val quizViewModel = QuizViewModel(repository)
     val wordViewModel = WordViewModel(repository)
     val statsViewModel = StatsViewModel(repository)
+    val settingsViewModel = SettingsViewModel(LocalContext.current, repository)
     val isTopAppBarVisible = remember { mutableStateOf(true) }
     val isBottomBarVisible = remember { mutableStateOf(false) }
+
 
     Scaffold(
         bottomBar = {
@@ -105,7 +107,10 @@ fun MainScreen() {
                             IconButton(onClick = {
                                 navController.popBackStack()
                             }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back"
+                                )
                             }
                         } else {
                             IconButton(onClick = {
@@ -151,7 +156,7 @@ fun MainScreen() {
                 )
             }
             composable(Route.QUIZ.name) {
-                QuizScreen(quizViewModel = quizViewModel, onBack = { navController.popBackStack() })
+                QuizScreen(quizViewModel = quizViewModel)
             }
             composable(Route.MANAGEMENT.name) {
                 WordManagementScreen(wordViewModel = wordViewModel)
@@ -160,7 +165,7 @@ fun MainScreen() {
                 UsernameScreen(navController)
             }
             composable(Route.SETTINGS.name) {
-                SettingsScreen(navController, SettingsViewModel(LocalContext.current))
+                SettingsScreen(navController, settingsViewModel)
             }
             composable(Route.HELP.name) {
                 HelpScreen()
