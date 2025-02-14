@@ -43,28 +43,6 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
     val lastAnswered by statsViewModel.lastAnswered.collectAsState()
     val scope = statsViewModel.viewModelScope
 
-    // StatCard titles and values variable
-    val values = remember {
-        listOf(
-            "Total Questions" to "$totalQuestions",
-            "Correct Answers" to "$correctAnswers",
-            "Incorrect Answers" to "$incorrectAnswers",
-            "Skipped Questions" to "$skippedQuestions",
-            "Success Rate" to "%.2f%%".format(successRate * 100),
-            "Failure Rate" to "%.2f%%".format(failureRate * 100),
-            "Skipped Rate" to "%.2f%%".format(skippedRate * 100),
-            "Total Score" to "${correctAnswers * 10}",
-            "Total Time Spent" to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
-            "Last Answered" to lastAnswered
-        )
-    }
-
-    /*
-    LaunchedEffect(Unit) {
-        statsViewModel.fillStats()
-    }
-     */
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +56,20 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
         item {
             Spacer(modifier = Modifier.height(24.dp))
         }
-        items(values) { (title, value) ->
+        items(
+            listOf(
+                "Total Questions" to "$totalQuestions",
+                "Correct Answers" to "$correctAnswers",
+                "Incorrect Answers" to "$incorrectAnswers",
+                "Skipped Questions" to "$skippedQuestions",
+                "Success Rate" to "%.2f%%".format(successRate * 100),
+                "Failure Rate" to "%.2f%%".format(failureRate * 100),
+                "Skipped Rate" to "%.2f%%".format(skippedRate * 100),
+                "Total Score" to "${correctAnswers * 10}",
+                "Total Time Spent" to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
+                "Last Answered" to lastAnswered
+            )
+        ) { (title, value) ->
             StatCard(title = title, value = value)
         }
         item {

@@ -3,8 +3,11 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import kotlinx.coroutines.launch
 
-class SettingsViewModel(context: Context) : ViewModel() {
+class SettingsViewModel(context: Context, private val repository: WordRepository) : ViewModel() {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
 
@@ -23,6 +26,9 @@ class SettingsViewModel(context: Context) : ViewModel() {
 
     fun resetProgress() {
         sharedPreferences.edit().clear().apply()
+        viewModelScope.launch {
+            repository.resetProgress()
+        }
     }
 
     fun logout() {

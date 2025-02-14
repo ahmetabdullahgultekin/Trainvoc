@@ -11,6 +11,14 @@ import kotlinx.coroutines.flow.Flow
 interface WordDao {
 
     /**
+     * Reset the progress of the user.
+     *
+     * Update the statistics of the words in the database.
+     */
+    @Query("UPDATE words SET correctCount = 0, wrongCount = 0, skippedCount = 0, timeSpentMs = 0, lastAnswered = 0")
+    suspend fun resetProgress()
+
+    /**
      * Word queries
      *
      * These queries are used to interact with the words in the database.

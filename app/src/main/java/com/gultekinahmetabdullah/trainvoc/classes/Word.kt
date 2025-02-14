@@ -13,7 +13,7 @@ data class Word(
     val timeSpentMs: Long = 0,
     val lastAnswered: Long? = null
 ) {
-    val totalAttempts: Int
+    private val totalAttempts: Int
         get() = correctCount + wrongCount + skippedCount
 
     val accuracy: Double

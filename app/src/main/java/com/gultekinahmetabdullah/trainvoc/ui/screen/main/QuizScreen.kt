@@ -45,9 +45,10 @@ import com.gultekinahmetabdullah.trainvoc.classes.Word
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable
-fun QuizScreen(quizViewModel: QuizViewModel, onBack: () -> Unit) {
+fun QuizScreen(quizViewModel: QuizViewModel) {
     val question by quizViewModel.currentQuestion.collectAsState()
     val progress by quizViewModel.progress.collectAsState()
+    val isTimeUp by quizViewModel.isTimeOver.collectAsState()
     val hasStarted by quizViewModel.isTimeRunning.collectAsState(initial = false)
     var selectedAnswer by remember { mutableStateOf<Word?>(null) }
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
@@ -129,17 +130,17 @@ fun QuizScreen(quizViewModel: QuizViewModel, onBack: () -> Unit) {
                     val backgroundColor by animateColorAsState(
                         targetValue = when {
 
-                            // Show the correct answer whatever the user selected
-                            selectedAnswer != null && choice == question!!.correctWord -> Color.Green.copy(
+                            // Show the correct answer with different colour when the time is up
+                            isTimeUp && choice == question!!.correctWord -> Color.Green.copy(
                                 alpha = 0.8f
                             )
 
                             selectedAnswer == choice && isCorrect == true -> Color.Green.copy(
-                                alpha = 0.8f
+                                alpha = 0.5f
                             )
 
                             selectedAnswer == choice && isCorrect == false -> Color.Red.copy(
-                                alpha = 0.8f
+                                alpha = 0.5f
                             )
 
                             else -> MaterialTheme.colorScheme.primaryContainer
@@ -158,7 +159,11 @@ fun QuizScreen(quizViewModel: QuizViewModel, onBack: () -> Unit) {
                             .padding(8.dp)
                             .scale(scaleAnim)
                             .clickable {
-                                if (selectedAnswer != null || isCorrect != null) return@clickable
+                                if (
+                                    selectedAnswer != null
+                                    || isCorrect != null
+                                    || isTimeUp
+                                    ) return@clickable
                                 selectedAnswer = choice
                                 isCorrect = quizViewModel.checkAnswer(choice)
                             },
@@ -199,7 +204,7 @@ fun QuizScreen(quizViewModel: QuizViewModel, onBack: () -> Unit) {
                         isCorrect = null
                         quizViewModel.loadNextQuestion()
                     },
-                    enabled = selectedAnswer != null,
+                    enabled = selectedAnswer != null || isTimeUp,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,

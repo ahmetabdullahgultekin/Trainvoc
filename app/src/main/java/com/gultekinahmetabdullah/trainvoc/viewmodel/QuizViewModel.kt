@@ -32,6 +32,9 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     private val _timeLeft = MutableStateFlow(durationConst)
     val timeLeft: StateFlow<Int> = _timeLeft
 
+    private val _isTimeOver = MutableStateFlow(false)
+    val isTimeOver: StateFlow<Boolean> = _isTimeOver
+
     // Add a variable to store the progress of the quiz
     private val _progress = MutableStateFlow(progressConst)
     val progress: StateFlow<Float> = _progress
@@ -87,7 +90,13 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
                 delay(1000)
                 _timeLeft.value--
                 _progress.value = _timeLeft.value / durationConst.toFloat()
+                println(
+                    "Time left: ${_timeLeft.value}, " +
+                            "Progress: ${_progress.value}, " +
+                            "Score: ${_score.value}"
+                )
                 if (_timeLeft.value == 0) {
+                    _isTimeOver.value = true
                     checkAnswer(null)
                     resetQuestionVariables()
                 }
@@ -135,6 +144,7 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     }
 
     fun loadNextQuestion() {
+        _isTimeOver.value = false
         resetQuestionVariables()
         if (currentIndex < _quizQuestions.value.size) {
             _currentQuestion.value = _quizQuestions.value[currentIndex]
