@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gultekinahmetabdullah.trainvoc.classes.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable
@@ -49,23 +49,28 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
     val question by quizViewModel.currentQuestion.collectAsState()
     val progress by quizViewModel.progress.collectAsState()
     val isTimeUp by quizViewModel.isTimeOver.collectAsState()
-    val hasStarted by quizViewModel.isTimeRunning.collectAsState(initial = false)
+    val score by quizViewModel.score.collectAsState()
     var selectedAnswer by remember { mutableStateOf<Word?>(null) }
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
-
-    /*
-    LaunchedEffect(Unit) {
-        if (!hasStarted) {
-            quizViewModel.startQuiz(quiz = quiz)
-        }
-    }
-     */
 
     DisposableEffect(Unit) {
         onDispose {
             quizViewModel.finalizeQuiz()
         }
     }
+
+    val progressColor by animateColorAsState(
+        targetValue = if (selectedAnswer != null && isCorrect != null) {
+            if (isCorrect == true) Color.Green else Color.Red
+        } else {
+            if (isTimeUp) Color.DarkGray else Color(
+                red = 1f - progress,
+                green = progress,
+                blue = 0f
+            )
+        },
+        animationSpec = tween(durationMillis = 500)
+    )
 
     LazyColumn(
         modifier = Modifier
@@ -75,18 +80,24 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
+            ScoreTitle(score = score)
+        }
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        item {
             // Timer Progress Bar
             LinearProgressIndicator(
                 progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp),
-                color = MaterialTheme.colorScheme.primary,
+                    .height(4.dp),
+                color = progressColor,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
         }
         item {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
         }
         item {
             if (question == null) {
@@ -98,7 +109,9 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                         .fillMaxWidth()
                         .padding(8.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    ),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(
@@ -109,7 +122,7 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                     ) {
                         Text(
                             text = "Which one is the correct meaning of:",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
 
@@ -130,17 +143,45 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                     val backgroundColor by animateColorAsState(
                         targetValue = when {
 
-                            // Show the correct answer with different colour when the time is up
-                            isTimeUp && choice == question!!.correctWord -> Color.Green.copy(
-                                alpha = 0.8f
-                            )
+                            /**
+                             *  We have 4 cases here:
+                             *
+                             *  1. The user has selected an answer and the answer is correct
+                             *
+                             *  2. The user has selected an answer and the answer is wrong
+                             *
+                             *  3. The time is up and the correct answer is shown
+                             *
+                             *  4. The user has not selected an answer yet
+                             *
+                             *  In the first case, we show the correct answer with a green background
+                             *
+                             *  In the second case, we show the wrong answer with a red background
+                             *  Also, we show the correct answer with a green background
+                             *
+                             *  In the third case, we show the correct answer with a green background
+                             *
+                             *  In the fourth case, we show the default background color
+                             *
+                             */
 
+                            // Show the correct answer with green background when the user selects the correct answer
                             selectedAnswer == choice && isCorrect == true -> Color.Green.copy(
                                 alpha = 0.5f
                             )
 
+                            // Show the wrong answer with red background when the user selects the wrong answer
                             selectedAnswer == choice && isCorrect == false -> Color.Red.copy(
                                 alpha = 0.5f
+                            )
+                            // Also, show the correct answer with green background
+                            choice == question!!.correctWord && isCorrect == false -> Color.Green.copy(
+                                alpha = 0.5f
+                            )
+
+                            // Show the correct answer with green background when the time is up
+                            isTimeUp && choice == question!!.correctWord -> Color.Green.copy(
+                                alpha = 0.8f
                             )
 
                             else -> MaterialTheme.colorScheme.primaryContainer
@@ -163,7 +204,7 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                                     selectedAnswer != null
                                     || isCorrect != null
                                     || isTimeUp
-                                    ) return@clickable
+                                ) return@clickable
                                 selectedAnswer = choice
                                 isCorrect = quizViewModel.checkAnswer(choice)
                             },
@@ -218,6 +259,37 @@ fun QuizScreen(quizViewModel: QuizViewModel) {
                     Text(text = "Next Question", fontSize = 18.sp)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ScoreTitle(score: Int) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Score: ",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "$score",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

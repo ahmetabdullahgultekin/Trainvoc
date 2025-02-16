@@ -13,8 +13,8 @@ android {
         applicationId = "com.gultekinahmetabdullah.trainvoc"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.0.3"
+        versionCode = 7
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -69,7 +69,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.core.splashscreen)
-    implementation (libs.gson)
+    implementation(libs.gson)
 
     // Test dependencies
     testImplementation(libs.junit)
