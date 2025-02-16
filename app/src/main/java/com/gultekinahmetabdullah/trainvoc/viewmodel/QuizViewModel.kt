@@ -2,10 +2,12 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gultekinahmetabdullah.trainvoc.classes.Question
-import com.gultekinahmetabdullah.trainvoc.classes.Quiz
-import com.gultekinahmetabdullah.trainvoc.classes.Word
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
+import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +27,12 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     val quizQuestions: StateFlow<List<Question>> = _quizQuestions
 
     private var currentIndex = 0
+
     private val _currentQuestion = MutableStateFlow<Question?>(null)
     val currentQuestion: StateFlow<Question?> = _currentQuestion
+
+    private val _currentWordStats = MutableStateFlow<Statistic?>(null)
+    val currentWordStats: StateFlow<Statistic?> = _currentWordStats
 
     // Add time variable to show the time left for each question
     private val _timeLeft = MutableStateFlow(durationConst)
@@ -63,19 +69,34 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     }
      */
 
+    private var quizJob: Job? = null
+
     fun startQuiz(quiz: Quiz) {
+        // Cancel the previous quiz if it is running
+        quizJob?.cancel()
         // If quiz has already started, then do not allow new start
         resetQuiz()
         // Fetch 10 questions from the database until user reaches the end of the list
         // Start the timer for each question
         // Timer will decrease the timeLeft variable every second
-        viewModelScope.launch {
+        quizJob = viewModelScope.launch {
             // Initialize the variables
             // Declare the quiz type
             _quiz.value = quiz
             // Load the first set of questions
             loadQuizQuestions()
             loadNextQuestion()
+            /*
+            * Start the quiz
+            *
+             * Loop through the questions,
+             * This loop will continue until the user reaches the end of the list
+             * Each iteration corresponds to a question
+             *
+             * Load the next question
+             * Start the timer
+             * Wait for the timer to finish
+             */
             // Start the quiz
             _isTimeRunning.value = true
             _isQuizFinished.value = false
@@ -101,34 +122,6 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
                     resetQuestionVariables()
                 }
             }
-
-            /*
-             * Start the quiz
-             *
-             * Loop through the questions,
-             * This loop will continue until the user reaches the end of the list
-             * Each iteration corresponds to a question
-             *
-             * Load the next question
-             * Start the timer
-             * Wait for the timer to finish
-             */
-            /*
-            viewModelScope.launch {
-                while (currentIndex < _quizQuestions.value.size) {
-                    while (_isTimeRunning.value) {
-                        delay(100)
-                    }
-                    // Check if we need to load more questions
-                    addNewQuestions()
-                    // Reset the timer and progress bar
-                    resetQuestionVariables()
-                    // Load the next question
-                    loadNextQuestion()
-                }
-            }
-
-             */
         }
     }
 
@@ -150,6 +143,8 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
             viewModelScope.launch {
+                _currentWordStats.value =
+                    repository.getWordStats(_currentQuestion.value!!.correctWord)
                 addNewQuestions()
             }
             _isTimeRunning.value = true
@@ -161,16 +156,20 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     fun checkAnswer(choice: Word?): Boolean? {
         val currentQuestion = _currentQuestion.value ?: return null
         pauseQuiz()
+        val secondsSpent = durationConst - _timeLeft.value
         viewModelScope.launch {
-            repository.addTimeSpent(
-                _currentQuestion.value!!.correctWord.word,
-                durationConst - _timeLeft.value
-            )
             repository.updateLastAnswered(_currentQuestion.value!!.correctWord.word)
+            repository.updateSecondsSpent(secondsSpent, _currentQuestion.value!!.correctWord)
         }
         if (choice == null) {
             viewModelScope.launch {
-                repository.increaseSkippedAnswers(_currentQuestion.value!!.correctWord.word)
+                repository.updateWordStats(
+                    _currentWordStats.value!!.copy(
+                        statId = 0,
+                        skippedCount = _currentWordStats.value!!.skippedCount + 1
+                    ),
+                    _currentQuestion.value!!.correctWord
+                )
             }
             return null
         }
@@ -179,24 +178,30 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
             _score.value++
             // Update the entity stats in the database
             viewModelScope.launch {
-                repository.increaseCorrectAnswers(_currentQuestion.value!!.correctWord.word)
+                repository.updateWordStats(
+                    _currentWordStats.value!!.copy(
+                        statId = 0,
+                        correctCount = _currentWordStats.value!!.correctCount + 1
+                    ),
+                    _currentQuestion.value!!.correctWord
+                )
             }
             return true
         } else {
             // Wrong answer
-            _score.value--
+            _score.value = scoreConst
             // Update the entity stats in the database
             viewModelScope.launch {
-                repository.increaseWrongAnswers(_currentQuestion.value!!.correctWord.word)
+                repository.updateWordStats(
+                    _currentWordStats.value!!.copy(
+                        statId = 0,
+                        wrongCount = _currentWordStats.value!!.wrongCount + 1
+                    ),
+                    _currentQuestion.value!!.correctWord
+                )
             }
             return false
         }
-    }
-
-    fun resumeQuiz() {
-        _isAnswered.value = false
-        _isTimeRunning.value = true
-        _isUserReady.value = true
     }
 
     private fun pauseQuiz() {
@@ -228,6 +233,7 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     }
 
     fun finalizeQuiz() {
+        quizJob?.cancel()
         resetQuiz()
     }
 }

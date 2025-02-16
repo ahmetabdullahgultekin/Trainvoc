@@ -11,6 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,17 +26,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.gultekinahmetabdullah.trainvoc.classes.Word
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
+import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 
 @Composable
 fun WordManagementScreen(wordViewModel: WordViewModel) {
     val words = wordViewModel.words.collectAsState().value
+    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
+
+    val filteredWords = words.filter { word ->
+        word.word.word.contains(searchQuery.text, ignoreCase = true) ||
+                word.word.meaning.contains(searchQuery.text, ignoreCase = true)
+    }
+
+    val expendedNewWord = remember { mutableStateOf(false) }
 
     var wordInput by remember { mutableStateOf(TextFieldValue("")) }
-    var explanationInput by remember { mutableStateOf(TextFieldValue("")) }
+    var meaningInput by remember { mutableStateOf(TextFieldValue("")) }
 
     Column(
         modifier = Modifier
@@ -44,66 +60,200 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Input Fields
+        // Search Bar
         OutlinedTextField(
-            value = wordInput,
-            onValueChange = { wordInput = it },
-            label = { Text("Word") },
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
-            value = explanationInput,
-            onValueChange = { explanationInput = it },
-            label = { Text("Explanation") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
+        // Make text fields collapsible
+        Button(onClick = { expendedNewWord.value = !expendedNewWord.value }) {
+            Text("Add New Word")
+        }
 
-        // Insert Button
-        Button(
-            onClick = {
-                if (wordInput.text.isNotBlank() && explanationInput.text.isNotBlank()) {
-                    val newWord = Word(
-                        word = wordInput.text,
-                        meaning = explanationInput.text,
-                        correctCount = 0,
-                        wrongCount = 0,
-                    )
-                    wordViewModel.insertWord(newWord)
-                    wordInput = TextFieldValue("")
-                    explanationInput = TextFieldValue("")
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Add Word")
+        if (expendedNewWord.value) {
+            // Input Fields
+            OutlinedTextField(
+                value = wordInput,
+                onValueChange = { wordInput = it },
+                label = { Text("Word") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = meaningInput,
+                onValueChange = { meaningInput = it },
+                label = { Text("Explanation") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            WordSelectionForm()
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Insert Button
+            Button(
+                onClick = {
+                    if (wordInput.text.isNotBlank() && meaningInput.text.isNotBlank()) {
+                        val newWord = Word(
+                            word = wordInput.text,
+                            meaning = meaningInput.text,
+                        )
+                        wordViewModel.insertWord(newWord)
+                        wordInput = TextFieldValue("")
+                        meaningInput = TextFieldValue("")
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add Word")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Display Words
         LazyColumn {
-            items(words) { word ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Word: ${word.word}",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Explanation: ${word.meaning}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
+            items(filteredWords) { word ->
+                WordCard(word)
             }
         }
+    }
+}
+
+@Composable
+fun WordCard(word: WordAskedInExams) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Word: ${word.word.word}",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Explanation: ${word.word.meaning}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            // Add more details and stats here
+            Text(
+                text = "Level: ${word.word.level?.level ?: "N/A"}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "Category: ${
+                    word.exam.joinToString(", ") { it.exam }
+                }",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "Last Reviewed: ${word.word.lastReviewed ?: "N/A"}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "Stat ID: ${word.word.statId}",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WordLevelComboBox() {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedLevel by remember { mutableStateOf<WordLevel?>(null) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        OutlinedTextField(
+            value = selectedLevel?.level ?: "Select Level",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Level") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            textStyle = TextStyle.Default
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            WordLevel.entries.forEach { level ->
+                DropdownMenuItem(
+                    text = { Text(level.level) },
+                    onClick = {
+                        selectedLevel = level
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WordCategoryComboBox() {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf<Exam?>(null) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        OutlinedTextField(
+            value = selectedCategory?.exam ?: "Select Category",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Category") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            textStyle = TextStyle.Default
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            Exam.examTypes.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text(category.exam) },
+                    onClick = {
+                        selectedCategory = category
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun WordSelectionForm() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        WordLevelComboBox()
+        WordCategoryComboBox()
     }
 }

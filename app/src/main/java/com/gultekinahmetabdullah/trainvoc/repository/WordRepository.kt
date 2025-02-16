@@ -1,14 +1,18 @@
 package com.gultekinahmetabdullah.trainvoc.repository
 
-import com.gultekinahmetabdullah.trainvoc.classes.Question
-import com.gultekinahmetabdullah.trainvoc.classes.QuizType
-import com.gultekinahmetabdullah.trainvoc.classes.Word
+import com.gultekinahmetabdullah.trainvoc.classes.enums.QuizType
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
+import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import kotlinx.coroutines.flow.Flow
 
 class WordRepository(private val wordDao: WordDao) {
 
-    suspend fun resetProgress() { wordDao.resetProgress() }
+    suspend fun resetProgress() {
+        wordDao.resetProgress()
+    }
 
     suspend fun getCorrectAnswers(): Int = wordDao.getCorrectAnswers()
 
@@ -20,24 +24,52 @@ class WordRepository(private val wordDao: WordDao) {
 
     suspend fun getLastAnswered(): Long = wordDao.getLastAnswered()
 
-    suspend fun increaseCorrectAnswers(word: String) {
-        wordDao.increaseCorrectAnswers(word)
+    suspend fun getAllWordsAskedInExams(): List<WordAskedInExams> = wordDao.getAllWordsWithExams()
+
+
+    /*suspend fun updateWordStats(statistic: Statistic, word: Word) {
+        // Update the statistics of the word
+        wordDao.insertStatistic(statistic)
+        // Update the related word statistic id
+        wordDao.updateWordStatId(word.statId, word.word)
+    }*/
+
+    suspend fun updateWordStats(statistic: Statistic, word: Word) {
+        // Check if the statistic already exists
+        val existingStatistic = wordDao.getStatByValues(
+            statistic.correctCount,
+            statistic.wrongCount,
+            statistic.skippedCount
+        )
+
+        if (existingStatistic != null) {
+            // If the statistic exists, update the word's stat_id
+            wordDao.updateWordStatId(existingStatistic.statId, word.word)
+        } else {
+            // If the statistic does not exist, insert the new statistic
+            val newStatId = wordDao.insertStatistic(statistic).toInt()
+            wordDao.updateWordStatId(newStatId, word.word)
+        }
+
+        // Check if the previous statistic has no relation with any word
+        val previousStatId = word.statId
+        val wordCount = wordDao.getWordCountByStatId(previousStatId)
+        if (wordCount == 0) {
+            // If no word is associated with the previous statistic, delete it
+            wordDao.deleteStatistic(previousStatId)
+        }
     }
 
-    suspend fun increaseWrongAnswers(word: String) {
-        wordDao.increaseWrongAnswers(word)
-    }
-
-    suspend fun increaseSkippedAnswers(word: String) {
-        wordDao.increaseSkippedAnswers(word)
-    }
-
-    suspend fun addTimeSpent(word: String, i: Int) {
-        wordDao.addTimeSpent(word, i)
+    suspend fun getWordStats(word: Word): Statistic {
+        return wordDao.getStatById(word.statId)
     }
 
     suspend fun updateLastAnswered(word: String) {
-        wordDao.updateLastAnswered(word, System.currentTimeMillis())
+        wordDao.updateLastReviewed(word, System.currentTimeMillis())
+    }
+
+    suspend fun updateSecondsSpent(secondsSpent: Int, word: Word) {
+        wordDao.updateSecondsSpent(secondsSpent, word.word)
     }
 
     fun getAllWords(): Flow<List<Word>> = wordDao.getAllWords()
@@ -45,15 +77,9 @@ class WordRepository(private val wordDao: WordDao) {
     suspend fun insertWord(word: Word) = wordDao.insertWord(word)
 
     suspend fun generateTenQuestions(quizType: QuizType): MutableList<Question> {
-        println(
-            "WordRepository.generateTenQuestions: quizType = $quizType"
-        )
         val tenQuestions = mutableListOf<Question>()
         repeat(10) {
             val fiveWords = getFiveWords(quizType = quizType)
-            println(
-                "WordRepository.generateTenQuestions: fiveWords = $fiveWords"
-            )
             val correctWord = fiveWords.random()
             val shuffledWords = fiveWords.shuffled()
             tenQuestions.add(
@@ -79,140 +105,4 @@ class WordRepository(private val wordDao: WordDao) {
             QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
         }
     }
-
-    /*
-    suspend fun getRandomQuizQuestions(): Collection<Question> {
-        //val tenQuestions = mutableListOf<Question>()
-        repeat(10) {
-            val fiveWords = wordDao.getRandomFiveWords()
-            generateQuestion(fiveWords, tenQuestions)
-            val correctWord = fiveWords.random()
-            val shuffledWords = fiveWords.shuffled()
-            tenQuestions.add(
-                Question(
-                    correctWord = correctWord,
-                    incorrectWords = shuffledWords.filter { it != correctWord },
-                )
-            )
-        }
-        return tenQuestions
-    }
-
-    suspend fun getLeastCorrectQuizQuestions(): Collection<Question> {
-        val tenQuestions = mutableListOf<Question>()
-        repeat(10) {
-            val fiveWords = wordDao.getLeastCorrectFiveWords()
-            val correctWord = fiveWords.random()
-            val shuffledWords = fiveWords.shuffled()
-            tenQuestions.add(
-                Question(
-                    correctWord = correctWord,
-                    incorrectWords = shuffledWords.filter { it != correctWord },
-                )
-            )
-        }
-        return tenQuestions
-    }
-
-    suspend fun getLeastWrongQuizQuestions(): Collection<Question> {
-        val tenQuestions = mutableListOf<Question>()
-        repeat(10) {
-            val fiveWords = wordDao.getLeastWrongFiveWords()
-            val correctWord = fiveWords.random()
-            val shuffledWords = fiveWords.shuffled()
-            tenQuestions.add(
-                Question(
-                    correctWord = correctWord,
-                    incorrectWords = shuffledWords.filter { it != correctWord },
-                )
-            )
-        }
-        return tenQuestions
-    }
-
-    suspend fun getLeastReviewedQuizQuestions(): Collection<Question> {
-        val tenQuestions = mutableListOf<Question>()
-        repeat(10) {
-            val fiveWords = wordDao.getLeastReviewedFiveWords()
-            val correctWord = fiveWords.random()
-            val shuffledWords = fiveWords.shuffled()
-            tenQuestions.add(
-                Question(
-                    correctWord = correctWord,
-                    incorrectWords = shuffledWords.filter { it != correctWord },
-                )
-            )
-        }
-        return tenQuestions
-    }
-
-    fun getQuizQuestions(quizType: QuizType): Collection<Question> {
-        return when (quizType) {
-            QuizType.RANDOM -> getRandomQuizQuestions()
-            QuizType.LEAST_CORRECT -> getLeastCorrectQuizQuestions()
-            QuizType.LEAST_WRONG -> getLeastWrongQuizQuestions()
-            QuizType.LEAST_REVIEWED -> getLeastReviewedQuizQuestions()
-            QuizType.LEAST_RECENT -> getRandomQuizQuestions()
-            QuizType.MOST_CORRECT -> getRandomQuizQuestions()
-            QuizType.MOST_WRONG -> getRandomQuizQuestions()
-            QuizType.MOST_REVIEWED -> getRandomQuizQuestions()
-            QuizType.MOST_RECENT -> getRandomQuizQuestions()
-            else -> getRandomQuizQuestions()
-        }
-    }
-
-    fun getAllWords(): LiveData<List<Word>> = wordDao.getAllWords()
-    suspend fun getWrongPercentage(): Double = wordDao.getWrongPercentage()
-    suspend fun getLeastKnownWords(): List<Word> = wordDao.getLeastKnownWords()
-    suspend fun insert(word: Word) { wordDao.insert(word) }
-
-    suspend fun getQuizQuestions(): List<Question> {
-        val tenQuestions = mutableListOf<Question>()
-        repeat(10) {
-            val fiveWords = wordDao.getRandomFiveWords()
-            val correctWord = fiveWords.random()
-            val shuffledWords = fiveWords.shuffled()
-            tenQuestions.add(
-                Question(
-                    correctWord = correctWord,
-                    incorrectWords = shuffledWords.filter { it != correctWord },
-                )
-            )
-        }
-        return tenQuestions
-    }
-
-    suspend fun updateWordStats(word: Word) {
-        wordDao.updateWordStats(
-            word.word,
-            word.numberOfCorrectAnswers,
-            word.numberOfWrongAnswers
-        )
-    }
-
-    suspend fun generateQuestions(): List<Question> {
-        val fiveWords = wordDao.getRandomFiveWords()
-        val correctWord = fiveWords.random()
-        val shuffledWords = fiveWords.shuffled()
-        return shuffledWords.map {
-            Question(
-                correctWord = correctWord,
-                incorrectWords = shuffledWords.filter { it != correctWord },
-            )
-        }
-    }
-
-    suspend fun getRandomWord(): Word {
-        return wordDao.getRandomWord()
-    }
-
-    suspend fun getRandomFiveWords(): List<Word> {
-        return wordDao.getRandomFiveWords()
-    }
-
-    suspend fun insertWords(words: List<Word>) {
-        wordDao.insertWords(words)
-    }
-     */
-
 }

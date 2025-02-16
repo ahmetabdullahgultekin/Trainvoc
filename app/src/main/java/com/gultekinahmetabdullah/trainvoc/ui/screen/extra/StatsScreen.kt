@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,12 +22,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import kotlinx.coroutines.launch
 
@@ -43,6 +47,15 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
     val lastAnswered by statsViewModel.lastAnswered.collectAsState()
     val scope = statsViewModel.viewModelScope
 
+    val composition by
+    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_book.json"))
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = 3,
+        isPlaying = true,
+        speed = 1f,
+    )
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -50,6 +63,13 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        item {
+            LottieAnimation(
+                composition = composition,
+                modifier = Modifier.size(256.dp),
+                progress = { progress }
+            )
+        }
         item {
             Text(text = "Quiz Statistics", style = MaterialTheme.typography.headlineMedium)
         }

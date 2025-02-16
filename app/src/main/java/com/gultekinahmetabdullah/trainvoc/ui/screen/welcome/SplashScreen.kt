@@ -16,7 +16,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.gultekinahmetabdullah.trainvoc.classes.Route
+import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import kotlinx.coroutines.delay
 
 @Composable
@@ -39,9 +39,6 @@ fun SplashScreen(navController: NavController) {
     LaunchedEffect(true) {
         delay(3000) // Wait for animation to finish
         val username = sharedPreferences.getString("username", null)
-        println(
-            "SplashScreen: username: $username"
-        )
         val destination =
             if (username.isNullOrEmpty()) Route.WELCOME.name else Route.MAIN.name
         navController.navigate(destination)

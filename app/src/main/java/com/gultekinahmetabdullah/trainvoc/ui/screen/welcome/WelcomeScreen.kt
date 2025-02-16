@@ -22,7 +22,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.gultekinahmetabdullah.trainvoc.classes.Route
+import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 
 @Composable
 fun WelcomeScreen(

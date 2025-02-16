@@ -12,7 +12,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.gultekinahmetabdullah.trainvoc.classes.Route
+import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.MainScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.SplashScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen

@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
+import QuizMenuScreen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +43,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gultekinahmetabdullah.trainvoc.InitializeDatabase
-import com.gultekinahmetabdullah.trainvoc.classes.Route
+import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.AboutScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.HelpScreen
@@ -101,8 +102,9 @@ fun MainScreen() {
                             return@TopAppBar
                         }
                         if (
-                            navBackStackEntry.value?.destination?.route == Route.QUIZ.name ||
-                            navBackStackEntry.value?.destination?.route == Route.QUIZ_MENU.name
+                            navBackStackEntry.value?.destination?.route == Route.QUIZ.name
+                            || navBackStackEntry.value?.destination?.route == Route.QUIZ_MENU.name
+                            || navBackStackEntry.value?.destination?.route == Route.QUIZ_EXAM_MENU.name
                         ) {
                             IconButton(onClick = {
                                 navController.popBackStack()
@@ -144,7 +146,14 @@ fun MainScreen() {
                     onNavigateToHelp = { navController.navigate(Route.HELP.name) },
                     onNavigateToSettings = { navController.navigate(Route.SETTINGS.name) },
                     onNavigateToStats = { navController.navigate(Route.STATS.name) },
-                    onNavigateToQuiz = { navController.navigate(Route.QUIZ_MENU.name) },
+                    onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU.name) },
+                )
+            }
+            composable(Route.QUIZ_EXAM_MENU.name) {
+                QuizExamMenuScreen(
+                    onExamSelected = {
+                        navController.navigate(Route.QUIZ_MENU.name)
+                    }
                 )
             }
             composable(Route.QUIZ_MENU.name) {
