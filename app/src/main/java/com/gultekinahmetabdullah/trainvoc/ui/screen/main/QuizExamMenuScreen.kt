@@ -22,17 +22,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import java.util.Locale
 
 @Composable
-fun QuizExamMenuScreen(onExamSelected: () -> Unit) {
+fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
     Column(
         Modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Select Quiz Category",
+            text = "Select Quiz Category\nGrayed out categories are not available yet",
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -43,13 +44,14 @@ fun QuizExamMenuScreen(onExamSelected: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
+
             items(WordLevel.entries.size) { index ->
                 val level = WordLevel.entries[index]
                 QuizCategoryCard(
                     title = level.name,
                     description = "Test your knowledge with ${level.name.lowercase(Locale.getDefault())} words",
                     color = level.color,
-                    onClick = { onExamSelected() }
+                    onClick = { onExamSelected(QuizParameter.Level(level)) }
                 )
             }
             items(Exam.examTypes.size) { index ->
@@ -59,7 +61,7 @@ fun QuizExamMenuScreen(onExamSelected: () -> Unit) {
                     title = exam.exam,
                     description = "Test your knowledge with ${exam.exam} words",
                     color = color,
-                    onClick = { onExamSelected() }
+                    onClick = { onExamSelected(QuizParameter.ExamType(exam)) }
                 )
             }
         }
@@ -72,8 +74,18 @@ fun QuizCategoryCard(title: String, description: String, color: Color, onClick: 
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .size(150.dp)
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = color)
+            .clickable(
+                enabled = if (title == "A1" || title == "A2" || title == "B1"
+                    || title == "B2" || title == "C1" || title == "YDS"
+                    || title == "Mixed"
+                ) true else false
+            )
+            { onClick() },
+        colors = if (title == "A1" || title == "A2" || title == "B1"
+            || title == "B2" || title == "C1" || title == "YDS"
+            || title == "Mixed"
+        ) CardDefaults.cardColors(containerColor = color)
+        else CardDefaults.cardColors(containerColor = Color.Gray)
     ) {
         Column(
             modifier = Modifier

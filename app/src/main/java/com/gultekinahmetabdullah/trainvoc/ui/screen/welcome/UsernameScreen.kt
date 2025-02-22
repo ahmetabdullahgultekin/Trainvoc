@@ -38,7 +38,7 @@ fun UsernameScreen(navController: NavController) {
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     val composition by
-    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_typing.json"))
+    rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_typing.json"))
 
     Column(
         modifier = Modifier

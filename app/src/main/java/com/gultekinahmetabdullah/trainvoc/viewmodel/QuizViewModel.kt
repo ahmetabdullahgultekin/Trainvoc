@@ -1,9 +1,11 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
@@ -22,6 +24,9 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
 
     private val _quiz = MutableStateFlow<Quiz?>(null)
     val quiz: StateFlow<Quiz?> = _quiz
+
+    private val _quizParameter = MutableStateFlow<QuizParameter?>(null)
+    val quizParameter: StateFlow<Any?> = _quizParameter
 
     private val _quizQuestions = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val quizQuestions: StateFlow<List<Question>> = _quizQuestions
@@ -71,22 +76,25 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
 
     private var quizJob: Job? = null
 
-    fun startQuiz(quiz: Quiz) {
-        // Cancel the previous quiz if it is running
-        quizJob?.cancel()
-        // If quiz has already started, then do not allow new start
-        resetQuiz()
-        // Fetch 10 questions from the database until user reaches the end of the list
-        // Start the timer for each question
-        // Timer will decrease the timeLeft variable every second
-        quizJob = viewModelScope.launch {
-            // Initialize the variables
-            // Declare the quiz type
-            _quiz.value = quiz
-            // Load the first set of questions
-            loadQuizQuestions()
-            loadNextQuestion()
-            /*
+    fun startQuiz(newQuizParameter: QuizParameter, quiz: Quiz) {
+
+        try {
+            // Cancel the previous quiz if it is running
+            quizJob?.cancel()
+            // If quiz has already started, then do not allow new start
+            resetQuiz()
+            // Fetch 10 questions from the database until user reaches the end of the list
+            // Start the timer for each question
+            // Timer will decrease the timeLeft variable every second
+            quizJob = viewModelScope.launch {
+                // Initialize the variables
+                // Declare the quiz type
+                _quiz.value = quiz
+                _quizParameter.value = newQuizParameter
+                // Load the first set of questions
+                loadQuizQuestions()
+                loadNextQuestion()
+                /*
             * Start the quiz
             *
              * Loop through the questions,
@@ -97,31 +105,34 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
              * Start the timer
              * Wait for the timer to finish
              */
-            // Start the quiz
-            _isTimeRunning.value = true
-            _isQuizFinished.value = false
-            // Start the timer
-            while (_timeLeft.value > 0 && !_isQuizFinished.value) {
-                // Check if the user has paused the quiz
-                while (!_isTimeRunning.value) {
-                    delay(100)
-                    continue
-                }
-                // Wait for 1 second
-                delay(1000)
-                _timeLeft.value--
-                _progress.value = _timeLeft.value / durationConst.toFloat()
-                println(
-                    "Time left: ${_timeLeft.value}, " +
-                            "Progress: ${_progress.value}, " +
-                            "Score: ${_score.value}"
-                )
-                if (_timeLeft.value == 0) {
-                    _isTimeOver.value = true
-                    checkAnswer(null)
-                    resetQuestionVariables()
+                // Start the quiz
+                _isTimeRunning.value = true
+                _isQuizFinished.value = false
+                // Start the timer
+                while (_timeLeft.value > 0 && !_isQuizFinished.value) {
+                    // Check if the user has paused the quiz
+                    while (!_isTimeRunning.value) {
+                        delay(100)
+                        continue
+                    }
+                    // Wait for 1 second
+                    delay(1000)
+                    _timeLeft.value--
+                    _progress.value = _timeLeft.value / durationConst.toFloat()
+                    println(
+                        "Time left: ${_timeLeft.value}, " +
+                                "Progress: ${_progress.value}, " +
+                                "Score: ${_score.value}"
+                    )
+                    if (_timeLeft.value == 0) {
+                        _isTimeOver.value = true
+                        checkAnswer(null)
+                        resetQuestionVariables()
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Log.e("QuizViewModel", "Error starting quiz: ${e.message}")
         }
     }
 
@@ -133,7 +144,9 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
 
     private suspend fun loadQuizQuestions() {
         // Add new questions to the dynamic list
-        _quizQuestions.value.addAll(repository.generateTenQuestions(_quiz.value!!.type))
+        _quizQuestions.value.addAll(
+            repository.generateTenQuestions(_quiz.value!!.type, _quizParameter.value!!)
+        )
     }
 
     fun loadNextQuestion() {

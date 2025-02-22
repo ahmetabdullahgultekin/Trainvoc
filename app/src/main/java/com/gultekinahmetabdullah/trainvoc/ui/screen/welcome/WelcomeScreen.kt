@@ -30,7 +30,7 @@ fun WelcomeScreen(
     scaffoldPadding: PaddingValues
 ) {
     val composition by
-    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_man_greetings.json"))
+    rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_man_greetings.json"))
 
     Column(
         modifier = Modifier

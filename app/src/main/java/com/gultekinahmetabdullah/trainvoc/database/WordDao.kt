@@ -46,8 +46,9 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWord(word: Word)
 
-    @Insert
-    suspend fun insertWords(words: List<Word>)
+    // Insert words, if the words already exist, return the word
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertWords(words: MutableSet<Word>): List<Long>
 
     @Insert
     suspend fun insertExams(exams: List<Exam>)
@@ -57,7 +58,7 @@ interface WordDao {
     suspend fun insertWordExamCrossRefs(crossRefs: List<WordExamCrossRef>)
 
     // Insert statistics, if the statistics already exist, replace them
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertStatistic(statistic: Statistic): Long
 
     @Query("SELECT COUNT(*) FROM words WHERE stat_id = :statId")
@@ -144,6 +145,22 @@ interface WordDao {
     @Query("SELECT * FROM words WHERE word = :word")
     suspend fun getExamsOfWord(word: String): List<WordAskedInExams>
 
+    // Get the total time spent on the words
+    @Query("SELECT SUM(seconds_spent) FROM words")
+    suspend fun getTotalTimeSpent(): Int
+
+    // Get the time spent on a specific word
+    @Query("SELECT seconds_spent FROM words WHERE word = :word")
+    suspend fun getTimeSpent(word: String): Int
+
+    // Get the last time the word was answered
+    @Query("SELECT last_reviewed FROM words WHERE word = :word")
+    suspend fun getLastAnswered(word: String): Long
+
+    // Get the last time any word was answered
+    @Query("SELECT last_reviewed FROM words ORDER BY last_reviewed DESC LIMIT 1")
+    suspend fun getLastAnswered(): Long
+
     /**
      * Update the statistics of a word in the database.
      *
@@ -175,6 +192,23 @@ interface WordDao {
 
     @Query("SELECT * FROM words ORDER BY RANDOM() LIMIT 5")
     suspend fun getRandomFiveWords(): List<Word>
+
+    // overload the function to get random words with a specific level
+    @Query("SELECT * FROM words WHERE level = :level ORDER BY RANDOM() LIMIT 5")
+    suspend fun getRandomFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get random words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        WHERE exams.exam = :exam
+        ORDER BY RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getRandomFiveWordsByExam(exam: String): List<Word>
 
     /**
      * Question queries
@@ -208,6 +242,32 @@ interface WordDao {
     )
     suspend fun getLeastCorrectFiveWords(): List<Word>
 
+    // overload the function to get the least correct words with a specific level
+    @Query(
+        """
+        SELECT w.* FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.level = :level
+        ORDER BY s.correct_count ASC, RANDOM()
+        LIMIT 5
+    """
+    )
+    suspend fun getLeastCorrectFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the least correct words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam
+        ORDER BY statistics.correct_count ASC, RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getLeastCorrectFiveWordsByExam(exam: String): List<Word>
+
     // Order the words by the number of correct answers in descending order and return random 5 words
     @Query(
         """
@@ -218,6 +278,32 @@ interface WordDao {
     """
     )
     suspend fun getMostCorrectFiveWords(): List<Word>
+
+    // overload the function to get the most correct words with a specific level
+    @Query(
+        """
+        SELECT w.* FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.level = :level
+        ORDER BY s.correct_count DESC, RANDOM()
+        LIMIT 5
+    """
+    )
+    suspend fun getMostCorrectFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the most correct words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam
+        ORDER BY statistics.correct_count DESC, RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getMostCorrectFiveWordsByExam(exam: String): List<Word>
 
     // Order the words by the number of wrong answers in ascending order and return random 5 words
     @Query(
@@ -230,6 +316,33 @@ interface WordDao {
     )
     suspend fun getLeastWrongFiveWords(): List<Word>
 
+    // overload the function to get the least wrong words with a specific level
+    @Query(
+        """
+        SELECT w.* FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.level = :level
+        ORDER BY s.wrong_count ASC, RANDOM()
+        LIMIT 5
+    """
+    )
+    suspend fun getLeastWrongFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the least wrong words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam
+        ORDER BY statistics.wrong_count ASC, RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getLeastWrongFiveWordsByExam(exam: String): List<Word>
+
+
     // Order the words by the number of wrong answers in descending order and return random 5 words
     @Query(
         """
@@ -240,6 +353,32 @@ interface WordDao {
     """
     )
     suspend fun getMostWrongFiveWords(): List<Word>
+
+    // overload the function to get the most wrong words with a specific level
+    @Query(
+        """
+        SELECT w.* FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.level = :level
+        ORDER BY s.wrong_count DESC, RANDOM()
+        LIMIT 5
+    """
+    )
+    suspend fun getMostWrongFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the most wrong words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam
+        ORDER BY statistics.wrong_count DESC, RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getMostWrongFiveWordsByExam(exam: String): List<Word>
 
     // Order the words by the number of total answers in ascending order and return random 5 words
     @Query(
@@ -252,6 +391,33 @@ interface WordDao {
     )
     suspend fun getLeastReviewedFiveWords(): List<Word>
 
+    // overload the function to get the least reviewed words with a specific level
+    @Query(
+        """
+        SELECT w.* FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.level = :level
+        ORDER BY s.correct_count + s.wrong_count + s.skipped_count ASC, RANDOM() 
+        LIMIT 5
+    """
+    )
+    suspend fun getLeastReviewedFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the least reviewed words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam
+        ORDER BY statistics.correct_count + statistics.wrong_count + statistics.skipped_count ASC,
+        RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getLeastReviewedFiveWordsByExam(exam: String): List<Word>
+
     // Order the words by the number of total answers in descending order and return random 5 words
     @Query(
         """
@@ -263,27 +429,72 @@ interface WordDao {
     )
     suspend fun getMostReviewedFiveWords(): List<Word>
 
+    // overload the function to get the most reviewed words with a specific level
+    @Query(
+        """
+        SELECT w.* FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.level = :level
+        ORDER BY s.correct_count + s.wrong_count + s.skipped_count DESC, RANDOM() 
+        LIMIT 5
+    """
+    )
+    suspend fun getMostReviewedFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the most reviewed words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam
+        ORDER BY statistics.correct_count + statistics.wrong_count + statistics.skipped_count DESC,
+        RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getMostReviewedFiveWordsByExam(exam: String): List<Word>
+
     // Order the words by the last time they were answered in ascending order and return random 5 words
     @Query("SELECT * FROM words ORDER BY last_reviewed ASC, RANDOM() LIMIT 5")
     suspend fun getLeastRecentFiveWords(): List<Word>
+
+    // overload the function to get the least recent words with a specific level
+    @Query("SELECT * FROM words WHERE level = :level ORDER BY last_reviewed ASC, RANDOM() LIMIT 5")
+    suspend fun getLeastRecentFiveWordsByLevel(level: String): List<Word>
+
+    // overload the function to get the least recent words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        WHERE exams.exam = :exam
+        ORDER BY words.last_reviewed ASC, RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getLeastRecentFiveWordsByExam(exam: String): List<Word>
 
     // Order the words by the last time they were answered in descending order and return random 5 words
     @Query("SELECT * FROM words ORDER BY last_reviewed DESC, RANDOM() LIMIT 5")
     suspend fun getMostRecentFiveWords(): List<Word>
 
-    // Get the total time spent on the words
-    @Query("SELECT SUM(seconds_spent) FROM words")
-    suspend fun getTotalTimeSpent(): Int
+    // overload the function to get the most recent words with a specific level
+    @Query("SELECT * FROM words WHERE level = :level ORDER BY last_reviewed DESC, RANDOM() LIMIT 5")
+    suspend fun getMostRecentFiveWordsByLevel(level: String): List<Word>
 
-    // Get the time spent on a specific word
-    @Query("SELECT seconds_spent FROM words WHERE word = :word")
-    suspend fun getTimeSpent(word: String): Int
-
-    // Get the last time the word was answered
-    @Query("SELECT last_reviewed FROM words WHERE word = :word")
-    suspend fun getLastAnswered(word: String): Long
-
-    // Get the last time any word was answered
-    @Query("SELECT last_reviewed FROM words ORDER BY last_reviewed DESC LIMIT 1")
-    suspend fun getLastAnswered(): Long
+    // overload the function to get the most recent words with a specific exam
+    @Transaction
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        WHERE exams.exam = :exam
+        ORDER BY words.last_reviewed DESC, RANDOM() LIMIT 5
+    """
+    )
+    suspend fun getMostRecentFiveWordsByExam(exam: String): List<Word>
 }

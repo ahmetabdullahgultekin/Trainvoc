@@ -10,4 +10,5 @@ enum class QuizType {
     MOST_WRONG,
     MOST_RECENT,
     MOST_REVIEWED,
+
 }
