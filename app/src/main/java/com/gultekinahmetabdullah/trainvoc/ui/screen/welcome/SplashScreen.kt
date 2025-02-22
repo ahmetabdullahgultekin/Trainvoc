@@ -27,7 +27,7 @@ fun SplashScreen(navController: NavController) {
 
     // Lottie Animation State
     val composition by
-    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_rolling_cat.json"))
+    rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_rolling_cat.json"))
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = 3,

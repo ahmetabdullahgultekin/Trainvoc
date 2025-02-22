@@ -4,6 +4,7 @@ enum class Route {
     HOME,
     MAIN,
     SPLASH,
+    STORY,
     QUIZ,
     QUIZ_MENU,
     QUIZ_EXAM_MENU,

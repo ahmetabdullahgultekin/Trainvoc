@@ -48,13 +48,14 @@ import com.gultekinahmetabdullah.trainvoc.R
 @Composable
 fun HomeScreen(
     onNavigateToQuiz: () -> Unit,
+    onNavigateToStory: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToHelp: () -> Unit,
     onNavigateToStats: () -> Unit
 ) {
     // Lottie Animation State
     val composition by
-    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_diamond.json"))
+    rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_diamond.json"))
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = LottieConstants.IterateForever,
@@ -129,9 +130,23 @@ fun HomeScreen(
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(text = "Start Quiz", fontSize = 18.sp)
+            Text(text = "Start Custom Quiz", fontSize = 18.sp)
             Spacer(modifier = Modifier.width(8.dp))
             Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Start Quiz")
+        }
+
+        // Main Call-to-Action Button
+        Button(
+            onClick = onNavigateToStory,
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scaleAnim.value),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+        ) {
+            Text(text = "Story Mode", fontSize = 18.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Story Mode")
         }
 
         Spacer(modifier = Modifier.height(24.dp))

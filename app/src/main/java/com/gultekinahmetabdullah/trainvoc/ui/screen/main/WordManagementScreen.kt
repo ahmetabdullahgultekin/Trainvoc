@@ -139,7 +139,7 @@ fun WordCard(word: WordAskedInExams) {
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Explanation: ${word.word.meaning}",
+                text = "Meaning: ${word.word.meaning}",
                 style = MaterialTheme.typography.bodyMedium
             )
             // Add more details and stats here
@@ -149,7 +149,7 @@ fun WordCard(word: WordAskedInExams) {
             )
             Text(
                 text = "Category: ${
-                    word.exam.joinToString(", ") { it.exam }
+                    word.exams.joinToString(", ") { it.exam }
                 }",
                 style = MaterialTheme.typography.bodySmall
             )

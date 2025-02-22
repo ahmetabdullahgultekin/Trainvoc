@@ -44,6 +44,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gultekinahmetabdullah.trainvoc.InitializeDatabase
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.AboutScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.HelpScreen
@@ -78,6 +80,8 @@ fun MainScreen() {
     val settingsViewModel = SettingsViewModel(LocalContext.current, repository)
     val isTopAppBarVisible = remember { mutableStateOf(true) }
     val isBottomBarVisible = remember { mutableStateOf(false) }
+
+    val parameter = remember { mutableStateOf<QuizParameter?>(null) }
 
 
     Scaffold(
@@ -144,23 +148,30 @@ fun MainScreen() {
             composable(Route.HOME.name) {
                 HomeScreen(
                     onNavigateToHelp = { navController.navigate(Route.HELP.name) },
+                    onNavigateToStory = { navController.navigate(Route.STORY.name) },
                     onNavigateToSettings = { navController.navigate(Route.SETTINGS.name) },
                     onNavigateToStats = { navController.navigate(Route.STATS.name) },
                     onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU.name) },
                 )
             }
+            composable(Route.STORY.name) {
+                StoryScreen()
+            }
             composable(Route.QUIZ_EXAM_MENU.name) {
                 QuizExamMenuScreen(
-                    onExamSelected = {
+                    onExamSelected = { quizParameter ->
                         navController.navigate(Route.QUIZ_MENU.name)
+                        parameter.value = quizParameter
                     }
                 )
             }
             composable(Route.QUIZ_MENU.name) {
                 QuizMenuScreen(
                     onQuizSelected = { quiz ->
-                        quizViewModel.startQuiz(quiz)
-                        navController.navigate(Route.QUIZ.name)
+                        parameter.value?.let {
+                            quizViewModel.startQuiz(it, quiz)
+                            navController.navigate(Route.QUIZ.name)
+                        }
                     }
                 )
             }

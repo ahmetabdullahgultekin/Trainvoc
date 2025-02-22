@@ -48,7 +48,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
     val scope = statsViewModel.viewModelScope
 
     val composition by
-    rememberLottieComposition(LottieCompositionSpec.Asset("json/anime_book.json"))
+    rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_book.json"))
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = 3,

@@ -47,7 +47,7 @@ data class Statistic(
  * Exam entity
  */
 
-@Entity(tableName = "exam")
+@Entity(tableName = "exams")
 data class Exam(
     @PrimaryKey @ColumnInfo(name = "exam") val exam: String
 ) {
@@ -96,7 +96,7 @@ data class WordAskedInExams(
         parentColumn = "word",
         entityColumn = "exam"
     )
-    val exam: List<Exam>
+    val exams: List<Exam>
 )
 
 data class ExamWithWords(

@@ -1,7 +1,10 @@
 package com.gultekinahmetabdullah.trainvoc.repository
 
 import com.gultekinahmetabdullah.trainvoc.classes.enums.QuizType
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
+import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
@@ -76,10 +79,13 @@ class WordRepository(private val wordDao: WordDao) {
 
     suspend fun insertWord(word: Word) = wordDao.insertWord(word)
 
-    suspend fun generateTenQuestions(quizType: QuizType): MutableList<Question> {
+    suspend fun generateTenQuestions(
+        quizType: QuizType, quizParameter: QuizParameter
+    ): MutableList<Question> {
+
         val tenQuestions = mutableListOf<Question>()
         repeat(10) {
-            val fiveWords = getFiveWords(quizType = quizType)
+            val fiveWords = getFiveWords(quizType = quizType, parameter = quizParameter)
             val correctWord = fiveWords.random()
             val shuffledWords = fiveWords.shuffled()
             tenQuestions.add(
@@ -92,17 +98,54 @@ class WordRepository(private val wordDao: WordDao) {
         return tenQuestions
     }
 
-    private suspend fun getFiveWords(quizType: QuizType): List<Word> {
-        return when (quizType) {
-            QuizType.RANDOM -> wordDao.getRandomFiveWords()
-            QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
-            QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
-            QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
-            QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
-            QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
-            QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
-            QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
-            QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
+    private suspend fun getFiveWords(quizType: QuizType, parameter: QuizParameter): List<Word> {
+        return when (parameter) {
+            is QuizParameter.Level -> {
+                val level = when (parameter.wordLevel) {
+                    WordLevel.A1 -> "A1"
+                    WordLevel.A2 -> "A2"
+                    WordLevel.B1 -> "B1"
+                    WordLevel.B2 -> "B2"
+                    WordLevel.C1 -> "C1"
+                    WordLevel.C2 -> "C2"
+                }
+                when (quizType) {
+                    QuizType.RANDOM -> wordDao.getRandomFiveWordsByLevel(level)
+                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByLevel(level)
+                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByLevel(level)
+                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByLevel(level)
+                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByLevel(level)
+                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByLevel(level)
+                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByLevel(level)
+                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByLevel(level)
+                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByLevel(level)
+                }
+            }
+            is QuizParameter.ExamType -> {
+                when (quizType) {
+                    QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
+                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByExam(parameter.exam.exam)
+                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByExam(parameter.exam.exam)
+                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByExam(parameter.exam.exam)
+                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByExam(parameter.exam.exam)
+                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByExam(parameter.exam.exam)
+                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByExam(parameter.exam.exam)
+                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByExam(parameter.exam.exam)
+                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByExam(parameter.exam.exam)
+                }
+            } else -> {
+                when (quizType) {
+                    QuizType.RANDOM -> wordDao.getRandomFiveWords()
+                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
+                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
+                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
+                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
+                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
+                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
+                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
+                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
+                }
+            }
         }
     }
 }
