@@ -1,4 +1,3 @@
-```markdown
 # TrainVoc
 
 TrainVoc is a vocabulary training application designed to help users improve their language skills by practicing words categorized by levels or exams. The app uses a database of words and provides various quiz types to enhance learning.
