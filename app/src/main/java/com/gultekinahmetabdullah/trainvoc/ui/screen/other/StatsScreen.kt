@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen.extra
+package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

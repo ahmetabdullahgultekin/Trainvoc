@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen.extra
+package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
 import android.content.Intent
 import android.net.Uri

@@ -44,13 +44,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gultekinahmetabdullah.trainvoc.InitializeDatabase
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
-import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
-import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.AboutScreen
-import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.HelpScreen
-import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.SettingsScreen
-import com.gultekinahmetabdullah.trainvoc.ui.screen.extra.StatsScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.other.AboutScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.other.HelpScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.other.SettingsScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.other.StatsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
