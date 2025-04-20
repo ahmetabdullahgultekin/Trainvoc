@@ -18,7 +18,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,27 +37,38 @@ fun StoryScreen(
 ) {
     val levels = viewModel.levels.collectAsState().value
 
-    LazyColumn(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp)
+            .paint(
+                painter = painterResource(id = R.drawable.bg_4),
+                contentScale = ContentScale.FillBounds
+            )
     ) {
-        items(levels.size) { index ->
-            val (level, isUnlocked) = levels.entries.elementAt(index)
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .clickable(enabled = isUnlocked) {
-                        // Handle level click
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp)
+        ) {
+            items(levels.size) { index ->
+                // First Level is unlocked by default
+                val (level, isUnlocked) = levels.entries.elementAt(index)
 
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                LeafButton(text = level.longName, isUnlocked = isUnlocked) {}
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .clickable(enabled = isUnlocked) {
+                            // Handle level click
+
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    LeafButton(text = level.longName, isUnlocked = isUnlocked) {}
+                }
             }
         }
     }

@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -61,8 +60,6 @@ interface WordDao {
     @Transaction
     @Insert
     suspend fun insertWordExamCrossRefs(crossRefs: List<WordExamCrossRef>)
-
-
 
 
     // Insert statistics, if the statistics already exist, replace them
@@ -505,9 +502,6 @@ interface WordDao {
     """
     )
     suspend fun getMostRecentFiveWordsByExam(exam: String): List<Word>
-
-
-
 
 
     /**

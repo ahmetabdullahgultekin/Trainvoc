@@ -24,13 +24,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import kotlinx.coroutines.launch
 
@@ -56,64 +60,73 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
         speed = 1f,
     )
 
-    LazyColumn(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .paint(
+                painter = painterResource(id = R.drawable.bg_1), // Replace with your image resource
+                contentScale = ContentScale.FillBounds
+            )
     ) {
-        item {
-            LottieAnimation(
-                composition = composition,
-                modifier = Modifier.size(256.dp),
-                progress = { progress }
-            )
-        }
-        item {
-            Text(text = "Quiz Statistics", style = MaterialTheme.typography.headlineMedium)
-        }
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-        items(
-            listOf(
-                "Total Questions" to "$totalQuestions",
-                "Correct Answers" to "$correctAnswers",
-                "Incorrect Answers" to "$incorrectAnswers",
-                "Skipped Questions" to "$skippedQuestions",
-                "Success Rate" to "%.2f%%".format(successRate * 100),
-                "Failure Rate" to "%.2f%%".format(failureRate * 100),
-                "Skipped Rate" to "%.2f%%".format(skippedRate * 100),
-                "Total Score" to "${correctAnswers * 10}",
-                "Total Time Spent" to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
-                "Last Answered" to lastAnswered
-            )
-        ) { (title, value) ->
-            StatCard(title = title, value = value)
-        }
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-        }
-        item {
-            StatsBarChart(
-                correctAnswers, incorrectAnswers, skippedQuestions,
-                successRate, failureRate, skippedRate
-            )
-        }
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-        }
-        item {
-            Button(onClick = {
-                scope.launch {
-                    statsViewModel.fillStats()
-                }
-            }) {
-                Text(text = "Refresh Stats")
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                LottieAnimation(
+                    composition = composition,
+                    modifier = Modifier.size(256.dp),
+                    progress = { progress }
+                )
             }
-        }
+            item {
+                Text(text = "Quiz Statistics", style = MaterialTheme.typography.headlineMedium)
+            }
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+            items(
+                listOf(
+                    "Total Questions" to "$totalQuestions",
+                    "Correct Answers" to "$correctAnswers",
+                    "Incorrect Answers" to "$incorrectAnswers",
+                    "Skipped Questions" to "$skippedQuestions",
+                    "Success Rate" to "%.2f%%".format(successRate * 100),
+                    "Failure Rate" to "%.2f%%".format(failureRate * 100),
+                    "Skipped Rate" to "%.2f%%".format(skippedRate * 100),
+                    "Total Score" to "${correctAnswers * 10}",
+                    "Total Time Spent" to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
+                    "Last Answered" to lastAnswered
+                )
+            ) { (title, value) ->
+                StatCard(title = title, value = value)
+            }
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+            item {
+                StatsBarChart(
+                    correctAnswers, incorrectAnswers, skippedQuestions,
+                    successRate, failureRate, skippedRate
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+            item {
+                Button(onClick = {
+                    scope.launch {
+                        statsViewModel.fillStats()
+                    }
+                }) {
+                    Text(text = "Refresh Stats")
+                }
+            }
 
+        }
     }
 }
 

@@ -22,16 +22,16 @@ import java.io.InputStreamReader
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun wordDao(): WordDao
-   /* abstract fun statisticDao(): StatisticDao
-    abstract fun examDao(): ExamDao
-    abstract fun wordExamCrossRefDao(): WordExamCrossRefDao*/
+    /* abstract fun statisticDao(): StatisticDao
+     abstract fun examDao(): ExamDao
+     abstract fun wordExamCrossRefDao(): WordExamCrossRefDao*/
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "word-db"
 
         private var instance: AppDatabase? = null
 
-        private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)
+        /*private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)*/
 
         fun getInstance(context: Context): AppDatabase {
             if (instance == null) {
@@ -62,12 +62,12 @@ abstract class AppDatabase : RoomDatabase() {
             .build()
 
 
-        /*
+        /**
         * Populate the database with words from the animations file
         * Uncomment the following code to populate the database with words from the animations file
         *
         */
-        private suspend fun populateDatabase(context: Context, wordDao: WordDao) {
+        /*private suspend fun populateDatabase(context: Context, wordDao: WordDao) {
 
             try {
                 fillWordsAndExams(context, wordDao)
@@ -75,7 +75,7 @@ abstract class AppDatabase : RoomDatabase() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
+        }*/
 
         /**
          *  Insert the word if it does not exist in the database.

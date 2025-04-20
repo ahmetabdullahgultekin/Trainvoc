@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,11 +33,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 
 @Composable
 fun HelpScreen() {
@@ -48,54 +53,64 @@ fun HelpScreen() {
         "How to contact support?" to "You can email us or call our support team from the contact section below."
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .paint(
+                painter = painterResource(id = R.drawable.bg_6),
+                contentScale = ContentScale.FillBounds
+            )
     ) {
-        Text("Help & Support", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-
-        // FAQs Section
-        Text("Frequently Asked Questions", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-        faqList.forEach { (question, answer) ->
-            FAQItem(question, answer)
-        }
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-        // Contact Support Section
-        Text("Contact Support", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-        ContactItem("Email Support", Icons.Default.Email, "support@trainvoc.com") {
-            val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@trainvoc.com"))
-            context.startActivity(emailIntent)
-        }
-        ContactItem("Call Support", Icons.Default.Phone, "+1 234 567 890") {
-            val phoneIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+1234567890"))
-            context.startActivity(phoneIntent)
-        }
-        ContactItem("Visit Website", Icons.Default.Home, "www.trainvoc.com") {
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.trainvoc.com"))
-            context.startActivity(webIntent)
-        }
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-        // Feedback Section
-        Text("Give Us Feedback", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-        Button(
-            onClick = {
-                Toast.makeText(context, "Redirecting to feedback form...", Toast.LENGTH_SHORT)
-                    .show()
-                val feedbackIntent =
-                    Intent(Intent.ACTION_VIEW, Uri.parse("https://www.trainvoc.com/feedback"))
-                context.startActivity(feedbackIntent)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Submit Feedback")
+            Text("Help & Support", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
+            // FAQs Section
+            Text("Frequently Asked Questions", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            faqList.forEach { (question, answer) ->
+                FAQItem(question, answer)
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            // Contact Support Section
+            Text("Contact Support", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            ContactItem("Email Support", Icons.Default.Email, "support@trainvoc.com") {
+                val emailIntent =
+                    Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@trainvoc.com"))
+                context.startActivity(emailIntent)
+            }
+            ContactItem("Call Support", Icons.Default.Phone, "+1 234 567 890") {
+                val phoneIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:+1234567890"))
+                context.startActivity(phoneIntent)
+            }
+            ContactItem("Visit Website", Icons.Default.Home, "www.trainvoc.com") {
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.trainvoc.com"))
+                context.startActivity(webIntent)
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+            // Feedback Section
+            Text("Give Us Feedback", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Button(
+                onClick = {
+                    Toast.makeText(context, "Redirecting to feedback form...", Toast.LENGTH_SHORT)
+                        .show()
+                    val feedbackIntent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://www.trainvoc.com/feedback"))
+                    context.startActivity(feedbackIntent)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text("Submit Feedback")
+            }
         }
     }
 }
