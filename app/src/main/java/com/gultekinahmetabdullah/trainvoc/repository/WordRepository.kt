@@ -152,6 +152,9 @@ class WordRepository(private val wordDao: WordDao) {
     }
 
     suspend fun isLevelUnlocked(level: WordLevel): Boolean {
+        // First level is unlocked by default
+        if (level == WordLevel.A1) return true
+
         val levelUnlockerWordCount = wordDao.getLevelUnlockerWordCount(level.name)
         val levelWordCount = wordDao.getWordCountByLevel(level.name)
         println(
