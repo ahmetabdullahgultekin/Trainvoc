@@ -22,6 +22,9 @@ import java.io.InputStreamReader
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun wordDao(): WordDao
+   /* abstract fun statisticDao(): StatisticDao
+    abstract fun examDao(): ExamDao
+    abstract fun wordExamCrossRefDao(): WordExamCrossRefDao*/
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "word-db"

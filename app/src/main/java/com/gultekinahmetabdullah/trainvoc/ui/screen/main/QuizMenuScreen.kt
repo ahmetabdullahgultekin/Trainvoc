@@ -1,6 +1,7 @@
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,41 +17,54 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .paint(
+                painter = painterResource(id = R.drawable.bg_2), // Replace with your image resource
+                contentScale = ContentScale.FillBounds
+            )
     ) {
-        Text(
-            text = "Select Quiz Type",
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.fillMaxSize()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
         ) {
-            items(Quiz.quizTypes.size) { index ->
-                val quiz = Quiz.quizTypes[index]
-                QuizCard(
-                    title = quiz.name,
-                    description = quiz.description,
-                    color = Color(quiz.color),
-                    onClick = { onQuizSelected(quiz) }
-                )
+            Text(
+                text = "Select Quiz Type",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(Quiz.quizTypes.size) { index ->
+                    val quiz = Quiz.quizTypes[index]
+                    QuizCard(
+                        title = quiz.name,
+                        description = quiz.description,
+                        color = Color(quiz.color),
+                        onClick = { onQuizSelected(quiz) }
+                    )
+                }
             }
         }
     }

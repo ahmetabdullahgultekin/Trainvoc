@@ -144,7 +144,7 @@ fun WordCard(word: WordAskedInExams) {
             )
             // Add more details and stats here
             Text(
-                text = "Level: ${word.word.level?.level ?: "N/A"}",
+                text = "Level: ${word.word.level?.longName ?: "N/A"}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
@@ -176,7 +176,7 @@ fun WordLevelComboBox() {
         onExpandedChange = { expanded = it }
     ) {
         OutlinedTextField(
-            value = selectedLevel?.level ?: "Select Level",
+            value = selectedLevel?.longName ?: "Select Level",
             onValueChange = {},
             readOnly = true,
             label = { Text("Level") },
@@ -195,7 +195,7 @@ fun WordLevelComboBox() {
         ) {
             WordLevel.entries.forEach { level ->
                 DropdownMenuItem(
-                    text = { Text(level.level) },
+                    text = { Text(level.longName) },
                     onClick = {
                         selectedLevel = level
                         expanded = false

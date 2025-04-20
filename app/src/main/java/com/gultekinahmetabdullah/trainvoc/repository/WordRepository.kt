@@ -4,7 +4,6 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.QuizType
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
@@ -121,6 +120,7 @@ class WordRepository(private val wordDao: WordDao) {
                     QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByLevel(level)
                 }
             }
+
             is QuizParameter.ExamType -> {
                 when (quizType) {
                     QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
@@ -133,7 +133,9 @@ class WordRepository(private val wordDao: WordDao) {
                     QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByExam(parameter.exam.exam)
                     QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByExam(parameter.exam.exam)
                 }
-            } else -> {
+            }
+
+            else -> {
                 when (quizType) {
                     QuizType.RANDOM -> wordDao.getRandomFiveWords()
                     QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
@@ -147,5 +149,14 @@ class WordRepository(private val wordDao: WordDao) {
                 }
             }
         }
+    }
+
+    suspend fun isLevelUnlocked(level: WordLevel): Boolean {
+        val levelUnlockerWordCount = wordDao.getLevelUnlockerWordCount(level.name)
+        val levelWordCount = wordDao.getWordCountByLevel(level.name)
+        println(
+            "Level: ${level.name}, Unlocker Word Count: $levelUnlockerWordCount, Word Count: $levelWordCount"
+        )
+        return levelWordCount == levelUnlockerWordCount
     }
 }
