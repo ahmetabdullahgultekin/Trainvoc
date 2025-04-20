@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,11 +17,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
@@ -28,41 +33,51 @@ import java.util.Locale
 
 @Composable
 fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
-    Column(
-        Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .paint(
+                painter = painterResource(id = R.drawable.bg_2), // Replace with your image resource
+                contentScale = ContentScale.FillBounds
+            )
     ) {
-        Text(
-            text = "Select Quiz Category\nGrayed out categories are not available yet",
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxSize()
+        Column(
+            Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "Select Quiz Category\nGrayed out categories are not available yet",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
-            items(WordLevel.entries.size) { index ->
-                val level = WordLevel.entries[index]
-                QuizCategoryCard(
-                    title = level.name,
-                    description = "Test your knowledge with ${level.name.lowercase(Locale.getDefault())} words",
-                    color = level.color,
-                    onClick = { onExamSelected(QuizParameter.Level(level)) }
-                )
-            }
-            items(Exam.examTypes.size) { index ->
-                val exam = Exam.examTypes[index]
-                val color = Exam.examColors.entries.first { it.key == exam.exam }.value
-                QuizCategoryCard(
-                    title = exam.exam,
-                    description = "Test your knowledge with ${exam.exam} words",
-                    color = color,
-                    onClick = { onExamSelected(QuizParameter.ExamType(exam)) }
-                )
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                items(WordLevel.entries.size) { index ->
+                    val level = WordLevel.entries[index]
+                    QuizCategoryCard(
+                        title = level.name,
+                        description = "Test your knowledge with ${level.name.lowercase(Locale.getDefault())} words",
+                        color = level.color,
+                        onClick = { onExamSelected(QuizParameter.Level(level)) }
+                    )
+                }
+                items(Exam.examTypes.size) { index ->
+                    val exam = Exam.examTypes[index]
+                    val color = Exam.examColors.entries.first { it.key == exam.exam }.value
+                    QuizCategoryCard(
+                        title = exam.exam,
+                        description = "Test your knowledge with ${exam.exam} words",
+                        color = color,
+                        onClick = { onExamSelected(QuizParameter.ExamType(exam)) }
+                    )
+                }
             }
         }
     }

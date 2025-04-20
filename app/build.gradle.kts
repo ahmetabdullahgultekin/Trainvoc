@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.navigation.compose)
+    androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.androidx.core.testing)
     ksp(libs.androidx.room.compiler)
     implementation(libs.lottie.compose)
     implementation(libs.androidx.core.splashscreen)
@@ -79,4 +81,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.junit)
+    testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 }

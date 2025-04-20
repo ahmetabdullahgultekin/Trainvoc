@@ -3,7 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.classes.enums
 import androidx.compose.ui.graphics.Color
 
 enum class WordLevel(
-    val level: String,
+    val longName: String,
     val color: Color
 ) {
     A1("Beginner", Color(0xFF4CAF50)),

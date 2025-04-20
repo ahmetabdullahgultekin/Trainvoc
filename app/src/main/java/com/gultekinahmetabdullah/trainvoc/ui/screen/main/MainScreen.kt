@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
 import QuizMenuScreen
+import StoryScreen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,6 +55,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
+import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -73,10 +75,13 @@ fun MainScreen() {
     val coroutineScope = rememberCoroutineScope()
 
     val repository = WordRepository(InitializeDatabase.database.wordDao())
+
     val quizViewModel = QuizViewModel(repository)
     val wordViewModel = WordViewModel(repository)
     val statsViewModel = StatsViewModel(repository)
     val settingsViewModel = SettingsViewModel(LocalContext.current, repository)
+    val storyViewModel = StoryViewModel(repository)
+
     val isTopAppBarVisible = remember { mutableStateOf(true) }
     val isBottomBarVisible = remember { mutableStateOf(false) }
 
@@ -154,7 +159,16 @@ fun MainScreen() {
                 )
             }
             composable(Route.STORY.name) {
-                StoryScreen()
+                StoryScreen(
+                    viewModel = storyViewModel,
+                    onLevelSelected = { level ->
+                        navController.navigate(Route.QUIZ_EXAM_MENU.name)
+                        parameter.value = QuizParameter.Level(level)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
             composable(Route.QUIZ_EXAM_MENU.name) {
                 QuizExamMenuScreen(

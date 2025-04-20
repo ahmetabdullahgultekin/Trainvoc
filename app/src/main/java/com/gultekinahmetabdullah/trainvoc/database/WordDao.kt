@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -43,6 +44,10 @@ interface WordDao {
     @Query("SELECT * FROM words ORDER BY word ASC")
     fun getAllWords(): Flow<List<Word>>
 
+    // Get word count of a specific level
+    @Query("SELECT COUNT(*) FROM words WHERE level = :level")
+    suspend fun getWordCountByLevel(level: String): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWord(word: Word)
 
@@ -56,6 +61,9 @@ interface WordDao {
     @Transaction
     @Insert
     suspend fun insertWordExamCrossRefs(crossRefs: List<WordExamCrossRef>)
+
+
+
 
     // Insert statistics, if the statistics already exist, replace them
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -497,4 +505,23 @@ interface WordDao {
     """
     )
     suspend fun getMostRecentFiveWordsByExam(exam: String): List<Word>
+
+
+
+
+
+    /**
+     * Check all levels and determine if they are unlocked or not.
+     * Check all the words correctly answered and determine if the level is unlocked or not.
+     */
+    @Query(
+        """
+    SELECT
+        SUM(CASE WHEN s.correct_count > s.wrong_count AND s.correct_count > s.skipped_count THEN 1 ELSE 0 END) AS words_with_higher_correct_count
+    FROM words w
+    JOIN statistics s ON w.stat_id = s.stat_id
+    WHERE w.level = :level
+    """
+    )
+    suspend fun getLevelUnlockerWordCount(level: String): Int
 }
