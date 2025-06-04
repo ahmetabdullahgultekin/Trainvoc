@@ -26,8 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.airbnb.lottie.compose.LottieAnimation
@@ -63,9 +65,13 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .paint(
-                painter = painterResource(id = R.drawable.bg_1), // Replace with your image resource
-                contentScale = ContentScale.FillBounds
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFFE3F2FD), // Light blue
+                        Color(0xFFFFFFFF)  // White
+                    )
+                )
             )
     ) {
         LazyColumn(
@@ -83,26 +89,44 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                 )
             }
             item {
-                Text(text = "Quiz Statistics", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    text = stringResource(id = R.string.quiz_statistics),
+                    style = MaterialTheme.typography.headlineMedium
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
-            items(
-                listOf(
-                    "Total Questions" to "$totalQuestions",
-                    "Correct Answers" to "$correctAnswers",
-                    "Incorrect Answers" to "$incorrectAnswers",
-                    "Skipped Questions" to "$skippedQuestions",
-                    "Success Rate" to "%.2f%%".format(successRate * 100),
-                    "Failure Rate" to "%.2f%%".format(failureRate * 100),
-                    "Skipped Rate" to "%.2f%%".format(skippedRate * 100),
-                    "Total Score" to "${correctAnswers * 10}",
-                    "Total Time Spent" to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
-                    "Last Answered" to lastAnswered
+            item {
+                val totalQuestionsLabel = stringResource(id = R.string.total_questions)
+                val correctAnswersLabel = stringResource(id = R.string.correct_answers)
+                val incorrectAnswersLabel = stringResource(id = R.string.incorrect_answers)
+                val skippedQuestionsLabel = stringResource(id = R.string.skipped_questions)
+                val successRateLabel = stringResource(id = R.string.success_rate)
+                val failureRateLabel = stringResource(id = R.string.failure_rate)
+                val skippedRateLabel = stringResource(id = R.string.skipped_rate)
+                val totalScoreLabel = stringResource(id = R.string.total_score)
+                val totalTimeSpentLabel = stringResource(id = R.string.total_time_spent)
+                val lastAnsweredLabel = stringResource(id = R.string.last_answered)
+
+                val statsList = listOf(
+                    totalQuestionsLabel to "$totalQuestions",
+                    correctAnswersLabel to "$correctAnswers",
+                    incorrectAnswersLabel to "$incorrectAnswers",
+                    skippedQuestionsLabel to "$skippedQuestions",
+                    successRateLabel to "%.2f%%".format(successRate * 100),
+                    failureRateLabel to "%.2f%%".format(failureRate * 100),
+                    skippedRateLabel to "%.2f%%".format(skippedRate * 100),
+                    totalScoreLabel to "${correctAnswers * 10}",
+                    totalTimeSpentLabel to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
+                    lastAnsweredLabel to lastAnswered
                 )
-            ) { (title, value) ->
-                StatCard(title = title, value = value)
+
+                Column {
+                    statsList.forEach { (title, value) ->
+                        StatCard(title = title, value = value)
+                    }
+                }
             }
             item {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -162,11 +186,12 @@ fun StatsBarChart(
     failureRate: Float,
     skippedRate: Float
 ) {
-
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = "Answer Distribution", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = stringResource(id = R.string.answer_distribution),
+            style = MaterialTheme.typography.headlineMedium
+        )
         Spacer(modifier = Modifier.height(16.dp))
-
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
@@ -187,14 +212,11 @@ fun StatsBarChart(
                     .background(Color.Red, RoundedCornerShape(8.dp))
             )
         }
-
         Spacer(modifier = Modifier.height(8.dp))
-
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "Correct: $correct", color = Color.Green)
-            Text(text = "Skipped: $skipped", color = Color.White)
-            Text(text = "Incorrect: $incorrect", color = Color.Red)
+            Text(text = stringResource(id = R.string.correct_colon, correct), color = Color.Green)
+            Text(text = stringResource(id = R.string.skipped_colon, skipped), color = Color.White)
+            Text(text = stringResource(id = R.string.incorrect_colon, incorrect), color = Color.Red)
         }
     }
 }
-

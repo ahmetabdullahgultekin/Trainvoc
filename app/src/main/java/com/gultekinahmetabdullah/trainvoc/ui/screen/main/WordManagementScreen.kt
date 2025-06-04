@@ -26,9 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -56,7 +58,10 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Word Management", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = stringResource(id = R.string.word_management),
+            style = MaterialTheme.typography.headlineMedium
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -64,7 +69,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            label = { Text("Search") },
+            label = { Text(stringResource(id = R.string.search)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -72,7 +77,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
 
         // Make text fields collapsible
         Button(onClick = { expendedNewWord.value = !expendedNewWord.value }) {
-            Text("Add New Word")
+            Text(stringResource(id = R.string.add_new_word))
         }
 
         if (expendedNewWord.value) {
@@ -80,14 +85,14 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
             OutlinedTextField(
                 value = wordInput,
                 onValueChange = { wordInput = it },
-                label = { Text("Word") },
+                label = { Text(stringResource(id = R.string.word)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = meaningInput,
                 onValueChange = { meaningInput = it },
-                label = { Text("Explanation") },
+                label = { Text(stringResource(id = R.string.explanation)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -110,7 +115,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Add Word")
+                Text(stringResource(id = R.string.add_word))
             }
         }
 
@@ -135,30 +140,36 @@ fun WordCard(word: WordAskedInExams) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Word: ${word.word.word}",
+                text = stringResource(id = R.string.word_colon, word.word.word),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Meaning: ${word.word.meaning}",
+                text = stringResource(id = R.string.meaning_colon, word.word.meaning),
                 style = MaterialTheme.typography.bodyMedium
             )
             // Add more details and stats here
             Text(
-                text = "Level: ${word.word.level?.longName ?: "N/A"}",
+                text = stringResource(
+                    id = R.string.level_colon,
+                    word.word.level?.longName ?: stringResource(id = R.string.na)
+                ),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Category: ${
-                    word.exams.joinToString(", ") { it.exam }
-                }",
+                text = stringResource(
+                    id = R.string.category_colon,
+                    word.exams.joinToString(", ") { it.exam }),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Last Reviewed: ${word.word.lastReviewed ?: "N/A"}",
+                text = stringResource(
+                    id = R.string.last_reviewed_colon,
+                    word.word.lastReviewed ?: stringResource(id = R.string.na)
+                ),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Stat ID: ${word.word.statId}",
+                text = stringResource(id = R.string.stat_id_colon, word.word.statId),
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -176,10 +187,10 @@ fun WordLevelComboBox() {
         onExpandedChange = { expanded = it }
     ) {
         OutlinedTextField(
-            value = selectedLevel?.longName ?: "Select Level",
+            value = selectedLevel?.longName ?: stringResource(id = R.string.select_level),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Level") },
+            label = { Text(stringResource(id = R.string.level)) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
@@ -217,10 +228,10 @@ fun WordCategoryComboBox() {
         onExpandedChange = { expanded = it }
     ) {
         OutlinedTextField(
-            value = selectedCategory?.exam ?: "Select Category",
+            value = selectedCategory?.exam ?: stringResource(id = R.string.select_category),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Category") },
+            label = { Text(stringResource(id = R.string.category)) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },

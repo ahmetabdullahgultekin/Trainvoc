@@ -12,7 +12,6 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.ExamWithWords
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
-import kotlinx.coroutines.Dispatchers
 import java.io.InputStreamReader
 
 @Database(
@@ -58,15 +57,15 @@ abstract class AppDatabase : RoomDatabase() {
             /* Uncomment the following line to create the database in memory
             *
              */
-        ).createFromAsset("database/word-db.db")
+        )//.createFromAsset("database/word-db.db")
             .build()
 
 
         /**
-        * Populate the database with words from the animations file
-        * Uncomment the following code to populate the database with words from the animations file
-        *
-        */
+         * Populate the database with words from the animations file
+         * Uncomment the following code to populate the database with words from the animations file
+         *
+         */
         /*private suspend fun populateDatabase(context: Context, wordDao: WordDao) {
 
             try {
