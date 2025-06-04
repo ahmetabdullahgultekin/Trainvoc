@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -29,15 +32,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,14 +88,23 @@ fun HomeScreen(
         )
     }
 
+    val isScreenVisible = rememberUpdatedState(true)
+    DisposableEffect(isScreenVisible.value) {
+        onDispose {
+            // Here you could pause Lottie if needed
+        }
+    }
+
     // Root container with background image
     Box(
         modifier = Modifier
             .fillMaxSize()
             .paint(
-                painter = painterResource(id = R.drawable.bg_3), // Replace with your image resource
+                painter = painterResource(id = R.drawable.bg_3),
                 contentScale = ContentScale.FillBounds
             )
+            .padding(WindowInsets.systemBars.asPaddingValues())
+            .testTag("HomeScreenRoot")
     ) {
         Column(
             modifier = Modifier
@@ -96,71 +116,79 @@ fun HomeScreen(
             // App Logo
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "App Icon",
+                contentDescription = stringResource(id = R.string.app_icon_desc),
                 modifier = Modifier
                     .size(120.dp)
                     .padding(8.dp)
+                    .testTag("AppLogo")
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Welcome Message
             Text(
-                text = "Welcome to TrainVoc! 🚀",
+                text = stringResource(id = R.string.home_welcome),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.background,
+                modifier = Modifier.testTag("WelcomeText")
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Improve your English-Turkish vocabulary with engaging quizzes and smart learning tools.",
+                text = stringResource(id = R.string.home_subtitle),
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.background,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterHorizontally),
+                    .align(Alignment.CenterHorizontally)
+                    .testTag("SubtitleText"),
                 fontWeight = FontWeight.Medium
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             // Lottie Animation
+            val lottieDesc = stringResource(id = R.string.lottie_desc)
             LottieAnimation(
                 composition = composition,
                 progress = { progress },
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier
+                    .size(200.dp)
+                    .semantics {
+                        contentDescription = lottieDesc
+                    }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             // Main Call-to-Action Button
-            Button(
+            DebouncedButton(
                 onClick = onNavigateToQuiz,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .scale(scaleAnim.value),
+                    .scale(scaleAnim.value)
+                    .testTag("QuizButton"),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text(text = "Start Custom Quiz", fontSize = 18.sp)
+                Text(text = stringResource(id = R.string.start_quiz), fontSize = 18.sp)
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Start Quiz")
+                Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
             }
-
-            // Main Call-to-Action Button
-            Button(
+            DebouncedButton(
                 onClick = onNavigateToStory,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .scale(scaleAnim.value),
+                    .scale(scaleAnim.value)
+                    .testTag("StoryButton"),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
             ) {
-                Text(text = "Story Mode", fontSize = 18.sp)
+                Text(text = stringResource(id = R.string.story_mode), fontSize = 18.sp)
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Story Mode")
+                Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -170,10 +198,56 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                HomeNavButton("Settings", Icons.Default.Settings, onNavigateToSettings)
-                HomeNavButton("Help", Icons.Default.Info, onNavigateToHelp)
-                HomeNavButton("Stats", Icons.Default.CheckCircle, onNavigateToStats)
+                HomeNavButton(
+                    stringResource(id = R.string.settings),
+                    Icons.Default.Settings,
+                    onNavigateToSettings,
+                    "SettingsButton"
+                )
+                HomeNavButton(
+                    stringResource(id = R.string.help),
+                    Icons.Default.Info,
+                    onNavigateToHelp,
+                    "HelpButton"
+                )
+                HomeNavButton(
+                    stringResource(id = R.string.stats),
+                    Icons.Default.CheckCircle,
+                    onNavigateToStats,
+                    "StatsButton"
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun DebouncedButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(12.dp),
+    colors: androidx.compose.material3.ButtonColors = ButtonDefaults.buttonColors(),
+    content: @Composable () -> Unit
+) {
+    var isEnabled by remember { mutableStateOf(true) }
+    Button(
+        onClick = {
+            if (isEnabled) {
+                isEnabled = false
+                onClick()
+            }
+        },
+        enabled = isEnabled,
+        modifier = modifier,
+        shape = shape,
+        colors = colors
+    ) {
+        content()
+    }
+    if (!isEnabled) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(500)
+            isEnabled = true
         }
     }
 }
@@ -183,11 +257,14 @@ fun HomeScreen(
 fun HomeNavButton(
     title: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    testTag: String = ""
 ) {
     Button(
         onClick = onClick,
-        modifier = Modifier.size(108.dp, 40.dp),
+        modifier = Modifier
+            .size(108.dp, 40.dp)
+            .then(if (testTag.isNotEmpty()) Modifier.testTag(testTag) else Modifier),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
     ) {

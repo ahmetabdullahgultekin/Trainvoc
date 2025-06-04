@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -44,6 +45,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gultekinahmetabdullah.trainvoc.InitializeDatabase
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
@@ -260,14 +262,14 @@ fun CustomBottomSheet(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "More Options",
+                    text = stringResource(id = R.string.more_options),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                BottomSheetButton("Manage Words") {
+                BottomSheetButton(stringResource(id = R.string.manage_words)) {
                     navigateAndClose(
                         navController,
                         Route.MANAGEMENT.name,
@@ -276,7 +278,7 @@ fun CustomBottomSheet(
                         showBottomSheet
                     )
                 }
-                BottomSheetButton("Settings") {
+                BottomSheetButton(stringResource(id = R.string.settings)) {
                     navigateAndClose(
                         navController,
                         Route.SETTINGS.name,
@@ -285,7 +287,7 @@ fun CustomBottomSheet(
                         showBottomSheet
                     )
                 }
-                BottomSheetButton("Help") {
+                BottomSheetButton(stringResource(id = R.string.help)) {
                     navigateAndClose(
                         navController,
                         Route.HELP.name,
@@ -294,7 +296,7 @@ fun CustomBottomSheet(
                         showBottomSheet
                     )
                 }
-                BottomSheetButton("About") {
+                BottomSheetButton(stringResource(id = R.string.about)) {
                     navigateAndClose(
                         navController,
                         Route.ABOUT.name,
@@ -317,7 +319,7 @@ fun CustomBottomSheet(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Text(text = "Close", color = Color.White)
+                    Text(text = stringResource(id = R.string.close), color = Color.White)
                 }
             }
         },

@@ -63,7 +63,7 @@ fun StoryScreen(
                         .padding(horizontal = 16.dp)
                         .clickable(enabled = isUnlocked) {
                             // Handle level click
-
+                            onLevelSelected(level)
                         },
                     contentAlignment = Alignment.Center
                 ) {

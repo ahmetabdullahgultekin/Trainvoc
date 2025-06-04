@@ -1,5 +1,10 @@
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +21,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,8 +44,9 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .paint(
-                painter = painterResource(id = R.drawable.bg_2), // Replace with your image resource
-                contentScale = ContentScale.FillBounds
+                painter = painterResource(id = R.drawable.bg_2),
+                contentScale = ContentScale.FillBounds,
+                alpha = 0.12f
             )
     ) {
         Column(
@@ -45,22 +55,36 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
                 .padding(16.dp),
         ) {
             Text(
-                text = "Select Quiz Type",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                text = stringResource(id = R.string.select_quiz_type),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
-
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(Quiz.quizTypes.size) { index ->
                     val quiz = Quiz.quizTypes[index]
-                    QuizCard(
-                        title = quiz.name,
-                        description = quiz.description,
+                    AnimatedQuizCard(
+                        title = stringResource(
+                            id = when (quiz.name) {
+                                "Multiple Choice" -> R.string.quiz_multiple_choice
+                                "True/False" -> R.string.quiz_true_false
+                                "Matching" -> R.string.quiz_matching
+                                else -> R.string.quiz_generic
+                            }, quiz.name
+                        ),
+                        description = stringResource(
+                            id = when (quiz.name) {
+                                "Multiple Choice" -> R.string.quiz_multiple_choice_desc
+                                "True/False" -> R.string.quiz_true_false_desc
+                                "Matching" -> R.string.quiz_matching_desc
+                                else -> R.string.quiz_generic_desc
+                            }, quiz.description
+                        ),
                         color = Color(quiz.color),
                         onClick = { onQuizSelected(quiz) }
                     )
@@ -71,16 +95,22 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
 }
 
 @Composable
-fun QuizCard(title: String, description: String, color: Color, onClick: () -> Unit) {
+fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(targetValue = if (pressed) 1.05f else 1f, animationSpec = tween(200), label = "")
+    val animatedElevation by animateFloatAsState(targetValue = if (pressed) 14f else 6f, animationSpec = tween(200), label = "")
+    val animatedColor by animateColorAsState(targetValue = if (pressed) color.copy(alpha = 0.97f) else color, animationSpec = tween(200), label = "")
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(18.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(196.dp)
             .padding(4.dp)
-            .shadow(6.dp, RoundedCornerShape(12.dp))
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = color)
+            .shadow(animatedElevation.dp, RoundedCornerShape(18.dp))
+            .scale(scale)
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = animatedColor)
     ) {
         Column(
             modifier = Modifier
