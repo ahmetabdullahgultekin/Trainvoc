@@ -487,13 +487,23 @@ fun CustomBottomSheet(
 data class BottomSheetButtonData(val text: String, val icon: ImageVector, val onClick: () -> Unit)
 
 @Composable
-fun BottomSheetButton(text: String, icon: ImageVector, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun BottomSheetButton(
+    text: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
-        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.padding(end = 8.dp))
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.padding(end = 8.dp)
+        )
         Text(text = text, fontSize = 18.sp, color = Color.White)
     }
 }

@@ -30,7 +30,7 @@ class WordNotificationWorker(
         if (words.isEmpty()) return@withContext Result.success()
 
         val word = words[Random.nextInt(words.size)]
-        val stat = word.statId?.let { statsDao.getStatisticById(it.toLong()) }
+        val stat = word.statId.let { statsDao.getStatisticById(it.toLong()) }
 
         val (title, message) = if (stat != null && stat.learned) {
             "Hatırlıyor musun?" to "\"${word.word}\" kelimesini hatırlıyor musun?"

@@ -12,7 +12,6 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.ExamWithWords
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
-import kotlinx.coroutines.Dispatchers
 import java.io.InputStreamReader
 
 @Database(
@@ -36,7 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private var instance: AppDatabase? = null
 
-        private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)
+        /*private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)*/
 
         fun getInstance(context: Context): AppDatabase {
             if (instance == null) {

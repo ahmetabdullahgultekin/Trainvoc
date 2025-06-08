@@ -168,7 +168,7 @@ class WordRepository(
         return levelWordCount == levelUnlockerWordCount
     }
 
-    suspend fun getWordById(wordId: String): Word? = wordDao.getWord(wordId)
+    suspend fun getWordById(wordId: String): Word = wordDao.getWord(wordId)
 
     suspend fun getExamsForWord(wordId: String): List<String> {
         return wordExamCrossRefDao.getExamNamesByWord(wordId)
