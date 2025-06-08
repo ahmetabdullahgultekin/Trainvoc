@@ -3,7 +3,6 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,17 +34,24 @@ import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
-import java.util.Locale
 import kotlinx.coroutines.flow.collectLatest
+import java.util.Locale
 
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
-    var notificationsEnabled by remember { mutableStateOf(viewModel.isNotificationsEnabled()) }
+    val notificationsEnabled by remember { mutableStateOf(viewModel.isNotificationsEnabled()) }
     var selectedTheme by remember { mutableStateOf(viewModel.getTheme()) }
     var selectedLanguage by remember { mutableStateOf(viewModel.getLanguage()) }
 
-    // Listen for language change and set locale on activity context, then recreate
+    // Tema değişikliğini dinle
+    LaunchedEffect(Unit) {
+        viewModel.theme.collectLatest {
+            selectedTheme = it
+        }
+    }
+
+    // Dil değişikliğini dinle ve aktivite bağlamında yerel ayarı ayarla, ardından yeniden oluştur
     LaunchedEffect(Unit) {
         viewModel.languageChanged.collectLatest {
             val activity = context as? Activity
@@ -82,17 +88,11 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                     stringResource(id = R.string.dark)
                 ),
                 selectedOption = selectedTheme,
-                onOptionSelected = { /* Disabled */ }
+                onOptionSelected = {
+                    selectedTheme = it
+                    viewModel.setTheme(it)
+                }
             )
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 2.dp, bottom = 8.dp)) {
-                Text(
-                    stringResource(id = R.string.theme_coming_soon),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
         }
 
         // Notifications Toggle
@@ -101,9 +101,11 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             isChecked = notificationsEnabled,
             onCheckedChange = { /* Disabled */ }
         )
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 2.dp, bottom = 8.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 2.dp, bottom = 8.dp)
+        ) {
             Text(
                 stringResource(id = R.string.notifications_coming_soon),
                 style = MaterialTheme.typography.bodySmall,
@@ -128,7 +130,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
         // Manage Account
         Button(
-            onClick = { navController.navigate(Route.MANAGEMENT.name) },
+            onClick = { navController.navigate(Route.MANAGEMENT) },
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth()
         ) {

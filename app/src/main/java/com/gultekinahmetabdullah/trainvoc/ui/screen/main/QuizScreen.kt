@@ -78,13 +78,9 @@ fun QuizScreen(quizViewModel: QuizViewModel, onQuit: (() -> Unit)? = null) {
 
     val progressColor by animateColorAsState(
         targetValue = if (selectedAnswer != null && isCorrect != null) {
-            if (isCorrect == true) Color.Green else Color.Red
+            if (isCorrect == true) Color(0xFF66BB6A) else MaterialTheme.colorScheme.error
         } else {
-            if (isTimeUp) Color.DarkGray else Color(
-                red = 1f - progress,
-                green = progress,
-                blue = 0f
-            )
+            if (isTimeUp) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
         },
         animationSpec = tween(durationMillis = 500)
     )
@@ -186,10 +182,22 @@ fun QuizScreen(quizViewModel: QuizViewModel, onQuit: (() -> Unit)? = null) {
                     question!!.choices.forEach { choice ->
                         val backgroundColor by animateColorAsState(
                             targetValue = when {
-                                selectedAnswer == choice && isCorrect == true -> Color(0xFF43A047).copy(alpha = 0.7f)
-                                selectedAnswer == choice && isCorrect == false -> Color(0xFFE53935).copy(alpha = 0.7f)
-                                choice == question!!.correctWord && isCorrect == false -> Color(0xFF43A047).copy(alpha = 0.7f)
-                                isTimeUp && choice == question!!.correctWord -> Color(0xFF43A047).copy(alpha = 0.9f)
+                                selectedAnswer == choice && isCorrect == true -> Color(0xFF66BB6A).copy(
+                                    alpha = 0.7f
+                                )
+
+                                selectedAnswer == choice && isCorrect == false -> MaterialTheme.colorScheme.error.copy(
+                                    alpha = 0.7f
+                                )
+
+                                choice == question!!.correctWord && isCorrect == false -> Color(
+                                    0xFF66BB6A
+                                ).copy(alpha = 0.7f)
+
+                                isTimeUp && choice == question!!.correctWord -> Color(0xFF66BB6A).copy(
+                                    alpha = 0.9f
+                                )
+
                                 else -> MaterialTheme.colorScheme.primaryContainer
                             },
                             animationSpec = tween(400), label = ""
@@ -234,7 +242,7 @@ fun QuizScreen(quizViewModel: QuizViewModel, onQuit: (() -> Unit)? = null) {
                                         modifier = Modifier
                                             .size(32.dp)
                                             .clip(CircleShape)
-                                            .background(if (isCorrect == true) Color(0xFF43A047) else Color(0xFFE53935)),
+                                            .background(if (isCorrect == true) Color(0xFF66BB6A) else MaterialTheme.colorScheme.error),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(

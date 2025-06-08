@@ -59,15 +59,17 @@ fun StoryScreen(
 
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
                         .padding(horizontal = 16.dp)
                         .clickable(enabled = isUnlocked) {
-                            // Handle level click
                             onLevelSelected(level)
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    LeafButton(text = level.longName, isUnlocked = isUnlocked) {}
+                    LeafButton(
+                        text = level.longName,
+                        isUnlocked = isUnlocked,
+                        onClick = { onLevelSelected(level) }
+                    )
                 }
             }
         }
@@ -90,7 +92,7 @@ fun LeafButton(text: String, isUnlocked: Boolean, onClick: () -> Unit) {
 
     Surface(
         shape = leafShape,
-        color = if (isUnlocked) Color(0xFF66BB6A) else Color.Gray,
+        color = if (isUnlocked) androidx.compose.material3.MaterialTheme.colorScheme.primary else Color.Gray,
         modifier = Modifier
             .width(256.dp)
             .height(128.dp),
@@ -104,16 +106,22 @@ fun LeafButton(text: String, isUnlocked: Boolean, onClick: () -> Unit) {
                 .clickable(enabled = isUnlocked) { onClick() }
                 .border(
                     width = 2.dp,
-                    color = Color.White,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
                     shape = leafShape
                 )
         ) {
             if (isUnlocked) {
-                Text(text, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(
+                    text,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
             } else {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_lock_24),
-                    contentDescription = "Locked", tint = Color.White
+                    contentDescription = "Locked",
+                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
                 )
             }
         }

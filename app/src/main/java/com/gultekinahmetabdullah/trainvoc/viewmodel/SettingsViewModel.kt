@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
@@ -28,17 +29,17 @@ class SettingsViewModel(context: Context, private val repository: WordRepository
         sharedPreferences.getString("theme", "System Default") ?: "System Default"
 
     fun setTheme(theme: String) {
-        sharedPreferences.edit().putString("theme", theme).apply()
+        sharedPreferences.edit { putString("theme", theme) }
         _theme.value = theme
     }
 
     fun isNotificationsEnabled(): Boolean = sharedPreferences.getBoolean("notifications", true)
     fun setNotificationsEnabled(enabled: Boolean) =
-        sharedPreferences.edit().putBoolean("notifications", enabled).apply()
+        sharedPreferences.edit { putBoolean("notifications", enabled) }
 
     fun getLanguage(): String = sharedPreferences.getString("language", "English") ?: "English"
     fun setLanguage(language: String) {
-        sharedPreferences.edit().putString("language", language).apply()
+        sharedPreferences.edit { putString("language", language) }
         _language.value = language
         setAppLocale(language)
         viewModelScope.launch { _languageChanged.emit(Unit) }
@@ -48,7 +49,7 @@ class SettingsViewModel(context: Context, private val repository: WordRepository
         val localeCode = when (language) {
             "Türkçe", "Turkish" -> "tr"
             "English" -> "en"
-            else -> "en"
+            else -> "tr" // Varsayılan olarak Türkçe
         }
         val locale = java.util.Locale(localeCode)
         java.util.Locale.setDefault(locale)
@@ -59,13 +60,13 @@ class SettingsViewModel(context: Context, private val repository: WordRepository
     }
 
     fun resetProgress() {
-        sharedPreferences.edit().clear().apply()
+        sharedPreferences.edit { clear() }
         viewModelScope.launch {
             repository.resetProgress()
         }
     }
 
     fun logout() {
-        sharedPreferences.edit().remove("username").apply()
+        sharedPreferences.edit { remove("username") }
     }
 }

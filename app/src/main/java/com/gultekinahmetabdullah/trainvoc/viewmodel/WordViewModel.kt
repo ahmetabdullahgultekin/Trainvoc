@@ -14,6 +14,9 @@ class WordViewModel(private val repository: WordRepository) : ViewModel() {
     private val _words = MutableStateFlow<List<WordAskedInExams>>(emptyList())
     val words: StateFlow<List<WordAskedInExams>> = _words
 
+    private val _filteredWords = MutableStateFlow<List<Word>>(emptyList())
+    val filteredWords: StateFlow<List<Word>> = _filteredWords
+
     init {
         fetchWords()
     }
@@ -29,5 +32,33 @@ class WordViewModel(private val repository: WordRepository) : ViewModel() {
             repository.insertWord(word)
             fetchWords()
         }
+    }
+
+    fun filterWords(query: String) {
+        _filteredWords.value = _words.value
+            .map { it.word }
+            .filter {
+                it.word.contains(query, ignoreCase = true) ||
+                it.meaning.contains(query, ignoreCase = true)
+            }
+            .sortedBy { it.word }
+    }
+
+    // Belirli bir kelimeyi word ile getir
+    fun getWordById(wordId: String): Word? {
+        return _words.value.map { it.word }.find { it.word == wordId }
+    }
+
+    data class WordFullDetail(
+        val word: Word?,
+        val statistic: com.gultekinahmetabdullah.trainvoc.classes.word.Statistic?,
+        val exams: List<String>
+    )
+
+    suspend fun getWordFullDetail(wordId: String): WordFullDetail? {
+        val word = repository.getWordById(wordId) ?: return null
+        val statistic = repository.getWordStats(word)
+        val exams = repository.getExamsForWord(wordId)
+        return WordFullDetail(word, statistic, exams)
     }
 }

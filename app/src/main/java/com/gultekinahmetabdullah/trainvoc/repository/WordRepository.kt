@@ -7,10 +7,18 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
+import com.gultekinahmetabdullah.trainvoc.database.ExamDao
+import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
+import com.gultekinahmetabdullah.trainvoc.database.WordExamCrossRefDao
 import kotlinx.coroutines.flow.Flow
 
-class WordRepository(private val wordDao: WordDao) {
+class WordRepository(
+    private val wordDao: WordDao,
+    private val statisticDao: StatisticDao,
+    private val wordExamCrossRefDao: WordExamCrossRefDao,
+    private val examDao: ExamDao
+) {
 
     suspend fun resetProgress() {
         wordDao.resetProgress()
@@ -49,16 +57,16 @@ class WordRepository(private val wordDao: WordDao) {
             wordDao.updateWordStatId(existingStatistic.statId, word.word)
         } else {
             // If the statistic does not exist, insert the new statistic
-            val newStatId = wordDao.insertStatistic(statistic).toInt()
+            val newStatId = statisticDao.insertStatistic(statistic).toInt()
             wordDao.updateWordStatId(newStatId, word.word)
         }
 
         // Check if the previous statistic has no relation with any word
         val previousStatId = word.statId
-        val wordCount = wordDao.getWordCountByStatId(previousStatId)
+        val wordCount = statisticDao.getWordCountByStatId(previousStatId)
         if (wordCount == 0) {
             // If no word is associated with the previous statistic, delete it
-            wordDao.deleteStatistic(previousStatId)
+            statisticDao.deleteStatistic(previousStatId)
         }
     }
 
@@ -157,9 +165,12 @@ class WordRepository(private val wordDao: WordDao) {
 
         val levelUnlockerWordCount = wordDao.getLevelUnlockerWordCount(level.name)
         val levelWordCount = wordDao.getWordCountByLevel(level.name)
-        println(
-            "Level: ${level.name}, Unlocker Word Count: $levelUnlockerWordCount, Word Count: $levelWordCount"
-        )
         return levelWordCount == levelUnlockerWordCount
+    }
+
+    suspend fun getWordById(wordId: String): Word? = wordDao.getWord(wordId)
+
+    suspend fun getExamsForWord(wordId: String): List<String> {
+        return wordExamCrossRefDao.getExamNamesByWord(wordId)
     }
 }

@@ -41,6 +41,7 @@ data class Statistic(
     @ColumnInfo(name = "correct_count") val correctCount: Int = 0,
     @ColumnInfo(name = "wrong_count") val wrongCount: Int = 0,
     @ColumnInfo(name = "skipped_count") val skippedCount: Int = 0,
+    @ColumnInfo(name = "learned") val learned: Boolean = false
 )
 
 /**

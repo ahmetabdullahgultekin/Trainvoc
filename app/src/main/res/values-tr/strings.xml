@@ -123,4 +123,13 @@
     <string name="correct_colon">Doğru: %1$d</string>
     <string name="skipped_colon">Atlanan: %1$d</string>
     <string name="incorrect_colon">Yanlış: %1$d</string>
+    <string name="search_word">Kelime Ara</string>
+    <string name="loading">Yükleniyor…</string>
+    <string name="word_not_found">Kelime bulunamadı.</string>
+    <string name="last_reviewed">Son Çalışma: %1$s</string>
+    <string name="total_seconds">Toplam Süre: %1$d sn</string>
+    <string name="exam_history">Sorulduğu Sınavlar:</string>
+    <string name="send_test_notification">Test Bildirimi Gönder</string>
+    <string name="home">Ana Sayfa</string>
+    <string name="quiz">Test</string>
 </resources>

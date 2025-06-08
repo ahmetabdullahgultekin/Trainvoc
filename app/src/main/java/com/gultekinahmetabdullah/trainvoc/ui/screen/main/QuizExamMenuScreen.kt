@@ -106,13 +106,14 @@ fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
                                 }
                             )
                         ),
-                        color = level.color,
+                        color = MaterialTheme.colorScheme.primary,
                         onClick = { onExamSelected(QuizParameter.Level(level)) }
                     )
                 }
                 items(Exam.examTypes.size) { index ->
                     val exam = Exam.examTypes[index]
-                    val color = Exam.examColors.entries.first { it.key == exam.exam }.value
+                    val color = Exam.examColors.entries.firstOrNull { it.key == exam.exam }?.value
+                        ?: MaterialTheme.colorScheme.primary
                     AnimatedQuizCategoryCard(
                         title = stringResource(
                             id = when (exam.exam) {
@@ -143,12 +144,29 @@ fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
 }
 
 @Composable
-fun AnimatedQuizCategoryCard(title: String, description: String, color: Color, onClick: () -> Unit) {
+fun AnimatedQuizCategoryCard(
+    title: String,
+    description: String,
+    color: Color,
+    onClick: () -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(targetValue = if (pressed) 1.07f else 1f, animationSpec = tween(200), label = "")
-    val animatedElevation by animateFloatAsState(targetValue = if (pressed) 16f else 6f, animationSpec = tween(200), label = "")
-    val animatedColor by animateColorAsState(targetValue = if (pressed) color.copy(alpha = 0.95f) else color, animationSpec = tween(200), label = "")
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 1.07f else 1f,
+        animationSpec = tween(200),
+        label = ""
+    )
+    val animatedElevation by animateFloatAsState(
+        targetValue = if (pressed) 16f else 6f,
+        animationSpec = tween(200),
+        label = ""
+    )
+    val animatedColor by animateColorAsState(
+        targetValue = if (pressed) color.copy(alpha = 0.95f) else color,
+        animationSpec = tween(200),
+        label = ""
+    )
     Surface(
         shape = RoundedCornerShape(24.dp),
         tonalElevation = animatedElevation.dp,
@@ -171,13 +189,13 @@ fun AnimatedQuizCategoryCard(title: String, description: String, color: Color, o
                 text = title,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(bottom = 10.dp)
             )
             Text(
                 text = description,
                 fontSize = 15.sp,
-                color = Color.White.copy(alpha = 0.92f),
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
                 textAlign = TextAlign.Center
             )
         }

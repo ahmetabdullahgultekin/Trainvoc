@@ -44,7 +44,7 @@ fun SplashScreen(navController: NavController) {
         delay(3000) // Wait for animation to finish
         val username = sharedPreferences.getString("username", null)
         val destination =
-            if (username.isNullOrEmpty()) Route.WELCOME.name else Route.MAIN.name
+            if (username.isNullOrEmpty()) Route.WELCOME else Route.MAIN
         navController.navigate(destination)
     }
 

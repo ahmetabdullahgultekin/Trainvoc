@@ -5,11 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
-import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -37,6 +35,7 @@ interface WordDao {
      *
      */
 
+    // --- WORD QUERIES ---
     @Query("SELECT * FROM words WHERE word = :word")
     suspend fun getWord(word: String): Word
 
@@ -54,138 +53,7 @@ interface WordDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWords(words: MutableSet<Word>): List<Long>
 
-    @Insert
-    suspend fun insertExams(exams: List<Exam>)
-
-    @Transaction
-    @Insert
-    suspend fun insertWordExamCrossRefs(crossRefs: List<WordExamCrossRef>)
-
-
-    // Insert statistics, if the statistics already exist, replace them
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertStatistic(statistic: Statistic): Long
-
-    @Query("SELECT COUNT(*) FROM words WHERE stat_id = :statId")
-    suspend fun getWordCountByStatId(statId: Int): Int
-
-    @Query("DELETE FROM statistics WHERE stat_id = :statId")
-    suspend fun deleteStatistic(statId: Int)
-
-    /*    @Transaction
-        @Insert(onConflict = OnConflictStrategy.REPLACE)
-        suspend fun insertWordWithStats(wordWithStats: WordWithStats)*/
-
-
-    /**
-     * Statistics queries
-     *
-     * These queries are used to get the statistics of the user.
-     *
-     * The statistics are used to show the user's progress and performance.
-     *
-     */
-
-    // Get the total number of correct answers
-    @Query(
-        """
-        SELECT SUM(correct_count) FROM words w
-        JOIN statistics s ON w.stat_id = s.stat_id
-    """
-    )
-    suspend fun getCorrectAnswers(): Int
-
-    // Get the total number of wrong answers
-    @Query(
-        """
-        SELECT SUM(wrong_count) FROM words w
-        JOIN statistics s ON w.stat_id = s.stat_id
-    """
-    )
-    suspend fun getWrongAnswers(): Int
-
-    // Get the total number of skipped answers
-    @Query(
-        """
-        SELECT SUM(skipped_count) FROM words w
-        JOIN statistics s ON w.stat_id = s.stat_id
-    """
-    )
-    suspend fun getSkippedAnswers(): Int
-
-    // Get the total number of answers
-    @Query(
-        """
-        SELECT SUM(correct_count + wrong_count + skipped_count) FROM words w
-        JOIN statistics s ON w.stat_id = s.stat_id
-    """
-    )
-    suspend fun getTotalAnswers(): Int
-
-    // Get the total number of words
-    @Query("SELECT COUNT(*) FROM words")
-    suspend fun getWordCount(): Int
-
-    // Get the statistics of a word
-    @Query("SELECT * FROM statistics WHERE stat_id = :statId")
-    suspend fun getStatById(statId: Int): Statistic
-
-    @Query(
-        """
-        SELECT * FROM statistics
-        WHERE correct_count = :correctCount
-        AND wrong_count = :wrongCount
-        AND skipped_count = :skippedCount
-    """
-    )
-    suspend fun getStatByValues(correctCount: Int, wrongCount: Int, skippedCount: Int): Statistic
-
-    // Get all the word with exams
-    @Transaction
-    @Query("SELECT * FROM words")
-    suspend fun getAllWordsWithExams(): List<WordAskedInExams>
-
-    // Get the exams of a word
-    @Transaction
-    @Query("SELECT * FROM words WHERE word = :word")
-    suspend fun getExamsOfWord(word: String): List<WordAskedInExams>
-
-    // Get the total time spent on the words
-    @Query("SELECT SUM(seconds_spent) FROM words")
-    suspend fun getTotalTimeSpent(): Int
-
-    // Get the time spent on a specific word
-    @Query("SELECT seconds_spent FROM words WHERE word = :word")
-    suspend fun getTimeSpent(word: String): Int
-
-    // Get the last time the word was answered
-    @Query("SELECT last_reviewed FROM words WHERE word = :word")
-    suspend fun getLastAnswered(word: String): Long
-
-    // Get the last time any word was answered
-    @Query("SELECT last_reviewed FROM words ORDER BY last_reviewed DESC LIMIT 1")
-    suspend fun getLastAnswered(): Long
-
-    /**
-     * Update the statistics of a word in the database.
-     *
-     * The correct and wrong answers are updated based on the user's input.
-     *
-     * The word is then updated in the database.
-     *
-     */
-
-    // Update the last time the word was answered
-    @Query("UPDATE words SET last_reviewed = :time WHERE word = :word")
-    suspend fun updateLastReviewed(word: String, time: Long = System.currentTimeMillis())
-
-    // Update the seconds spent on the word
-    @Query("UPDATE words SET seconds_spent = seconds_spent + :secondsSpent WHERE word = :word")
-    suspend fun updateSecondsSpent(secondsSpent: Int, word: String)
-
-    // Update the word stat id
-    @Query("UPDATE words SET stat_id = :statId WHERE word = :word")
-    suspend fun updateWordStatId(statId: Int, word: String)
+    // --- Sadece kelime işlemleri burada kalacak, istatistik ve sınav işlemleri diğer DAO'larda ---
 
     /**
      * Get a random list of words from the database.
@@ -203,7 +71,6 @@ interface WordDao {
     suspend fun getRandomFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get random words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -260,7 +127,6 @@ interface WordDao {
     suspend fun getLeastCorrectFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the least correct words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -297,7 +163,6 @@ interface WordDao {
     suspend fun getMostCorrectFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the most correct words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -334,7 +199,6 @@ interface WordDao {
     suspend fun getLeastWrongFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the least wrong words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -372,7 +236,6 @@ interface WordDao {
     suspend fun getMostWrongFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the most wrong words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -390,7 +253,7 @@ interface WordDao {
         """
         SELECT w.* FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
-        ORDER BY s.correct_count + s.wrong_count + s.skipped_count ASC, RANDOM() 
+        ORDER BY s.correct_count + s.wrong_count + s.skipped_count ASC, RANDOM()
         LIMIT 5
     """
     )
@@ -402,14 +265,13 @@ interface WordDao {
         SELECT w.* FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
         WHERE w.level = :level
-        ORDER BY s.correct_count + s.wrong_count + s.skipped_count ASC, RANDOM() 
+        ORDER BY s.correct_count + s.wrong_count + s.skipped_count ASC, RANDOM()
         LIMIT 5
     """
     )
     suspend fun getLeastReviewedFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the least reviewed words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -428,7 +290,7 @@ interface WordDao {
         """
         SELECT w.* FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
-        ORDER BY s.correct_count + s.wrong_count + s.skipped_count DESC, RANDOM() 
+        ORDER BY s.correct_count + s.wrong_count + s.skipped_count DESC, RANDOM()
         LIMIT 5
     """
     )
@@ -440,14 +302,13 @@ interface WordDao {
         SELECT w.* FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
         WHERE w.level = :level
-        ORDER BY s.correct_count + s.wrong_count + s.skipped_count DESC, RANDOM() 
+        ORDER BY s.correct_count + s.wrong_count + s.skipped_count DESC, RANDOM()
         LIMIT 5
     """
     )
     suspend fun getMostReviewedFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the most reviewed words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -470,7 +331,6 @@ interface WordDao {
     suspend fun getLeastRecentFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the least recent words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -491,7 +351,6 @@ interface WordDao {
     suspend fun getMostRecentFiveWordsByLevel(level: String): List<Word>
 
     // overload the function to get the most recent words with a specific exam
-    @Transaction
     @Query(
         """
         SELECT words.* FROM words
@@ -518,4 +377,96 @@ interface WordDao {
     """
     )
     suspend fun getLevelUnlockerWordCount(level: String): Int
+
+    // Get the total number of correct answers
+    @Query(
+        """
+        SELECT SUM(correct_count) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        """
+    )
+    suspend fun getCorrectAnswers(): Int
+
+    // Get the total number of wrong answers
+    @Query(
+        """
+        SELECT SUM(wrong_count) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        """
+    )
+    suspend fun getWrongAnswers(): Int
+
+    // Get the total number of skipped answers
+    @Query(
+        """
+        SELECT SUM(skipped_count) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        """
+    )
+    suspend fun getSkippedAnswers(): Int
+
+    // Get the total number of answers
+    @Query(
+        """
+        SELECT SUM(correct_count + wrong_count + skipped_count) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        """
+    )
+    suspend fun getTotalAnswers(): Int
+
+    // Get the total number of words
+    @Query("SELECT COUNT(*) FROM words")
+    suspend fun getWordCount(): Int
+
+    // Get the statistics of a word
+    @Query("SELECT * FROM statistics WHERE stat_id = :statId")
+    suspend fun getStatById(statId: Int): Statistic
+
+    @Query(
+        """
+        SELECT * FROM statistics
+        WHERE correct_count = :correctCount
+        AND wrong_count = :wrongCount
+        AND skipped_count = :skippedCount
+        """
+    )
+    suspend fun getStatByValues(correctCount: Int, wrongCount: Int, skippedCount: Int): Statistic
+
+    // Get all the word with exams
+    @Transaction
+    @Query("SELECT * FROM words")
+    suspend fun getAllWordsWithExams(): List<WordAskedInExams>
+
+    // Get the exams of a word
+    @Transaction
+    @Query("SELECT * FROM words WHERE word = :word")
+    suspend fun getExamsOfWord(word: String): List<WordAskedInExams>
+
+    // Get the total time spent on the words
+    @Query("SELECT SUM(seconds_spent) FROM words")
+    suspend fun getTotalTimeSpent(): Int
+
+    // Get the time spent on a specific word
+    @Query("SELECT seconds_spent FROM words WHERE word = :word")
+    suspend fun getTimeSpent(word: String): Int
+
+    // Get the last time the word was answered
+    @Query("SELECT last_reviewed FROM words WHERE word = :word")
+    suspend fun getLastAnswered(word: String): Long
+
+    // Get the last time any word was answered
+    @Query("SELECT last_reviewed FROM words ORDER BY last_reviewed DESC LIMIT 1")
+    suspend fun getLastAnswered(): Long
+
+    // Update the last time the word was answered
+    @Query("UPDATE words SET last_reviewed = :time WHERE word = :word")
+    suspend fun updateLastReviewed(word: String, time: Long = System.currentTimeMillis())
+
+    // Update the seconds spent on the word
+    @Query("UPDATE words SET seconds_spent = seconds_spent + :secondsSpent WHERE word = :word")
+    suspend fun updateSecondsSpent(secondsSpent: Int, word: String)
+
+    // Update the word stat id
+    @Query("UPDATE words SET stat_id = :statId WHERE word = :word")
+    suspend fun updateWordStatId(statId: Int, word: String)
 }
