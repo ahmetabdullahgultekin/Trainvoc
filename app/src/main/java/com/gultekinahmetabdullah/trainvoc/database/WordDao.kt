@@ -14,17 +14,6 @@ import kotlinx.coroutines.flow.Flow
 interface WordDao {
 
     /**
-     * Reset the progress of the user.
-     *
-     * Clear the rows in the statistics table and WordWithStats table.
-     *
-     * This will reset the user's progress and performance.
-     *
-     */
-    @Query("DELETE FROM statistics")
-    suspend fun resetProgress()
-
-    /**
      * Word queries
      *
      * These queries are used to interact with the words in the database.
@@ -430,7 +419,7 @@ interface WordDao {
         AND skipped_count = :skippedCount
         """
     )
-    suspend fun getStatByValues(correctCount: Int, wrongCount: Int, skippedCount: Int): Statistic
+    suspend fun getStatByValues(correctCount: Int, wrongCount: Int, skippedCount: Int): Statistic?
 
     // Get all the word with exams
     @Transaction
@@ -469,4 +458,10 @@ interface WordDao {
     // Update the word stat id
     @Query("UPDATE words SET stat_id = :statId WHERE word = :word")
     suspend fun updateWordStatId(statId: Int, word: String)
+
+    @Query("UPDATE words SET stat_id = 0")
+    suspend fun resetAllWordStatIds()
+
+    @Query("UPDATE words SET last_reviewed = 0, seconds_spent = 0")
+    suspend fun resetAllWords()
 }

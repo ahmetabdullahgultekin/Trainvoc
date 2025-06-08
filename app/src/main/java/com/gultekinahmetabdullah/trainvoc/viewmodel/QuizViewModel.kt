@@ -119,11 +119,6 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
                     delay(1000)
                     _timeLeft.value--
                     _progress.value = _timeLeft.value / durationConst.toFloat()
-                    println(
-                        "Time left: ${_timeLeft.value}, " +
-                                "Progress: ${_progress.value}, " +
-                                "Score: ${_score.value}"
-                    )
                     if (_timeLeft.value == 0) {
                         _isTimeOver.value = true
                         checkAnswer(null)
@@ -178,7 +173,6 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
             viewModelScope.launch {
                 repository.updateWordStats(
                     _currentWordStats.value!!.copy(
-                        statId = 0,
                         skippedCount = _currentWordStats.value!!.skippedCount + 1
                     ),
                     _currentQuestion.value!!.correctWord
@@ -193,7 +187,6 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
             viewModelScope.launch {
                 repository.updateWordStats(
                     _currentWordStats.value!!.copy(
-                        statId = 0,
                         correctCount = _currentWordStats.value!!.correctCount + 1
                     ),
                     _currentQuestion.value!!.correctWord
@@ -207,7 +200,6 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
             viewModelScope.launch {
                 repository.updateWordStats(
                     _currentWordStats.value!!.copy(
-                        statId = 0,
                         wrongCount = _currentWordStats.value!!.wrongCount + 1
                     ),
                     _currentQuestion.value!!.correctWord

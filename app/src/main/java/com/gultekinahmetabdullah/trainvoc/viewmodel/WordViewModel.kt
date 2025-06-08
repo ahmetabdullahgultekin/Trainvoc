@@ -56,7 +56,7 @@ class WordViewModel(private val repository: WordRepository) : ViewModel() {
     )
 
     suspend fun getWordFullDetail(wordId: String): WordFullDetail? {
-        val word = repository.getWordById(wordId) ?: return null
+        val word = repository.getWordById(wordId)
         val statistic = repository.getWordStats(word)
         val exams = repository.getExamsForWord(wordId)
         return WordFullDetail(word, statistic, exams)

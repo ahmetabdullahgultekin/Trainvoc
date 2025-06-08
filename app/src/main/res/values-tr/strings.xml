@@ -132,4 +132,9 @@
     <string name="send_test_notification">Test Bildirimi Gönder</string>
     <string name="home">Ana Sayfa</string>
     <string name="quiz">Test</string>
+    <string name="welcome_title">Hoş Geldin Dostum!</string>
+    <string name="welcome_description">Trainvoc, yeni kelimeleri eğlenceli bir şekilde öğrenmenize yardımcı olan bir kelime eğitimi uygulamasıdır.</string>
+    <string name="lets_get_down_to_business">Haydi başlayalım!</string>
+    <string name="notifications_enabled">Bildirimler etkin</string>
+    <string name="notifications_disabled">Bildirimler devre dışı</string>
 </resources>

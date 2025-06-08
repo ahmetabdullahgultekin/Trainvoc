@@ -15,11 +15,12 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 
 @Entity(tableName = "words")
 data class Word(
-    @PrimaryKey @ColumnInfo(name = "word") val word: String, // One-to-one relationship with the word
+    @PrimaryKey
+    @ColumnInfo(name = "word") val word: String, // One-to-one relationship with the word
     @ColumnInfo(name = "meaning") val meaning: String, // One-to-one relationship with the meaning
     @ColumnInfo(name = "level") val level: WordLevel? = null, // One-to-many relationship with the level
     @ColumnInfo(name = "last_reviewed") val lastReviewed: Long? = null, // One-to-one relationship with the last reviewed
-    @ColumnInfo(name = "stat_id") val statId: Int = 1, // One-to-many relationship with the statistic
+    @ColumnInfo(name = "stat_id") val statId: Int = 0, // One-to-many relationship with the statistic
     @ColumnInfo(name = "seconds_spent") val secondsSpent: Int = 0 // One-to-one relationship with the seconds spent
 )
 
@@ -37,7 +38,9 @@ data class Word(
     ]
 )
 data class Statistic(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "stat_id") val statId: Int = 0,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "stat_id")
+    val statId: Int = 0,
     @ColumnInfo(name = "correct_count") val correctCount: Int = 0,
     @ColumnInfo(name = "wrong_count") val wrongCount: Int = 0,
     @ColumnInfo(name = "skipped_count") val skippedCount: Int = 0,

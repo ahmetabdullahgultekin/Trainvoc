@@ -24,6 +24,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.MainScreen
@@ -97,8 +98,8 @@ class MainActivity : ComponentActivity() {
                 viewModel(factory = StoryViewModelFactory(wordRepository))
             val themePref by settingsViewModel.theme.collectAsState()
             val darkTheme = when (themePref) {
-                getString(R.string.light) -> false
-                getString(R.string.dark) -> true
+                ThemePreference.LIGHT -> false
+                ThemePreference.DARK -> true
                 else -> isSystemInDarkTheme()
             }
             val navController = rememberNavController()
@@ -141,18 +142,20 @@ class MainActivity : ComponentActivity() {
             }
         }
         // Bildirim işini başlat (sadece bir kez başlatılır)
-        val workRequest =
-            PeriodicWorkRequestBuilder<WordNotificationWorker>(1, TimeUnit.HOURS).build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "word_notification_work",
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val notificationsEnabled = sharedPreferences.getBoolean("notifications", true)
+        if (notificationsEnabled) {
+            val workRequest =
+                PeriodicWorkRequestBuilder<WordNotificationWorker>(1, TimeUnit.HOURS).build()
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "word_notification_work",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
 
-        // Test için tek seferlik bildirim gönder
-        val testRequest = OneTimeWorkRequestBuilder<WordNotificationWorker>().build()
-        WorkManager.getInstance(this).enqueue(testRequest)
-
+            val testRequest = OneTimeWorkRequestBuilder<WordNotificationWorker>().build()
+            WorkManager.getInstance(this).enqueue(testRequest)
+        }
         // Android 13+ için çalışma zamanında bildirim izni iste
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
