@@ -4,15 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
-import com.gultekinahmetabdullah.trainvoc.classes.word.ExamWithWords
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
-import java.io.InputStreamReader
 
 @Database(
     entities = [
@@ -47,10 +42,10 @@ abstract class AppDatabase : RoomDatabase() {
             /* Populate Database
             * Uncomment the following code to populate the database with words from the animations file
             */
+
             /*scope.launch(Dispatchers.IO) {
                 populateDatabase(context, instance!!.wordDao())
             }*/
-
 
             return instance!!
         }
@@ -59,8 +54,8 @@ abstract class AppDatabase : RoomDatabase() {
             context.applicationContext,
             AppDatabase::class.java,
             DATABASE_NAME
-            /* Uncomment the following line to create the database in memory
-            *
+            /*
+            Uncomment the following line to create the database in memory
              */
         ).createFromAsset("database/trainvoc-db.db")
             .build()
@@ -100,7 +95,7 @@ abstract class AppDatabase : RoomDatabase() {
          *  This way, we can insert all the words in the json file.
          */
 
-        private suspend fun fillWordsAndExams(
+        /*private suspend fun fillWordsAndExams(
             context: Context,
             wordDao: WordDao,
             examDao: ExamDao,
@@ -170,12 +165,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private suspend fun fillStatisticTable(statisticDao: StatisticDao) {
             val statistic = Statistic(
+                statId = 0,
                 correctCount = 0,
                 wrongCount = 0,
                 skippedCount = 0,
             )
-            statisticDao.insertStatistic(statistic)
-        }
+            statisticDao.insertDefaultStatistic()
+        }*/
 
     }
 }

@@ -216,3 +216,4 @@ fun StatsBarChart(
         }
     }
 }
+

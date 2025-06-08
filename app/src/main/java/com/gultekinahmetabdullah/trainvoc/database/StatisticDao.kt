@@ -11,6 +11,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StatisticDao {
 
+    // Default insert method
+    @Query(
+        """
+        INSERT INTO statistics (stat_id, correct_count, wrong_count, skipped_count, learned)
+        VALUES (0, 0, 0, 0, 0)
+           """
+    )
+    suspend fun insertDefaultStatistic(): Long
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertStatistic(statistic: Statistic): Long
 
@@ -35,7 +44,7 @@ interface StatisticDao {
     @Query("UPDATE statistics SET learned = 1 WHERE stat_id = :statId")
     suspend fun markLearned(statId: Long)
 
-    @Query("DELETE FROM statistics")
+    @Query("DELETE FROM statistics WHERE stat_id > 1")
     suspend fun resetProgress()
 
     @Query("DELETE FROM statistics WHERE stat_id = :statId")

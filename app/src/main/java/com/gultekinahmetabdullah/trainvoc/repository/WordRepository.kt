@@ -21,7 +21,9 @@ class WordRepository(
 ) {
 
     suspend fun resetProgress() {
-        wordDao.resetProgress()
+        statisticDao.resetProgress()
+        wordDao.resetAllWordStatIds()
+        wordDao.resetAllWords()
     }
 
     suspend fun getCorrectAnswers(): Int = wordDao.getCorrectAnswers()
@@ -52,13 +54,34 @@ class WordRepository(
             statistic.skippedCount
         )
 
-        if (existingStatistic != null) {
+        val isExisting = existingStatistic?.statId != null
+
+        if (isExisting) {
             // If the statistic exists, update the word's stat_id
             wordDao.updateWordStatId(existingStatistic.statId, word.word)
         } else {
             // If the statistic does not exist, insert the new statistic
-            val newStatId = statisticDao.insertStatistic(statistic).toInt()
+            println(
+                "Inserting new statistic: correctCount=${statistic.correctCount}, " +
+                        "wrongCount=${statistic.wrongCount}, skippedCount=${statistic.skippedCount}"
+            )
+            val newStatId = statisticDao.insertStatistic(
+                Statistic(
+                    statId = 0, // Assuming statId is auto-generated
+                    correctCount = statistic.correctCount,
+                    wrongCount = statistic.wrongCount,
+                    skippedCount = statistic.skippedCount
+                )
+            ).toInt()
+            println(
+                "Inserted new statistic with ID: $newStatId, " +
+                        "correctCount=${statistic.correctCount}, " +
+                        "wrongCount=${statistic.wrongCount}, skippedCount=${statistic.skippedCount}"
+            )
             wordDao.updateWordStatId(newStatId, word.word)
+            println(
+                "Updated word '${word.word}' with new statId: $newStatId"
+            )
         }
 
         // Check if the previous statistic has no relation with any word

@@ -132,4 +132,9 @@
     <string name="send_test_notification">Send Test Notification</string>
     <string name="home">Home</string>
     <string name="quiz">Quiz</string>
+    <string name="welcome_title">Welcome my Friend!</string>
+    <string name="welcome_description">Trainvoc is a vocabulary training app that helps you learn new words in a fun way.</string>
+    <string name="lets_get_down_to_business">Let\'s get down to business!</string>
+    <string name="notifications_enabled">Notifications enabled</string>
+    <string name="notifications_disabled">Notifications disabled</string>
 </resources>
