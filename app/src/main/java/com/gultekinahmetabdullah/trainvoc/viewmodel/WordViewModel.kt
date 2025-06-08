@@ -39,7 +39,7 @@ class WordViewModel(private val repository: WordRepository) : ViewModel() {
             .map { it.word }
             .filter {
                 it.word.contains(query, ignoreCase = true) ||
-                it.meaning.contains(query, ignoreCase = true)
+                        it.meaning.contains(query, ignoreCase = true)
             }
             .sortedBy { it.word }
     }
