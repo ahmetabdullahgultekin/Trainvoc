@@ -12,25 +12,31 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.ExamWithWords
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
+import kotlinx.coroutines.Dispatchers
 import java.io.InputStreamReader
 
 @Database(
-    entities = [Word::class, Statistic::class, Exam::class, WordExamCrossRef::class],
+    entities = [
+        Word::class,
+        Statistic::class,
+        Exam::class,
+        WordExamCrossRef::class
+    ],
     version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun wordDao(): WordDao
-    /* abstract fun statisticDao(): StatisticDao
-     abstract fun examDao(): ExamDao
-     abstract fun wordExamCrossRefDao(): WordExamCrossRefDao*/
+    abstract fun examDao(): ExamDao
+    abstract fun wordExamCrossRefDao(): WordExamCrossRefDao
+    abstract fun statisticDao(): StatisticDao
 
     object DatabaseBuilder {
-        private const val DATABASE_NAME = "word-db"
+        private const val DATABASE_NAME = "trainvoc-db"
 
         private var instance: AppDatabase? = null
 
-        /*private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)*/
+        private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)
 
         fun getInstance(context: Context): AppDatabase {
             if (instance == null) {
@@ -42,9 +48,9 @@ abstract class AppDatabase : RoomDatabase() {
             /* Populate Database
             * Uncomment the following code to populate the database with words from the animations file
             */
-            /*      scope.launch(Dispatchers.IO) {
-                      populateDatabase(context, instance!!.wordDao())
-                  }*/
+            /*scope.launch(Dispatchers.IO) {
+                populateDatabase(context, instance!!.wordDao())
+            }*/
 
 
             return instance!!
@@ -57,7 +63,7 @@ abstract class AppDatabase : RoomDatabase() {
             /* Uncomment the following line to create the database in memory
             *
              */
-        ).createFromAsset("database/word-db.db")
+        ).createFromAsset("database/trainvoc-db.db")
             .build()
 
 
@@ -69,8 +75,15 @@ abstract class AppDatabase : RoomDatabase() {
         /*private suspend fun populateDatabase(context: Context, wordDao: WordDao) {
 
             try {
-                fillWordsAndExams(context, wordDao)
-                fillStatisticTable(wordDao)
+                fillWordsAndExams(
+                    context,
+                    wordDao,
+                    instance!!.examDao(),
+                    instance!!.wordExamCrossRefDao()
+                )
+                fillStatisticTable(
+                    instance!!.statisticDao(),
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -88,7 +101,12 @@ abstract class AppDatabase : RoomDatabase() {
          *  This way, we can insert all the words in the json file.
          */
 
-        private suspend fun fillWordsAndExams(context: Context, wordDao: WordDao) {
+        private suspend fun fillWordsAndExams(
+            context: Context,
+            wordDao: WordDao,
+            examDao: ExamDao,
+            wordExamCrossRefDao: WordExamCrossRefDao
+        ) {
             val inputStream = context.assets.open("database/all_words.json")
             val reader = InputStreamReader(inputStream)
             val wordListType = object : TypeToken<Map<String, List<Word>>>() {}.type
@@ -126,19 +144,19 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
             wordDao.insertWords(allWords)
-            fillExamTable(wordDao)
-            fillWordExamCrossRefTable(wordDao, examWithWords)
+            fillExamTable(examDao)
+            fillWordExamCrossRefTable(wordExamCrossRefDao, examWithWords)
         }
 
-        private suspend fun fillExamTable(wordDao: WordDao) {
+        private suspend fun fillExamTable(examDao: ExamDao) {
             val examEntities = Exam.examTypes.map {
                 Exam(exam = it.exam)
             }
-            wordDao.insertExams(examEntities)
+            examDao.insertExams(examEntities)
         }
 
         private suspend fun fillWordExamCrossRefTable(
-            wordDao: WordDao, words: MutableSet<ExamWithWords>
+            wordExamCrossRefDao: WordExamCrossRefDao, words: MutableSet<ExamWithWords>
         ) {
             val wordExamCrossRefs = words.flatMap { examWithWords ->
                 examWithWords.words.map { word ->
@@ -148,17 +166,18 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 }
             }
-            wordDao.insertWordExamCrossRefs(wordExamCrossRefs)
+            wordExamCrossRefDao.insertWordExamCrossRefs(wordExamCrossRefs)
         }
 
-        private suspend fun fillStatisticTable(wordDao: WordDao) {
+        private suspend fun fillStatisticTable(statisticDao: StatisticDao) {
             val statistic = Statistic(
                 correctCount = 0,
                 wrongCount = 0,
                 skippedCount = 0,
             )
-            wordDao.insertStatistic(statistic)
+            statisticDao.insertStatistic(statistic)
         }
 
     }
 }
+

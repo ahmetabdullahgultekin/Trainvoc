@@ -11,7 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,26 +31,27 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.gultekinahmetabdullah.trainvoc.InitializeDatabase
+import androidx.navigation.navArgument
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.AboutScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.HelpScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.SettingsScreen
@@ -64,25 +67,22 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-
+fun MainScreen(
+    quizViewModel: QuizViewModel,
+    wordViewModel: WordViewModel,
+    statsViewModel: StatsViewModel,
+    settingsViewModel: SettingsViewModel,
+    storyViewModel: StoryViewModel,
+    startWordId: String? = null
+) {
     val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
-
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = { true }
     )
     val showBottomSheet = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-
-    val repository = WordRepository(InitializeDatabase.database.wordDao())
-
-    val quizViewModel = QuizViewModel(repository)
-    val wordViewModel = WordViewModel(repository)
-    val statsViewModel = StatsViewModel(repository)
-    val settingsViewModel = SettingsViewModel(LocalContext.current, repository)
-    val storyViewModel = StoryViewModel(repository)
 
     val isTopAppBarVisible = remember { mutableStateOf(true) }
     val isBottomBarVisible = remember { mutableStateOf(false) }
@@ -91,6 +91,8 @@ fun MainScreen() {
 
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         bottomBar = {
             if (isBottomBarVisible.value) {
                 BottomNavigationBar(navController)
@@ -99,36 +101,47 @@ fun MainScreen() {
         topBar = {
             if (isTopAppBarVisible.value) {
                 TopAppBar(
-                    title = { Text("TrainVoc") },
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    },
                     colors = TopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        navigationIconContentColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                        actionIconContentColor = MaterialTheme.colorScheme.primary
+                        containerColor = MaterialTheme.colorScheme.surface, // updated to new palette
+                        scrolledContainerColor = MaterialTheme.colorScheme.surface, // updated
+                        navigationIconContentColor = MaterialTheme.colorScheme.primary, // updated
+                        titleContentColor = MaterialTheme.colorScheme.primary, // updated
+                        actionIconContentColor = MaterialTheme.colorScheme.secondary // updated for accent
                     ),
                     navigationIcon = {
-                        if (navBackStackEntry.value?.destination?.route == Route.HOME.name) {
+                        if (navBackStackEntry.value?.destination?.route == Route.HOME) {
                             return@TopAppBar
                         }
                         if (
-                            navBackStackEntry.value?.destination?.route == Route.QUIZ.name
-                            || navBackStackEntry.value?.destination?.route == Route.QUIZ_MENU.name
-                            || navBackStackEntry.value?.destination?.route == Route.QUIZ_EXAM_MENU.name
+                            navBackStackEntry.value?.destination?.route == Route.QUIZ
+                            || navBackStackEntry.value?.destination?.route == Route.QUIZ_MENU
+                            || navBackStackEntry.value?.destination?.route == Route.QUIZ_EXAM_MENU
                         ) {
                             IconButton(onClick = {
                                 navController.popBackStack()
                             }) {
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back"
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         } else {
                             IconButton(onClick = {
-                                navController.navigate(Route.HOME.name)
+                                navController.navigate(Route.HOME)
                             }) {
-                                Icon(Icons.Default.Home, contentDescription = "Home")
+                                Icon(
+                                    Icons.Default.Home,
+                                    contentDescription = "Home",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                             }
                         }
                     },
@@ -138,7 +151,11 @@ fun MainScreen() {
                                 showBottomSheet.value = true
                             }
                         }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = "More",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 )
@@ -147,24 +164,24 @@ fun MainScreen() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Route.HOME.name,
+            startDestination = Route.HOME,
             modifier = Modifier.padding(paddingValues)
         )
         {
-            composable(Route.HOME.name) {
+            composable(Route.HOME) {
                 HomeScreen(
-                    onNavigateToHelp = { navController.navigate(Route.HELP.name) },
-                    onNavigateToStory = { navController.navigate(Route.STORY.name) },
-                    onNavigateToSettings = { navController.navigate(Route.SETTINGS.name) },
-                    onNavigateToStats = { navController.navigate(Route.STATS.name) },
-                    onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU.name) },
+                    onNavigateToHelp = { navController.navigate(Route.HELP) },
+                    onNavigateToStory = { navController.navigate(Route.STORY) },
+                    onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
+                    onNavigateToStats = { navController.navigate(Route.STATS) },
+                    onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
                 )
             }
-            composable(Route.STORY.name) {
+            composable(Route.STORY) {
                 StoryScreen(
                     viewModel = storyViewModel,
                     onLevelSelected = { level ->
-                        navController.navigate(Route.QUIZ_EXAM_MENU.name)
+                        navController.navigate(Route.QUIZ_EXAM_MENU)
                         parameter.value = QuizParameter.Level(level)
                     },
                     onBack = {
@@ -172,50 +189,72 @@ fun MainScreen() {
                     }
                 )
             }
-            composable(Route.QUIZ_EXAM_MENU.name) {
+            composable(Route.QUIZ_EXAM_MENU) {
                 QuizExamMenuScreen(
                     onExamSelected = { quizParameter ->
-                        navController.navigate(Route.QUIZ_MENU.name)
+                        navController.navigate(Route.QUIZ_MENU)
                         parameter.value = quizParameter
                     }
                 )
             }
-            composable(Route.QUIZ_MENU.name) {
+            composable(Route.QUIZ_MENU) {
                 QuizMenuScreen(
                     onQuizSelected = { quiz ->
                         parameter.value?.let {
                             quizViewModel.startQuiz(it, quiz)
-                            navController.navigate(Route.QUIZ.name)
+                            navController.navigate(Route.QUIZ)
                         }
                     }
                 )
             }
-            composable(Route.QUIZ.name) {
+            composable(Route.QUIZ) {
                 QuizScreen(quizViewModel = quizViewModel)
             }
-            composable(Route.MANAGEMENT.name) {
+            composable(Route.MANAGEMENT) {
                 WordManagementScreen(wordViewModel = wordViewModel)
             }
-            composable(Route.USERNAME.name) {
+            composable(Route.USERNAME) {
                 UsernameScreen(navController)
             }
-            composable(Route.SETTINGS.name) {
+            composable(Route.SETTINGS) {
                 SettingsScreen(navController, settingsViewModel)
             }
-            composable(Route.HELP.name) {
+            composable(Route.HELP) {
                 HelpScreen()
             }
-            composable(Route.ABOUT.name) {
+            composable(Route.ABOUT) {
                 AboutScreen()
             }
-            composable(Route.STATS.name) {
+            composable(Route.STATS) {
                 StatsScreen(statsViewModel = statsViewModel)
+            }
+            composable(Route.DICTIONARY) {
+                com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.DictionaryScreen(
+                    navController = navController,
+                    wordViewModel = wordViewModel
+                )
+            }
+            composable(
+                route = Route.WORD_DETAIL,
+                arguments = listOf(navArgument("wordId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val wordId = backStackEntry.arguments?.getString("wordId") ?: ""
+                com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordDetailScreen(
+                    wordId = wordId,
+                    wordViewModel = wordViewModel
+                )
             }
         }
     }
 
     if (showBottomSheet.value) {
         CustomBottomSheet(sheetState, coroutineScope, showBottomSheet, navController)
+    }
+
+    LaunchedEffect(startWordId) {
+        if (!startWordId.isNullOrEmpty()) {
+            navController.navigate(Route.wordDetail(startWordId))
+        }
     }
 }
 
@@ -226,22 +265,37 @@ fun BottomNavigationBar(navController: NavController) {
         containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-            label = { Text("Home") },
-            selected = navController.currentDestination?.route == Route.HOME.name,
-            onClick = { navController.navigate(Route.HOME.name) }
+            icon = {
+                Icon(
+                    Icons.Default.Home,
+                    contentDescription = stringResource(id = R.string.home)
+                )
+            },
+            label = { Text(stringResource(id = R.string.home)) },
+            selected = navController.currentDestination?.route == Route.HOME,
+            onClick = { navController.navigate(Route.HOME) }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Build, contentDescription = "Quiz") },
-            label = { Text("Quiz") },
-            selected = navController.currentDestination?.route == Route.QUIZ.name,
-            onClick = { navController.navigate(Route.QUIZ.name) }
+            icon = {
+                Icon(
+                    Icons.Default.Build,
+                    contentDescription = stringResource(id = R.string.quiz)
+                )
+            },
+            label = { Text(stringResource(id = R.string.quiz)) },
+            selected = navController.currentDestination?.route == Route.QUIZ,
+            onClick = { navController.navigate(Route.QUIZ) }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Star, contentDescription = "Stats") },
-            label = { Text("Stats") },
-            selected = navController.currentDestination?.route == Route.STATS.name,
-            onClick = { navController.navigate(Route.STATS.name) }
+            icon = {
+                Icon(
+                    Icons.Default.Star,
+                    contentDescription = stringResource(id = R.string.stats)
+                )
+            },
+            label = { Text(stringResource(id = R.string.stats)) },
+            selected = navController.currentDestination?.route == Route.STATS,
+            onClick = { navController.navigate(Route.STATS) }
         )
     }
 }
@@ -255,60 +309,155 @@ fun CustomBottomSheet(
     navController: NavController
 ) {
     ModalBottomSheet(
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 8.dp,
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(24.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.more_options),
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
+                val buttonModifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                BottomSheetButton(stringResource(id = R.string.manage_words)) {
+                BottomSheetButton(
+                    text = stringResource(id = R.string.manage_words),
+                    icon = Icons.Default.Build,
+                    modifier = buttonModifier
+                ) {
                     navigateAndClose(
                         navController,
-                        Route.MANAGEMENT.name,
+                        Route.MANAGEMENT,
                         coroutineScope,
                         sheetState,
                         showBottomSheet
                     )
                 }
-                BottomSheetButton(stringResource(id = R.string.settings)) {
+                BottomSheetButton(
+                    text = stringResource(id = R.string.settings),
+                    icon = Icons.Default.MoreVert,
+                    modifier = buttonModifier
+                ) {
                     navigateAndClose(
                         navController,
-                        Route.SETTINGS.name,
+                        Route.SETTINGS,
                         coroutineScope,
                         sheetState,
                         showBottomSheet
                     )
                 }
-                BottomSheetButton(stringResource(id = R.string.help)) {
+                BottomSheetButton(
+                    text = stringResource(id = R.string.help),
+                    icon = Icons.Default.Info,
+                    modifier = buttonModifier
+                ) {
                     navigateAndClose(
                         navController,
-                        Route.HELP.name,
+                        Route.HELP,
                         coroutineScope,
                         sheetState,
                         showBottomSheet
                     )
                 }
-                BottomSheetButton(stringResource(id = R.string.about)) {
+                BottomSheetButton(
+                    text = stringResource(id = R.string.about),
+                    icon = Icons.Default.Star,
+                    modifier = buttonModifier
+                ) {
                     navigateAndClose(
                         navController,
-                        Route.ABOUT.name,
+                        Route.ABOUT,
                         coroutineScope,
                         sheetState,
                         showBottomSheet
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Close button
+                BottomSheetButton(
+                    text = stringResource(id = R.string.stats),
+                    icon = Icons.Default.Star,
+                    modifier = buttonModifier
+                ) {
+                    navigateAndClose(
+                        navController,
+                        Route.STATS,
+                        coroutineScope,
+                        sheetState,
+                        showBottomSheet
+                    )
+                }
+                BottomSheetButton(
+                    text = stringResource(id = R.string.quiz),
+                    icon = Icons.Default.Build,
+                    modifier = buttonModifier
+                ) {
+                    navigateAndClose(
+                        navController,
+                        Route.QUIZ,
+                        coroutineScope,
+                        sheetState,
+                        showBottomSheet
+                    )
+                }
+                BottomSheetButton(
+                    text = stringResource(id = R.string.story_mode),
+                    icon = Icons.Default.Star,
+                    modifier = buttonModifier
+                ) {
+                    navigateAndClose(
+                        navController,
+                        Route.STORY,
+                        coroutineScope,
+                        sheetState,
+                        showBottomSheet
+                    )
+                }
+                BottomSheetButton(
+                    text = stringResource(id = R.string.home),
+                    icon = Icons.Default.Home,
+                    modifier = buttonModifier
+                ) {
+                    navigateAndClose(
+                        navController,
+                        Route.HOME,
+                        coroutineScope,
+                        sheetState,
+                        showBottomSheet
+                    )
+                }
+                BottomSheetButton(
+                    text = stringResource(id = R.string.quiz_statistics),
+                    icon = Icons.Default.Star,
+                    modifier = buttonModifier
+                ) {
+                    navigateAndClose(
+                        navController,
+                        Route.QUIZ_EXAM_MENU,
+                        coroutineScope,
+                        sheetState,
+                        showBottomSheet
+                    )
+                }
+                BottomSheetButton(
+                    text = stringResource(id = R.string.search_word),
+                    icon = Icons.Default.Search,
+                    modifier = buttonModifier
+                ) {
+                    navigateAndClose(
+                        navController,
+                        Route.DICTIONARY,
+                        coroutineScope,
+                        sheetState,
+                        showBottomSheet
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -317,9 +466,12 @@ fun CustomBottomSheet(
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = stringResource(id = R.string.close), color = Color.White)
+                    Text(
+                        text = stringResource(id = R.string.close), color = Color.White
+                    )
                 }
             }
         },
@@ -331,16 +483,17 @@ fun CustomBottomSheet(
     )
 }
 
-// Helper composable for buttons inside the bottom sheet
+// Yeni BottomSheetButton tanımı
+data class BottomSheetButtonData(val text: String, val icon: ImageVector, val onClick: () -> Unit)
+
 @Composable
-fun BottomSheetButton(text: String, onClick: () -> Unit) {
+fun BottomSheetButton(text: String, icon: ImageVector, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
+        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.padding(end = 8.dp))
         Text(text = text, fontSize = 18.sp, color = Color.White)
     }
 }

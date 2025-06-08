@@ -19,7 +19,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -44,7 +44,9 @@ fun UsernameScreen(navController: NavController) {
     val context = navController.context
     val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    var selectedLanguage by remember { mutableStateOf(sharedPreferences.getString("language", "tr") ?: "tr") }
+    var selectedLanguage by remember {
+        mutableStateOf(sharedPreferences.getString("language", "tr") ?: "tr")
+    }
     val activity = context as? Activity
 
     val composition by
@@ -81,13 +83,18 @@ fun UsernameScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Language selection
+        val languageOptions = listOf("tr", "en")
+        if (selectedLanguage.isBlank()) selectedLanguage = "tr"
         Text(text = stringResource(id = R.string.choose_language))
         Row {
             RadioButton(
                 selected = selectedLanguage == "tr",
                 onClick = { selectedLanguage = "tr" }
             )
-            Text(text = stringResource(id = R.string.turkish), modifier = Modifier.padding(end = 16.dp))
+            Text(
+                text = stringResource(id = R.string.turkish),
+                modifier = Modifier.padding(end = 16.dp)
+            )
             RadioButton(
                 selected = selectedLanguage == "en",
                 onClick = { selectedLanguage = "en" }
@@ -100,17 +107,17 @@ fun UsernameScreen(navController: NavController) {
         Button(
             onClick = {
                 if (username.text.isNotBlank()) {
-                    sharedPreferences.edit().putString("username", username.text).apply()
-                    sharedPreferences.edit().putString("language", selectedLanguage).apply()
+                    sharedPreferences.edit { putString("username", username.text) }
+                    sharedPreferences.edit { putString("language", selectedLanguage) }
                     // Set locale
-                    val locale = Locale(selectedLanguage)
+                    val locale = Locale(selectedLanguage.ifBlank { "tr" })
                     Locale.setDefault(locale)
                     val res = context.resources
                     val config = Configuration(res.configuration)
                     config.setLocale(locale)
                     res.updateConfiguration(config, res.displayMetrics)
                     activity?.recreate()
-                    navController.navigate(Route.MAIN.name)
+                    navController.navigate(Route.MAIN)
                 }
             },
             modifier = Modifier.fillMaxWidth()

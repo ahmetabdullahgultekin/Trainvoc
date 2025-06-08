@@ -67,7 +67,7 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(onClick = {
-            navController.navigate(Route.USERNAME.name)
+            navController.navigate(Route.USERNAME)
         }) {
             Text("Let's get down to business!")
         }

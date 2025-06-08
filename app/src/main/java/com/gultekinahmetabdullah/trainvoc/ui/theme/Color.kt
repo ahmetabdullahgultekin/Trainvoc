@@ -2,10 +2,22 @@ package com.gultekinahmetabdullah.trainvoc.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Yeni ana palet renkleri
+val Primary = Color(0xFFAAD7D9) // Ana vurgu
+val Secondary = Color(0xFF92C7CF) // İkincil vurgu
+val Background = Color(0xFFFBF9F1) // Arka plan
+val Surface = Color(0xFFE5E1DA) // Kartlar, kutular
+val OnPrimary = Color(0xFF212121) // Ana metin (koyu)
+val OnSurface = Color(0xFF212121) // Yüzey üzeri metin (koyu)
+val Error = Color(0xFFE53935) // Hata
+val Success = Color(0xFF66BB6A) // Başarı
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Koyu tema renkleri
+val DarkPrimary = Color(0xFF264653) // Ana vurgu (koyu)
+val DarkSecondary = Color(0xFF2A9D8F) // İkincil vurgu (koyu)
+val DarkBackground = Color(0xFF121212) // Arka plan (koyu)
+val DarkSurface = Color(0xFF1E1E1E) // Kartlar, kutular (koyu)
+val DarkOnPrimary = Color(0xFFFFFFFF) // Ana metin (açık)
+val DarkOnSurface = Color(0xFFFFFFFF) // Yüzey üzeri metin (açık)
+val DarkError = Color(0xFFCF6679) // Hata (koyu tema için)
+val DarkSuccess = Color(0xFF81C784) // Başarı (koyu tema için)

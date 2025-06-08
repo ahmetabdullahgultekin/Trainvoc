@@ -1,7 +1,6 @@
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
     Box(
@@ -85,7 +83,7 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
                                 else -> R.string.quiz_generic_desc
                             }, quiz.description
                         ),
-                        color = Color(quiz.color),
+                        color = MaterialTheme.colorScheme.primary,
                         onClick = { onQuizSelected(quiz) }
                     )
                 }
@@ -98,9 +96,21 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
 fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(targetValue = if (pressed) 1.05f else 1f, animationSpec = tween(200), label = "")
-    val animatedElevation by animateFloatAsState(targetValue = if (pressed) 14f else 6f, animationSpec = tween(200), label = "")
-    val animatedColor by animateColorAsState(targetValue = if (pressed) color.copy(alpha = 0.97f) else color, animationSpec = tween(200), label = "")
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 1.05f else 1f,
+        animationSpec = tween(200),
+        label = ""
+    )
+    val animatedElevation by animateFloatAsState(
+        targetValue = if (pressed) 14f else 6f,
+        animationSpec = tween(200),
+        label = ""
+    )
+    val animatedColor by animateColorAsState(
+        targetValue = if (pressed) color.copy(alpha = 0.97f) else color,
+        animationSpec = tween(200),
+        label = ""
+    )
     Card(
         shape = RoundedCornerShape(18.dp),
         modifier = Modifier
@@ -122,13 +132,13 @@ fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: 
                 text = title,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = description,
                 fontSize = 14.sp,
-                color = Color.White.copy(alpha = 0.9f)
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
             )
         }
     }
