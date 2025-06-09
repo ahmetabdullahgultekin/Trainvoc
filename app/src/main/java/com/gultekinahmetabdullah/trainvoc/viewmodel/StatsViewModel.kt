@@ -37,6 +37,21 @@ class StatsViewModel(private val repository: WordRepository) : ViewModel() {
     private val _lastAnswered = MutableStateFlow("")
     val lastAnswered: StateFlow<String> = _lastAnswered
 
+    private val _totalQuizCount = MutableStateFlow(0)
+    val totalQuizCount: StateFlow<Int> = _totalQuizCount
+
+    private val _dailyCorrect = MutableStateFlow(0)
+    val dailyCorrect: StateFlow<Int> = _dailyCorrect
+
+    private val _weeklyCorrect = MutableStateFlow(0)
+    val weeklyCorrect: StateFlow<Int> = _weeklyCorrect
+
+    private val _mostWrongWord = MutableStateFlow("")
+    val mostWrongWord: StateFlow<String> = _mostWrongWord
+
+    private val _bestCategory = MutableStateFlow("")
+    val bestCategory: StateFlow<String> = _bestCategory
+
     init {
         fillStats()
     }
@@ -53,6 +68,12 @@ class StatsViewModel(private val repository: WordRepository) : ViewModel() {
             // Convert the last answered time to a readable format
             _lastAnswered.value = if (repository.getLastAnswered() == 0L) "N/A"
             else DateFormat.getDateTimeInstance().format(repository.getLastAnswered())
+            // Yeni istatistikler
+            _totalQuizCount.value = repository.getTotalQuizCount()
+            _dailyCorrect.value = repository.getDailyCorrectAnswers()
+            _weeklyCorrect.value = repository.getWeeklyCorrectAnswers()
+            _mostWrongWord.value = repository.getMostWrongWord() ?: "-"
+            _bestCategory.value = repository.getBestCategory() ?: "-"
         }
     }
 

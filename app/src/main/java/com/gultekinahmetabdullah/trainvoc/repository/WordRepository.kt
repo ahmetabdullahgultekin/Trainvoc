@@ -1,9 +1,11 @@
 package com.gultekinahmetabdullah.trainvoc.repository
 
+import androidx.room.Transaction
 import com.gultekinahmetabdullah.trainvoc.classes.enums.QuizType
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
+import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
@@ -46,49 +48,44 @@ class WordRepository(
         wordDao.updateWordStatId(word.statId, word.word)
     }*/
 
+    fun isLearned(statistic: Statistic): Boolean {
+        return statistic.correctCount > (statistic.wrongCount + statistic.skippedCount)
+    }
+
+    @Transaction
     suspend fun updateWordStats(statistic: Statistic, word: Word) {
-        // Check if the statistic already exists
-        val existingStatistic = wordDao.getStatByValues(
-            statistic.correctCount,
-            statistic.wrongCount,
-            statistic.skippedCount
-        )
-
-        val isExisting = existingStatistic?.statId != null
-
-        if (isExisting) {
-            // If the statistic exists, update the word's stat_id
-            wordDao.updateWordStatId(existingStatistic.statId, word.word)
+        val updatedStatistic = statistic.copy(learned = isLearned(statistic))
+        val wordCount = statisticDao.getWordCountByStatId(word.statId)
+        // TODO: There is a error here, SQLConstraintException: UNIQUE constraint failed: statistics.stat_id
+        if (wordCount == 1) {
+            // Stat sadece bu kelimeye ait, doğrudan güncelle
+            statisticDao.updateStatistic(updatedStatistic.copy(statId = word.statId))
         } else {
-            // If the statistic does not exist, insert the new statistic
-            println(
-                "Inserting new statistic: correctCount=${statistic.correctCount}, " +
-                        "wrongCount=${statistic.wrongCount}, skippedCount=${statistic.skippedCount}"
+            // Aynı değerlere ve learned alanına sahip bir Statistic var mı?
+            val existingStatistic = wordDao.getStatByValues(
+                updatedStatistic.correctCount,
+                updatedStatistic.wrongCount,
+                updatedStatistic.skippedCount,
+                updatedStatistic.learned
             )
-            val newStatId = statisticDao.insertStatistic(
-                Statistic(
-                    statId = 0, // Assuming statId is auto-generated
-                    correctCount = statistic.correctCount,
-                    wrongCount = statistic.wrongCount,
-                    skippedCount = statistic.skippedCount
-                )
-            ).toInt()
-            println(
-                "Inserted new statistic with ID: $newStatId, " +
-                        "correctCount=${statistic.correctCount}, " +
-                        "wrongCount=${statistic.wrongCount}, skippedCount=${statistic.skippedCount}"
-            )
-            wordDao.updateWordStatId(newStatId, word.word)
-            println(
-                "Updated word '${word.word}' with new statId: $newStatId"
-            )
+            if (existingStatistic != null && existingStatistic.learned == updatedStatistic.learned) {
+                // Eğer zaten aynı statId'ye sahipse hiçbir şey yapma
+                if (word.statId != existingStatistic.statId) {
+                    wordDao.updateWordStatId(existingStatistic.statId, word.word)
+                }
+                // Güncelleme veya ekleme yapma, çakışmayı önle
+            } else {
+                // Yeni bir Statistic oluştur ve statId'yi ona güncelle
+                val newStatId = statisticDao.insertStatistic(
+                    updatedStatistic.copy(statId = 0)
+                ).toInt()
+                wordDao.updateWordStatId(newStatId, word.word)
+            }
         }
-
-        // Check if the previous statistic has no relation with any word
+        // Önceki Statistic'e bağlı kelime kalmadıysa sil
         val previousStatId = word.statId
-        val wordCount = statisticDao.getWordCountByStatId(previousStatId)
-        if (wordCount == 0) {
-            // If no word is associated with the previous statistic, delete it
+        val prevWordCount = statisticDao.getWordCountByStatId(previousStatId)
+        if (prevWordCount == 0) {
             statisticDao.deleteStatistic(previousStatId)
         }
     }
@@ -153,20 +150,35 @@ class WordRepository(
             }
 
             is QuizParameter.ExamType -> {
-                when (quizType) {
-                    QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
-                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByExam(parameter.exam.exam)
-                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByExam(parameter.exam.exam)
-                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByExam(parameter.exam.exam)
-                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByExam(parameter.exam.exam)
-                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByExam(parameter.exam.exam)
-                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByExam(parameter.exam.exam)
-                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByExam(parameter.exam.exam)
-                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByExam(parameter.exam.exam)
+                // If the exam is "Mixed", we treat it as a special case
+                if (parameter.exam == Exam.examTypes.last()) {
+                    when (quizType) {
+                        QuizType.RANDOM -> wordDao.getRandomFiveWords()
+                        QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
+                        QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
+                        QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
+                        QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
+                        QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
+                        QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
+                        QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
+                        QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
+                    }
+                } else {
+                    when (quizType) {
+                        QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
+                        QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByExam(parameter.exam.exam)
+                        QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByExam(parameter.exam.exam)
+                        QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByExam(parameter.exam.exam)
+                        QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByExam(parameter.exam.exam)
+                        QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByExam(parameter.exam.exam)
+                        QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByExam(parameter.exam.exam)
+                        QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByExam(parameter.exam.exam)
+                        QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByExam(parameter.exam.exam)
+                    }
                 }
             }
 
-            else -> {
+            /*else -> {
                 when (quizType) {
                     QuizType.RANDOM -> wordDao.getRandomFiveWords()
                     QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
@@ -178,7 +190,7 @@ class WordRepository(
                     QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
                     QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
                 }
-            }
+            }*/
         }
     }
 
@@ -195,5 +207,48 @@ class WordRepository(
 
     suspend fun getExamsForWord(wordId: String): List<String> {
         return wordExamCrossRefDao.getExamNamesByWord(wordId)
+    }
+
+    suspend fun markWordAsLearned(statId: Long) {
+        statisticDao.markLearned(statId)
+    }
+
+    suspend fun getWordCountByStatId(statId: Int): Int = statisticDao.getWordCountByStatId(statId)
+
+    suspend fun getLearnedStatisticByValues(
+        correctCount: Int,
+        wrongCount: Int,
+        skippedCount: Int
+    ): Statistic? =
+        statisticDao.getLearnedStatisticByValues(correctCount, wrongCount, skippedCount)
+
+    suspend fun updateWordStatId(statId: Int, word: String) = wordDao.updateWordStatId(statId, word)
+
+    suspend fun insertStatistic(statistic: Statistic): Long =
+        statisticDao.insertStatistic(statistic)
+
+    // Toplam yapılan quiz sayısı (örnek: Exam tablosu veya benzeri bir tablodan alınabilir)
+    suspend fun getTotalQuizCount(): Int {
+        return statisticDao.getTotalAnsweredQuizCount()
+    }
+
+    // Bugün doğru cevaplanan soru sayısı
+    suspend fun getDailyCorrectAnswers(): Int {
+        return statisticDao.getDailyCorrectAnswers()
+    }
+
+    // Bu hafta doğru cevaplanan soru sayısı
+    suspend fun getWeeklyCorrectAnswers(): Int {
+        return statisticDao.getWeeklyCorrectAnswers()
+    }
+
+    // En çok yanlış yapılan kelime
+    suspend fun getMostWrongWord(): String? {
+        return wordDao.getMostWrongWord()
+    }
+
+    // En iyi kategori (en çok doğru yapılan seviye)
+    suspend fun getBestCategory(): String? {
+        return wordDao.getBestCategory()
     }
 }

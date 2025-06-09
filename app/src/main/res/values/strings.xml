@@ -68,6 +68,13 @@
     <string name="faq_how_to_theme_desc">Theme selection will be available soon.</string>
     <string name="faq_how_to_contact">How do I contact support?</string>
     <string name="faq_how_to_contact_desc">You can reach us from the settings or help menu.</string>
+    <string name="faq_how_to_report_bug">How do I report a bug?</string>
+    <string name="faq_how_to_report_bug_desc">You can report bugs via the feedback button or by emailing support@trainvoc.com.</string>
+    <string name="faq_how_to_suggest_feature">How can I suggest a new feature?</string>
+    <string name="faq_how_to_suggest_feature_desc">You can suggest features using the feedback form or by contacting us via email.</string>
+    <string name="faq_how_to_backup">How do I backup my data?</string>
+    <string name="faq_how_to_backup_desc">Backup and restore features will be available soon. Stay tuned!</string>
+    <string name="help_welcome">Welcome to the help center! Here you can find answers to common questions, contact support, and send us your feedback.</string>
     <string name="help_support">Help &amp; Support</string>
     <string name="faq_title">Frequently Asked Questions</string>
     <string name="contact_support">Contact Support</string>
@@ -100,11 +107,17 @@
     <string name="level_b1">B1</string>
     <string name="level_b2">B2</string>
     <string name="level_c1">C1</string>
+    <string name="level_c2">C2</string>
     <string name="level_yds">YDS</string>
     <string name="level_mixed">Mixed</string>
     <string name="exam_yds">YDS</string>
     <string name="exam_mixed">Mixed Exam</string>
     <string name="exam_generic">%1$s Exam</string>
+    <string name="exam_toefl">TOEFL</string>
+    <string name="exam_ielts">IELTS</string>
+    <string name="exam_yokdil">YÖKDİL</string>
+    <string name="exam_kpds">KPDS</string>
+    <string name="test_your_knowledge_with_exam">Test your knowledge with %1$s Exam</string>
     <string name="quiz_multiple_choice">Multiple Choice</string>
     <string name="quiz_true_false">True/False</string>
     <string name="quiz_matching">Matching</string>
@@ -137,4 +150,24 @@
     <string name="lets_get_down_to_business">Let\'s get down to business!</string>
     <string name="notifications_enabled">Notifications enabled</string>
     <string name="notifications_disabled">Notifications disabled</string>
+    <string name="unknown_level">Unknown Level</string>
+    <string name="word_stats">Word Statistics History for %1$s</string>
+    <string name="correct">How many times was it answered correctly?</string>
+    <string name="wrong">
+        How many times was it answered incorrectly?
+    </string>
+    <string name="skipped">
+        How many times was it skipped?
+    </string>
+    <string name="learned">Is it learned?</string>
+    <string name="coming_soon">Coming Soon!</string>
+    <string name="total_quizzes">Total Quizzes</string>
+    <string name="avg_time_per_question">Avg. Time per Question</string>
+    <string name="most_wrong_word">Most Wrong Word</string>
+    <string name="daily_correct">Daily Correct</string>
+    <string name="weekly_correct">Weekly Correct</string>
+    <string name="monthly_correct">Monthly Correct</string>
+    <string name="best_category">Best Category</string>
+    <string name="worst_category">Worst Category</string>
+    <string name="total_words">Total Words</string>
 </resources>

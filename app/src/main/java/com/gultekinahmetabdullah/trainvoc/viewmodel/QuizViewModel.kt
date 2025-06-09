@@ -241,4 +241,31 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
         quizJob?.cancel()
         resetQuiz()
     }
+
+    fun markCurrentWordAsLearned() {
+        viewModelScope.launch {
+            val stat = _currentWordStats.value ?: return@launch
+            val word = _currentQuestion.value?.correctWord ?: return@launch
+            val wordCount = repository.getWordCountByStatId(stat.statId)
+            if (wordCount == 1) {
+                // Stat sadece bu kelimeye ait, doğrudan işaretle
+                repository.markWordAsLearned(stat.statId.toLong())
+            } else {
+                // Aynı değerlere sahip ve learned=true olan bir stat var mı?
+                val learnedStat = repository.getLearnedStatisticByValues(
+                    stat.correctCount, stat.wrongCount, stat.skippedCount
+                )
+                if (learnedStat != null) {
+                    // StatId'yi ona güncelle
+                    repository.updateWordStatId(learnedStat.statId, word.word)
+                } else {
+                    // Yeni bir stat oluştur ve statId'yi ona güncelle
+                    val newStatId = repository.insertStatistic(
+                        stat.copy(statId = 0, learned = true)
+                    ).toInt()
+                    repository.updateWordStatId(newStatId, word.word)
+                }
+            }
+        }
+    }
 }

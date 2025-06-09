@@ -1,8 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.welcome
 
 import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,13 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -32,32 +30,23 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
-import java.util.Locale
+import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 
 @Composable
 fun WelcomeScreen(
     navController: NavController,
-    scaffoldPadding: PaddingValues
+    scaffoldPadding: PaddingValues,
+    settingsViewModel: SettingsViewModel
 ) {
     val composition by
     rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_man_greetings.json"))
 
     val context = navController.context
-    val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    val selectedLanguage = LanguagePreference.entries.find {
-        it.code == sharedPreferences.getString("language", null)
-    } ?: LanguagePreference.ENGLISH
+    val selectedLanguage by settingsViewModel.language.collectAsState()
     val activity = context as? Activity
 
-    fun updateLanguage(lang: LanguagePreference) {
-        sharedPreferences.edit { putString("language", lang.code) }
-        val locale = Locale(lang.code.ifBlank { "tr" })
-        Locale.setDefault(locale)
-        val res = context.resources
-        val config = android.content.res.Configuration(res.configuration)
-        config.setLocale(locale)
-        res.updateConfiguration(config, res.displayMetrics)
+    fun onLanguageSelected(lang: LanguagePreference) {
+        settingsViewModel.setLanguage(lang, activity)
         activity?.recreate()
     }
 
@@ -105,7 +94,7 @@ fun WelcomeScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
                 selected = selectedLanguage == LanguagePreference.TURKISH,
-                onClick = { updateLanguage(LanguagePreference.TURKISH) }
+                onClick = { onLanguageSelected(LanguagePreference.TURKISH) }
             )
             Text(
                 text = stringResource(id = R.string.turkish),
@@ -114,7 +103,7 @@ fun WelcomeScreen(
             )
             RadioButton(
                 selected = selectedLanguage == LanguagePreference.ENGLISH,
-                onClick = { updateLanguage(LanguagePreference.ENGLISH) }
+                onClick = { onLanguageSelected(LanguagePreference.ENGLISH) }
             )
             Text(
                 text = stringResource(id = R.string.english),

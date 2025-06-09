@@ -108,17 +108,6 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 }
             }
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 2.dp, bottom = 8.dp)
-        ) {
-            Text(
-                stringResource(id = R.string.notifications_coming_soon),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
 
         // Language Selection
         val languageOptions = listOf(LanguagePreference.ENGLISH, LanguagePreference.TURKISH)

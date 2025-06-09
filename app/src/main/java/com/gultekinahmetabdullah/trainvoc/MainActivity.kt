@@ -51,7 +51,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Hide system bars (status and navigation)
+        /**
+         * In Android 11 (API level 30) and higher, the system bars are hidden
+         * by default when the app is in immersive mode.
+         * To ensure that the system bars are hidden
+         * and the app is in immersive mode,
+         * we can use the WindowInsetsControllerCompat
+         * to control the visibility of the system bars.
+         */
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
             androidx.core.view.WindowInsetsControllerCompat(window, window.decorView)
@@ -72,11 +79,30 @@ class MainActivity : ComponentActivity() {
                     )
         }
 
+        /**
+         * Install the splash screen.
+         * This is required to show the splash screen
+         * while the app is loading.
+         */
         installSplashScreen()
 
+        // Enable edge-to-edge mode for the activity
         enableEdgeToEdge()
 
+        /** * Set the content view for the activity.
+         * This is where we define the Composable functions
+         * and set up the navigation graph.
+         */
         setContent {
+            /**
+             * Initialize the database and repositories.
+             * This is done here to ensure that
+             * the database is initialized
+             * before the Composable functions are called.
+             * We use the AppDatabase singleton
+             * to get the instance of the database
+             * and create the WordRepository.
+             */
             val context = this
             val db = AppDatabase.DatabaseBuilder.getInstance(context)
             val wordRepository = WordRepository(
@@ -85,26 +111,52 @@ class MainActivity : ComponentActivity() {
                 db.wordExamCrossRefDao(),
                 db.examDao()
             )
+
+            /**
+             * Initialize the ViewModels.
+             * We use the viewModel() function to get the instances
+             * of the ViewModels and pass the repositories to their factories.
+             */
             val quizViewModel: QuizViewModel =
                 viewModel(factory = QuizViewModelFactory(wordRepository))
             val wordViewModel: WordViewModel =
                 viewModel(factory = WordViewModelFactory(wordRepository))
             val statsViewModel: StatsViewModel =
                 viewModel(factory = StatsViewModelFactory(wordRepository))
-            val settingsViewModel: SettingsViewModel = viewModel(
-                factory = SettingsViewModelFactory(context, wordRepository)
-            )
+            val settingsViewModel: SettingsViewModel =
+                viewModel(factory = SettingsViewModelFactory(context, wordRepository))
             val storyViewModel: StoryViewModel =
                 viewModel(factory = StoryViewModelFactory(wordRepository))
+
+            // Dil tercihini al
+            val languagePref by settingsViewModel.language.collectAsState()
+
+            // Dil tercihi değiştiğinde locale'ı güncelle
+            LaunchedEffect(languagePref) {
+                settingsViewModel.updateLocale(languagePref.code)
+            }
+
+            /**
+             * Set the theme based on user preference.
+             * We collect the theme preference from the SettingsViewModel
+             * and apply the appropriate theme.
+             * If the preference is not set,
+             * we use the system default theme.
+             */
             val themePref by settingsViewModel.theme.collectAsState()
             val darkTheme = when (themePref) {
                 ThemePreference.LIGHT -> false
                 ThemePreference.DARK -> true
                 else -> isSystemInDarkTheme()
             }
+
+            // Initialize the navigation controller
             val navController = rememberNavController()
 
-            // Bildirimden kelime id'si geldiyse, MainScreen'e yönlendir
+            /** * Handle the intent that started the activity.
+             * If the intent contains a wordId, we navigate to the MAIN screen.
+             * This is useful for handling notifications that open the app.
+             */
             val wordIdFromNotification = intent?.getStringExtra("wordId")
             LaunchedEffect(wordIdFromNotification) {
                 if (!wordIdFromNotification.isNullOrEmpty()) {
@@ -112,6 +164,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            /** * Set the content of the activity using the TrainvocTheme.
+             * We wrap the Scaffold and NavHost inside the TrainvocTheme
+             * to apply the theme to the entire app.
+             */
             TrainvocTheme(darkTheme = darkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(navController = navController, startDestination = Route.SPLASH) {
@@ -121,7 +177,8 @@ class MainActivity : ComponentActivity() {
                         composable(Route.WELCOME) {
                             WelcomeScreen(
                                 navController = navController,
-                                scaffoldPadding = innerPadding
+                                scaffoldPadding = innerPadding,
+                                settingsViewModel = settingsViewModel
                             )
                         }
                         composable(Route.USERNAME) {
@@ -141,7 +198,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        // Bildirim işini başlat (sadece bir kez başlatılır)
+
+        /** * Initialize the WorkManager for word notifications.
+         * We check the shared preferences to see if notifications are enabled.
+         * If they are, we enqueue a periodic work request
+         * to show word notifications every hour.
+         * We also enqueue a one-time work request for testing purposes.
+         */
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val notificationsEnabled = sharedPreferences.getBoolean("notifications", true)
         if (notificationsEnabled) {
