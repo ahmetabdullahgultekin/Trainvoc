@@ -417,9 +417,15 @@ interface WordDao {
         WHERE correct_count = :correctCount
         AND wrong_count = :wrongCount
         AND skipped_count = :skippedCount
+        AND learned = :learned
         """
     )
-    suspend fun getStatByValues(correctCount: Int, wrongCount: Int, skippedCount: Int): Statistic?
+    suspend fun getStatByValues(
+        correctCount: Int,
+        wrongCount: Int,
+        skippedCount: Int,
+        learned: Boolean
+    ): Statistic?
 
     // Get all the word with exams
     @Transaction
@@ -464,4 +470,25 @@ interface WordDao {
 
     @Query("UPDATE words SET last_reviewed = 0, seconds_spent = 0")
     suspend fun resetAllWords()
+
+    // En çok yanlış yapılan kelime
+    @Query(
+        """
+        SELECT w.word FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        ORDER BY s.wrong_count DESC LIMIT 1
+    """
+    )
+    suspend fun getMostWrongWord(): String?
+
+    // En iyi kategori (en çok doğru yapılan seviye)
+    @Query(
+        """
+        SELECT w.level FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        GROUP BY w.level
+        ORDER BY SUM(s.correct_count) DESC LIMIT 1
+    """
+    )
+    suspend fun getBestCategory(): String?
 }

@@ -30,6 +30,13 @@ class SettingsViewModel(context: Context, private val repository: WordRepository
     private val _notificationsEnabled = MutableStateFlow(isNotificationsEnabled())
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled
 
+    init {
+        // Uygulama açılırken locale'ı sharedPreferences'a göre ayarla
+        val lang = getLanguage()
+        updateLocale(lang.code)
+        _language.value = lang
+    }
+
     fun getTheme(): ThemePreference =
         try {
             ThemePreference.valueOf(
@@ -54,25 +61,36 @@ class SettingsViewModel(context: Context, private val repository: WordRepository
     }
 
     fun getLanguage(): LanguagePreference {
-        val code = sharedPreferences.getString("language", LanguagePreference.ENGLISH.code)
-            ?: LanguagePreference.ENGLISH.code
-        return LanguagePreference.entries.find { it.code == code } ?: LanguagePreference.ENGLISH
+        val code = sharedPreferences.getString("language", null)
+        return if (code != null) {
+            LanguagePreference.entries.find { it.code == code } ?: LanguagePreference.ENGLISH
+        } else {
+            val systemLang = java.util.Locale.getDefault().language
+            LanguagePreference.entries.find { it.code == systemLang } ?: LanguagePreference.TURKISH
+        }
     }
 
-    fun setLanguage(language: LanguagePreference) {
+    fun setLanguage(language: LanguagePreference, activity: android.app.Activity? = null) {
         sharedPreferences.edit { putString("language", language.code) }
         _language.value = language
-        setAppLocale(language.code)
+        updateLocale(language.code, activity)
         viewModelScope.launch { _languageChanged.emit(Unit) }
     }
 
-    private fun setAppLocale(languageCode: String) {
+    fun updateLocale(languageCode: String, activity: android.app.Activity? = null) {
         val locale = java.util.Locale(languageCode)
         java.util.Locale.setDefault(locale)
         val resources = appContext.resources
         val config = resources.configuration
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
+        // Activity context'i için de güncelle
+        activity?.let {
+            val actResources = it.resources
+            val actConfig = actResources.configuration
+            actConfig.setLocale(locale)
+            actResources.updateConfiguration(actConfig, actResources.displayMetrics)
+        }
     }
 
     fun resetProgress() {

@@ -57,7 +57,8 @@ abstract class AppDatabase : RoomDatabase() {
             /*
             Uncomment the following line to create the database in memory
              */
-        ).createFromAsset("database/trainvoc-db.db")
+        )
+            .createFromAsset("database/trainvoc-db.db")
             .build()
 
 

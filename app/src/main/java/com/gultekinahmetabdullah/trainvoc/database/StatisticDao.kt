@@ -62,4 +62,36 @@ interface StatisticDao {
 
     @Query("SELECT COUNT(*) FROM words WHERE stat_id = :statId")
     suspend fun getWordCountByStatId(statId: Int): Int
+
+    @Query("SELECT * FROM statistics WHERE correct_count = :correctCount AND wrong_count = :wrongCount AND skipped_count = :skippedCount AND learned = 1 LIMIT 1")
+    suspend fun getLearnedStatisticByValues(
+        correctCount: Int,
+        wrongCount: Int,
+        skippedCount: Int
+    ): Statistic?
+
+    // Bugün doğru cevaplanan soru sayısı (Word tablosundaki last_reviewed üzerinden)
+    @Query(
+        """
+        SELECT SUM(s.correct_count) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE date(w.last_reviewed/1000, 'unixepoch') = date('now', 'localtime')
+    """
+    )
+    suspend fun getDailyCorrectAnswers(): Int
+
+    // Bu hafta doğru cevaplanan soru sayısı (Word tablosundaki last_reviewed üzerinden)
+    @Query(
+        """
+        SELECT SUM(s.correct_count) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE strftime('%W', w.last_reviewed/1000, 'unixepoch') = strftime('%W', 'now', 'localtime')
+        AND strftime('%Y', w.last_reviewed/1000, 'unixepoch') = strftime('%Y', 'now', 'localtime')
+    """
+    )
+    suspend fun getWeeklyCorrectAnswers(): Int
+
+    // Toplam cevaplanan soru sayısı
+    @Query("SELECT SUM(correct_count + wrong_count + skipped_count) FROM statistics")
+    suspend fun getTotalAnsweredQuizCount(): Int
 }

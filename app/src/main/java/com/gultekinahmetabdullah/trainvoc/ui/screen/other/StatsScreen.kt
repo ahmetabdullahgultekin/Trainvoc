@@ -1,5 +1,8 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,11 +14,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,8 +32,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
@@ -49,8 +62,18 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
     val lastAnswered by statsViewModel.lastAnswered.collectAsState()
     val scope = statsViewModel.viewModelScope
 
-    val composition by
-    rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_book.json"))
+    val totalQuizCount by statsViewModel.totalQuizCount.collectAsState()
+    val dailyCorrect by statsViewModel.dailyCorrect.collectAsState()
+    val weeklyCorrect by statsViewModel.weeklyCorrect.collectAsState()
+    val mostWrongWord by statsViewModel.mostWrongWord.collectAsState()
+    val bestCategory by statsViewModel.bestCategory.collectAsState()
+
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.Asset(
+            if (successRate > 0.7f) "animations/celebration.json"
+            else "animations/anime_book.json"
+        )
+    )
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = 3,
@@ -64,8 +87,9 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFFE3F2FD), // Light blue
-                        Color(0xFFFFFFFF)  // White
+                        Color(0xFFB3E5FC), // Daha canlı mavi
+                        Color(0xFFE1BEE7), // Lila
+                        Color(0xFFFFFFFF)  // Beyaz
                     )
                 )
             )
@@ -80,95 +104,189 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
             item {
                 LottieAnimation(
                     composition = composition,
-                    modifier = Modifier.size(256.dp),
+                    modifier = Modifier.size(220.dp),
                     progress = { progress }
                 )
             }
             item {
                 Text(
                     text = stringResource(id = R.string.quiz_statistics),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+            // Animasyonlu StatCard'lar
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.Star,
+                    title = stringResource(id = R.string.total_score),
+                    value = "${correctAnswers * 10}",
+                    color = Color(0xFFFFD600),
+                    isPainter = false
                 )
             }
             item {
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-            item {
-                val totalQuestionsLabel = stringResource(id = R.string.total_questions)
-                val correctAnswersLabel = stringResource(id = R.string.correct_answers)
-                val incorrectAnswersLabel = stringResource(id = R.string.incorrect_answers)
-                val skippedQuestionsLabel = stringResource(id = R.string.skipped_questions)
-                val successRateLabel = stringResource(id = R.string.success_rate)
-                val failureRateLabel = stringResource(id = R.string.failure_rate)
-                val skippedRateLabel = stringResource(id = R.string.skipped_rate)
-                val totalScoreLabel = stringResource(id = R.string.total_score)
-                val totalTimeSpentLabel = stringResource(id = R.string.total_time_spent)
-                val lastAnsweredLabel = stringResource(id = R.string.last_answered)
-
-                val statsList = listOf(
-                    totalQuestionsLabel to "$totalQuestions",
-                    correctAnswersLabel to "$correctAnswers",
-                    incorrectAnswersLabel to "$incorrectAnswers",
-                    skippedQuestionsLabel to "$skippedQuestions",
-                    successRateLabel to "%.2f%%".format(successRate * 100),
-                    failureRateLabel to "%.2f%%".format(failureRate * 100),
-                    skippedRateLabel to "%.2f%%".format(skippedRate * 100),
-                    totalScoreLabel to "${correctAnswers * 10}",
-                    totalTimeSpentLabel to "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
-                    lastAnsweredLabel to lastAnswered
+                AnimatedStatCard(
+                    icon = painterResource(id = R.drawable.baseline_leaderboard_24),
+                    title = stringResource(id = R.string.total_quizzes),
+                    value = "$totalQuizCount",
+                    color = Color(0xFF64B5F6),
+                    isPainter = true
                 )
-
-                Column {
-                    statsList.forEach { (title, value) ->
-                        StatCard(title = title, value = value)
-                    }
-                }
             }
             item {
-                Spacer(modifier = Modifier.height(32.dp))
+                AnimatedStatCard(
+                    icon = painterResource(id = R.drawable.outline_timer_24),
+                    title = stringResource(id = R.string.total_time_spent),
+                    value = "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
+                    color = Color(0xFF81C784),
+                    isPainter = true
+                )
             }
+            item {
+                AnimatedStatCard(
+                    icon = painterResource(id = R.drawable.baseline_bar_chart_24),
+                    title = stringResource(id = R.string.avg_time_per_question),
+                    // Show just two decimal places
+                    value = "${
+                        (totalTimeSpent.toDouble() / totalQuestions.toDouble()).let {
+                            "%.2f".format(it)
+                        }
+                    }s",
+                    color = Color(0xFFBA68C8),
+                    isPainter = true
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.CheckCircle,
+                    title = stringResource(id = R.string.correct_answers),
+                    value = "$correctAnswers",
+                    color = Color(0xFF66BB6A),
+                    isPainter = false
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.Close,
+                    title = stringResource(id = R.string.incorrect_answers),
+                    value = "$incorrectAnswers",
+                    color = Color(0xFFE57373),
+                    isPainter = false
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = painterResource(id = R.drawable.baseline_skip_next_24),
+                    title = stringResource(id = R.string.skipped_questions),
+                    value = "$skippedQuestions",
+                    color = Color(0xFFB0BEC5),
+                    isPainter = true
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.Star,
+                    title = stringResource(id = R.string.best_category),
+                    value = bestCategory,
+                    color = Color(0xFFFFF176),
+                    isPainter = false
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.Close,
+                    title = stringResource(id = R.string.most_wrong_word),
+                    value = mostWrongWord,
+                    color = Color(0xFFEF5350),
+                    isPainter = false
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.CheckCircle,
+                    title = "Daily Correct",
+                    value = "$dailyCorrect",
+                    color = Color(0xFF4DD0E1),
+                    isPainter = false
+                )
+            }
+            item {
+                AnimatedStatCard(
+                    icon = Icons.Default.CheckCircle,
+                    title = "Weekly Correct",
+                    value = "$weeklyCorrect",
+                    color = Color(0xFF9575CD),
+                    isPainter = false
+                )
+            }
+            item { Spacer(modifier = Modifier.height(16.dp)) }
             item {
                 StatsBarChart(
                     correctAnswers, incorrectAnswers, skippedQuestions,
                     successRate, failureRate, skippedRate
                 )
             }
-            item {
-                Spacer(modifier = Modifier.height(32.dp))
-            }
+            item { Spacer(modifier = Modifier.height(24.dp)) }
             item {
                 Button(onClick = {
-                    scope.launch {
-                        statsViewModel.fillStats()
-                    }
+                    scope.launch { statsViewModel.fillStats() }
                 }) {
                     Text(text = "Refresh Stats")
                 }
             }
-
         }
     }
 }
 
 @Composable
-fun StatCard(title: String, value: String) {
+fun AnimatedStatCard(
+    icon: Any, // ImageVector veya Painter olabilir
+    title: String,
+    value: String,
+    color: Color,
+    isPainter: Boolean = false
+) {
+    val anim = animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(durationMillis = 600), label = "cardAnim"
+    )
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .height(80.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+            .padding(vertical = 6.dp)
+            .height(70.dp)
+            .scale(anim.value),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.18f))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 18.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = title, style = MaterialTheme.typography.bodyLarge, color = Color.Black)
-            Text(text = value, style = MaterialTheme.typography.headlineSmall, color = Color.Black)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (isPainter) {
+                    Image(
+                        painter = icon as Painter,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp)
+                    )
+                } else {
+                    Icon(
+                        icon as ImageVector,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(text = title, style = MaterialTheme.typography.bodyLarge, color = color)
+            }
+            Text(text = value, style = MaterialTheme.typography.headlineSmall, color = color)
         }
     }
 }
@@ -185,35 +303,49 @@ fun StatsBarChart(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(id = R.string.answer_distribution),
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(16.dp))
+        // StatsBarChart içindeki Row'da:
         Row(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .weight(if (successRate <= 0f) 0.01f else successRate)
-                    .height(30.dp)
-                    .background(Color.Green, RoundedCornerShape(8.dp))
+            AnimatedBar(
+                modifier = Modifier.weight(if (successRate <= 0f) 0.01f else successRate),
+                color = Color(0xFF66BB6A),
             )
-            Box(
-                modifier = Modifier
-                    .weight(if (skippedRate <= 0f) 0.01f else skippedRate)
-                    .height(30.dp)
-                    .background(Color.Gray, RoundedCornerShape(8.dp))
+            AnimatedBar(
+                modifier = Modifier.weight(if (skippedRate <= 0f) 0.01f else skippedRate),
+                color = Color(0xFFB0BEC5),
             )
-            Box(
-                modifier = Modifier
-                    .weight(if (failureRate <= 0f) 0.01f else failureRate)
-                    .height(30.dp)
-                    .background(Color.Red, RoundedCornerShape(8.dp))
+            AnimatedBar(
+                modifier = Modifier.weight(if (failureRate <= 0f) 0.01f else failureRate),
+                color = Color(0xFFE57373),
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = stringResource(id = R.string.correct_colon, correct), color = Color.Green)
-            Text(text = stringResource(id = R.string.skipped_colon, skipped), color = Color.White)
-            Text(text = stringResource(id = R.string.incorrect_colon, incorrect), color = Color.Red)
+            Text(
+                text = stringResource(id = R.string.correct_colon, correct),
+                color = Color(0xFF66BB6A)
+            )
+            Text(
+                text = stringResource(id = R.string.skipped_colon, skipped),
+                color = Color(0xFFB0BEC5)
+            )
+            Text(
+                text = stringResource(id = R.string.incorrect_colon, incorrect),
+                color = Color(0xFFE57373)
+            )
         }
     }
 }
 
+// AnimatedBar fonksiyonunu şu şekilde değiştirin:
+@Composable
+fun AnimatedBar(modifier: Modifier, color: Color) {
+    Box(
+        modifier = modifier
+            .height(30.dp)
+            .background(color, RoundedCornerShape(8.dp))
+    )
+}

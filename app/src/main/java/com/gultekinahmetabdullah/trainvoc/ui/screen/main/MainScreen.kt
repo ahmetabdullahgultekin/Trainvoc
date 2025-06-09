@@ -2,22 +2,30 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
 import QuizMenuScreen
 import StoryScreen
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -102,11 +111,30 @@ fun MainScreen(
             if (isTopAppBarVisible.value) {
                 TopAppBar(
                     title = {
-                        Text(
-                            text = stringResource(id = R.string.app_name),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                        Row(
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                            modifier = Modifier.padding(start = 4.dp)
+                        ) {
+                            Image(
+                                painter = androidx.compose.ui.res.painterResource(
+                                    id = R.drawable.baseline_generating_tokens_24
+                                ),
+                                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                                    MaterialTheme.colorScheme.primary
+                                ),
+                                contentDescription = stringResource(id = R.string.app_name) + " logo",
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .padding(end = 10.dp)
+                            )
+                            Text(
+                                text = stringResource(id = R.string.app_name),
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    letterSpacing = 2.sp
+                                ),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     },
                     colors = TopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surface, // updated to new palette
@@ -311,153 +339,125 @@ fun CustomBottomSheet(
     ModalBottomSheet(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(
+            topStart = 28.dp,
+            topEnd = 28.dp
+        ),
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
             ) {
-                Text(
-                    text = stringResource(id = R.string.more_options),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                val buttonModifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp)
+                // Başlık ve kapatma butonu
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.more_options),
+                        style = MaterialTheme.typography.headlineSmall.copy(letterSpacing = 1.sp),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                showBottomSheet.value = false
+                            }
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(id = R.string.close),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(4.dp))
 
-                BottomSheetButton(
-                    text = stringResource(id = R.string.manage_words),
-                    icon = Icons.Default.Build,
-                    modifier = buttonModifier
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                    thickness = 1.dp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Menü seçenekleri listesi
+                val menuItems = listOf(
+                    Triple(stringResource(id = R.string.home), Icons.Default.Home, Route.HOME),
+                    Triple(
+                        stringResource(id = R.string.story_mode),
+                        Icons.Default.Star,
+                        Route.STORY
+                    ),
+                    Triple(
+                        stringResource(id = R.string.stats),
+                        Icons.Default.CheckCircle,
+                        Route.STATS
+                    ),
+                    Triple(
+                        stringResource(id = R.string.search_word),
+                        Icons.Default.Search,
+                        Route.DICTIONARY
+                    ),
+                    Triple(
+                        stringResource(id = R.string.manage_words),
+                        Icons.Default.Build,
+                        Route.MANAGEMENT
+                    ),
+                    Triple(
+                        stringResource(id = R.string.settings),
+                        Icons.Default.Settings,
+                        Route.SETTINGS
+                    ),
+                    Triple(stringResource(id = R.string.help), Icons.Default.Info, Route.HELP),
+                    Triple(
+                        stringResource(id = R.string.about),
+                        Icons.Default.AccountCircle,
+                        Route.ABOUT
+                    ),
+                )
+
+                androidx.compose.foundation.lazy.LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    navigateAndClose(
-                        navController,
-                        Route.MANAGEMENT,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
+                    items(menuItems.size) { index ->
+                        val (text, icon, route) = menuItems[index]
+                        androidx.compose.material3.ListItem(
+                            headlineContent = {
+                                Text(text, style = MaterialTheme.typography.bodyLarge)
+                            },
+                            leadingContent = {
+                                Icon(
+                                    icon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                                        if (!sheetState.isVisible) {
+                                            showBottomSheet.value = false
+                                            navController.navigate(route)
+                                        }
+                                    }
+                                }
+                                .padding(vertical = 2.dp, horizontal = 2.dp)
+                        )
+                        if (index < menuItems.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
+                                thickness = 1.dp,
+                            )
+                        }
+                    }
                 }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.settings),
-                    icon = Icons.Default.MoreVert,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.SETTINGS,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.help),
-                    icon = Icons.Default.Info,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.HELP,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.about),
-                    icon = Icons.Default.Star,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.ABOUT,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.stats),
-                    icon = Icons.Default.Star,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.STATS,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.quiz),
-                    icon = Icons.Default.Build,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.QUIZ,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.story_mode),
-                    icon = Icons.Default.Star,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.STORY,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.home),
-                    icon = Icons.Default.Home,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.HOME,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.quiz_statistics),
-                    icon = Icons.Default.Star,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.QUIZ_EXAM_MENU,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                BottomSheetButton(
-                    text = stringResource(id = R.string.search_word),
-                    icon = Icons.Default.Search,
-                    modifier = buttonModifier
-                ) {
-                    navigateAndClose(
-                        navController,
-                        Route.DICTIONARY,
-                        coroutineScope,
-                        sheetState,
-                        showBottomSheet
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dp))
+
+                Spacer(modifier = Modifier.height(12.dp))
                 Button(
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -467,8 +467,24 @@ fun CustomBottomSheet(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .shadow(
+                            elevation = 6.dp,
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                            ambientColor = MaterialTheme.colorScheme.error,
+                            spotColor = MaterialTheme.colorScheme.error,
+                            clip = false
+                        )
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.close),
+                        tint = Color.White,
+                        modifier = Modifier.padding(end = 6.dp)
+                    )
                     Text(
                         text = stringResource(id = R.string.close), color = Color.White
                     )

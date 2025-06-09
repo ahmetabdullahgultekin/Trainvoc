@@ -86,6 +86,7 @@
     <string name="level_b1">B1</string>
     <string name="level_b2">B2</string>
     <string name="level_c1">C1</string>
+    <string name="level_c2">C2</string>
     <string name="level_yds">YDS</string>
     <string name="level_mixed">Karışık</string>
     <string name="exam_yds">YDS</string>
@@ -108,6 +109,7 @@
     <string name="choose_language">Dil Seçin</string>
     <string name="continue_text">Devam Et</string>
     <string name="test_your_knowledge_with">Bilginizi %1$s ile test edin</string>
+    <string name="test_your_knowledge_with_exam">%1$s Sınavı ile bilginizi test edin</string>
     <string name="quiz_statistics">Test İstatistikleri</string>
     <string name="total_questions">Toplam Soru</string>
     <string name="correct_answers">Doğru Cevaplar</string>
@@ -137,4 +139,31 @@
     <string name="lets_get_down_to_business">Haydi başlayalım!</string>
     <string name="notifications_enabled">Bildirimler etkin</string>
     <string name="notifications_disabled">Bildirimler devre dışı</string>
+    <string name="exam_toefl">TOEFL</string>
+    <string name="exam_ielts">IELTS</string>
+    <string name="exam_yokdil">YÖKDİL</string>
+    <string name="exam_kpds">KPDS</string>
+    <string name="unknown_level">Bilinmeyen Seviye</string>
+    <string name="word_stats">%1$s için Geçmiş Kelime İstatistikleri</string>
+    <string name="correct">Kaç Kez Doğru Bildin</string>
+    <string name="wrong">Kaç Kez Yanlış Bildin</string>
+    <string name="skipped">Kaç Kez Atladın</string>
+    <string name="learned">Öğrenildi mi?</string>
+    <string name="coming_soon">Yakında!</string>
+    <string name="faq_how_to_report_bug">Uygulamada bir hata nasıl bildirilir?</string>
+    <string name="faq_how_to_report_bug_desc">Hataları geri bildirim butonu ile veya support@trainvoc.com adresine e-posta göndererek bildirebilirsiniz.</string>
+    <string name="faq_how_to_suggest_feature">Yeni bir özellik nasıl önerilir?</string>
+    <string name="faq_how_to_suggest_feature_desc">Geri bildirim formunu kullanarak veya e-posta ile bize ulaşarak yeni özellikler önerebilirsiniz.</string>
+    <string name="faq_how_to_backup">Verilerimi nasıl yedeklerim?</string>
+    <string name="faq_how_to_backup_desc">Yedekleme ve geri yükleme özellikleri yakında eklenecek. Takipte kalın!</string>
+    <string name="help_welcome">Yardım merkezine hoş geldiniz! Burada sıkça sorulan soruların yanıtlarını bulabilir, destek ile iletişime geçebilir ve bize geri bildirim gönderebilirsiniz.</string>
+    <string name="total_quizzes">Toplam Test Sayısı</string>
+    <string name="avg_time_per_question">Ortalama Soru Başına Süre</string>
+    <string name="most_wrong_word">En Çok Yanlış Cevaplanan Kelime</string>
+    <string name="daily_correct">Günlük Doğru Cevap</string>
+    <string name="weekly_correct">Haftalık Doğru Cevap</string>
+    <string name="monthly_correct">Aylık Doğru Cevap</string>
+    <string name="best_category">En İyi Kategori</string>
+    <string name="worst_category">En Kötü Kategori</string>
+    <string name="total_words">Toplam Kelime Sayısı</string>
 </resources>

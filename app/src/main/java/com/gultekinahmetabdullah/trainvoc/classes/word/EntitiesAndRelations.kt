@@ -32,7 +32,7 @@ data class Word(
     tableName = "statistics",
     indices = [
         Index(
-            value = ["correct_count", "wrong_count", "skipped_count"],
+            value = ["correct_count", "wrong_count", "skipped_count", "learned"],
             unique = true
         ),
     ]
@@ -62,6 +62,7 @@ data class Exam(
             Exam("YDS"),
             Exam("YÖKDİL"),
             Exam("KPDS"),
+            // This must be the last one
             Exam("Mixed")
         )
 
@@ -70,7 +71,8 @@ data class Exam(
             "IELTS" to Color(0xFF2196F3),
             "YDS" to Color(0xFF9C27B0),
             "YÖKDİL" to Color(0xFFE91E63),
-            "KPDS" to Color(0xFFE91E63),
+            "KPDS" to Color(0xFFFFC107),
+            // "Mixed" should be the last one to ensure it is not overridden
             "Mixed" to Color(0xFFFF9800)
         )
     }
