@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -53,17 +54,24 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                 .padding(bottom = 8.dp)
         )
         Box(modifier = Modifier.weight(1f)) {
-            LazyColumn {
-                items(filteredWords) { word ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable { navController.navigate(Route.wordDetail(word.word)) }
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(word.word, style = MaterialTheme.typography.titleMedium)
-                            Text(word.meaning, style = MaterialTheme.typography.bodyMedium)
+            // Scroll state oluştur
+            val listState = rememberLazyListState()
+            Box {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(filteredWords) { word ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .clickable { navController.navigate(Route.wordDetail(word.word)) }
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(word.word, style = MaterialTheme.typography.titleMedium)
+                                Text(word.meaning, style = MaterialTheme.typography.bodyMedium)
+                            }
                         }
                     }
                 }

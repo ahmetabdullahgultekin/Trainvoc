@@ -63,6 +63,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordManagementScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.AboutScreen
@@ -71,6 +72,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.other.SettingsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.StatsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizExamMenuScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
@@ -157,9 +159,16 @@ fun MainScreen(
                             navBackStackEntry.value?.destination?.route == Route.QUIZ
                             || navBackStackEntry.value?.destination?.route == Route.QUIZ_MENU
                             || navBackStackEntry.value?.destination?.route == Route.QUIZ_EXAM_MENU
+                            || navBackStackEntry.value?.destination?.route == Route.STORY
+                            || navBackStackEntry.value?.destination?.route == Route.WORD_DETAIL
                         ) {
                             IconButton(onClick = {
-                                navController.popBackStack()
+                                if (navBackStackEntry.value?.destination?.route == Route.QUIZ) {
+                                    // Quiz ekranındayken çıkış için handler tetiklenir
+                                    QuizScreenExitHandler.triggerExit()
+                                } else {
+                                    navController.popBackStack()
+                                }
                             }) {
                                 Icon(
                                     Icons.AutoMirrored.Filled.ArrowBack,
@@ -182,7 +191,12 @@ fun MainScreen(
                     actions = {
                         IconButton(onClick = {
                             coroutineScope.launch {
-                                showBottomSheet.value = true
+                                //showBottomSheet.value = true
+                                if (navController.currentBackStackEntry?.destination?.route == Route.QUIZ) {
+                                    QuizScreenExitHandler.triggerExit()
+                                } else {
+                                    showBottomSheet.value = true
+                                }
                             }
                         }) {
                             Icon(
@@ -216,8 +230,15 @@ fun MainScreen(
                     StoryScreen(
                         viewModel = storyViewModel,
                         onLevelSelected = { level ->
-                            navController.navigate(Route.QUIZ)
                             parameter.value = QuizParameter.Level(level)
+
+                            parameter.value?.let {
+                                quizViewModel.startQuiz(
+                                    it,
+                                    Quiz.quizTypes[0]
+                                ) // Default to first quiz type
+                            }
+                            navController.navigate(Route.QUIZ)
                         },
                         onBack = {
                             navController.popBackStack()
@@ -243,7 +264,10 @@ fun MainScreen(
                     )
                 }
                 composable(Route.QUIZ) {
-                    QuizScreen(quizViewModel = quizViewModel)
+                    QuizScreen(
+                        quizViewModel = quizViewModel,
+                        onQuit = { navController.navigate(Route.HOME) },
+                    )
                 }
                 composable(Route.MANAGEMENT) {
                     WordManagementScreen(wordViewModel = wordViewModel)
@@ -465,7 +489,12 @@ fun CustomBottomSheet(
                                     coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
                                         if (!sheetState.isVisible) {
                                             showBottomSheet.value = false
-                                            navController.navigate(route)
+                                            // Quiz ekranındayken çıkış için handler tetiklenir
+                                            if (navController.currentBackStackEntry?.destination?.route == Route.QUIZ) {
+                                                QuizScreenExitHandler.triggerExit()
+                                            } else {
+                                                navController.navigate(route)
+                                            }
                                         }
                                     }
                                 }

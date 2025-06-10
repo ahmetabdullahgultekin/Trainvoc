@@ -25,6 +25,7 @@ class StoryViewModel(private val wordRepository: WordRepository) : ViewModel() {
                     async { level to isLevelUnlocked(level) }
                 }.associate { it.await() }
             }
+            println("[StoryViewModel] Loaded levels: $levelStatus")
             _levels.value = levelStatus
         }
     }
@@ -34,9 +35,17 @@ class StoryViewModel(private val wordRepository: WordRepository) : ViewModel() {
      * Sadece A1 başta açık, diğerleri bir önceki seviyedeki tüm kelimeler learned ise açılır.
      */
     suspend fun isLevelUnlocked(level: WordLevel): Boolean {
-        if (level == WordLevel.A1) return true
-        val previous = WordLevel.entries.getOrNull(level.ordinal - 1) ?: return false
-        return wordRepository.isLevelUnlocked(previous)
+        if (level == WordLevel.A1) {
+            println("[StoryViewModel] isLevelUnlocked: ${level.name} is always unlocked (A1)")
+            return true
+        }
+        val previous = WordLevel.entries.getOrNull(level.ordinal) ?: run {
+            println("[StoryViewModel] isLevelUnlocked: ${level.name} has no previous level, returning false")
+            return false
+        }
+        val unlocked = wordRepository.isLevelUnlocked(previous)
+        println("[StoryViewModel] isLevelUnlocked: ${level.name}, previous: ${previous.name}, previousUnlocked: $unlocked (details: checking if all words in $previous are learned)")
+        return unlocked
     }
 
     /**

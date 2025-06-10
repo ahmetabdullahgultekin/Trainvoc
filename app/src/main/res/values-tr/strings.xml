@@ -101,7 +101,7 @@
     <string name="quiz_matching_desc">Doğru eşleşmeleri bulun.</string>
     <string name="quiz_generic_desc">%1$s ile bilginizi test edin.</string>
     <string name="quit_quiz_title">Testten Çıkılsın mı?</string>
-    <string name="quit_quiz_message">Emin misiniz? Bu soru atlanacak.</string>
+    <string name="quit_quiz_message">Emin misiniz? Bu soru atlandı olarak sayılacak.</string>
     <string name="yes">Evet</string>
     <string name="no">Hayır</string>
     <string name="username_prompt">Adını bizimle paylaş dostum!</string>
@@ -145,11 +145,12 @@
     <string name="exam_yokdil">YÖKDİL</string>
     <string name="exam_kpds">KPDS</string>
     <string name="unknown_level">Bilinmeyen Seviye</string>
-    <string name="word_stats">%1$s için Geçmiş Kelime İstatistikleri</string>
+    <string name="word_stats">"%1$s" için Geçmiş Kelime İstatistikleri</string>
     <string name="correct">Kaç Kez Doğru Bildin</string>
     <string name="wrong">Kaç Kez Yanlış Bildin</string>
     <string name="skipped">Kaç Kez Atladın</string>
-    <string name="learned">Öğrenildi mi?</string>
+    <string name="learned">Bu Kelime Daha Önce Öğrenildi</string>
+    <string name="not_learned">Bu Kelime Henüz Öğrenilmedi</string>
     <string name="coming_soon">Yakında!</string>
     <string name="faq_how_to_report_bug">Uygulamada bir hata nasıl bildirilir?</string>
     <string name="faq_how_to_report_bug_desc">Hataları geri bildirim butonu ile veya support@trainvoc.com adresine e-posta göndererek bildirebilirsiniz.</string>
@@ -173,4 +174,12 @@
         ilerlemenizi takip edin.
     </string>
     <string name="test_mode_warning">"    ⚠️ Uygulama halen test aşamasındadır. Bazı özellikler ve butonlar henüz aktif olmayabilir."</string>
+    <string name="level_with_value">Seviye: %1$s</string>
+    <string name="total_words_with_value">Toplam Kelime: %1$s</string>
+    <string name="learned_words_with_value">Öğrenilen Kelime: %1$s</string>
+    <string name="progress_with_value">İlerleme: %1$s</string>
+    <string name="custom_mode_with_value">Custom Mod: %1$s</string>
+    <string name="exam_with_value">Sınav: %1$s</string>
+    <string name="exam_type_with_value">Sınav Tipi: %1$s</string>
+    <string name="locked_level_warning">Kilitli - Önceki seviyedeki tüm kelimeleri öğren!</string>
 </resources>

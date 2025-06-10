@@ -16,8 +16,8 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = DarkOnPrimary,
     onSurface = DarkOnSurface,
     error = DarkError,
-    // success rengi MaterialTheme'de yok, özel kullanım için eklenemez
-)
+
+    )
 
 private val LightColorScheme = lightColorScheme(
     primary = Primary,
@@ -29,7 +29,6 @@ private val LightColorScheme = lightColorScheme(
     onBackground = OnPrimary,
     onSurface = OnSurface,
     error = Error,
-    // success rengi MaterialTheme'de yok, özel kullanım için eklenemez
 )
 
 @Composable

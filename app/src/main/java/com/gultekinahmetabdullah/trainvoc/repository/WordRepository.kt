@@ -137,6 +137,7 @@ class WordRepository(
                     WordLevel.C2 -> "C2"
                 }
                 when (quizType) {
+                    QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWordsByLevel(level)
                     QuizType.RANDOM -> wordDao.getRandomFiveWordsByLevel(level)
                     QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByLevel(level)
                     QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByLevel(level)
@@ -153,6 +154,7 @@ class WordRepository(
                 // If the exam is "Mixed", we treat it as a special case
                 if (parameter.exam == Exam.examTypes.last()) {
                     when (quizType) {
+                        QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWords()
                         QuizType.RANDOM -> wordDao.getRandomFiveWords()
                         QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
                         QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
@@ -165,6 +167,7 @@ class WordRepository(
                     }
                 } else {
                     when (quizType) {
+                        QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWordsByExam(parameter.exam.exam)
                         QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
                         QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByExam(parameter.exam.exam)
                         QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByExam(parameter.exam.exam)
@@ -200,6 +203,7 @@ class WordRepository(
 
         val levelUnlockerWordCount = wordDao.getLevelUnlockerWordCount(level.name)
         val levelWordCount = wordDao.getWordCountByLevel(level.name)
+        println("Checking if level ${level.name} is unlocked: $levelWordCount words in level, $levelUnlockerWordCount words needed to unlock")
         return levelWordCount == levelUnlockerWordCount
     }
 
@@ -251,4 +255,10 @@ class WordRepository(
     suspend fun getBestCategory(): String? {
         return wordDao.getBestCategory()
     }
+
+    suspend fun getWordCountByLevel(level: String): Int = wordDao.getWordCountByLevel(level)
+    suspend fun getLearnedWordCount(level: String): Int = wordDao.getLevelUnlockerWordCount(level)
+    suspend fun getWordCountByExam(exam: String): Int = wordDao.getWordCountByExam(exam)
+    suspend fun getLearnedWordCountByExam(exam: String): Int =
+        wordDao.getLearnedWordCountByExam(exam)
 }
