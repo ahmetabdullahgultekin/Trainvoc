@@ -68,7 +68,7 @@ fun UsernameScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(id = R.string.welcome_description),
+            text = stringResource(id = R.string.welcome_description_2),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 8.dp)

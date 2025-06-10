@@ -27,7 +27,7 @@
     <string name="category">Category</string>
     <string name="na">N/A</string>
     <string name="select_quiz_category">Select Quiz Category</string>
-    <string name="test_your_knowledge_with">Test your knowledge with %1$s</string>
+    <string name="test_your_knowledge_with">Test your knowledge with %1$s level words</string>
     <string name="select_quiz_type">Select Quiz Type</string>
     <string name="loading_questions">Loading Questions…</string>
     <string name="which_one_is_the_correct_meaning">Which one is the correct meaning of:</string>
@@ -111,13 +111,14 @@
     <string name="level_yds">YDS</string>
     <string name="level_mixed">Mixed</string>
     <string name="exam_yds">YDS</string>
-    <string name="exam_mixed">Mixed Exam</string>
+    <string name="exam_mixed">Mixed</string>
     <string name="exam_generic">%1$s Exam</string>
     <string name="exam_toefl">TOEFL</string>
     <string name="exam_ielts">IELTS</string>
     <string name="exam_yokdil">YÖKDİL</string>
     <string name="exam_kpds">KPDS</string>
-    <string name="test_your_knowledge_with_exam">Test your knowledge with %1$s Exam</string>
+    <string name="test_your_knowledge_with_exam">Test your knowledge with the words asked in the %1$s Exam</string>
+    <string name="test_your_knowledge_with_mixed">Test your knowledge with all levels of words</string>
     <string name="quiz_multiple_choice">Multiple Choice</string>
     <string name="quiz_true_false">True/False</string>
     <string name="quiz_matching">Matching</string>
@@ -170,4 +171,10 @@
     <string name="best_category">Best Category</string>
     <string name="worst_category">Worst Category</string>
     <string name="total_words">Total Words</string>
+    <string name="welcome_description_2">
+        Trainvoc is a vocabulary training app that helps you learn new words in a fun way.
+        You can test your knowledge with quizzes, track your progress, and manage your vocabulary
+        effectively.
+    </string>
+    <string name="test_mode_warning">⚠️ The app is still in the testing phase. Some features and buttons may not be active yet.</string>
 </resources>

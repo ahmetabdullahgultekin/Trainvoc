@@ -359,10 +359,10 @@ interface WordDao {
     @Query(
         """
     SELECT
-        SUM(CASE WHEN s.correct_count > s.wrong_count AND s.correct_count > s.skipped_count THEN 1 ELSE 0 END) AS words_with_higher_correct_count
+        COUNT(*) AS learned_word_count
     FROM words w
     JOIN statistics s ON w.stat_id = s.stat_id
-    WHERE w.level = :level
+    WHERE w.level = :level AND s.learned = 1
     """
     )
     suspend fun getLevelUnlockerWordCount(level: String): Int

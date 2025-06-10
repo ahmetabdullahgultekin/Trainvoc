@@ -54,9 +54,7 @@ fun StoryScreen(
             verticalArrangement = Arrangement.spacedBy(40.dp)
         ) {
             items(levels.size) { index ->
-                // First Level is unlocked by default
                 val (level, isUnlocked) = levels.entries.elementAt(index)
-
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -70,6 +68,17 @@ fun StoryScreen(
                         isUnlocked = isUnlocked,
                         onClick = { onLevelSelected(level) }
                     )
+                    if (!isUnlocked) {
+                        Text(
+                            text = "Kilitli - Önceki seviyedeki tüm kelimeleri öğren!",
+                            color = Color.Red,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(top = 8.dp)
+                        )
+                    }
                 }
             }
         }

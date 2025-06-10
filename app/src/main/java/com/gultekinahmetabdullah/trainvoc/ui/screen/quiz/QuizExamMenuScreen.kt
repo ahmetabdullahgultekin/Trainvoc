@@ -1,32 +1,33 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen.main
+package com.gultekinahmetabdullah.trainvoc.ui.screen.quiz
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
@@ -35,8 +36,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.AvailableQuizCategory
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
@@ -117,57 +118,63 @@ fun AnimatedQuizCategoryCard(
         animationSpec = tween(200),
         label = ""
     )
-    val animatedColor by animateColorAsState(
-        targetValue = if (pressed && enabled) color.copy(alpha = 0.95f) else color.copy(alpha = if (enabled) 1f else 0.5f),
-        animationSpec = tween(200),
-        label = ""
-    )
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        tonalElevation = animatedElevation.dp,
-        shadowElevation = animatedElevation.dp,
-        color = animatedColor,
+    val disabledAlpha = 0.45f
+    val disabledColor = color.copy(alpha = disabledAlpha)
+    val cardColor = if (enabled) color else disabledColor
+    val textColor =
+        if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(
+            alpha = 0.5f
+        )
+    val borderColor =
+        if (enabled) Color.Transparent else MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+
+    Card(
         modifier = Modifier
-            .size(150.dp)
             .scale(scale)
-            .clip(RoundedCornerShape(24.dp))
-            .then(
-                if (enabled)
-                    Modifier.clickable(
-                        interactionSource = interactionSource,
-                        indication = null,
-                        onClick = onClick
-                    )
-                else Modifier
-            )
+            .fillMaxWidth()
+            .aspectRatio(1f) // Kartlar kare olacak
+            .padding(vertical = 8.dp)
+            .then(if (!enabled) Modifier.alpha(0.7f) else Modifier),
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(animatedElevation.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        border = if (!enabled) BorderStroke(2.dp, borderColor) else null,
+        enabled = enabled,
+        onClick = onClick,
+        interactionSource = interactionSource
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(18.dp),
+                .padding(20.dp)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally // Tüm içerik ortalı
         ) {
             Text(
                 text = title,
-                fontSize = 22.sp,
+                style = MaterialTheme.typography.titleLarge,
+                color = textColor,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = description,
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onPrimary,
-                maxLines = 3
+                style = MaterialTheme.typography.bodyMedium,
+                color = textColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
             if (!enabled) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(id = R.string.coming_soon),
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
