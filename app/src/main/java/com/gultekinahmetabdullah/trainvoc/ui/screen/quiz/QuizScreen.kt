@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen.main
+package com.gultekinahmetabdullah.trainvoc.ui.screen.quiz
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -7,6 +7,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -129,12 +133,12 @@ fun QuizScreen(quizViewModel: QuizViewModel, onQuit: (() -> Unit)? = null) {
             }
             AnimatedVisibility(
                 visible = showStats && currentStats != null,
-                enter = androidx.compose.animation.expandIn(
+                enter = expandIn(
                     expandFrom = Alignment.TopEnd
-                ) + androidx.compose.animation.fadeIn(),
-                exit = androidx.compose.animation.shrinkOut(
+                ) + fadeIn(),
+                exit = shrinkOut(
                     shrinkTowards = Alignment.TopEnd
-                ) + androidx.compose.animation.fadeOut()
+                ) + fadeOut()
             ) {
                 Surface(
                     modifier = Modifier

@@ -3,10 +3,13 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 import QuizMenuScreen
 import StoryScreen
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -61,10 +64,13 @@ import androidx.navigation.navArgument
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
+import com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordManagementScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.AboutScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.HelpScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.SettingsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.StatsScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizExamMenuScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
@@ -190,87 +196,89 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = Route.HOME,
-            modifier = Modifier.padding(paddingValues)
-        )
-        {
-            composable(Route.HOME) {
-                HomeScreen(
-                    onNavigateToHelp = { navController.navigate(Route.HELP) },
-                    onNavigateToStory = { navController.navigate(Route.STORY) },
-                    onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
-                    onNavigateToStats = { navController.navigate(Route.STATS) },
-                    onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
-                )
-            }
-            composable(Route.STORY) {
-                StoryScreen(
-                    viewModel = storyViewModel,
-                    onLevelSelected = { level ->
-                        navController.navigate(Route.QUIZ_EXAM_MENU)
-                        parameter.value = QuizParameter.Level(level)
-                    },
-                    onBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-            composable(Route.QUIZ_EXAM_MENU) {
-                QuizExamMenuScreen(
-                    onExamSelected = { quizParameter ->
-                        navController.navigate(Route.QUIZ_MENU)
-                        parameter.value = quizParameter
-                    }
-                )
-            }
-            composable(Route.QUIZ_MENU) {
-                QuizMenuScreen(
-                    onQuizSelected = { quiz ->
-                        parameter.value?.let {
-                            quizViewModel.startQuiz(it, quiz)
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Ana içerik
+            NavHost(
+                navController = navController,
+                startDestination = Route.HOME,
+                modifier = Modifier.padding(paddingValues)
+            ) {
+                composable(Route.HOME) {
+                    HomeScreen(
+                        onNavigateToHelp = { navController.navigate(Route.HELP) },
+                        onNavigateToStory = { navController.navigate(Route.STORY) },
+                        onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
+                        onNavigateToStats = { navController.navigate(Route.STATS) },
+                        onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
+                    )
+                }
+                composable(Route.STORY) {
+                    StoryScreen(
+                        viewModel = storyViewModel,
+                        onLevelSelected = { level ->
                             navController.navigate(Route.QUIZ)
+                            parameter.value = QuizParameter.Level(level)
+                        },
+                        onBack = {
+                            navController.popBackStack()
                         }
-                    }
-                )
-            }
-            composable(Route.QUIZ) {
-                QuizScreen(quizViewModel = quizViewModel)
-            }
-            composable(Route.MANAGEMENT) {
-                WordManagementScreen(wordViewModel = wordViewModel)
-            }
-            composable(Route.USERNAME) {
-                UsernameScreen(navController)
-            }
-            composable(Route.SETTINGS) {
-                SettingsScreen(navController, settingsViewModel)
-            }
-            composable(Route.HELP) {
-                HelpScreen()
-            }
-            composable(Route.ABOUT) {
-                AboutScreen()
-            }
-            composable(Route.STATS) {
-                StatsScreen(statsViewModel = statsViewModel)
-            }
-            composable(Route.DICTIONARY) {
-                com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.DictionaryScreen(
-                    navController = navController,
-                    wordViewModel = wordViewModel
-                )
-            }
-            composable(
-                route = Route.WORD_DETAIL,
-                arguments = listOf(navArgument("wordId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val wordId = backStackEntry.arguments?.getString("wordId") ?: ""
-                com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordDetailScreen(
-                    wordId = wordId,
-                    wordViewModel = wordViewModel
-                )
+                    )
+                }
+                composable(Route.QUIZ_EXAM_MENU) {
+                    QuizExamMenuScreen(
+                        onExamSelected = { quizParameter ->
+                            navController.navigate(Route.QUIZ_MENU)
+                            parameter.value = quizParameter
+                        }
+                    )
+                }
+                composable(Route.QUIZ_MENU) {
+                    QuizMenuScreen(
+                        onQuizSelected = { quiz ->
+                            parameter.value?.let {
+                                quizViewModel.startQuiz(it, quiz)
+                                navController.navigate(Route.QUIZ)
+                            }
+                        }
+                    )
+                }
+                composable(Route.QUIZ) {
+                    QuizScreen(quizViewModel = quizViewModel)
+                }
+                composable(Route.MANAGEMENT) {
+                    WordManagementScreen(wordViewModel = wordViewModel)
+                }
+                composable(Route.USERNAME) {
+                    UsernameScreen(navController)
+                }
+                composable(Route.SETTINGS) {
+                    SettingsScreen(navController, settingsViewModel)
+                }
+                composable(Route.HELP) {
+                    HelpScreen()
+                }
+                composable(Route.ABOUT) {
+                    AboutScreen()
+                }
+                composable(Route.STATS) {
+                    StatsScreen(statsViewModel = statsViewModel)
+                }
+                composable(Route.DICTIONARY) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.DictionaryScreen(
+                        navController = navController,
+                        wordViewModel = wordViewModel
+                    )
+                }
+                composable(
+                    route = Route.WORD_DETAIL,
+                    arguments = listOf(navArgument("wordId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val wordId = backStackEntry.arguments?.getString("wordId") ?: ""
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordDetailScreen(
+                        wordId = wordId,
+                        wordViewModel = wordViewModel
+                    )
+                }
             }
         }
     }
@@ -423,6 +431,21 @@ fun CustomBottomSheet(
                 androidx.compose.foundation.lazy.LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.test_mode_warning),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
+                                    shape = MaterialTheme.shapes.medium
+                                )
+                                .padding(12.dp),
+                            fontSize = 18.sp
+                        )
+                    }
                     items(menuItems.size) { index ->
                         val (text, icon, route) = menuItems[index]
                         androidx.compose.material3.ListItem(

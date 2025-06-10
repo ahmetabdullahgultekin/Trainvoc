@@ -48,7 +48,11 @@ sealed class AvailableQuizCategory(
             "Mixed" -> R.string.exam_mixed
             else -> R.string.exam_generic
         },
-        descriptionRes = R.string.test_your_knowledge_with_exam,
+        descriptionRes = if (exam.exam == "Mixed") {
+            R.string.test_your_knowledge_with_mixed
+        } else {
+            R.string.test_your_knowledge_with_exam
+        },
         descriptionArgRes = when (exam.exam) {
             "YDS" -> R.string.exam_yds
             "TOEFL" -> R.string.exam_toefl

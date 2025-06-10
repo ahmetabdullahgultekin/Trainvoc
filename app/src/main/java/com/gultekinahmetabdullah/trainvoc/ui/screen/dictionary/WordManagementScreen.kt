@@ -1,4 +1,4 @@
-package com.gultekinahmetabdullah.trainvoc.ui.screen.main
+package com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

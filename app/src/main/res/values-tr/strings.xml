@@ -90,7 +90,7 @@
     <string name="level_yds">YDS</string>
     <string name="level_mixed">Karışık</string>
     <string name="exam_yds">YDS</string>
-    <string name="exam_mixed">Karışık Sınav</string>
+    <string name="exam_mixed">Karışık</string>
     <string name="exam_generic">%1$s Sınavı</string>
     <string name="quiz_multiple_choice">Çoktan Seçmeli</string>
     <string name="quiz_true_false">Doğru/Yanlış</string>
@@ -108,8 +108,9 @@
     <string name="your_name">Adınız</string>
     <string name="choose_language">Dil Seçin</string>
     <string name="continue_text">Devam Et</string>
-    <string name="test_your_knowledge_with">Bilginizi %1$s ile test edin</string>
-    <string name="test_your_knowledge_with_exam">%1$s Sınavı ile bilginizi test edin</string>
+    <string name="test_your_knowledge_with">Bilginizi %1$s seviyesi kelimeleri ile test edin</string>
+    <string name="test_your_knowledge_with_exam">%1$s Sınavında çıkmış kelimeler ile bilginizi test edin</string>
+    <string name="test_your_knowledge_with_mixed">Tüm seviyelerden karışık kelimeler ile bilginizi test edin</string>
     <string name="quiz_statistics">Test İstatistikleri</string>
     <string name="total_questions">Toplam Soru</string>
     <string name="correct_answers">Doğru Cevaplar</string>
@@ -166,4 +167,10 @@
     <string name="best_category">En İyi Kategori</string>
     <string name="worst_category">En Kötü Kategori</string>
     <string name="total_words">Toplam Kelime Sayısı</string>
+    <string name="welcome_description_2">
+        Trainvoc, kelime bilginizi eğlenceli bir şekilde
+        geliştirmenize yardımcı olan bir uygulamadır. Yeni kelimeler öğrenin, testler yapın ve
+        ilerlemenizi takip edin.
+    </string>
+    <string name="test_mode_warning">"    ⚠️ Uygulama halen test aşamasındadır. Bazı özellikler ve butonlar henüz aktif olmayabilir."</string>
 </resources>
