@@ -35,6 +35,10 @@ class WordViewModel(private val repository: WordRepository) : ViewModel() {
     }
 
     fun filterWords(query: String) {
+        println("Filtering words with query: $query")
+        println(
+            "Current words count: ${_words.value.size}, Filtered words count: ${_filteredWords.value.size}"
+        )
         _filteredWords.value = _words.value
             .map { it.word }
             .filter {
@@ -42,6 +46,7 @@ class WordViewModel(private val repository: WordRepository) : ViewModel() {
                         it.meaning.contains(query, ignoreCase = true)
             }
             .sortedBy { it.word }
+        println("Filtered words count after filtering: ${_filteredWords.value.size}")
     }
 
     // Belirli bir kelimeyi word ile getir

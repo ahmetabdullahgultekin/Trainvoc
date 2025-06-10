@@ -16,7 +16,7 @@ interface StatisticDao {
         """
         INSERT INTO statistics (stat_id, correct_count, wrong_count, skipped_count, learned)
         VALUES (0, 0, 0, 0, 0)
-           """
+        """
     )
     suspend fun insertDefaultStatistic(): Long
 

@@ -128,7 +128,7 @@
     <string name="quiz_matching_desc">Match the correct pairs.</string>
     <string name="quiz_generic_desc">Test your knowledge with %1$s.</string>
     <string name="quit_quiz_title">Quit Quiz?</string>
-    <string name="quit_quiz_message">Are you sure you want to quit? This question will be skipped.</string>
+    <string name="quit_quiz_message">Are you sure you want to quit? This question will be marked as skipped.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="username_prompt">Let us know your name my friend!</string>
@@ -152,15 +152,16 @@
     <string name="notifications_enabled">Notifications enabled</string>
     <string name="notifications_disabled">Notifications disabled</string>
     <string name="unknown_level">Unknown Level</string>
-    <string name="word_stats">Word Statistics History for %1$s</string>
-    <string name="correct">How many times was it answered correctly?</string>
+    <string name="word_stats">Word Statistics History for "%1$s"</string>
+    <string name="correct">How many times was it answered correctly</string>
     <string name="wrong">
-        How many times was it answered incorrectly?
+        How many times was it answered incorrectly
     </string>
     <string name="skipped">
-        How many times was it skipped?
+        How many times was it skipped
     </string>
-    <string name="learned">Is it learned?</string>
+    <string name="learned">You have learned this word before.</string>
+    <string name="not_learned">You have not learned this word yet.</string>
     <string name="coming_soon">Coming Soon!</string>
     <string name="total_quizzes">Total Quizzes</string>
     <string name="avg_time_per_question">Avg. Time per Question</string>
@@ -177,4 +178,12 @@
         effectively.
     </string>
     <string name="test_mode_warning">⚠️ The app is still in the testing phase. Some features and buttons may not be active yet.</string>
+    <string name="level_with_value">Level: %1$s</string>
+    <string name="total_words_with_value">Total Words: %1$s</string>
+    <string name="learned_words_with_value">Learned Words: %1$s</string>
+    <string name="progress_with_value">Progress: %1$s</string>
+    <string name="custom_mode_with_value">Custom Mod: %1$s</string>
+    <string name="exam_with_value">Exam: %1$s</string>
+    <string name="exam_type_with_value">Exam Type: %1$s</string>
+    <string name="locked_level_warning">Locked - Learn all words in the previous level first!</string>
 </resources>

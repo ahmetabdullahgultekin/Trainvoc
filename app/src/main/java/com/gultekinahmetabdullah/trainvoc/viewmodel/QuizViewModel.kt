@@ -66,6 +66,16 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     private val _isUserReady = MutableStateFlow(true)
     val isUserReady: StateFlow<Boolean> = _isUserReady
 
+    // --- Story ve Custom modlar için toplam ve öğrenilen kelime sayısı ---
+    private val _totalWords = MutableStateFlow<Int?>(null)
+    val totalWords: StateFlow<Int?> = _totalWords
+
+    private val _learnedWords = MutableStateFlow<Int?>(null)
+    val learnedWords: StateFlow<Int?> = _learnedWords
+
+    private val _progressPercent = MutableStateFlow<Int?>(null)
+    val progressPercent: StateFlow<Int?> = _progressPercent
+
     /*
     init {
         viewModelScope.launch {
@@ -79,8 +89,6 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
     fun startQuiz(newQuizParameter: QuizParameter, quiz: Quiz) {
 
         try {
-            // Cancel the previous quiz if it is running
-            quizJob?.cancel()
             // If quiz has already started, then do not allow new start
             resetQuiz()
             // Fetch 10 questions from the database until user reaches the end of the list
@@ -163,19 +171,20 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
 
     fun checkAnswer(choice: Word?): Boolean? {
         val currentQuestion = _currentQuestion.value ?: return null
+        val currentStats = _currentWordStats.value ?: return null
         pauseQuiz()
         val secondsSpent = durationConst - _timeLeft.value
         viewModelScope.launch {
-            repository.updateLastAnswered(_currentQuestion.value!!.correctWord.word)
-            repository.updateSecondsSpent(secondsSpent, _currentQuestion.value!!.correctWord)
+            repository.updateLastAnswered(currentQuestion.correctWord.word)
+            repository.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
         }
         if (choice == null) {
             viewModelScope.launch {
                 repository.updateWordStats(
-                    _currentWordStats.value!!.copy(
-                        skippedCount = _currentWordStats.value!!.skippedCount + 1
+                    currentStats.copy(
+                        skippedCount = currentStats.skippedCount + 1
                     ),
-                    _currentQuestion.value!!.correctWord
+                    currentQuestion.correctWord
                 )
             }
             return null
@@ -186,23 +195,21 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
             // Update the entity stats in the database
             viewModelScope.launch {
                 repository.updateWordStats(
-                    _currentWordStats.value!!.copy(
-                        correctCount = _currentWordStats.value!!.correctCount + 1
+                    currentStats.copy(
+                        correctCount = currentStats.correctCount + 1
                     ),
-                    _currentQuestion.value!!.correctWord
+                    currentQuestion.correctWord
                 )
             }
             return true
         } else {
             // Wrong answer
-            _score.value = scoreConst
-            // Update the entity stats in the database
             viewModelScope.launch {
                 repository.updateWordStats(
-                    _currentWordStats.value!!.copy(
-                        wrongCount = _currentWordStats.value!!.wrongCount + 1
+                    currentStats.copy(
+                        wrongCount = currentStats.wrongCount + 1
                     ),
-                    _currentQuestion.value!!.correctWord
+                    currentQuestion.correctWord
                 )
             }
             return false
@@ -235,35 +242,39 @@ class QuizViewModel(private val repository: WordRepository) : ViewModel() {
         _isUserReady.value = false
         _quiz.value = null
         _isQuizFinished.value = true
+        _currentWordStats.value = null
+        _totalWords.value = null
+        _learnedWords.value = null
+        _progressPercent.value = null
+        _isTimeOver.value = false
+        // Cancel the quiz job if it is running
+        quizJob?.cancel()
     }
 
     fun finalizeQuiz() {
-        quizJob?.cancel()
+        // Check answer and send it as null if the user didn't answer
+        checkAnswer(null)
+        // Reset the quiz variables
         resetQuiz()
     }
 
-    fun markCurrentWordAsLearned() {
+    fun collectQuizStats(parameter: QuizParameter) {
         viewModelScope.launch {
-            val stat = _currentWordStats.value ?: return@launch
-            val word = _currentQuestion.value?.correctWord ?: return@launch
-            val wordCount = repository.getWordCountByStatId(stat.statId)
-            if (wordCount == 1) {
-                // Stat sadece bu kelimeye ait, doğrudan işaretle
-                repository.markWordAsLearned(stat.statId.toLong())
-            } else {
-                // Aynı değerlere sahip ve learned=true olan bir stat var mı?
-                val learnedStat = repository.getLearnedStatisticByValues(
-                    stat.correctCount, stat.wrongCount, stat.skippedCount
-                )
-                if (learnedStat != null) {
-                    // StatId'yi ona güncelle
-                    repository.updateWordStatId(learnedStat.statId, word.word)
-                } else {
-                    // Yeni bir stat oluştur ve statId'yi ona güncelle
-                    val newStatId = repository.insertStatistic(
-                        stat.copy(statId = 0, learned = true)
-                    ).toInt()
-                    repository.updateWordStatId(newStatId, word.word)
+            when (parameter) {
+                is QuizParameter.Level -> {
+                    val total = repository.getWordCountByLevel(parameter.wordLevel.name)
+                    val learned = repository.getLearnedWordCount(parameter.wordLevel.name)
+                    _totalWords.value = total
+                    _learnedWords.value = learned
+                    _progressPercent.value = if (total > 0) (learned * 100 / total) else 0
+                }
+
+                is QuizParameter.ExamType -> {
+                    val total = repository.getWordCountByExam(parameter.exam.exam)
+                    val learned = repository.getLearnedWordCountByExam(parameter.exam.exam)
+                    _totalWords.value = total
+                    _learnedWords.value = learned
+                    _progressPercent.value = if (total > 0) (learned * 100 / total) else 0
                 }
             }
         }

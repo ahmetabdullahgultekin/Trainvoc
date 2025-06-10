@@ -92,6 +92,41 @@ interface WordDao {
      *
      */
 
+    // Get a random five words which are not learned yet
+    @Query(
+        """
+        SELECT * FROM words
+        WHERE stat_id IN (SELECT stat_id FROM statistics)
+        ORDER BY (SELECT learned FROM statistics WHERE stat_id = words.stat_id) ASC, RANDOM()
+        LIMIT 5
+        """
+    )
+    suspend fun getRandomFiveNotLearnedWords(): List<Word>
+
+    // overload the function to get random not learned words with a specific level
+    @Query(
+        """
+        SELECT * FROM words
+        WHERE level = :level AND stat_id IN (SELECT stat_id FROM statistics)
+        ORDER BY (SELECT learned FROM statistics WHERE stat_id = words.stat_id) ASC, RANDOM()
+        LIMIT 5
+        """
+    )
+    suspend fun getRandomFiveNotLearnedWordsByLevel(level: String): List<Word>
+
+    // overload the function to get random not learned words with a specific exam
+    @Query(
+        """
+        SELECT words.* FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        WHERE exams.exam = :exam
+        ORDER BY (SELECT learned FROM statistics WHERE stat_id = words.stat_id) ASC, RANDOM()
+        LIMIT 5
+        """
+    )
+    suspend fun getRandomFiveNotLearnedWordsByExam(exam: String): List<Word>
+
     // Order the words by the number of correct answers in ascending order and return random 5 words
     @Query(
         """
@@ -491,4 +526,27 @@ interface WordDao {
     """
     )
     suspend fun getBestCategory(): String?
+
+    // Belirli bir sınava ait toplam kelime sayısı
+    @Query(
+        """
+        SELECT COUNT(*) FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        WHERE exams.exam = :exam
+        """
+    )
+    suspend fun getWordCountByExam(exam: String): Int
+
+    // Belirli bir sınava ait öğrenilen kelime sayısı
+    @Query(
+        """
+        SELECT COUNT(*) FROM words
+        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN exams ON word_exam_cross_ref.exam = exams.exam
+        JOIN statistics ON words.stat_id = statistics.stat_id
+        WHERE exams.exam = :exam AND statistics.learned = 1
+        """
+    )
+    suspend fun getLearnedWordCountByExam(exam: String): Int
 }

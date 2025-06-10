@@ -30,8 +30,6 @@ abstract class AppDatabase : RoomDatabase() {
 
         private var instance: AppDatabase? = null
 
-        /*private val scope = kotlinx.coroutines.CoroutineScope(Dispatchers.IO)*/
-
         fun getInstance(context: Context): AppDatabase {
             if (instance == null) {
                 synchronized(AppDatabase::class) {
@@ -39,11 +37,12 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
 
-            /* Populate Database
-            * Uncomment the following code to populate the database with words from the animations file
-            */
+            /**
+             * Populate Database
+             * Uncomment the following code to populate the database with words from the animations file
+             */
 
-            /*scope.launch(Dispatchers.IO) {
+            /*kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
                 populateDatabase(context, instance!!.wordDao())
             }*/
 
@@ -54,8 +53,8 @@ abstract class AppDatabase : RoomDatabase() {
             context.applicationContext,
             AppDatabase::class.java,
             DATABASE_NAME
-            /*
-            Uncomment the following line to create the database in memory
+            /**
+             * Uncomment the following line to create the database in memory
              */
         )
             .createFromAsset("database/trainvoc-db.db")
@@ -67,6 +66,7 @@ abstract class AppDatabase : RoomDatabase() {
          * Uncomment the following code to populate the database with words from the animations file
          *
          */
+
         /*private suspend fun populateDatabase(context: Context, wordDao: WordDao) {
 
             try {
@@ -122,9 +122,11 @@ abstract class AppDatabase : RoomDatabase() {
                 }
                 allWords.addAll(
                     words.map {
+                        val standardizedWord = standardizeWord(it.word)
+                        val standardizedMeaning = standardizeMeaning(it.meaning)
                         Word(
-                            word = it.word,
-                            meaning = it.meaning,
+                            word = standardizedWord,
+                            meaning = standardizedMeaning,
                             // examOrLevel is a
                             // level: A! -> Beginner, A2 -> Elementary, B1 -> Intermediate,
                             // B2 -> Upper Intermediate, C1 -> Advanced, C2 -> Proficiency
@@ -165,15 +167,35 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private suspend fun fillStatisticTable(statisticDao: StatisticDao) {
-            val statistic = Statistic(
-                statId = 0,
-                correctCount = 0,
-                wrongCount = 0,
-                skippedCount = 0,
-            )
             statisticDao.insertDefaultStatistic()
-        }*/
+        }
 
+        // İngilizce kelimeler için standardizasyon
+        private fun standardizeWord(text: String): String {
+            val englishLocale = java.util.Locale.ENGLISH
+            return if (text.all { it.isUpperCase() }) {
+                // Tamamen büyük harfse olduğu gibi bırak
+                text
+            } else {
+                // Karışık ise standardize et
+                // Türkçe büyük İ harfini küçük 'i' yap, büyük I harfini küçük 'i' yap
+                val fixed = text.replace('İ', 'I').replace('ı', 'i')
+                fixed.lowercase(englishLocale).replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(englishLocale) else it.toString()
+                }
+            }
+        }
+
+        // Türkçe anlamlar için standardizasyon
+        private fun standardizeMeaning(text: String): String {
+            val turkishLocale = java.util.Locale.forLanguageTag("tr-TR")
+            return if (text.all { it.isUpperCase() }) {
+                // Tamamen büyük harfse olduğu gibi bırak
+                text
+            } else {
+                // Karışık ise standardize et
+                text.lowercase(turkishLocale).replaceFirstChar { it.titlecase(turkishLocale) }
+            }
+        }*/
     }
 }
-
