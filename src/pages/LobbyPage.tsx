@@ -7,13 +7,7 @@ import Modal from '../components/shared/Modal';
 import FullscreenButton from '../components/shared/FullscreenButton';
 import useProfile, {avatarList} from '../components/shared/useProfile';
 import {hashPassword} from '../components/shared/hashPassword';
-
-interface LobbyData {
-    players: Player[];
-    hostId: string;
-    roomCode: string;
-    gameStarted: boolean;
-}
+import type {LobbyData, Player} from '../interfaces/game';
 
 const LobbyPage: React.FC = () => {
     const navigate = useNavigate();
@@ -30,7 +24,7 @@ const LobbyPage: React.FC = () => {
     const roomCode = params.get('roomCode');
     const playerId = params.get('playerId');
     // player objesi tamamen kaldırıldı, sadece useProfile global olarak kullanılacak
-    const {nick, avatar} = useProfile();
+    useProfile();
 
     useEffect(() => {
         // Tam ekrandan çıkılırsa artık lobiyi dağıtma, sadece host çıkarsa dağıt
@@ -107,8 +101,8 @@ const LobbyPage: React.FC = () => {
         else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
         else if ((document as any).msExitFullscreen) (document as any).msExitFullscreen();
         try {
-            let hash = hashedPassword;
-            if (!hash && roomPassword) hash = await hashPassword(roomPassword);
+            let hash = '';
+            if (roomPassword) hash = await hashPassword(roomPassword);
             await api.post(`/api/game/rooms/${roomCode}/disband` + (hash ? `?hashedPassword=${hash}` : ''));
             navigate('/play');
         } catch (e) {
@@ -225,6 +219,17 @@ const LobbyPage: React.FC = () => {
                                 Hazır mısın? Oyun birazdan başlıyor!
                             </Typography>
                         </Box>
+                        <Box mb={2}>
+                            <Typography variant="h6" fontWeight={700} sx={{color: '#1976d2', mb: 1}}>
+                                Oda Ayarları
+                            </Typography>
+                            <Box component="ul" sx={{pl: 3, mb: 2, fontSize: 15, color: '#333'}}>
+                                <li>Soru Süresi: <b>{lobby.questionDuration ?? '-'}</b> sn</li>
+                                <li>Toplam Soru: <b>{lobby.totalQuestionCount ?? '-'}</b></li>
+                                <li>Şık Sayısı: <b>{lobby.optionCount ?? '-'}</b></li>
+                                <li>Seviye: <b>{lobby.level ?? '-'}</b></li>
+                            </Box>
+                        </Box>
                         <style>
                             {`
                         @keyframes spin {
@@ -238,34 +243,37 @@ const LobbyPage: React.FC = () => {
                         `}
                         </style>
                         <Grid container spacing={2} justifyContent="center" mb={3}>
-                            {players.map(player => (
-                                <Grid key={player.id}>
-                                    <Paper elevation={2} sx={{
-                                        p: 2,
-                                        borderRadius: 2,
-                                        minWidth: 100,
-                                        textAlign: 'center',
-                                        background: player.isHost ? '#fffde7' : '#e3f2fd'
-                                    }}>
-                                        <Avatar sx={{
-                                            bgcolor: player.isHost ? '#ffd600' : '#1976d2',
-                                            mx: 'auto',
-                                            mb: 1,
-                                            width: 56,
-                                            height: 56,
-                                            fontSize: 36
+                            {players.map((player) => {
+                                const isHost = player.id === lobby.hostId;
+                                return (
+                                    <Grid key={player.id}>
+                                        <Paper elevation={2} sx={{
+                                            p: 2,
+                                            borderRadius: 2,
+                                            minWidth: 100,
+                                            textAlign: 'center',
+                                            background: isHost ? '#fffde7' : '#e3f2fd'
                                         }}>
-                                            {typeof (player as any).avatarId === 'number' || !isNaN(Number((player as any).avatarId))
-                                                ? avatarList[Number((player as any).avatarId) % avatarList.length]
-                                                : avatarList[Math.floor(Math.random() * avatarList.length)]}
-                                        </Avatar>
-                                        <Typography fontWeight={600}>
-                                            {player.name} {player.isHost &&
-                                            <span style={{color: '#ff9800', fontWeight: 700}}>(host)</span>}
-                                        </Typography>
-                                    </Paper>
-                                </Grid>
-                            ))}
+                                            <Avatar sx={{
+                                                bgcolor: isHost ? '#ffd600' : '#1976d2',
+                                                mx: 'auto',
+                                                mb: 1,
+                                                width: 56,
+                                                height: 56,
+                                                fontSize: 36
+                                            }}>
+                                                {typeof (player as any).avatarId === 'number' || !isNaN(Number((player as any).avatarId))
+                                                    ? avatarList[Number((player as any).avatarId) % avatarList.length]
+                                                    : avatarList[Math.floor(Math.random() * avatarList.length)]}
+                                            </Avatar>
+                                            <Typography fontWeight={600}>
+                                                {player.name} {isHost &&
+                                                <span style={{color: '#ff9800', fontWeight: 700}}>(host)</span>}
+                                            </Typography>
+                                        </Paper>
+                                    </Grid>
+                                );
+                            })}
                         </Grid>
                         {isHost ? (
                             <>

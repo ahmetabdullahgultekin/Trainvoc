@@ -22,3 +22,14 @@ export interface GameRoom {
     level: string;
     totalQuestionCount: number;
 }
+
+export interface LobbyData {
+    players: Player[];
+    hostId: string;
+    roomCode: string;
+    gameStarted: boolean;
+    questionDuration: number;
+    optionCount: number;
+    level: string;
+    totalQuestionCount: number;
+}

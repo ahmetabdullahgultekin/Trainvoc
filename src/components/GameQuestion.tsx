@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Box, Button, LinearProgress, Typography} from '@mui/material';
 
 interface GameQuestionProps {
     question: string;
     options: string[];
     onAnswer: (answer: string, answerTime: number) => void;
-    timeLimit: number;
+    timeLimit: number; // toplam süre (sabit)
+    timeLeft: number; // kalan süre (her tick değişir)
     answered?: boolean;
     correctMeaning?: string;
     selectedAnswer?: string | null;
@@ -16,29 +17,61 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
                                                        options,
                                                        onAnswer,
                                                        timeLimit,
+                                                       timeLeft: initialTimeLeft,
                                                        answered,
                                                        correctMeaning,
                                                        selectedAnswer
                                                    }) => {
     const [selected, setSelected] = useState<string | null>(selectedAnswer ?? null);
-    const [timeLeft, setTimeLeft] = useState(timeLimit);
+    // Local sayaç (frontend'de akıcı geri sayım ve bar için)
+    const [localTimeLeft, setLocalTimeLeft] = useState<number>(initialTimeLeft);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    React.useEffect(() => {
-        if (selected !== null || timeLeft === 0) return;
-        const timer = setTimeout(() => setTimeLeft(t => t - 1), 1000);
-        return () => clearTimeout(timer);
-    }, [timeLeft, selected]);
+    // Progress bar ve sayaç sadece ilk renderda başlasın, backend'den gelen timeLeft değiştikçe sıfırlansın
+    useEffect(() => {
+        setLocalTimeLeft(initialTimeLeft);
+    }, [initialTimeLeft]);
 
-    React.useEffect(() => {
-        if (timeLeft === 0 && selected === null) {
+    // Sayaç başlatıcı ve durdurucu
+    useEffect(() => {
+        if (answered || selected !== null) return;
+        setLocalTimeLeft(initialTimeLeft); // Her yeni soru veya timeLeft değişiminde sıfırla
+        if (timerRef.current) clearInterval(timerRef.current);
+        let last = Date.now();
+        timerRef.current = setInterval(() => {
+            setLocalTimeLeft(prev => {
+                const now = Date.now();
+                const elapsed = (now - last) / 1000;
+                last = now;
+                const next = prev - elapsed;
+                console.log('ProgressBar Debug', {prev, now, elapsed, next, initialTimeLeft});
+                if (next <= 0) {
+                    clearInterval(timerRef.current!);
+                    return 0;
+                }
+                return next;
+            });
+        }, 50);
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [initialTimeLeft, answered, selected]);
+
+    // Süre bitince otomatik cevap
+    useEffect(() => {
+        if (localTimeLeft <= 0 && selected === null && !answered) {
             onAnswer('', timeLimit);
         }
-    }, [timeLeft, selected, onAnswer]);
+    }, [localTimeLeft, selected, answered, onAnswer, timeLimit]);
+
+    // localTimeLeft doğrudan progress bar için kullanılacak
+    const progressValue = Math.max(0, Math.min(100, (localTimeLeft / timeLimit) * 100));
 
     const handleSelect = (opt: string) => {
         if (selected !== null) return;
         setSelected(opt);
-        const usedTime = timeLimit - timeLeft;
+        if (timerRef.current) clearInterval(timerRef.current);
+        const usedTime = timeLimit - localTimeLeft;
         onAnswer(opt, usedTime);
     };
 
@@ -47,7 +80,10 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
             <Typography variant="h5" fontWeight={700} mb={2} color="#222">
                 {question}
             </Typography>
-            <LinearProgress variant="determinate" value={(timeLeft / timeLimit) * 100} sx={{mb: 3}}/>
+            <LinearProgress variant="determinate" value={progressValue} sx={{mb: 3, transition: 'width 0.1s linear'}}/>
+            <Typography variant="body2" color="#888" mb={2} textAlign="right">
+                {Math.ceil(localTimeLeft)} sn
+            </Typography>
             {options.map(opt => {
                 let btnColor = 'primary';
                 let btnBg = '#fff';
@@ -90,15 +126,19 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
                             borderColor: btnColor === 'error' ? '#e53935' : btnColor === 'success' ? '#4caf50' : '#eee',
                             transition: 'all 0.3s',
                         }}
-                        onClick={() => handleSelect(opt)}
-                        disabled={(!answered && (selected !== null || timeLeft === 0))}
+                        onClick={() => {
+                            if (!answered && selected === null && localTimeLeft > 0) {
+                                handleSelect(opt);
+                            }
+                        }}
+                        disabled={(!answered && (selected !== null || localTimeLeft === 0))}
                     >
                         {opt}
                     </Button>
                 );
             })}
             <Typography mt={2} color="#1976d2" fontWeight={700} fontSize={20} textAlign="center">
-                Kalan süre: {timeLeft} sn
+                Kalan süre: {Math.ceil(localTimeLeft)} sn
             </Typography>
         </Box>
     );
