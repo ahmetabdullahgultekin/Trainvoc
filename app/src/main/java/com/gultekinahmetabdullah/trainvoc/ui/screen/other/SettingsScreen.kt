@@ -209,6 +209,29 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             )
         }
 
+        // Backup & Sync Section
+        Text(
+            text = "Backup & Sync",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        // Backup & Sync button
+        Button(
+            onClick = {
+                haptic.click()
+                navController.navigate(Route.BACKUP)
+            },
+            shape = RoundedCornerShape(CornerRadius.medium),
+            modifier = Modifier
+                .fillMaxWidth()
+                .pressClickable { }
+        ) {
+            Text("Backup & Restore")
+        }
+
+        Spacer(modifier = Modifier.height(Spacing.small))
+
         // Language Selection - All 6 supported languages
         val languageOptions = listOf(
             LanguagePreference.ENGLISH,
