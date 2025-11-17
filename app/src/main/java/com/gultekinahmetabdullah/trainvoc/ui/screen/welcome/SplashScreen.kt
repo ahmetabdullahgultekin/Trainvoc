@@ -31,6 +31,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import kotlinx.coroutines.delay
 
 @Composable
@@ -106,7 +107,7 @@ fun SplashAnimatedBackground(
         ), label = "spiralAngle"
     )
     val color1 by infiniteTransition.animateColor(
-        initialValue = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
+        initialValue = MaterialTheme.colorScheme.primary.copy(alpha = Alpha.surfaceMedium),
         targetValue = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.22f),
         animationSpec = infiniteRepeatable(
             animation = tween(duration, easing = FastOutSlowInEasing),
@@ -137,8 +138,8 @@ fun SplashAnimatedBackground(
             for (i in 0 until spiralCount) {
                 val spiralColor = when (i) {
                     0 -> color1.copy(alpha = 0.25f)
-                    1 -> color2.copy(alpha = 0.18f)
-                    else -> color1.copy(alpha = 0.12f)
+                    1 -> color2.copy(alpha = Alpha.surfaceMedium)
+                    else -> color1.copy(alpha = Alpha.surfaceLight)
                 }
                 val spiralAngle = angle + i * 120f
                 drawSpiral(
