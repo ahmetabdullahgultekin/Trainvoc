@@ -101,7 +101,7 @@ class DataImporter(
             }
 
             // Verify checksum if requested
-            if (validateChecksum && backupData.metadata != null) {
+            if (validateChecksum) {
                 val calculatedChecksum = calculateChecksum(backupData.words, backupData.statistics)
                 if (calculatedChecksum != backupData.metadata.checksum) {
                     return@withContext RestoreResult.Failure(
@@ -337,11 +337,9 @@ class DataImporter(
                     }
 
                     // Verify checksum
-                    if (backupData.metadata != null) {
-                        val calculatedChecksum = calculateChecksum(backupData.words, backupData.statistics)
-                        if (calculatedChecksum != backupData.metadata.checksum) {
-                            return@withContext ValidationResult.Invalid("Checksum verification failed")
-                        }
+                    val calculatedChecksum = calculateChecksum(backupData.words, backupData.statistics)
+                    if (calculatedChecksum != backupData.metadata.checksum) {
+                        return@withContext ValidationResult.Invalid("Checksum verification failed")
                     }
 
                     ValidationResult.Valid(
