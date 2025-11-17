@@ -1,7 +1,9 @@
 package com.gultekinahmetabdullah.trainvoc.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -31,6 +33,19 @@ private val LightColorScheme = lightColorScheme(
     error = Error,
 )
 
+/**
+ * Material Design 3 Shape System
+ * Centralized shape definitions using CornerRadius tokens from Dimensions.kt
+ * Provides consistent rounded corners throughout the application.
+ */
+private val AppShapes = Shapes(
+    extraSmall = RoundedCornerShape(CornerRadius.extraSmall),  // 4dp
+    small = RoundedCornerShape(CornerRadius.small),            // 8dp
+    medium = RoundedCornerShape(CornerRadius.medium),          // 12dp
+    large = RoundedCornerShape(CornerRadius.large),            // 16dp
+    extraLarge = RoundedCornerShape(CornerRadius.extraLarge)   // 24dp
+)
+
 @Composable
 fun TrainvocTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -51,6 +66,7 @@ fun TrainvocTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = AppShapes,
         content = content
     )
 }

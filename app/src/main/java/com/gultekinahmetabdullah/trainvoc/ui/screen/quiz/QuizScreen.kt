@@ -190,7 +190,7 @@ fun QuizScreen(
                         CircularProgressIndicator()
                         Text(
                             text = stringResource(id = R.string.loading_questions),
-                            fontSize = 18.sp
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     } else {
                         val currentQuestion = question!!
@@ -239,7 +239,7 @@ fun QuizScreen(
                         ) {
                             Text(
                                 text = stringResource(id = R.string.next_question),
-                                fontSize = 18.sp
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                     }

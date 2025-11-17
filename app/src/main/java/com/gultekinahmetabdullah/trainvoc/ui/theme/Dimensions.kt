@@ -81,3 +81,17 @@ object AnimationDuration {
     const val backgroundSlow = 40000  // Slow background gradient animation
     const val backgroundOffset = 12000 // Offset for secondary background gradient
 }
+
+/**
+ * Elevation tokens for consistent shadow/depth throughout the application.
+ * Following Material Design 3 elevation scale.
+ */
+object Elevation {
+    val none: Dp = 0.dp
+    val extraLow: Dp = 1.dp
+    val low: Dp = 2.dp
+    val medium: Dp = 4.dp
+    val high: Dp = 8.dp
+    val veryHigh: Dp = 12.dp
+    val extreme: Dp = 16.dp
+}
