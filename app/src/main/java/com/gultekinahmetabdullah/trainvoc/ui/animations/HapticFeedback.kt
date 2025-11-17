@@ -54,6 +54,7 @@ class HapticPerformer(private val view: View) {
      * @param type The type of haptic feedback to perform
      * @param flags Optional flags for haptic feedback
      */
+    @Suppress("DEPRECATION")
     fun perform(
         type: HapticFeedbackType,
         flags: Int = HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
@@ -127,6 +128,7 @@ fun rememberHapticPerformer(): HapticPerformer {
  * Extension function for easy haptic feedback
  * Usage: view.hapticClick()
  */
+@Suppress("DEPRECATION")
 fun View.hapticClick() {
     performHapticFeedback(
         HapticFeedbackConstants.VIRTUAL_KEY,
@@ -137,6 +139,7 @@ fun View.hapticClick() {
 /**
  * Extension function for long press haptic feedback
  */
+@Suppress("DEPRECATION")
 fun View.hapticLongPress() {
     performHapticFeedback(
         HapticFeedbackConstants.LONG_PRESS,

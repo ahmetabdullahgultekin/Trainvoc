@@ -205,6 +205,7 @@ object CommonContentDescriptions {
 fun Context.announceForAccessibility(message: String) {
     val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as? AccessibilityManager
     if (am?.isEnabled == true) {
+        @Suppress("DEPRECATION")
         val event = android.view.accessibility.AccessibilityEvent.obtain()
         event.eventType = android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT
         event.text.add(message)
