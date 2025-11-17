@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class StatsViewModel @Inject constructor(
     }
 
     fun fillStats() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _correctAnswers.value = repository.getCorrectAnswers()
             _incorrectAnswers.value = repository.getWrongAnswers()
             _skippedQuestions.value = repository.getSkippedAnswers()
