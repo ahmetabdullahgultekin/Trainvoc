@@ -1,12 +1,39 @@
 package com.gultekinahmetabdullah.trainvoc.ui.backup
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.CloudDone
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.CloudQueue
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -15,7 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.sync.SyncState
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * Sync Status Card
@@ -34,12 +62,15 @@ fun SyncStatusCard(
             is SyncState.Synced -> CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer
             )
+
             is SyncState.Error -> CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             )
+
             is SyncState.ConflictDetected -> CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             )
+
             else -> CardDefaults.cardColors()
         }
     ) {
@@ -118,6 +149,7 @@ fun SyncStateIcon(syncState: SyncState) {
                 modifier = Modifier.size(32.dp)
             )
         }
+
         is SyncState.Syncing,
         is SyncState.Uploading,
         is SyncState.Downloading -> {
@@ -142,6 +174,7 @@ fun SyncStateIcon(syncState: SyncState) {
                     .rotate(rotation)
             )
         }
+
         is SyncState.Synced -> {
             Icon(
                 Icons.Default.CloudDone,
@@ -150,6 +183,7 @@ fun SyncStateIcon(syncState: SyncState) {
                 modifier = Modifier.size(32.dp)
             )
         }
+
         is SyncState.Error -> {
             Icon(
                 Icons.Default.CloudOff,
@@ -158,6 +192,7 @@ fun SyncStateIcon(syncState: SyncState) {
                 modifier = Modifier.size(32.dp)
             )
         }
+
         is SyncState.ConflictDetected -> {
             Icon(
                 Icons.Default.Warning,

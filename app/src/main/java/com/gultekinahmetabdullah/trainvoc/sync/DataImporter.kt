@@ -5,15 +5,13 @@ import androidx.room.withTransaction
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
-import com.gultekinahmetabdullah.trainvoc.BuildConfig
-import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileNotFoundException
 import java.security.MessageDigest
 
 /**
@@ -96,7 +94,7 @@ class DataImporter(
             if (backupData.version > BackupData.CURRENT_BACKUP_VERSION) {
                 return@withContext RestoreResult.Failure(
                     "Backup version ${backupData.version} is newer than app version. " +
-                    "Please update the app to restore this backup."
+                            "Please update the app to restore this backup."
                 )
             }
 
@@ -136,6 +134,7 @@ class DataImporter(
                         backupData = backupData
                     )
                 }
+
                 else -> {
                     // Resolve conflicts and import
                     val resolvedData = resolveConflicts(
@@ -337,7 +336,8 @@ class DataImporter(
                     }
 
                     // Verify checksum
-                    val calculatedChecksum = calculateChecksum(backupData.words, backupData.statistics)
+                    val calculatedChecksum =
+                        calculateChecksum(backupData.words, backupData.statistics)
                     if (calculatedChecksum != backupData.metadata.checksum) {
                         return@withContext ValidationResult.Invalid("Checksum verification failed")
                     }
@@ -348,6 +348,7 @@ class DataImporter(
                         version = backupData.version
                     )
                 }
+
                 "csv" -> {
                     // Basic CSV validation
                     val lines = file.readLines()
@@ -365,6 +366,7 @@ class DataImporter(
                         version = 1
                     )
                 }
+
                 else -> ValidationResult.Invalid("Unsupported file format: ${file.extension}")
             }
         } catch (e: Exception) {
@@ -388,7 +390,8 @@ class DataImporter(
             val existingWord = existingWords.find { it.word == backupWord.word }
             if (existingWord != null) {
                 if (existingWord.meaning != backupWord.meaning ||
-                    existingWord.level?.name != backupWord.level) {
+                    existingWord.level?.name != backupWord.level
+                ) {
                     conflicts.add(
                         DataConflict.WordConflict(
                             word = backupWord.word,
@@ -423,6 +426,7 @@ class DataImporter(
                 resolvedWords.addAll(backupWords)
                 resolvedStatistics.addAll(backupStatistics)
             }
+
             ConflictStrategy.MERGE_PREFER_LOCAL -> {
                 // Keep local version for conflicts, add new items
                 val existingWordTexts = existingWords.map { it.word }.toSet()
@@ -446,6 +450,7 @@ class DataImporter(
                     }
                 }
             }
+
             ConflictStrategy.MERGE_PREFER_REMOTE -> {
                 // Use remote version for conflicts, keep local-only items
                 val backupWordTexts = backupWords.map { it.word }.toSet()
@@ -469,9 +474,11 @@ class DataImporter(
                     }
                 }
             }
+
             ConflictStrategy.MERGE_SMART -> {
                 // Smart merge: prefer most recent or most complete data
-                val allWordTexts = (existingWords.map { it.word } + backupWords.map { it.word }).toSet()
+                val allWordTexts =
+                    (existingWords.map { it.word } + backupWords.map { it.word }).toSet()
 
                 allWordTexts.forEach { wordText ->
                     val localWord = existingWords.find { it.word == wordText }
@@ -481,28 +488,34 @@ class DataImporter(
                         localWord == null && remoteWord != null -> {
                             // Only in backup, use backup version
                             resolvedWords.add(remoteWord)
-                            val remoteStat = backupStatistics.find { it.statId == remoteWord.statId }
+                            val remoteStat =
+                                backupStatistics.find { it.statId == remoteWord.statId }
                             if (remoteStat != null) {
                                 resolvedStatistics.add(remoteStat)
                             }
                         }
+
                         localWord != null && remoteWord == null -> {
                             // Only in local, use local version
                             resolvedWords.add(WordBackup.fromWord(localWord))
-                            val localStat = existingStatistics.find { it.statId == localWord.statId }
+                            val localStat =
+                                existingStatistics.find { it.statId == localWord.statId }
                             if (localStat != null) {
                                 resolvedStatistics.add(StatisticBackup.fromStatistic(localStat))
                             }
                         }
+
                         localWord != null && remoteWord != null -> {
                             // In both, smart merge
-                            val localStat = existingStatistics.find { it.statId == localWord.statId }
-                            val remoteStat = backupStatistics.find { it.statId == remoteWord.statId }
+                            val localStat =
+                                existingStatistics.find { it.statId == localWord.statId }
+                            val remoteStat =
+                                backupStatistics.find { it.statId == remoteWord.statId }
 
                             // Prefer version with more learning progress
                             val useRemote = if (localStat != null && remoteStat != null) {
                                 remoteStat.correctCount + remoteStat.wrongCount >
-                                localStat.correctCount + localStat.wrongCount
+                                        localStat.correctCount + localStat.wrongCount
                             } else {
                                 remoteStat != null
                             }
@@ -522,6 +535,7 @@ class DataImporter(
                     }
                 }
             }
+
             ConflictStrategy.FAIL_ON_CONFLICT -> {
                 // Should not reach here, handled earlier
                 throw IllegalStateException("FAIL_ON_CONFLICT should be handled before resolution")
@@ -587,7 +601,10 @@ class DataImporter(
     /**
      * Calculate checksum for data integrity verification
      */
-    private fun calculateChecksum(words: List<WordBackup>, statistics: List<StatisticBackup>): String {
+    private fun calculateChecksum(
+        words: List<WordBackup>,
+        statistics: List<StatisticBackup>
+    ): String {
         val data = words.joinToString { it.word } + statistics.joinToString { it.statId.toString() }
         val digest = MessageDigest.getInstance("MD5")
         val hashBytes = digest.digest(data.toByteArray())

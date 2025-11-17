@@ -32,12 +32,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationScheduler
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.MainScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.SplashScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
@@ -48,11 +46,7 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
-import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
-import com.gultekinahmetabdullah.trainvoc.notification.NotificationScheduler
-import com.gultekinahmetabdullah.trainvoc.worker.WordNotificationWorker
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

@@ -5,15 +5,18 @@ Comprehensive performance optimization utilities for Trainvoc app.
 ## 📦 Package Contents
 
 ### 1. **PerformanceMonitor.kt**
+
 Real-time performance monitoring and metrics tracking.
 
 **Features:**
+
 - Execution time tracking
 - Database query performance monitoring
 - Memory usage logging
 - Performance summary reports
 
 **Usage:**
+
 ```kotlin
 // Track method execution time
 val words = PerformanceMonitor.measureTime("fetchWords") {
@@ -31,6 +34,7 @@ PerformanceMonitor.printSummary()
 ```
 
 **Extension Functions:**
+
 ```kotlin
 // Simple timing
 val result = timeIt("operationName") {
@@ -44,15 +48,18 @@ val result = timeItSuspend("asyncOperation") {
 ```
 
 ### 2. **MemoryLeakPrevention.kt**
+
 Utilities and patterns to prevent common memory leaks.
 
 **Features:**
+
 - Lifecycle-aware coroutine scopes
 - Automatic resource cleanup
 - Memory usage monitoring
 - Leak-safe listener wrappers
 
 **Usage:**
+
 ```kotlin
 @Composable
 fun MyScreen(viewModel: MyViewModel) {
@@ -74,6 +81,7 @@ fun MyScreen(viewModel: MyViewModel) {
 ```
 
 **Memory Management:**
+
 ```kotlin
 // Check if memory is low
 if (MemoryManager.isLowMemory()) {
@@ -89,15 +97,18 @@ MemoryManager.suggestGcIfNeeded()
 ```
 
 ### 3. **DatabaseOptimization.kt**
+
 Best practices and utilities for Room database optimization.
 
 **Features:**
+
 - Batch insert optimization
 - Query performance monitoring
 - Database optimization checklist
 - Migration best practices
 
 **Usage:**
+
 ```kotlin
 // Batch insert with transaction (10-100x faster)
 batchInsert(database) {
@@ -111,6 +122,7 @@ DatabasePerformanceChecklist.monitorQuery("getWords", durationMs = 45)
 ```
 
 **Optimization Checklist:**
+
 - ✅ Indices on frequently queried columns
 - ✅ Transactions for batch operations
 - ✅ Flow for reactive queries
@@ -119,9 +131,11 @@ DatabasePerformanceChecklist.monitorQuery("getWords", durationMs = 45)
 - ✅ Optimized JOIN queries
 
 ### 4. **StartupOptimization.kt**
+
 App startup optimization strategies and utilities.
 
 **Features:**
+
 - Lazy initialization
 - Background initialization
 - Parallel initialization
@@ -129,6 +143,7 @@ App startup optimization strategies and utilities.
 - WorkManager optimization
 
 **Usage:**
+
 ```kotlin
 class TrainvocApplication : Application() {
     override fun onCreate() {
@@ -152,6 +167,7 @@ class TrainvocApplication : Application() {
 ```
 
 **Parallel Initialization:**
+
 ```kotlin
 StartupOptimizer.initInParallel(
     { initDatabase() },
@@ -163,22 +179,26 @@ StartupOptimizer.initInParallel(
 ## 🎯 Performance Targets
 
 ### App Startup
+
 - **Cold start**: < 1 second (target: < 400ms)
 - **Warm start**: < 200ms (target: < 100ms)
 - **Application.onCreate()**: < 50ms
 - **Activity creation**: < 150ms
 
 ### Database Queries
+
 - **Simple SELECT**: < 10ms
 - **JOIN queries**: < 50ms
 - **Bulk INSERT (100 items)**: < 100ms
 
 ### Memory Usage
+
 - **Idle memory**: < 50MB
 - **Active use**: < 150MB
 - **Peak memory**: < 200MB
 
 ### UI Performance
+
 - **Frame rate**: 60 FPS (16.67ms per frame)
 - **Jank-free scrolling**: < 5% dropped frames
 - **Animation smoothness**: 60 FPS
@@ -188,12 +208,14 @@ StartupOptimizer.initInParallel(
 ### How to Monitor Performance
 
 **1. Enable Performance Monitoring:**
+
 ```kotlin
 // In debug builds
 PerformanceMonitor.enabled = true
 ```
 
 **2. Track Operations:**
+
 ```kotlin
 // Wrap expensive operations
 PerformanceMonitor.measureTime("loadWords") {
@@ -202,12 +224,14 @@ PerformanceMonitor.measureTime("loadWords") {
 ```
 
 **3. View Metrics:**
+
 ```kotlin
 // Print summary at any time
 PerformanceMonitor.printSummary()
 ```
 
 ### Performance Metrics to Track
+
 - Method execution times
 - Database query durations
 - Memory usage over time
@@ -217,24 +241,28 @@ PerformanceMonitor.printSummary()
 ## 🚀 Optimization Strategies
 
 ### 1. Database Optimization
+
 - ✅ **Indices**: Added on level, stat_id, last_reviewed, learned, correct_count, wrong_count
 - ✅ **Transactions**: Batch operations wrapped in withTransaction()
 - ✅ **Flow**: Used for reactive UI updates
 - ✅ **Query Optimization**: Efficient JOIN queries, avoiding N+1 problems
 
 ### 2. Memory Optimization
+
 - ✅ **ViewModel Pattern**: Data stored in ViewModels, not Activities
 - ✅ **Lifecycle-aware**: Coroutines auto-cancel on lifecycle destroy
 - ✅ **@Immutable annotations**: Compose optimization
 - ✅ **Resource cleanup**: Proper disposal of resources
 
 ### 3. Startup Optimization
+
 - ✅ **Lazy Initialization**: Non-critical components initialized on demand
 - ✅ **Background Init**: Heavy work moved off main thread
 - ✅ **Minimal Application.onCreate()**: Only critical init in Application class
 - ✅ **StrictMode**: Enabled in debug to catch violations
 
 ### 4. UI Optimization
+
 - ✅ **Compose Optimizations**: @Immutable, remember(), derivedStateOf()
 - ✅ **Animation Performance**: Hardware-accelerated animations
 - ✅ **Lazy Loading**: LazyColumn with key() for efficient list rendering
@@ -243,6 +271,7 @@ PerformanceMonitor.printSummary()
 ## ⚠️ Common Pitfalls to Avoid
 
 ### Memory Leaks
+
 - ❌ Static references to Context/Activity
 - ❌ Non-cancelled coroutines
 - ❌ Unregistered listeners
@@ -251,6 +280,7 @@ PerformanceMonitor.printSummary()
 - ✅ Unregister listeners properly
 
 ### Database Performance
+
 - ❌ Queries on main thread
 - ❌ Missing indices on filtered columns
 - ❌ SELECT * when only need few columns
@@ -261,6 +291,7 @@ PerformanceMonitor.printSummary()
 - ✅ Batch with withTransaction()
 
 ### Startup Performance
+
 - ❌ Heavy work in Application.onCreate()
 - ❌ Synchronous initialization
 - ❌ Blocking main thread
@@ -271,12 +302,14 @@ PerformanceMonitor.printSummary()
 ## 📈 Performance Testing
 
 ### Manual Testing
+
 1. Enable StrictMode in debug builds
 2. Monitor logcat for performance warnings
 3. Use PerformanceMonitor.printSummary()
 4. Check memory usage with Android Profiler
 
 ### Automated Testing
+
 ```kotlin
 @Test
 fun `test database query performance`() {
@@ -294,6 +327,7 @@ fun `test database query performance`() {
 ```
 
 ### Profiling Tools
+
 - **Android Studio Profiler**: CPU, Memory, Network profiling
 - **Systrace**: System-level performance analysis
 - **Method Tracing**: Detailed method execution profiling
@@ -304,18 +338,21 @@ fun `test database query performance`() {
 ### Debug vs Release
 
 **Debug Build:**
+
 - StrictMode enabled
 - Performance logging enabled
 - Detailed error messages
 - Source maps included
 
 **Release Build:**
+
 - StrictMode disabled
 - Performance logging disabled (or minimal)
 - Proguard/R8 enabled
 - APK size optimized
 
 ### Feature Flags
+
 ```kotlin
 object PerformanceConfig {
     val ENABLE_MONITORING = BuildConfig.DEBUG
@@ -332,11 +369,13 @@ object PerformanceConfig {
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [Android Performance Patterns](https://developer.android.com/topic/performance)
 - [Room Performance Best Practices](https://developer.android.com/training/data-storage/room/performance)
 - [Compose Performance](https://developer.android.com/jetpack/compose/performance)
 
 ### Tools
+
 - [Android Studio Profiler](https://developer.android.com/studio/profile)
 - [Perfetto](https://perfetto.dev/) - System profiling
 - [LeakCanary](https://square.github.io/leakcanary/) - Memory leak detection
@@ -359,10 +398,12 @@ object PerformanceConfig {
 ## Sprint 8: Performance Optimization ⚡
 
 This performance package was created as part of Sprint 8 to optimize:
+
 - ✅ Database indexing and query performance
 - ✅ Memory management and leak prevention
 - ✅ App startup time optimization
 - ✅ WorkManager task efficiency
 - ✅ Performance monitoring and metrics
 
-**Result**: Significantly improved app performance, faster startup times, optimized database queries, and comprehensive performance monitoring tools for ongoing optimization.
+**Result**: Significantly improved app performance, faster startup times, optimized database
+queries, and comprehensive performance monitoring tools for ongoing optimization.
