@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     @ApplicationContext context: Context,
-    private val repository: WordRepository
+    private val repository: IWordRepository
 ) : ViewModel() {
     private val appContext = context.applicationContext
     private val sharedPreferences: SharedPreferences =

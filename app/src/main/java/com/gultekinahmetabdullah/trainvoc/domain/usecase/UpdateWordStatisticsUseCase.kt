@@ -2,15 +2,16 @@ package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import javax.inject.Inject
 
 /**
  * Use Case for updating word statistics after quiz answers.
  * Encapsulates business logic for correct/wrong/skipped answer handling.
+ * Follows Dependency Inversion Principle by depending on IWordRepository interface.
  */
 class UpdateWordStatisticsUseCase @Inject constructor(
-    private val repository: WordRepository
+    private val repository: IWordRepository
 ) {
     /**
      * Updates statistics when a word is answered correctly.
