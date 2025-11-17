@@ -199,6 +199,36 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    /**
+                     * GAMIFICATION FEATURES - PLANNED FOR FUTURE RELEASE
+                     *
+                     * The following sections display gamification UI elements that are
+                     * currently showing placeholder/mock data. These features are planned
+                     * for future implementation:
+                     *
+                     * 1. User Profile & XP System
+                     *    - Dynamic username from user preferences
+                     *    - Level progression based on quiz performance
+                     *    - Experience points (XP) tracking
+                     *
+                     * 2. Daily Tasks & Achievements
+                     *    - Task tracking (quizzes solved, words learned, achievements earned)
+                     *    - Achievement/badge system
+                     *    - Progress persistence
+                     *
+                     * 3. Quiz Categories
+                     *    - General, Targeted, and Quick quiz modes
+                     *    - Category-specific statistics
+                     *
+                     * 4. Quick Access Features
+                     *    - Word of the Day
+                     *    - Favorites management
+                     *    - Quiz history
+                     *
+                     * Implementation Status: UI completed, backend logic pending
+                     * Estimated Completion: Next major release
+                     */
+
                     // XP Bar & Avatar Card (Gamification)
                     Row(
                         modifier = Modifier
@@ -225,7 +255,7 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text(
-                                        text = stringResource(id = R.string.username_placeholder), // TODO: Replace with actual username
+                                        text = stringResource(id = R.string.username_placeholder), // Placeholder: awaiting user profile implementation
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -233,7 +263,7 @@ fun HomeScreen(
                                         text = stringResource(
                                             id = R.string.level_colon,
                                             "2"
-                                        ), // TODO: Make level dynamic
+                                        ), // Placeholder: awaiting XP system implementation
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
@@ -260,7 +290,7 @@ fun HomeScreen(
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth(0.4f) // TODO: XP oranına göre dinamik yap
+                                        .fillMaxWidth(0.4f) // Placeholder: 40% progress (1200/3000 XP)
                                         .height(16.dp)
                                         .background(
                                             color = MaterialTheme.colorScheme.primary,
@@ -269,7 +299,7 @@ fun HomeScreen(
                                 )
                             }
                             Text(
-                                text = stringResource(id = R.string.xp_progress, 1200, 3000), // TODO: Make XP dynamic
+                                text = stringResource(id = R.string.xp_progress, 1200, 3000), // Placeholder: awaiting XP tracking system
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.align(Alignment.End)
                             )
@@ -440,17 +470,17 @@ fun HomeScreen(
                         CategoryCard(
                             emoji = "🧠",
                             title = stringResource(id = R.string.category_general),
-                            onClick = { /* TODO: Start general quiz */ }
+                            onClick = { /* Planned feature */ }
                         )
                         CategoryCard(
                             emoji = "🎯",
                             title = stringResource(id = R.string.category_targeted),
-                            onClick = { /* TODO: Start targeted quiz */ }
+                            onClick = { /* Planned feature */ }
                         )
                         CategoryCard(
                             emoji = "⚡",
                             title = stringResource(id = R.string.category_quick),
-                            onClick = { /* TODO: Start quick quiz */ }
+                            onClick = { /* Planned feature */ }
                         )
                     }
 
@@ -474,17 +504,17 @@ fun HomeScreen(
                         QuickAccessCard(
                             emoji = "🌟",
                             title = stringResource(id = R.string.word_of_the_day),
-                            onClick = { /* TODO: Navigate to word of the day screen */ }
+                            onClick = { /* Planned feature */ }
                         )
                         QuickAccessCard(
                             emoji = "❤️",
                             title = stringResource(id = R.string.favorites),
-                            onClick = { /* TODO: Navigate to favorites screen */ }
+                            onClick = { /* Planned feature */ }
                         )
                         QuickAccessCard(
                             emoji = "⏱️",
                             title = stringResource(id = R.string.last_quiz),
-                            onClick = { /* TODO: Navigate to last quiz screen */ }
+                            onClick = { /* Planned feature */ }
                         )
                     }
 
