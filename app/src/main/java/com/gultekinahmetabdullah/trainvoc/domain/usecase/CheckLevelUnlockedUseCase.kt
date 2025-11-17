@@ -1,15 +1,16 @@
 package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import javax.inject.Inject
 
 /**
  * Use Case for checking if a word level is unlocked.
  * Implements the business rule: level unlocks when previous level is mastered.
+ * Follows Dependency Inversion Principle by depending on IWordRepository interface.
  */
 class CheckLevelUnlockedUseCase @Inject constructor(
-    private val repository: WordRepository
+    private val repository: IWordRepository
 ) {
     /**
      * Checks if a given level is unlocked for the user.
