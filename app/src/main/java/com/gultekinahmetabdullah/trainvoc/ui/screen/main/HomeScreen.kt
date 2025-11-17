@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,6 +86,8 @@ fun HomeScreen(
     preloadLottie: LottieComposition? = null, // Type corrected
     preloadBg: Painter? = null
 ) {
+    val context = LocalContext.current
+
     // Use Lottie animation and image with preload
     val composition = preloadLottie
         ?: rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_diamond.json")).value
