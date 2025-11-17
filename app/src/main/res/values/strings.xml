@@ -186,4 +186,25 @@
     <string name="exam_with_value">Exam: %1$s</string>
     <string name="exam_type_with_value">Exam Type: %1$s</string>
     <string name="locked_level_warning">Locked - Learn all words in the previous level first!</string>
+
+    <!-- Home Screen Gamification -->
+    <string name="username_placeholder">User</string>
+    <string name="daily_tasks">Daily Tasks</string>
+    <string name="task_solve_quizzes">Solve 3 Quizzes</string>
+    <string name="task_learn_words">Learn 10 New Words</string>
+    <string name="task_earn_achievement">Earn 1 Achievement</string>
+    <string name="achievements">Achievements</string>
+    <string name="achievement_first_quiz">First Quiz</string>
+    <string name="achievement_streak_day">Streak Day</string>
+    <string name="achievement_100_words">100 Words</string>
+    <string name="categories">Categories</string>
+    <string name="category_general">General</string>
+    <string name="category_targeted">Targeted</string>
+    <string name="category_quick">Quick</string>
+    <string name="quick_access">Quick Access</string>
+    <string name="word_of_the_day">Word of the Day</string>
+    <string name="favorites">Favorites</string>
+    <string name="last_quiz">Last Quiz</string>
+    <string name="xp_progress">%1$d / %2$d XP</string>
+    <string name="task_progress">%1$d/%2$d</string>
 </resources>
