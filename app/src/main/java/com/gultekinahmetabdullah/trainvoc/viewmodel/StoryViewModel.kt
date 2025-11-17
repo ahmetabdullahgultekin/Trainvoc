@@ -4,12 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StoryViewModel(private val wordRepository: WordRepository) : ViewModel() {
+@HiltViewModel
+class StoryViewModel @Inject constructor(
+    private val wordRepository: WordRepository
+) : ViewModel() {
 
     private val _levels = MutableStateFlow<Map<WordLevel, Boolean>>(emptyMap())
     val levels: StateFlow<Map<WordLevel, Boolean>> = _levels

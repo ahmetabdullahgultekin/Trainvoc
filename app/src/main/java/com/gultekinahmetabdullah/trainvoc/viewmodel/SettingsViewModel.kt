@@ -8,12 +8,19 @@ import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SettingsViewModel(context: Context, private val repository: WordRepository) : ViewModel() {
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    @ApplicationContext context: Context,
+    private val repository: WordRepository
+) : ViewModel() {
     private val appContext = context.applicationContext
     private val sharedPreferences: SharedPreferences =
         appContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)

@@ -4,11 +4,16 @@ import android.icu.text.DateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StatsViewModel(private val repository: WordRepository) : ViewModel() {
+@HiltViewModel
+class StatsViewModel @Inject constructor(
+    private val repository: WordRepository
+) : ViewModel() {
 
     private val _correctAnswers = MutableStateFlow(0)
     val correctAnswers: StateFlow<Int> = _correctAnswers
@@ -87,32 +92,4 @@ class StatsViewModel(private val repository: WordRepository) : ViewModel() {
         _skippedRatio.value = if (_totalQuestions.value == 0) 0f
         else (_skippedQuestions.value.toFloat() / _totalQuestions.value)
     }
-
-    /*
-    fun updateStats(isCorrect: Boolean) {
-        _totalQuestions.value++
-
-        if (isCorrect) {
-            _correctAnswers.value++
-        } else {
-            _incorrectAnswers.value++
-        }
-
-        calculateSuccessPercentage()
-    }
-
-
-    private fun calculateSuccessPercentage() {
-        _successPercentage.value = if (_totalQuestions.value == 0) 0f
-        else (_correctAnswers.value.toFloat() / _totalQuestions.value) * 100
-    }
-
-    fun resetStats() {
-        _totalQuestions.value = 0
-        _correctAnswers.value = 0
-        _incorrectAnswers.value = 0
-        _successPercentage.value = 0f
-    }
-
-     */
 }
