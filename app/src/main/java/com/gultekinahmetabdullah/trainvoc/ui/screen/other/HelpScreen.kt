@@ -248,7 +248,11 @@ fun ContactItem(title: String, icon: ImageVector, contactDetail: String, onClick
             .padding(Spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = title, modifier = Modifier.size(IconSize.medium))
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            modifier = Modifier.size(IconSize.medium)
+        )
         Spacer(modifier = Modifier.width(Spacing.small))
         Text(text = contactDetail, fontSize = 16.sp, fontWeight = FontWeight.Medium)
     }

@@ -37,7 +37,8 @@ class SettingsViewModel @Inject constructor(
     private val _languageChanged = MutableSharedFlow<Unit>()
     val languageChanged = _languageChanged
 
-    private val _notificationsEnabled = MutableStateFlow(preferencesRepository.isNotificationsEnabled())
+    private val _notificationsEnabled =
+        MutableStateFlow(preferencesRepository.isNotificationsEnabled())
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled
 
     init {
@@ -90,17 +91,9 @@ class SettingsViewModel @Inject constructor(
     fun updateLocale(languageCode: String, activity: android.app.Activity? = null) {
         val locale = java.util.Locale(languageCode)
         java.util.Locale.setDefault(locale)
-        val resources = appContext.resources
-        val config = resources.configuration
-        config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
-        // Activity context'i için de güncelle
-        activity?.let {
-            val actResources = it.resources
-            val actConfig = actResources.configuration
-            actConfig.setLocale(locale)
-            actResources.updateConfiguration(actConfig, actResources.displayMetrics)
-        }
+        // Note: Activity recreation (via activity.recreate()) will automatically
+        // apply the new locale configuration. No need for deprecated updateConfiguration().
+        // The locale change will take effect when the activity is recreated.
     }
 
     fun resetProgress() {

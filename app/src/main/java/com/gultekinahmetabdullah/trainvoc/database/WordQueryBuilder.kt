@@ -33,7 +33,8 @@ object WordQueryBuilder {
             append("SELECT w.* FROM words w")
 
             // Add JOIN if statistics-based or exam-based filtering is needed
-            val needsStatsJoin = quizType != QuizType.RANDOM && quizType != QuizType.LEAST_RECENT && quizType != QuizType.MOST_RECENT
+            val needsStatsJoin =
+                quizType != QuizType.RANDOM && quizType != QuizType.LEAST_RECENT && quizType != QuizType.MOST_RECENT
             val needsExamJoin = exam != null
 
             if (needsStatsJoin || quizType == QuizType.NOT_LEARNED) {
