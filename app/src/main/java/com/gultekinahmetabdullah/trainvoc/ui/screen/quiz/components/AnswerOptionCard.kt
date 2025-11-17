@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +58,8 @@ fun AnswerOptionCard(
     isTimeUp: Boolean,
     onChoiceClick: (Word) -> Unit
 ) {
+    val cardShape = remember { RoundedCornerShape(CornerRadius.large) }
+
     val backgroundColor by animateColorAsState(
         targetValue = when {
             selectedAnswer == choice && isCorrect == true -> Color(0xFF66BB6A).copy(alpha = 0.7f)
@@ -83,13 +86,13 @@ fun AnswerOptionCard(
             .fillMaxWidth()
             .padding(Spacing.small)
             .scale(scaleAnim)
-            .clip(RoundedCornerShape(CornerRadius.large))
+            .clip(cardShape)
             .clickable(
                 enabled = selectedAnswer == null && isCorrect == null && !isTimeUp
             ) {
                 onChoiceClick(choice)
             },
-        shape = RoundedCornerShape(CornerRadius.large),
+        shape = cardShape,
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
     ) {
