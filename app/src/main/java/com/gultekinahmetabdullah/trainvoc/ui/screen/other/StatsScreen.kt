@@ -304,10 +304,9 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                         )
                         Spacer(modifier = Modifier.height(Spacing.medium))
 
-                        Row(
+                        Column(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             DonutChart(
                                 data = listOf(
@@ -330,6 +329,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                                 size = 180.dp,
                                 strokeWidth = 32.dp
                             )
+
+                            Spacer(modifier = Modifier.height(Spacing.medium))
 
                             ChartLegend(
                                 data = listOf(
@@ -453,7 +454,10 @@ fun AnimatedStatCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.weight(1f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 if (isPainter) {
                     Image(
                         painter = icon as Painter,
@@ -468,10 +472,22 @@ fun AnimatedStatCard(
                         modifier = Modifier.size(IconSize.large)
                     )
                 }
-                Spacer(modifier = Modifier.width(Spacing.medium))
-                Text(text = title, style = MaterialTheme.typography.bodyLarge, color = color)
+                Spacer(modifier = Modifier.width(Spacing.small))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = color,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
             }
-            Text(text = value, style = MaterialTheme.typography.headlineSmall, color = color)
+            Spacer(modifier = Modifier.width(Spacing.small))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.headlineSmall,
+                color = color,
+                maxLines = 1
+            )
         }
     }
 }
