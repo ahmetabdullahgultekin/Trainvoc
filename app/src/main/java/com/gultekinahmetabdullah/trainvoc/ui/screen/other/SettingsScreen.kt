@@ -51,16 +51,14 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val language by viewModel.language.collectAsState()
     val configuration = LocalConfiguration.current // Compose context
 
-    // Listen for language changes and set locale in activity context, then recreate
+    // Listen for language changes and recreate activity to apply new locale
     LaunchedEffect(configuration) {
         viewModel.languageChanged.collectLatest {
             val activity = context as? Activity
             val localeCode = language.code
             val locale = Locale(localeCode)
             Locale.setDefault(locale)
-            val config = Configuration(configuration)
-            config.setLocale(locale)
-            context.resources.updateConfiguration(config, context.resources.displayMetrics)
+            // Activity recreation will automatically apply the new configuration
             activity?.recreate()
         }
     }
