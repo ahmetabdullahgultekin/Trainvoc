@@ -187,7 +187,7 @@ fun QuizScreen(
                             fontSize = 18.sp
                         )
                     } else {
-                        val currentQuestion = question
+                        val currentQuestion = question!!
                         QuizQuestionCard(word = currentQuestion.correctWord.word)
 
                         Spacer(modifier = Modifier.height(Spacing.mediumLarge))
