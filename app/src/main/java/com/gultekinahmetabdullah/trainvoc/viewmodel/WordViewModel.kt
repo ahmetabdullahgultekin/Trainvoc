@@ -5,11 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WordViewModel(private val repository: WordRepository) : ViewModel() {
+@HiltViewModel
+class WordViewModel @Inject constructor(
+    private val repository: WordRepository
+) : ViewModel() {
 
     private val _words = MutableStateFlow<List<WordAskedInExams>>(emptyList())
     val words: StateFlow<List<WordAskedInExams>> = _words
