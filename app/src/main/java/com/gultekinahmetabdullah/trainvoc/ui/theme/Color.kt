@@ -1,5 +1,9 @@
 package com.gultekinahmetabdullah.trainvoc.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
 // ============================================================
@@ -275,11 +279,6 @@ object GradientColors {
 // ============================================================
 // Extension Properties for Theme-Aware Color Access
 // ============================================================
-
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 
 /**
  * Theme-aware color extensions for ColorScheme
