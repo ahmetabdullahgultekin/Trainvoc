@@ -49,7 +49,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val language by viewModel.language.collectAsState()
     val configuration = LocalConfiguration.current // Compose context
 
-    // Dil değişikliğini dinle ve aktivite bağlamında yerel ayarı ayarla, ardından yeniden oluştur
+    // Listen for language changes and set locale in activity context, then recreate
     LaunchedEffect(configuration) {
         viewModel.languageChanged.collectLatest {
             val activity = context as? Activity

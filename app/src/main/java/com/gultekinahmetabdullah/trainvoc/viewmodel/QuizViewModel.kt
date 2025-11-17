@@ -70,7 +70,7 @@ class QuizViewModel @Inject constructor(
     private val _isUserReady = MutableStateFlow(true)
     val isUserReady: StateFlow<Boolean> = _isUserReady
 
-    // --- Story ve Custom modlar için toplam ve öğrenilen kelime sayısı ---
+    // Total and learned word counts for Story and Custom modes
     private val _totalWords = MutableStateFlow<Int?>(null)
     val totalWords: StateFlow<Int?> = _totalWords
 

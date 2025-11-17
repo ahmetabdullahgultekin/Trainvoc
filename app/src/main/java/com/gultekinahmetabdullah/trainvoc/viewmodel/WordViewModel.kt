@@ -54,7 +54,7 @@ class WordViewModel @Inject constructor(
         println("Filtered words count after filtering: ${_filteredWords.value.size}")
     }
 
-    // Belirli bir kelimeyi word ile getir
+    // Get a specific word by its word ID
     fun getWordById(wordId: String): Word? {
         return _words.value.map { it.word }.find { it.word == wordId }
     }
