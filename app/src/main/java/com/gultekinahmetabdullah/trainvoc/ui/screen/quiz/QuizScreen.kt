@@ -56,6 +56,8 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDial
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable

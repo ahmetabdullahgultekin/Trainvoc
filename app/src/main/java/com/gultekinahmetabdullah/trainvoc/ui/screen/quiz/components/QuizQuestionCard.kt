@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.R
-import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 /**
  * Question card displaying the word to be defined.

@@ -38,7 +38,8 @@ class WordRepository(
 
     override suspend fun getLastAnswered(): Long = wordDao.getLastAnswered()
 
-    override suspend fun getAllWordsAskedInExams(): List<WordAskedInExams> = wordDao.getAllWordsWithExams()
+    override suspend fun getAllWordsAskedInExams(): List<WordAskedInExams> =
+        wordDao.getAllWordsWithExams()
 
     override fun isLearned(statistic: Statistic): Boolean {
         return statistic.correctCount > (statistic.wrongCount + statistic.skippedCount)
@@ -130,6 +131,7 @@ class WordRepository(
                 if (quizParameter.exam == Exam.examTypes.last()) null // "Mixed" exam
                 else quizParameter.exam.exam
             }
+
             else -> null
         }
 
@@ -180,7 +182,8 @@ class WordRepository(
         statisticDao.markLearned(statId)
     }
 
-    override suspend fun getWordCountByStatId(statId: Int): Int = statisticDao.getWordCountByStatId(statId)
+    override suspend fun getWordCountByStatId(statId: Int): Int =
+        statisticDao.getWordCountByStatId(statId)
 
     override suspend fun getLearnedStatisticByValues(
         correctCount: Int,
@@ -189,7 +192,8 @@ class WordRepository(
     ): Statistic? =
         statisticDao.getLearnedStatisticByValues(correctCount, wrongCount, skippedCount)
 
-    override suspend fun updateWordStatId(statId: Int, word: String) = wordDao.updateWordStatId(statId, word)
+    override suspend fun updateWordStatId(statId: Int, word: String) =
+        wordDao.updateWordStatId(statId, word)
 
     override suspend fun insertStatistic(statistic: Statistic): Long =
         statisticDao.insertStatistic(statistic)
@@ -219,8 +223,12 @@ class WordRepository(
         return wordDao.getBestCategory()
     }
 
-    override suspend fun getWordCountByLevel(level: String): Int = wordDao.getWordCountByLevel(level)
-    override suspend fun getLearnedWordCount(level: String): Int = wordDao.getLevelUnlockerWordCount(level)
+    override suspend fun getWordCountByLevel(level: String): Int =
+        wordDao.getWordCountByLevel(level)
+
+    override suspend fun getLearnedWordCount(level: String): Int =
+        wordDao.getLevelUnlockerWordCount(level)
+
     override suspend fun getWordCountByExam(exam: String): Int = wordDao.getWordCountByExam(exam)
     override suspend fun getLearnedWordCountByExam(exam: String): Int =
         wordDao.getLearnedWordCountByExam(exam)

@@ -53,6 +53,7 @@ interface IWordRepository {
         wrongCount: Int,
         skippedCount: Int
     ): Statistic?
+
     suspend fun updateWordStatId(statId: Int, word: String)
     suspend fun insertStatistic(statistic: Statistic): Long
 
