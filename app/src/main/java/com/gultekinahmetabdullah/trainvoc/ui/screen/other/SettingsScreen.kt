@@ -76,12 +76,9 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     var wordOfDayEnabled by remember { mutableStateOf(notificationPrefs.wordOfDayEnabled) }
 
     // Listen for language changes and recreate activity to apply new locale
-    LaunchedEffect(configuration) {
+    LaunchedEffect(Unit) {
         viewModel.languageChanged.collectLatest {
             val activity = context as? Activity
-            val localeCode = language.code
-            val locale = Locale(localeCode)
-            Locale.setDefault(locale)
             // Activity recreation will automatically apply the new configuration
             activity?.recreate()
         }
