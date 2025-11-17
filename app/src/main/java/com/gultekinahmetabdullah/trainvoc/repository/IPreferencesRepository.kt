@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.repository
 
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 
@@ -31,6 +32,18 @@ interface IPreferencesRepository {
      * @param theme The theme preference to store
      */
     fun setTheme(theme: ThemePreference)
+
+    /**
+     * Get the current color palette preference.
+     * @return ColorPalettePreference enum value, defaults to DEFAULT
+     */
+    fun getColorPalette(): ColorPalettePreference
+
+    /**
+     * Set the color palette preference.
+     * @param palette The color palette preference to store
+     */
+    fun setColorPalette(palette: ColorPalettePreference)
 
     /**
      * Check if notifications are enabled.

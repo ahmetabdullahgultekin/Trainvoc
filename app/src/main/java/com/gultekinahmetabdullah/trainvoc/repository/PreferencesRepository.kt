@@ -3,6 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.repository
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,6 +23,7 @@ class PreferencesRepository @Inject constructor(
         private const val PREFS_NAME = "user_prefs"
         private const val KEY_USERNAME = "username"
         private const val KEY_THEME = "theme"
+        private const val KEY_COLOR_PALETTE = "color_palette"
         private const val KEY_NOTIFICATIONS = "notifications"
         private const val KEY_LANGUAGE = "language"
     }
@@ -47,6 +49,15 @@ class PreferencesRepository @Inject constructor(
 
     override fun setTheme(theme: ThemePreference) {
         prefs.edit { putString(KEY_THEME, theme.name) }
+    }
+
+    override fun getColorPalette(): ColorPalettePreference {
+        val paletteKey = prefs.getString(KEY_COLOR_PALETTE, ColorPalettePreference.DEFAULT.key)
+        return ColorPalettePreference.fromKey(paletteKey ?: ColorPalettePreference.DEFAULT.key)
+    }
+
+    override fun setColorPalette(palette: ColorPalettePreference) {
+        prefs.edit { putString(KEY_COLOR_PALETTE, palette.key) }
     }
 
     override fun isNotificationsEnabled(): Boolean =

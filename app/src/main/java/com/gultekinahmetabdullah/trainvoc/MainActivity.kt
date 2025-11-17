@@ -125,11 +125,16 @@ class MainActivity : ComponentActivity() {
              * we use the system default theme.
              */
             val themePref by settingsViewModel.theme.collectAsState()
+            val colorPalettePref by settingsViewModel.colorPalette.collectAsState()
+
             val darkTheme = when (themePref) {
                 ThemePreference.LIGHT -> false
                 ThemePreference.DARK -> true
+                ThemePreference.AMOLED -> true
                 else -> isSystemInDarkTheme()
             }
+
+            val amoledMode = themePref == ThemePreference.AMOLED
 
             // Initialize the navigation controller
             val navController = rememberNavController()
@@ -149,7 +154,11 @@ class MainActivity : ComponentActivity() {
              * We wrap the Scaffold and NavHost inside the TrainvocTheme
              * to apply the theme to the entire app.
              */
-            TrainvocTheme(darkTheme = darkTheme) {
+            TrainvocTheme(
+                darkTheme = darkTheme,
+                amoledMode = amoledMode,
+                colorPalette = colorPalettePref
+            ) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     // Sağ üst köşede her zaman "alpha close test" ve versiyon yazısı
                     val context = LocalContext.current
