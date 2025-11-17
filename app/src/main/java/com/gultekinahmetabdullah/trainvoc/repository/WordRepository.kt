@@ -56,33 +56,50 @@ class WordRepository(
     suspend fun updateWordStats(statistic: Statistic, word: Word) {
         val updatedStatistic = statistic.copy(learned = isLearned(statistic))
         val wordCount = statisticDao.getWordCountByStatId(word.statId)
-        // TODO: There is a error here, SQLConstraintException: UNIQUE constraint failed: statistics.stat_id
+
         if (wordCount == 1) {
-            // Stat sadece bu kelimeye ait, doğrudan güncelle
+            // Statistic belongs only to this word, update it directly
             statisticDao.updateStatistic(updatedStatistic.copy(statId = word.statId))
         } else {
-            // Aynı değerlere ve learned alanına sahip bir Statistic var mı?
+            // Check if a Statistic with these exact values already exists
             val existingStatistic = wordDao.getStatByValues(
                 updatedStatistic.correctCount,
                 updatedStatistic.wrongCount,
                 updatedStatistic.skippedCount,
                 updatedStatistic.learned
             )
+
             if (existingStatistic != null && existingStatistic.learned == updatedStatistic.learned) {
-                // Eğer zaten aynı statId'ye sahipse hiçbir şey yapma
+                // Reuse existing statistic if it's not already assigned to this word
                 if (word.statId != existingStatistic.statId) {
                     wordDao.updateWordStatId(existingStatistic.statId, word.word)
                 }
-                // Güncelleme veya ekleme yapma, çakışmayı önle
             } else {
-                // Yeni bir Statistic oluştur ve statId'yi ona güncelle
+                // Try to insert new statistic
                 val newStatId = statisticDao.insertStatistic(
                     updatedStatistic.copy(statId = 0)
-                ).toInt()
-                wordDao.updateWordStatId(newStatId, word.word)
+                )
+
+                // Handle race condition: if insert returned -1 (conflict due to UNIQUE constraint)
+                if (newStatId == -1L) {
+                    // Another thread inserted the same statistic, query for it again
+                    val raceConditionStat = wordDao.getStatByValues(
+                        updatedStatistic.correctCount,
+                        updatedStatistic.wrongCount,
+                        updatedStatistic.skippedCount,
+                        updatedStatistic.learned
+                    )
+                    if (raceConditionStat != null) {
+                        wordDao.updateWordStatId(raceConditionStat.statId, word.word)
+                    }
+                } else {
+                    // Successfully inserted, use the new stat ID
+                    wordDao.updateWordStatId(newStatId.toInt(), word.word)
+                }
             }
         }
-        // Önceki Statistic'e bağlı kelime kalmadıysa sil
+
+        // Delete previous statistic if no words are using it
         val previousStatId = word.statId
         val prevWordCount = statisticDao.getWordCountByStatId(previousStatId)
         if (prevWordCount == 0) {
