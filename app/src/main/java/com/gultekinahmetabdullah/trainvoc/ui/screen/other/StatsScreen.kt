@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -264,6 +265,8 @@ fun AnimatedStatCard(
     isPainter: Boolean = false,
     iconContentDescription: String? = null
 ) {
+    val cardShape = remember { RoundedCornerShape(CornerRadius.large) }
+
     val anim = animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(durationMillis = 600), label = "cardAnim"
@@ -274,7 +277,7 @@ fun AnimatedStatCard(
             .padding(vertical = 6.dp)
             .height(70.dp)
             .scale(anim.value),
-        shape = RoundedCornerShape(CornerRadius.large),
+        shape = cardShape,
         colors = CardDefaults.cardColors(containerColor = color.copy(alpha = Alpha.surfaceMedium))
     ) {
         Row(
@@ -359,9 +362,10 @@ fun StatsBarChart(
 // AnimatedBar fonksiyonunu şu şekilde değiştirin:
 @Composable
 fun AnimatedBar(modifier: Modifier, color: Color) {
+    val barShape = remember { RoundedCornerShape(CornerRadius.small) }
     Box(
         modifier = modifier
             .height(30.dp)
-            .background(color, RoundedCornerShape(CornerRadius.small))
+            .background(color, barShape)
     )
 }

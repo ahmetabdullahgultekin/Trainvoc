@@ -55,9 +55,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.currentStateAsState
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -803,28 +806,44 @@ fun QuickAccessCard(
 }
 
 // Hafif hareketli renkli arka plan animasyonu
+// Lifecycle-aware: pauses animations when app is in background (saves battery)
 @Composable
 fun AnimatedBackground(
     modifier: Modifier = Modifier,
     duration: Int = 40000
-) { // animasyon süresi daha da artırıldı
-    val infiniteTransition = rememberInfiniteTransition(label = "bg")
-    val color1 by infiniteTransition.animateColor(
-        initialValue = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-        targetValue = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
-        animationSpec = infiniteRepeatable(
-            animation = tween(duration, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = "bg1"
-    )
-    val color2 by infiniteTransition.animateColor(
-        initialValue = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.9f),
-        targetValue = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.10f),
-        animationSpec = infiniteRepeatable(
-            animation = tween(duration + 12000, easing = FastOutSlowInEasing), // çok daha yavaş
-            repeatMode = RepeatMode.Reverse
-        ), label = "bg2"
-    )
+) {
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
+    val isActive = lifecycleState == Lifecycle.State.RESUMED
+
+    // Only run animations when app is in foreground to save battery
+    val color1 = if (isActive) {
+        val infiniteTransition = rememberInfiniteTransition(label = "bg")
+        infiniteTransition.animateColor(
+            initialValue = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+            targetValue = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
+            animationSpec = infiniteRepeatable(
+                animation = tween(duration, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ), label = "bg1"
+        ).value
+    } else {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+    }
+
+    val color2 = if (isActive) {
+        val infiniteTransition = rememberInfiniteTransition(label = "bg")
+        infiniteTransition.animateColor(
+            initialValue = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.9f),
+            targetValue = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.10f),
+            animationSpec = infiniteRepeatable(
+                animation = tween(duration + 12000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ), label = "bg2"
+        ).value
+    } else {
+        MaterialTheme.colorScheme.tertiary.copy(alpha = 0.9f)
+    }
+
     Box(
         modifier = modifier
             .background(

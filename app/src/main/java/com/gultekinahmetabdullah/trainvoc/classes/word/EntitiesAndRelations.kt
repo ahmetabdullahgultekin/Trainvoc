@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.classes.word
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
@@ -26,6 +27,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
         Index(value = ["last_reviewed"])
     ]
 )
+@Immutable
 data class Word(
     @PrimaryKey
     @ColumnInfo(name = "word") val word: String, // One-to-one relationship with the word
@@ -58,6 +60,7 @@ data class Word(
         Index(value = ["wrong_count"])
     ]
 )
+@Immutable
 data class Statistic(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "stat_id")
