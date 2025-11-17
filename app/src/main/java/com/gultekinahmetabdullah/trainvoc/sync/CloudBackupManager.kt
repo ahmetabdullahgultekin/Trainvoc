@@ -338,6 +338,14 @@ class CloudBackupManager(
                             _syncState.value = SyncState.Error(restoreResult.error)
                             SyncResult.Failure(restoreResult.error)
                         }
+                        is RestoreResult.PartialSuccess -> {
+                            _syncState.value = SyncState.Synced
+                            SyncResult.Success(
+                                uploaded = false,
+                                downloaded = true,
+                                conflictsResolved = 0
+                            )
+                        }
                         is RestoreResult.Conflict -> {
                             _syncState.value = SyncState.ConflictDetected
                             SyncResult.Conflict(restoreResult.conflicts)
