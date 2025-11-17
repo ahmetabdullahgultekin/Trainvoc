@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import kotlinx.coroutines.launch
 
@@ -61,25 +62,25 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(Spacing.mediumLarge)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(Spacing.mediumLarge)) {
             Text(text = currentWord.word, style = MaterialTheme.typography.headlineMedium)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
             Text(text = currentWord.meaning, style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
             Text(
                 text = stringResource(id = R.string.level, currentWord.level.toString()),
                 style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
             Text(
                 text = stringResource(
                     id = R.string.last_reviewed,
                     currentWord.lastReviewed?.toString() ?: "-"
                 ), style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
             statistic?.let { currentStatistic ->
                 Text(
                     text = stringResource(
@@ -89,7 +90,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                         currentStatistic.skippedCount
                     ), style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Spacing.small))
                 // secondsSpent yerine timeSpent kullanıldı (örnek)
                 Text(
                     text = stringResource(id = R.string.total_seconds, currentWord.secondsSpent),
@@ -97,7 +98,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                 )
             }
             if (exams.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Spacing.small))
                 Text(
                     text = stringResource(id = R.string.exam_history),
                     style = MaterialTheme.typography.titleSmall
