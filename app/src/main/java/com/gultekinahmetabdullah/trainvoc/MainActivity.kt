@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,26 +36,21 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
-import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.MainScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.SplashScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.WelcomeScreen
 import com.gultekinahmetabdullah.trainvoc.ui.theme.TrainvocTheme
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModelFactory
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModelFactory
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModelFactory
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModelFactory
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModelFactory
 import com.gultekinahmetabdullah.trainvoc.worker.WordNotificationWorker
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("WrongConstant")
@@ -105,41 +100,14 @@ class MainActivity : ComponentActivity() {
          * and set up the navigation graph.
          */
         setContent {
-            /**
-             * Initialize the database and repositories.
-             * This is done here to ensure that
-             * the database is initialized
-             * before the Composable functions are called.
-             * We use the AppDatabase singleton
-             * to get the instance of the database
-             * and create the WordRepository.
-             */
-            val context = this
-            val db = AppDatabase.DatabaseBuilder.getInstance(context)
-            val wordRepository = WordRepository(
-                db.wordDao(),
-                db.statisticDao(),
-                db.wordExamCrossRefDao(),
-                db.examDao()
-            )
+            // Initialize ViewModels using Hilt
+            val quizViewModel: QuizViewModel = hiltViewModel()
+            val wordViewModel: WordViewModel = hiltViewModel()
+            val statsViewModel: StatsViewModel = hiltViewModel()
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            val storyViewModel: StoryViewModel = hiltViewModel()
 
-            /**
-             * Initialize the ViewModels.
-             * We use the viewModel() function to get the instances
-             * of the ViewModels and pass the repositories to their factories.
-             */
-            val quizViewModel: QuizViewModel =
-                viewModel(factory = QuizViewModelFactory(wordRepository))
-            val wordViewModel: WordViewModel =
-                viewModel(factory = WordViewModelFactory(wordRepository))
-            val statsViewModel: StatsViewModel =
-                viewModel(factory = StatsViewModelFactory(wordRepository))
-            val settingsViewModel: SettingsViewModel =
-                viewModel(factory = SettingsViewModelFactory(context, wordRepository))
-            val storyViewModel: StoryViewModel =
-                viewModel(factory = StoryViewModelFactory(wordRepository))
-
-            // Dil tercihini al
+            // Get language preference
             val languagePref by settingsViewModel.language.collectAsState()
 
             // Dil tercihi değiştiğinde locale'ı güncelle
