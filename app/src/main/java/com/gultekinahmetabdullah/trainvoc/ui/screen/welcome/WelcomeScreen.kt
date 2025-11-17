@@ -32,6 +32,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 
 @Composable
@@ -66,7 +67,7 @@ fun WelcomeScreen(
             color = MaterialTheme.colorScheme.primary
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         Text(
             text = stringResource(id = R.string.welcome_description),
@@ -75,10 +76,10 @@ fun WelcomeScreen(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .wrapContentWidth(Alignment.CenterHorizontally)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = Spacing.mediumLarge)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         // Lottie Animation
         LottieAnimation(
@@ -87,7 +88,7 @@ fun WelcomeScreen(
             modifier = Modifier.size(260.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Spacing.large))
 
         // Language selection
         Text(
@@ -95,7 +96,7 @@ fun WelcomeScreen(
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.secondary
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
                 selected = selectedLanguage == LanguagePreference.TURKISH,
@@ -103,7 +104,7 @@ fun WelcomeScreen(
             )
             Text(
                 text = stringResource(id = R.string.turkish),
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end = Spacing.mediumLarge),
                 style = MaterialTheme.typography.bodyMedium
             )
             RadioButton(
@@ -116,7 +117,7 @@ fun WelcomeScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Spacing.large))
 
         Button(onClick = {
             navController.navigate(Route.USERNAME)

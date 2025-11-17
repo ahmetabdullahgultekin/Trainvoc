@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.AvailableQuizCategory
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 @Composable
 fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
@@ -62,14 +63,14 @@ fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
             )
     ) {
         Column(
-            Modifier.padding(16.dp),
+            Modifier.padding(Spacing.mediumLarge),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(id = R.string.select_quiz_category),
                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier.padding(bottom = Spacing.large)
             )
             val categories = AvailableQuizCategory.getAll()
             LazyVerticalGrid(
@@ -133,7 +134,7 @@ fun AnimatedQuizCategoryCard(
             .scale(scale)
             .fillMaxWidth()
             .aspectRatio(1f) // Kartlar kare olacak
-            .padding(vertical = 8.dp)
+            .padding(vertical = Spacing.small)
             .then(if (!enabled) Modifier.alpha(0.7f) else Modifier),
         shape = RoundedCornerShape(18.dp),
         elevation = CardDefaults.cardElevation(animatedElevation.dp),
@@ -158,7 +159,7 @@ fun AnimatedQuizCategoryCard(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
@@ -167,7 +168,7 @@ fun AnimatedQuizCategoryCard(
                 modifier = Modifier.fillMaxWidth()
             )
             if (!enabled) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Spacing.small))
                 Text(
                     text = stringResource(id = R.string.coming_soon),
                     style = MaterialTheme.typography.labelLarge,

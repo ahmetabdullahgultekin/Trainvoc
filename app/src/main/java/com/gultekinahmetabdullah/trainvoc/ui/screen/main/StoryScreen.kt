@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.ui.theme.LockedLeaf
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 
@@ -54,14 +55,14 @@ fun StoryScreen(
                 .fillMaxSize()
                 .background(Color.Transparent),
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(vertical = 16.dp),
+            contentPadding = PaddingValues(vertical = Spacing.mediumLarge),
             verticalArrangement = Arrangement.spacedBy(64.dp)
         ) {
             items(levels.size) { index ->
                 val (level, isUnlocked) = levels.entries.elementAt(index)
                 Box(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = Spacing.mediumLarge),
                     contentAlignment = Alignment.Center
                 ) {
                     LeafButton(
@@ -130,7 +131,7 @@ fun LeafButton(text: String, isUnlocked: Boolean, onClick: () -> Unit) {
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(top = 8.dp)
+                        .padding(top = Spacing.small)
                         .fillMaxWidth(0.5f)
                 )
             }

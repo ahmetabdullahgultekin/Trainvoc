@@ -46,6 +46,10 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import kotlinx.coroutines.launch
 
@@ -97,7 +101,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(Spacing.mediumLarge),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -115,7 +119,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            item { Spacer(modifier = Modifier.height(16.dp)) }
+            item { Spacer(modifier = Modifier.height(Spacing.mediumLarge)) }
             // Animasyonlu StatCard'lar
             item {
                 AnimatedStatCard(
@@ -232,14 +236,14 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
-            item { Spacer(modifier = Modifier.height(16.dp)) }
+            item { Spacer(modifier = Modifier.height(Spacing.mediumLarge)) }
             item {
                 StatsBarChart(
                     correctAnswers, incorrectAnswers, skippedQuestions,
                     successRate, failureRate, skippedRate
                 )
             }
-            item { Spacer(modifier = Modifier.height(24.dp)) }
+            item { Spacer(modifier = Modifier.height(Spacing.large)) }
             item {
                 Button(onClick = {
                     scope.launch { statsViewModel.fillStats() }
@@ -270,8 +274,8 @@ fun AnimatedStatCard(
             .padding(vertical = 6.dp)
             .height(70.dp)
             .scale(anim.value),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.18f))
+        shape = RoundedCornerShape(CornerRadius.large),
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = Alpha.surfaceMedium))
     ) {
         Row(
             modifier = Modifier
@@ -285,17 +289,17 @@ fun AnimatedStatCard(
                     Image(
                         painter = icon as Painter,
                         contentDescription = iconContentDescription,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(IconSize.large)
                     )
                 } else {
                     Icon(
                         icon as ImageVector,
                         contentDescription = iconContentDescription,
                         tint = color,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(IconSize.large)
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(Spacing.medium))
                 Text(text = title, style = MaterialTheme.typography.bodyLarge, color = color)
             }
             Text(text = value, style = MaterialTheme.typography.headlineSmall, color = color)
@@ -318,7 +322,7 @@ fun StatsBarChart(
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
         // StatsBarChart içindeki Row'da:
         Row(modifier = Modifier.fillMaxWidth()) {
             AnimatedBar(
@@ -334,7 +338,7 @@ fun StatsBarChart(
                 color = Color(0xFFE57373),
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
                 text = stringResource(id = R.string.correct_colon, correct),
@@ -358,6 +362,6 @@ fun AnimatedBar(modifier: Modifier, color: Color) {
     Box(
         modifier = modifier
             .height(30.dp)
-            .background(color, RoundedCornerShape(8.dp))
+            .background(color, RoundedCornerShape(CornerRadius.small))
     )
 }

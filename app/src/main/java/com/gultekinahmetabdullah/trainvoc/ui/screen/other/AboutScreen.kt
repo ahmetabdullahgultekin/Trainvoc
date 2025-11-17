@@ -40,6 +40,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 @Composable
 fun AboutScreen() {
@@ -49,7 +51,7 @@ fun AboutScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(Spacing.mediumLarge),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // App Icon
@@ -59,11 +61,11 @@ fun AboutScreen() {
             modifier = Modifier
                 .size(120.dp)
                 .background(Color.Gray, CircleShape)
-                .padding(8.dp),
+                .padding(Spacing.small),
             contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         // App Name & Version
         Text(
@@ -77,21 +79,21 @@ fun AboutScreen() {
             color = Color.Gray
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         // App Description
         Text(
             text = stringResource(id = R.string.about_app_desc),
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(horizontal = Spacing.small)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         HorizontalDivider()
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         // Developer Section
         Text(
@@ -99,7 +101,7 @@ fun AboutScreen() {
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         Image(
             painter = painterResource(id = R.drawable.baseline_generating_tokens_24),
@@ -107,11 +109,11 @@ fun AboutScreen() {
             modifier = Modifier
                 .size(100.dp)
                 .background(Color.Gray, CircleShape)
-                .padding(8.dp),
+                .padding(Spacing.small),
             contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         Text(
             text = stringResource(id = R.string.developer_name),
@@ -124,7 +126,7 @@ fun AboutScreen() {
             color = Color.Gray
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         // Social Links
         SocialLink(
@@ -164,11 +166,11 @@ fun AboutScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         HorizontalDivider()
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         // License & Credits
         Text(
@@ -176,16 +178,16 @@ fun AboutScreen() {
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         Text(
             text = stringResource(id = R.string.credits_desc),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(horizontal = Spacing.small)
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         Button(
             onClick = {
@@ -202,7 +204,7 @@ fun AboutScreen() {
             Text(stringResource(id = R.string.view_license))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
     }
 }
 
@@ -213,11 +215,11 @@ fun SocialLink(title: String, icon: ImageVector, link: String, onClick: () -> Un
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(12.dp),
+            .padding(Spacing.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = title, modifier = Modifier.size(24.dp))
-        Spacer(modifier = Modifier.width(8.dp))
+        Icon(imageVector = icon, contentDescription = title, modifier = Modifier.size(IconSize.medium))
+        Spacer(modifier = Modifier.width(Spacing.small))
         Text(text = link, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
     }
 }

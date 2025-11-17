@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 @Composable
 fun HelpScreen() {
@@ -77,7 +79,7 @@ fun HelpScreen() {
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(8.dp)
+                .padding(Spacing.small)
                 .size(64.dp)
                 .scale(logoAnim.value)
                 .offset(x = 10.dp, y = 0.dp)
@@ -85,7 +87,7 @@ fun HelpScreen() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(Spacing.mediumLarge)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -102,7 +104,7 @@ fun HelpScreen() {
                     text = stringResource(id = R.string.help_welcome),
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = Spacing.small)
                 )
             }
             // FAQs Section
@@ -122,7 +124,7 @@ fun HelpScreen() {
                     delay = i * 100L
                 )
             }
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.small))
             // Contact Support Section
             Text(
                 stringResource(id = R.string.contact_support),
@@ -156,7 +158,7 @@ fun HelpScreen() {
                 val webIntent = Intent(Intent.ACTION_VIEW, "https://www.trainvoc.com".toUri())
                 context.startActivity(webIntent)
             }
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.small))
             // Feedback Section
             Text(
                 stringResource(id = R.string.give_feedback),
@@ -213,7 +215,7 @@ fun AnimatedFAQItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expanded = !expanded }
-                .padding(8.dp),
+                .padding(Spacing.small),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -221,7 +223,7 @@ fun AnimatedFAQItem(
                 contentDescription = "FAQ Icon",
                 modifier = Modifier.size(20.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(Spacing.small))
             Text(text = question, fontSize = questionFontSize.sp, fontWeight = FontWeight.Medium)
         }
         AnimatedVisibility(visible = expanded) {
@@ -229,7 +231,7 @@ fun AnimatedFAQItem(
                 text = answer,
                 fontSize = answerFontSize.sp,
                 color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(start = 32.dp, bottom = 8.dp)
+                modifier = Modifier.padding(start = IconSize.extraLarge, bottom = Spacing.small)
             )
         }
         HorizontalDivider()
@@ -243,11 +245,11 @@ fun ContactItem(title: String, icon: ImageVector, contactDetail: String, onClick
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(8.dp),
+            .padding(Spacing.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = title, modifier = Modifier.size(24.dp))
-        Spacer(modifier = Modifier.width(8.dp))
+        Icon(imageVector = icon, contentDescription = title, modifier = Modifier.size(IconSize.medium))
+        Spacer(modifier = Modifier.width(Spacing.small))
         Text(text = contactDetail, fontSize = 16.sp, fontWeight = FontWeight.Medium)
     }
 }
