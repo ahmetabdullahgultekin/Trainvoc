@@ -37,6 +37,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 
 /**
  * Individual answer option card with animations.
@@ -62,10 +63,10 @@ fun AnswerOptionCard(
 
     val backgroundColor by animateColorAsState(
         targetValue = when {
-            selectedAnswer == choice && isCorrect == true -> Color(0xFF66BB6A).copy(alpha = 0.7f)
+            selectedAnswer == choice && isCorrect == true -> UnlockedLeaf.copy(alpha = 0.7f)
             selectedAnswer == choice && isCorrect == false -> MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
-            choice == correctWord && isCorrect == false -> Color(0xFF66BB6A).copy(alpha = 0.7f)
-            isTimeUp && choice == correctWord -> Color(0xFF66BB6A).copy(alpha = 0.9f)
+            choice == correctWord && isCorrect == false -> UnlockedLeaf.copy(alpha = 0.7f)
+            isTimeUp && choice == correctWord -> UnlockedLeaf.copy(alpha = 0.9f)
             else -> MaterialTheme.colorScheme.primaryContainer
         },
         animationSpec = tween(400),
@@ -112,7 +113,7 @@ fun AnswerOptionCard(
                         .size(IconSize.large)
                         .clip(CircleShape)
                         .background(
-                            if (isCorrect == true) Color(0xFF66BB6A)
+                            if (isCorrect == true) UnlockedLeaf
                             else MaterialTheme.colorScheme.error
                         ),
                     contentAlignment = Alignment.Center
