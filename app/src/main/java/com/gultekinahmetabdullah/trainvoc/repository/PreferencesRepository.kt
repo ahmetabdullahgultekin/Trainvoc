@@ -68,4 +68,12 @@ class PreferencesRepository @Inject constructor(
     override fun setLanguage(language: LanguagePreference) {
         prefs.edit { putString(KEY_LANGUAGE, language.code) }
     }
+
+    override fun clearAll() {
+        prefs.edit { clear() }
+    }
+
+    override fun clearUsername() {
+        prefs.edit { remove(KEY_USERNAME) }
+    }
 }
