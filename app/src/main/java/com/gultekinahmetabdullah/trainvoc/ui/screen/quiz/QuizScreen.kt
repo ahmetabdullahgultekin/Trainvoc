@@ -48,6 +48,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.AnswerOptionCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDialog
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
@@ -97,11 +101,11 @@ fun QuizScreen(
 
     val progressColor by animateColorAsState(
         targetValue = if (selectedAnswer != null && isCorrect != null) {
-            if (isCorrect == true) Color(0xFF66BB6A) else MaterialTheme.colorScheme.error
+            if (isCorrect == true) UnlockedLeaf else MaterialTheme.colorScheme.error
         } else {
             if (isTimeUp) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
         },
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = AnimationDuration.progress)
     )
 
     Box(

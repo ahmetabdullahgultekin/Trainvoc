@@ -48,9 +48,11 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import kotlinx.coroutines.launch
 
@@ -172,7 +174,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.CheckCircle,
                     title = stringResource(id = R.string.correct_answers),
                     value = "$correctAnswers",
-                    color = Color(0xFF66BB6A),
+                    color = UnlockedLeaf,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -269,7 +271,7 @@ fun AnimatedStatCard(
 
     val anim = animateFloatAsState(
         targetValue = 1f,
-        animationSpec = tween(durationMillis = 600), label = "cardAnim"
+        animationSpec = tween(durationMillis = AnimationDuration.statCard), label = "cardAnim"
     )
     Card(
         modifier = Modifier
@@ -330,7 +332,7 @@ fun StatsBarChart(
         Row(modifier = Modifier.fillMaxWidth()) {
             AnimatedBar(
                 modifier = Modifier.weight(if (successRate <= 0f) 0.01f else successRate),
-                color = Color(0xFF66BB6A),
+                color = UnlockedLeaf,
             )
             AnimatedBar(
                 modifier = Modifier.weight(if (skippedRate <= 0f) 0.01f else skippedRate),
@@ -345,7 +347,7 @@ fun StatsBarChart(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
                 text = stringResource(id = R.string.correct_colon, correct),
-                color = Color(0xFF66BB6A)
+                color = UnlockedLeaf
             )
             Text(
                 text = stringResource(id = R.string.skipped_colon, skipped),
