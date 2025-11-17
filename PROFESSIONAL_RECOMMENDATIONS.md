@@ -11,6 +11,7 @@
 **Overall Assessment:** 7.5/10
 
 **Strengths:**
+
 - ✅ Excellent Clean Architecture implementation (Repository → ViewModel → UI)
 - ✅ Proper Dependency Injection with Hilt
 - ✅ Outstanding refactoring (WordQueryBuilder eliminated 340 lines of duplicate code)
@@ -18,6 +19,7 @@
 - ✅ Professional KDoc documentation
 
 **Critical Issues:**
+
 - 🔴 **SECURITY**: SQL Injection vulnerability in WordQueryBuilder.kt
 - 🔴 **PERFORMANCE**: Missing database indices on frequently queried columns
 - 🔴 **ACCESSIBILITY**: Missing contentDescription on 20+ images/icons
@@ -30,9 +32,11 @@
 
 ### 1. 🔴 SECURITY: SQL Injection Vulnerability
 
-**Location:** `app/src/main/java/com/gultekinahmetabdullah/trainvoc/database/WordQueryBuilder.kt:48-54`
+**Location:**
+`app/src/main/java/com/gultekinahmetabdullah/trainvoc/database/WordQueryBuilder.kt:48-54`
 
 **Issue:**
+
 ```kotlin
 level?.let {
     whereConditions.add("w.level = '$it'")  // ⚠️ String concatenation!
@@ -45,6 +49,7 @@ exam?.let {
 **Risk:** Potential SQL injection if user input isn't validated properly.
 
 **Fix:**
+
 ```kotlin
 fun buildQuery(
     quizType: QuizType,
@@ -74,11 +79,13 @@ fun buildQuery(
 
 ### 2. 🔴 PERFORMANCE: Missing Database Indices
 
-**Location:** `app/src/main/java/com/gultekinahmetabdullah/trainvoc/classes/word/EntitiesAndRelations.kt`
+**Location:**
+`app/src/main/java/com/gultekinahmetabdullah/trainvoc/classes/word/EntitiesAndRelations.kt`
 
 **Issue:** Frequently queried columns lack indices, causing slow queries as database grows.
 
 **Impact:**
+
 - 10x-100x slower queries on tables with 1000+ words
 - Poor app responsiveness during quiz generation
 - Battery drain from excessive CPU usage
@@ -121,12 +128,14 @@ data class Statistic(...)
 **Issue:** Database operations running on main thread by default.
 
 **Examples:**
+
 - `QuizViewModel.kt:101, 165, 181, 186, 200, 211, 266`
 - `WordViewModel.kt:68, 74`
 - `StatsViewModel.kt:65`
 - `SettingsViewModel.kt:114`
 
 **Current (Wrong):**
+
 ```kotlin
 viewModelScope.launch {
     repository.getAllWordsAskedInExams()  // ⚠️ Runs on main thread!
@@ -134,6 +143,7 @@ viewModelScope.launch {
 ```
 
 **Fixed:**
+
 ```kotlin
 viewModelScope.launch(Dispatchers.IO) {
     repository.getAllWordsAskedInExams()  // ✅ Runs on IO thread
@@ -148,19 +158,21 @@ viewModelScope.launch(Dispatchers.IO) {
 
 ### 4. 🟡 ACCESSIBILITY: Missing Content Descriptions
 
-**Affected Users:** 15% of users rely on screen readers (285M people with visual impairments worldwide)
+**Affected Users:** 15% of users rely on screen readers (285M people with visual impairments
+worldwide)
 
 **Violations Found:**
 
-| File | Lines | Elements |
-|------|-------|----------|
-| `HomeScreen.kt` | 136, 336, 349 | Background images, play icons |
-| `HomeScreen.kt` | 438, 443, 448 | Achievement emojis 🥇🔥📚 |
-| `HomeScreen.kt` | 471, 476, 481 | Category emojis 🧠🎯⚡ |
-| `HomeScreen.kt` | 505, 510, 515 | Quick access emojis 🌟❤️⏱️ |
-| `StatsScreen.kt` | 275, 281 | Stat icons |
+| File             | Lines         | Elements                      |
+|------------------|---------------|-------------------------------|
+| `HomeScreen.kt`  | 136, 336, 349 | Background images, play icons |
+| `HomeScreen.kt`  | 438, 443, 448 | Achievement emojis 🥇🔥📚     |
+| `HomeScreen.kt`  | 471, 476, 481 | Category emojis 🧠🎯⚡         |
+| `HomeScreen.kt`  | 505, 510, 515 | Quick access emojis 🌟❤️⏱️    |
+| `StatsScreen.kt` | 275, 281      | Stat icons                    |
 
 **Fix:**
+
 ```kotlin
 // Before
 Icon(
@@ -176,6 +188,7 @@ Icon(
 ```
 
 **Add to strings.xml:**
+
 ```xml
 <string name="achievement_first_place">First place achievement</string>
 <string name="achievement_streak">Streak achievement</string>
@@ -196,6 +209,7 @@ Icon(
 **Issue:** 100+ hardcoded hex colors instead of Material Theme colors.
 
 **Current Theme:** `themes.xml` only has:
+
 ```xml
 <style name="Theme.Trainvoc" parent="android:Theme.Material.Light.NoActionBar" />
 ```
@@ -204,14 +218,15 @@ Icon(
 
 **Violations:**
 
-| File | Hardcoded Colors | Issue |
-|------|------------------|-------|
-| `StatsScreen.kt` | 20+ colors | Gradients, card backgrounds |
-| `QuizScreen.kt` | 4 instances | Success color `#66BB6A` |
-| `AnswerOptionCard.kt` | 4 instances | Same green duplicated |
-| `EntitiesAndRelations.kt` | 8 exam colors | Business logic in data class |
+| File                      | Hardcoded Colors | Issue                        |
+|---------------------------|------------------|------------------------------|
+| `StatsScreen.kt`          | 20+ colors       | Gradients, card backgrounds  |
+| `QuizScreen.kt`           | 4 instances      | Success color `#66BB6A`      |
+| `AnswerOptionCard.kt`     | 4 instances      | Same green duplicated        |
+| `EntitiesAndRelations.kt` | 8 exam colors    | Business logic in data class |
 
 **Example Issue:**
+
 ```kotlin
 // StatsScreen.kt:90-92 - Hardcoded gradient
 Brush.verticalGradient(
@@ -226,6 +241,7 @@ Brush.verticalGradient(
 **Solution: Create Proper Theme**
 
 1. **Create `Color.kt`:**
+
 ```kotlin
 package com.gultekinahmetabdullah.trainvoc.ui.theme
 
@@ -244,6 +260,7 @@ val StatCardGreen = Color(0xFFC8E6C9)
 ```
 
 2. **Create `Theme.kt`:**
+
 ```kotlin
 @Composable
 fun TrainvocTheme(
@@ -275,6 +292,7 @@ fun TrainvocTheme(
 ```
 
 3. **Use Theme Colors:**
+
 ```kotlin
 // Before
 Color(0xFF66BB6A)
@@ -292,6 +310,7 @@ MaterialTheme.colorScheme.secondary
 **Issue:** Turkish strings not localized in Worker and debug code.
 
 **Location:** `WordNotificationWorker.kt:35-38`
+
 ```kotlin
 val (title, message) = if (stat != null && stat.learned) {
     "Hatırlıyor musun?" to "\"${word.word}\" kelimesini hatırlıyor musun?"  // ⚠️
@@ -301,12 +320,14 @@ val (title, message) = if (stat != null && stat.learned) {
 ```
 
 **Also:**
+
 - `StatisticDao.kt:73, 83, 94` - Turkish comments
 - `MainActivity.kt:168` - Test string `"alpha close test v$versionName"`
 
 **Fix:**
 
 Add to `strings.xml`:
+
 ```xml
 <string name="notification_learned_title">Do you remember?</string>
 <string name="notification_learned_message">Do you remember the word \"%1$s\"?</string>
@@ -315,6 +336,7 @@ Add to `strings.xml`:
 ```
 
 Update Worker:
+
 ```kotlin
 val (title, message) = if (stat != null && stat.learned) {
     context.getString(R.string.notification_learned_title) to
@@ -334,11 +356,13 @@ val (title, message) = if (stat != null && stat.learned) {
 **Issue:** Using `!!` operator risks runtime crashes.
 
 **Examples:**
+
 - `QuizViewModel.kt:155`: `_quiz.value!!.type`
 - `QuizViewModel.kt:167`: `_currentQuestion.value!!.correctWord`
 - `QuizScreen.kt:188`: `question!!.correctWord.word`
 
 **Fix Pattern:**
+
 ```kotlin
 // Before
 val questions = repository.generateTenQuestions(_quiz.value!!.type, _quizParameter.value!!)
@@ -360,6 +384,7 @@ val questions = repository.generateTenQuestions(quiz.type, parameter)
 **Issue:** 189 occurrences of hardcoded `.dp` and `.sp` values
 
 **Examples:**
+
 - Padding: `4.dp`, `8.dp`, `12.dp`, `16.dp`, `24.dp`, `32.dp` (6 different values)
 - Font sizes: `12.sp`, `14.sp`, `16.sp`, `18.sp`, `20.sp`, `24.sp`, `28.sp`, `32.sp` (8 values)
 - Corner radius: `8.dp`, `12.dp`, `16.dp`, `24.dp` (4 values)
@@ -367,6 +392,7 @@ val questions = repository.generateTenQuestions(quiz.type, parameter)
 **Solution: Create Design Tokens**
 
 `ui/theme/Dimensions.kt`:
+
 ```kotlin
 object Spacing {
     val none = 0.dp
@@ -393,6 +419,7 @@ object Typography {
 ```
 
 **Usage:**
+
 ```kotlin
 // Before
 .padding(16.dp)
@@ -423,6 +450,7 @@ repeat(10) {
 **Impact:** 10 database round-trips = ~100-500ms total delay
 
 **Solution: Batch Loading**
+
 ```kotlin
 suspend fun generateTenQuestions(...): MutableList<Question> {
     // Load 50 words at once (10 questions × 5 words)
@@ -466,6 +494,7 @@ LaunchedEffect(search) {
 **Problem:** User types "hello" = 5 filter operations
 
 **Solution:**
+
 ```kotlin
 LaunchedEffect(search) {
     delay(300)  // Wait 300ms after user stops typing
@@ -474,6 +503,7 @@ LaunchedEffect(search) {
 ```
 
 **Or better, use StateFlow (already implemented in WordViewModel!)**:
+
 ```kotlin
 // WordViewModel already has debounce (line 42-50)!
 // Just use it directly:
@@ -494,12 +524,14 @@ TextField(
 **Issue:** Direct SharedPreferences access in UI layer
 
 **Violations:**
+
 - `UsernameScreen.kt:41,93` - Direct prefs access
 - `SettingsViewModel.kt:26` - Should be abstracted
 
 **Solution: Create Repository**
 
 `repository/PreferencesRepository.kt`:
+
 ```kotlin
 interface IPreferencesRepository {
     fun getUsername(): String?
@@ -529,6 +561,7 @@ class PreferencesRepository @Inject constructor(
 ```
 
 **Benefits:**
+
 - Testability (can mock preferences)
 - Centralized constants
 - Type safety
@@ -539,9 +572,11 @@ class PreferencesRepository @Inject constructor(
 
 ### 12. 🟢 ALPHA VALUES: Standardize Transparency
 
-**Issue:** 30+ different alpha values (0.08f, 0.10f, 0.12f, 0.15f, 0.18f, 0.7f, 0.8f, 0.85f, 0.9f, 0.97f)
+**Issue:** 30+ different alpha values (0.08f, 0.10f, 0.12f, 0.15f, 0.18f, 0.7f, 0.8f, 0.85f, 0.9f,
+0.97f)
 
 **Solution:**
+
 ```kotlin
 object Alpha {
     const val disabled = 0.38f     // Material Design standard
@@ -552,6 +587,7 @@ object Alpha {
 ```
 
 **Usage:**
+
 ```kotlin
 // Before
 .alpha(0.85f)
@@ -573,6 +609,7 @@ object Alpha {
 **Location:** `HomeScreen.kt:202-230` (documented)
 
 **Mock Data:**
+
 - Username: hardcoded "username_placeholder"
 - Level: hardcoded "2"
 - XP: hardcoded "1200/3000"
@@ -581,6 +618,7 @@ object Alpha {
 **Implementation Plan:**
 
 1. **Create Achievement System:**
+
 ```kotlin
 @Entity(tableName = "achievements")
 data class Achievement(
@@ -602,6 +640,7 @@ data class DailyTask(
 ```
 
 2. **XP System:**
+
 ```kotlin
 @Entity(tableName = "user_profile")
 data class UserProfile(
@@ -635,6 +674,7 @@ object XPCalculator {
 ```
 
 3. **Daily Streak:**
+
 ```kotlin
 suspend fun updateDailyStreak() {
     val today = LocalDate.now().toString()
@@ -659,6 +699,7 @@ suspend fun updateDailyStreak() {
 **Missing Validations:**
 
 1. **Username Input:**
+
 ```kotlin
 // UsernameScreen.kt - Add validation
 fun isValidUsername(username: String): Boolean {
@@ -669,6 +710,7 @@ fun isValidUsername(username: String): Boolean {
 ```
 
 2. **Search Input Sanitization:**
+
 ```kotlin
 // Prevent SQL injection in search
 fun sanitizeSearchInput(input: String): String {
@@ -711,6 +753,7 @@ class StatsViewModel {
 **Recommended Tests:**
 
 1. **Repository Tests:**
+
 ```kotlin
 @Test
 fun `updateWordStats handles race condition correctly`() = runTest {
@@ -725,6 +768,7 @@ fun `updateWordStats handles race condition correctly`() = runTest {
 ```
 
 2. **ViewModel Tests:**
+
 ```kotlin
 @Test
 fun `quiz generation returns 10 questions`() = runTest {
@@ -738,6 +782,7 @@ fun `quiz generation returns 10 questions`() = runTest {
 ```
 
 3. **Use Case Tests:**
+
 ```kotlin
 @Test
 fun `CalculateProgressUseCase returns correct percentage`() = runTest {
@@ -762,6 +807,7 @@ fun `CalculateProgressUseCase returns correct percentage`() = runTest {
 **User Benefit:** Scientifically proven to improve retention by 200%
 
 **Implementation:**
+
 ```kotlin
 @Entity
 data class ReviewSchedule(
@@ -810,6 +856,7 @@ object SM2Algorithm {  // SuperMemo 2
 **User Benefit:** Proper pronunciation learning
 
 **Implementation:**
+
 ```kotlin
 // Use Android TextToSpeech
 class PronunciationHelper(context: Context) {
@@ -831,6 +878,7 @@ IconButton(onClick = { pronunciationHelper.pronounce(word.word) }) {
 ```
 
 **Or use API:**
+
 ```kotlin
 // Free Dictionary API
 suspend fun getPronunciationAudio(word: String): String? {
@@ -849,6 +897,7 @@ suspend fun getPronunciationAudio(word: String): String? {
 **User Benefit:** Visual progress tracking motivates users
 
 **Implementation:**
+
 ```kotlin
 // Use Vico chart library
 dependencies {
@@ -871,6 +920,7 @@ fun WeeklyProgressChart(data: List<DailyStats>) {
 ```
 
 **Charts to Add:**
+
 - Weekly correct answers trend
 - Words learned over time
 - Level progress breakdown
@@ -886,6 +936,7 @@ fun WeeklyProgressChart(data: List<DailyStats>) {
 **User Benefit:** Alternative study method
 
 **Implementation:**
+
 ```kotlin
 @Composable
 fun FlashcardScreen(wordList: List<Word>) {
@@ -958,18 +1009,21 @@ suspend fun importFromJson(json: String) {
 ## TESTING CHECKLIST
 
 ### Performance Testing
+
 - [ ] Test with 10,000+ words in database
 - [ ] Measure quiz generation time (should be <500ms)
 - [ ] Profile memory usage (should be <200MB)
 - [ ] Test on low-end device (< 2GB RAM)
 
 ### Accessibility Testing
+
 - [ ] Enable TalkBack, navigate entire app
 - [ ] Test with large text settings (200%)
 - [ ] Verify color contrast ratios (WCAG AA)
 - [ ] Test with screen rotation
 
 ### Edge Cases
+
 - [ ] Empty database
 - [ ] Poor/no network connection
 - [ ] Notification permission denied
@@ -978,6 +1032,7 @@ suspend fun importFromJson(json: String) {
 - [ ] Username with special characters
 
 ### Localization Testing
+
 - [ ] Switch language mid-session
 - [ ] Verify RTL language support (Arabic)
 - [ ] Test plurals (1 word vs 2 words)
@@ -988,6 +1043,7 @@ suspend fun importFromJson(json: String) {
 ## IMPLEMENTATION ROADMAP
 
 ### Phase 1: Critical Fixes (1 week)
+
 - [ ] Fix SQL injection vulnerability
 - [ ] Add database indices
 - [ ] Add Dispatchers.IO to coroutines
@@ -995,22 +1051,26 @@ suspend fun importFromJson(json: String) {
 - [ ] Remove hardcoded Turkish strings
 
 ### Phase 2: Theme & Design (1 week)
+
 - [ ] Create proper Material3 theme
 - [ ] Replace hardcoded colors
 - [ ] Create design token system
 - [ ] Standardize spacing
 
 ### Phase 3: Performance (3 days)
+
 - [ ] Optimize quiz generation
 - [ ] Add search debouncing
 - [ ] Fix null safety issues
 
 ### Phase 4: Architecture (3 days)
+
 - [ ] Create PreferencesRepository
 - [ ] Add input validation
 - [ ] Improve error handling
 
 ### Phase 5: New Features (2-3 weeks)
+
 - [ ] Implement gamification backend
 - [ ] Add spaced repetition
 - [ ] Add audio pronunciation
@@ -1018,6 +1078,7 @@ suspend fun importFromJson(json: String) {
 - [ ] Add flashcard mode
 
 ### Phase 6: Testing (1 week)
+
 - [ ] Unit tests (80% coverage target)
 - [ ] Integration tests
 - [ ] Accessibility testing
@@ -1029,14 +1090,14 @@ suspend fun importFromJson(json: String) {
 
 **Before vs After:**
 
-| Metric | Current | Target |
-|--------|---------|--------|
-| Accessibility Score | 45% | 95% |
-| Theme Colors | 100+ hardcoded | 0 hardcoded |
-| Null Safety Issues | 20+ `!!` | 0 `!!` |
-| Database Query Time (1000 words) | ~300ms | ~50ms |
-| Code Coverage | 0% | 80% |
-| Memory Usage | Unknown | <150MB |
+| Metric                           | Current        | Target      |
+|----------------------------------|----------------|-------------|
+| Accessibility Score              | 45%            | 95%         |
+| Theme Colors                     | 100+ hardcoded | 0 hardcoded |
+| Null Safety Issues               | 20+ `!!`       | 0 `!!`      |
+| Database Query Time (1000 words) | ~300ms         | ~50ms       |
+| Code Coverage                    | 0%             | 80%         |
+| Memory Usage                     | Unknown        | <150MB      |
 
 ---
 
@@ -1049,6 +1110,7 @@ The Trainvoc application has **excellent architectural foundations** but needs a
 3. **Design Consistency** (User Experience)
 
 **Recommended Next Steps:**
+
 1. Address all CRITICAL issues (Week 1)
 2. Fix HIGH priority issues (Week 2)
 3. Implement 2-3 high-value features (Weeks 3-5)
