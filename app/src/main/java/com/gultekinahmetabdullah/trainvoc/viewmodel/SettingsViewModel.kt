@@ -1,12 +1,11 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,69 +16,72 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing application settings.
+ * Now uses PreferencesRepository for cleaner architecture and better testability.
+ */
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    @ApplicationContext context: Context,
-    private val repository: IWordRepository
+    @ApplicationContext private val context: Context,
+    private val repository: IWordRepository,
+    private val preferencesRepository: IPreferencesRepository
 ) : ViewModel() {
     private val appContext = context.applicationContext
-    private val sharedPreferences: SharedPreferences =
-        appContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
-    private val _theme = MutableStateFlow(getTheme())
+    private val _theme = MutableStateFlow(preferencesRepository.getTheme())
     val theme: StateFlow<ThemePreference> = _theme
 
-    private val _language = MutableStateFlow(getLanguage())
+    private val _language = MutableStateFlow(getLanguageWithSystemFallback())
     val language: StateFlow<LanguagePreference> = _language
 
     private val _languageChanged = MutableSharedFlow<Unit>()
     val languageChanged = _languageChanged
 
-    private val _notificationsEnabled = MutableStateFlow(isNotificationsEnabled())
+    private val _notificationsEnabled = MutableStateFlow(preferencesRepository.isNotificationsEnabled())
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled
 
     init {
-        // Uygulama açılırken locale'ı sharedPreferences'a göre ayarla
-        val lang = getLanguage()
+        // Initialize locale on app startup based on saved preferences
+        val lang = _language.value
         updateLocale(lang.code)
-        _language.value = lang
     }
 
-    fun getTheme(): ThemePreference =
-        try {
-            ThemePreference.valueOf(
-                sharedPreferences.getString(
-                    "theme",
-                    ThemePreference.SYSTEM.name
-                ) ?: ThemePreference.SYSTEM.name
-            )
-        } catch (e: Exception) {
-            ThemePreference.SYSTEM
-        }
+    fun getTheme(): ThemePreference = preferencesRepository.getTheme()
 
     fun setTheme(theme: ThemePreference) {
-        sharedPreferences.edit { putString("theme", theme.name) }
+        preferencesRepository.setTheme(theme)
         _theme.value = theme
     }
 
-    fun isNotificationsEnabled(): Boolean = sharedPreferences.getBoolean("notifications", true)
+    fun isNotificationsEnabled(): Boolean = preferencesRepository.isNotificationsEnabled()
+
     fun setNotificationsEnabled(enabled: Boolean) {
-        sharedPreferences.edit { putBoolean("notifications", enabled) }
+        preferencesRepository.setNotificationsEnabled(enabled)
         _notificationsEnabled.value = enabled
     }
 
-    fun getLanguage(): LanguagePreference {
-        val code = sharedPreferences.getString("language", null)
-        return if (code != null) {
-            LanguagePreference.entries.find { it.code == code } ?: LanguagePreference.ENGLISH
-        } else {
+    /**
+     * Get language preference with system fallback.
+     * If no language is saved, defaults to system language or Turkish.
+     */
+    private fun getLanguageWithSystemFallback(): LanguagePreference {
+        // Try to get saved language first
+        val savedLanguage = preferencesRepository.getLanguage()
+
+        // If it's the default (ENGLISH), check if we should use system language instead
+        if (savedLanguage == LanguagePreference.ENGLISH) {
             val systemLang = java.util.Locale.getDefault().language
-            LanguagePreference.entries.find { it.code == systemLang } ?: LanguagePreference.TURKISH
+            return LanguagePreference.entries.find { it.code == systemLang }
+                ?: LanguagePreference.TURKISH
         }
+
+        return savedLanguage
     }
 
+    fun getLanguage(): LanguagePreference = preferencesRepository.getLanguage()
+
     fun setLanguage(language: LanguagePreference, activity: android.app.Activity? = null) {
-        sharedPreferences.edit { putString("language", language.code) }
+        preferencesRepository.setLanguage(language)
         _language.value = language
         updateLocale(language.code, activity)
         viewModelScope.launch { _languageChanged.emit(Unit) }
@@ -102,22 +104,16 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun resetProgress() {
-        // Reset the progress in the repository
-        // This will reset the statistics and progress in the database
-        // Also reset the all shared preferences
-        sharedPreferences.edit {
-            remove("username")
-            remove("theme")
-            remove("language")
-            remove("notifications")
-            clear()
-        }
+        // Reset all preferences
+        preferencesRepository.clearAll()
+
+        // Reset database statistics and progress
         viewModelScope.launch(Dispatchers.IO) {
             repository.resetProgress()
         }
     }
 
     fun logout() {
-        sharedPreferences.edit { remove("username") }
+        preferencesRepository.clearUsername()
     }
 }

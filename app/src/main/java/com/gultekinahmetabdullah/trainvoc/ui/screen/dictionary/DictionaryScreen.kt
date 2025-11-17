@@ -35,8 +35,10 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
     var search by remember { mutableStateOf("") }
     val filteredWords by wordViewModel.filteredWords.collectAsState()
 
-    // Arama değiştikçe filtrele
+    // Debounced search: Wait 300ms after user stops typing before filtering
+    // This improves UX by reducing unnecessary database queries
     LaunchedEffect(search) {
+        kotlinx.coroutines.delay(300)  // 300ms debounce delay
         wordViewModel.filterWords(search)
     }
 
