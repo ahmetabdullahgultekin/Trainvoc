@@ -5,18 +5,15 @@ import android.os.Build
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
-import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * Data exporter for backing up user data
@@ -205,8 +202,8 @@ class DataExporter(
 
                     writer.write(
                         "${word.word},${word.level?.name ?: "UNKNOWN"}," +
-                        "${stat.correctCount},${stat.wrongCount},${stat.skippedCount}," +
-                        "${stat.learned},$successRate%"
+                                "${stat.correctCount},${stat.wrongCount},${stat.skippedCount}," +
+                                "${stat.learned},$successRate%"
                     )
                     writer.newLine()
                 }
@@ -311,7 +308,10 @@ class DataExporter(
     /**
      * Calculate checksum for data integrity verification
      */
-    private fun calculateChecksum(words: List<WordBackup>, statistics: List<StatisticBackup>): String {
+    private fun calculateChecksum(
+        words: List<WordBackup>,
+        statistics: List<StatisticBackup>
+    ): String {
         val data = words.joinToString { it.word } + statistics.joinToString { it.statId.toString() }
         val digest = MessageDigest.getInstance("MD5")
         val hashBytes = digest.digest(data.toByteArray())

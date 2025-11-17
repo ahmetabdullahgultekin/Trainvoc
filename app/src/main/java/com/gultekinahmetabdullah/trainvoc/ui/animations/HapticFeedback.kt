@@ -74,6 +74,7 @@ class HapticPerformer(private val view: View) {
                     HapticFeedbackConstants.LONG_PRESS
                 }
             }
+
             HapticFeedbackType.CONFIRM -> {
                 // For confirm, we use a lighter feedback
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {

@@ -12,9 +12,9 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.accessibility.HighContrastDarkColorScheme
 import com.gultekinahmetabdullah.trainvoc.accessibility.HighContrastLightColorScheme
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 
 // ============================================================
 // Default Color Schemes (Original)
@@ -350,6 +350,7 @@ private fun getColorScheme(
                 if (darkTheme) DefaultDarkColorScheme else DefaultLightColorScheme
             }
         }
+
         ColorPalettePreference.OCEAN -> {
             when {
                 amoledMode -> OceanAmoledColorScheme
@@ -357,6 +358,7 @@ private fun getColorScheme(
                 else -> OceanLightColorScheme
             }
         }
+
         ColorPalettePreference.FOREST -> {
             when {
                 amoledMode -> ForestAmoledColorScheme
@@ -364,6 +366,7 @@ private fun getColorScheme(
                 else -> ForestLightColorScheme
             }
         }
+
         ColorPalettePreference.SUNSET -> {
             when {
                 amoledMode -> SunsetAmoledColorScheme
@@ -371,6 +374,7 @@ private fun getColorScheme(
                 else -> SunsetLightColorScheme
             }
         }
+
         ColorPalettePreference.LAVENDER -> {
             when {
                 amoledMode -> LavenderAmoledColorScheme
@@ -378,6 +382,7 @@ private fun getColorScheme(
                 else -> LavenderLightColorScheme
             }
         }
+
         ColorPalettePreference.CRIMSON -> {
             when {
                 amoledMode -> CrimsonAmoledColorScheme
@@ -385,6 +390,7 @@ private fun getColorScheme(
                 else -> CrimsonLightColorScheme
             }
         }
+
         ColorPalettePreference.MINT -> {
             when {
                 amoledMode -> MintAmoledColorScheme
@@ -392,6 +398,7 @@ private fun getColorScheme(
                 else -> MintLightColorScheme
             }
         }
+
         ColorPalettePreference.DEFAULT -> {
             if (darkTheme) DefaultDarkColorScheme else DefaultLightColorScheme
         }

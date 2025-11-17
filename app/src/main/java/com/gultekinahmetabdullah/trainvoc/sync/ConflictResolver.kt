@@ -1,7 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.sync
 
-import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 
 /**
  * Conflict Resolution Utilities
@@ -159,6 +159,7 @@ class ConflictResolver {
                     )
                 }
             }
+
             ConflictStrategy.REPLACE_ALL -> {
                 // Simple: use all remote data
                 ConflictResolution.Resolved(
@@ -166,6 +167,7 @@ class ConflictResolver {
                     resolvedStatistics = remoteStats
                 )
             }
+
             ConflictStrategy.MERGE_PREFER_LOCAL -> {
                 resolveMergePreferLocal(
                     localWords = localWords,
@@ -175,6 +177,7 @@ class ConflictResolver {
                     conflicts = conflicts
                 )
             }
+
             ConflictStrategy.MERGE_PREFER_REMOTE -> {
                 resolveMergePreferRemote(
                     localWords = localWords,
@@ -184,6 +187,7 @@ class ConflictResolver {
                     conflicts = conflicts
                 )
             }
+
             ConflictStrategy.MERGE_SMART -> {
                 resolveMergeSmart(
                     localWords = localWords,
@@ -311,6 +315,7 @@ class ConflictResolver {
                         resolvedStats.add(remoteStat)
                     }
                 }
+
                 localWord != null && remoteWord == null -> {
                     // Only in local, use local version
                     resolvedWords.add(WordBackup.fromWord(localWord))
@@ -319,6 +324,7 @@ class ConflictResolver {
                         resolvedStats.add(StatisticBackup.fromStatistic(localStat))
                     }
                 }
+
                 localWord != null && remoteWord != null -> {
                     // In both, smart resolve
                     val localStat = localStats.find { it.statId == localWord.statId }
@@ -404,8 +410,8 @@ class ConflictResolver {
      */
     private fun hasWordDifferences(local: Word, remote: WordBackup): Boolean {
         return local.word != remote.word ||
-               local.meaning != remote.meaning ||
-               local.level?.name != remote.level
+                local.meaning != remote.meaning ||
+                local.level?.name != remote.level
     }
 
     /**
@@ -413,9 +419,9 @@ class ConflictResolver {
      */
     private fun hasStatisticDifferences(local: Statistic, remote: StatisticBackup): Boolean {
         return local.learned != remote.learned ||
-               local.correctCount != remote.correctCount ||
-               local.wrongCount != remote.wrongCount ||
-               local.skippedCount != remote.skippedCount
+                local.correctCount != remote.correctCount ||
+                local.wrongCount != remote.wrongCount ||
+                local.skippedCount != remote.skippedCount
     }
 
     /**

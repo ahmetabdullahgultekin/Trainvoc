@@ -65,7 +65,10 @@ fun AnswerOptionCard(
     val backgroundColor by animateColorAsState(
         targetValue = when {
             selectedAnswer == choice && isCorrect == true -> UnlockedLeaf.copy(alpha = 0.7f)
-            selectedAnswer == choice && isCorrect == false -> MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+            selectedAnswer == choice && isCorrect == false -> MaterialTheme.colorScheme.error.copy(
+                alpha = 0.7f
+            )
+
             choice == correctWord && isCorrect == false -> UnlockedLeaf.copy(alpha = 0.7f)
             isTimeUp && choice == correctWord -> UnlockedLeaf.copy(alpha = 0.9f)
             else -> MaterialTheme.colorScheme.primaryContainer

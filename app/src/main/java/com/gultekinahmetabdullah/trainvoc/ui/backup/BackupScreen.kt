@@ -1,22 +1,71 @@
 package com.gultekinahmetabdullah.trainvoc.ui.backup
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOff
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.Storage
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.TableChart
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.gultekinahmetabdullah.trainvoc.sync.*
+import com.gultekinahmetabdullah.trainvoc.sync.BackupData
+import com.gultekinahmetabdullah.trainvoc.sync.BackupFileInfo
+import com.gultekinahmetabdullah.trainvoc.sync.ConflictStrategy
+import com.gultekinahmetabdullah.trainvoc.sync.DataConflict
+import com.gultekinahmetabdullah.trainvoc.sync.SyncState
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * Backup & Restore Screen
@@ -94,6 +143,7 @@ fun BackupScreen(
                     progress = progress,
                     availableBackups = availableBackups
                 )
+
                 1 -> CloudBackupTab(
                     viewModel = viewModel,
                     uiState = uiState,
@@ -122,7 +172,8 @@ fun BackupScreen(
         // Snackbar for results
         if (uiState is BackupUiState.ExportSuccess ||
             uiState is BackupUiState.ImportSuccess ||
-            uiState is BackupUiState.Error) {
+            uiState is BackupUiState.Error
+        ) {
             LaunchedEffect(uiState) {
                 kotlinx.coroutines.delay(3000)
                 viewModel.resetState()
@@ -511,7 +562,8 @@ fun CloudBackupTab(
         // Progress indicator
         if (uiState is BackupUiState.Syncing ||
             uiState is BackupUiState.UploadingToCloud ||
-            uiState is BackupUiState.DownloadingFromCloud) {
+            uiState is BackupUiState.DownloadingFromCloud
+        ) {
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth()

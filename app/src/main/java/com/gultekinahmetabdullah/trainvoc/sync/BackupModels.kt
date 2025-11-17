@@ -1,8 +1,8 @@
 package com.gultekinahmetabdullah.trainvoc.sync
 
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
-import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 
 /**
  * Data models for backup and restore functionality

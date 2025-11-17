@@ -5,9 +5,11 @@ Comprehensive data synchronization and backup system for Trainvoc app.
 ## 📦 Package Contents
 
 ### 1. **BackupModels.kt**
+
 Data models and entities for backup/restore and sync operations.
 
 **Key Models:**
+
 - `BackupData`: Complete backup container with versioning
 - `WordBackup` / `StatisticBackup`: Serializable versions of database entities
 - `UserPreferences`: App settings and user configuration
@@ -17,6 +19,7 @@ Data models and entities for backup/restore and sync operations.
 - `WordCsvRow`: CSV export/import format
 
 **Features:**
+
 - Version control for backward compatibility
 - Checksum verification for data integrity
 - Type-safe result handling with sealed classes
@@ -25,9 +28,11 @@ Data models and entities for backup/restore and sync operations.
 ---
 
 ### 2. **DataExporter.kt**
+
 Export user data to JSON/CSV formats for backup.
 
 **Features:**
+
 - JSON export with full backup metadata
 - CSV export for word lists
 - Statistics CSV export for progress analysis
@@ -37,6 +42,7 @@ Export user data to JSON/CSV formats for backup.
 - Device ID generation for sync
 
 **Usage:**
+
 ```kotlin
 val exporter = DataExporter(context, database)
 
@@ -70,6 +76,7 @@ exporter.cleanupOldBackups(keepCount = 5)
 ```
 
 **JSON Backup Format:**
+
 ```json
 {
   "version": 1,
@@ -111,6 +118,7 @@ exporter.cleanupOldBackups(keepCount = 5)
 ```
 
 **CSV Export Format:**
+
 ```csv
 word,meaning,level,learned,correct_count,wrong_count
 hello,greeting,A1,true,10,2
@@ -120,9 +128,11 @@ goodbye,farewell,A1,false,3,1
 ---
 
 ### 3. **DataImporter.kt**
+
 Import and restore user data from backups.
 
 **Features:**
+
 - JSON import with full data restoration
 - CSV import for word lists
 - Data validation before import
@@ -133,6 +143,7 @@ Import and restore user data from backups.
 - User preferences restoration
 
 **Usage:**
+
 ```kotlin
 val importer = DataImporter(context, database)
 
@@ -179,6 +190,7 @@ when (validation) {
 ```
 
 **Conflict Detection:**
+
 - Detects when same word exists with different meanings/levels
 - Detects when statistics differ for same word
 - Provides detailed conflict information for resolution
@@ -186,9 +198,11 @@ when (validation) {
 ---
 
 ### 4. **CloudBackupManager.kt**
+
 Cloud backup and synchronization manager.
 
 **Features:**
+
 - Automatic cloud sync with configurable intervals
 - Background upload/download with WorkManager
 - Network state monitoring (WiFi-only option)
@@ -198,6 +212,7 @@ Cloud backup and synchronization manager.
 - Automatic retry on failure
 
 **Usage:**
+
 ```kotlin
 // Initialize in Application.onCreate()
 val cloudBackup = CloudBackupManager(context, database)
@@ -270,6 +285,7 @@ cloudBackup.disableAutoBackup()
 
 **Cloud Provider Integration:**
 The CloudBackupManager is designed to work with any cloud provider:
+
 - Google Drive (recommended)
 - Dropbox
 - OneDrive
@@ -280,9 +296,11 @@ The CloudBackupManager is designed to work with any cloud provider:
 ---
 
 ### 5. **ConflictResolver.kt**
+
 Advanced conflict resolution utilities.
 
 **Features:**
+
 - Automatic conflict detection
 - Multiple resolution strategies
 - Smart merge logic
@@ -290,20 +308,22 @@ Advanced conflict resolution utilities.
 - Manual resolution support
 
 **Conflict Types:**
+
 1. **Word Conflict**: Same word with different meanings or levels
 2. **Statistic Conflict**: Same word with different learning progress
 
 **Resolution Strategies:**
 
-| Strategy | Description | Use Case |
-|----------|-------------|----------|
-| `REPLACE_ALL` | Replace all local data with remote | Starting fresh, full restore |
-| `MERGE_PREFER_LOCAL` | Keep local for conflicts, add remote-only | Local data more trusted |
-| `MERGE_PREFER_REMOTE` | Use remote for conflicts, keep local-only | Remote data more trusted |
-| `MERGE_SMART` | Intelligent merge based on data quality | Automatic sync (recommended) |
-| `FAIL_ON_CONFLICT` | Report conflicts without resolving | Manual resolution required |
+| Strategy              | Description                               | Use Case                     |
+|-----------------------|-------------------------------------------|------------------------------|
+| `REPLACE_ALL`         | Replace all local data with remote        | Starting fresh, full restore |
+| `MERGE_PREFER_LOCAL`  | Keep local for conflicts, add remote-only | Local data more trusted      |
+| `MERGE_PREFER_REMOTE` | Use remote for conflicts, keep local-only | Remote data more trusted     |
+| `MERGE_SMART`         | Intelligent merge based on data quality   | Automatic sync (recommended) |
+| `FAIL_ON_CONFLICT`    | Report conflicts without resolving        | Manual resolution required   |
 
 **Usage:**
+
 ```kotlin
 val resolver = ConflictResolver()
 
@@ -354,6 +374,7 @@ val mergedStat = resolver.mergeStatistics(stat1, stat2)
 ```
 
 **Smart Merge Logic:**
+
 1. Prefer version with more learning progress (correct + wrong counts)
 2. If equal progress, prefer higher correct count
 3. Prefer learned words over unlearned
@@ -366,34 +387,40 @@ val mergedStat = resolver.mergeStatistics(stat1, stat2)
 ## 🎯 Features
 
 ### ✅ Offline-First Architecture
+
 - All operations work offline
 - Sync happens in background when connected
 - No data loss even without internet
 
 ### ✅ Conflict Resolution
+
 - Automatic conflict detection
 - Multiple resolution strategies
 - Smart merge based on data quality
 - Manual resolution support
 
 ### ✅ Data Integrity
+
 - Checksum verification (MD5)
 - Transaction-based imports (rollback on failure)
 - Version control for compatibility
 - Data validation before import
 
 ### ✅ Multiple Export Formats
+
 - **JSON**: Full backup with all metadata
 - **CSV**: Simple word lists for spreadsheets
 - **Statistics CSV**: Learning progress analysis
 
 ### ✅ Cloud Sync
+
 - Automatic background sync
 - WiFi-only option to save data
 - Smart bi-directional sync
 - Network state monitoring
 
 ### ✅ Performance Optimized
+
 - Background operations with coroutines
 - Progress callbacks for UI
 - Efficient batch operations
@@ -687,6 +714,7 @@ backups.forEach { backup ->
 ### Backup Storage Location
 
 Backups are stored in app-specific external storage:
+
 - **Android 10+**: `/Android/data/com.gultekinahmetabdullah.trainvoc/files/backups/`
 - **Pre-Android 10**: `/data/data/com.gultekinahmetabdullah.trainvoc/files/backups/`
 
@@ -800,14 +828,14 @@ fun `cloud sync should handle conflicts correctly`() = runTest {
 
 ### Backup Performance
 
-| Operation | Time (1000 words) | Notes |
-|-----------|-------------------|-------|
-| Export JSON | ~200ms | Includes serialization |
-| Export CSV | ~100ms | Simple format |
-| Import JSON | ~500ms | Includes parsing + DB insert |
-| Import CSV | ~300ms | Parsing + DB insert |
-| Cloud Upload | ~2-5s | Depends on network |
-| Cloud Download | ~2-5s | Depends on network |
+| Operation      | Time (1000 words) | Notes                        |
+|----------------|-------------------|------------------------------|
+| Export JSON    | ~200ms            | Includes serialization       |
+| Export CSV     | ~100ms            | Simple format                |
+| Import JSON    | ~500ms            | Includes parsing + DB insert |
+| Import CSV     | ~300ms            | Parsing + DB insert          |
+| Cloud Upload   | ~2-5s             | Depends on network           |
+| Cloud Download | ~2-5s             | Depends on network           |
 
 ### Optimization Tips
 
@@ -822,6 +850,7 @@ fun `cloud sync should handle conflicts correctly`() = runTest {
 ## 🔮 Future Enhancements
 
 ### Phase 2 Features
+
 - [ ] End-to-end encryption for backups
 - [ ] Incremental sync (only sync changes)
 - [ ] Multiple device tracking
@@ -832,6 +861,7 @@ fun `cloud sync should handle conflicts correctly`() = runTest {
 - [ ] Custom backend server support
 
 ### Phase 3 Features
+
 - [ ] Real-time sync with Firebase
 - [ ] Collaborative word lists
 - [ ] Share word lists with friends
@@ -845,6 +875,7 @@ fun `cloud sync should handle conflicts correctly`() = runTest {
 ## Sprint 9: Data Sync & Backup ☁️
 
 This sync package was created as part of Sprint 9 to implement:
+
 - ✅ Backup data models and entities
 - ✅ Export functionality (JSON/CSV)
 - ✅ Import functionality (JSON/CSV)
@@ -853,18 +884,21 @@ This sync package was created as part of Sprint 9 to implement:
 - ⏳ Backup/restore UI components (pending)
 - ✅ Comprehensive documentation
 
-**Result**: Complete offline-first data sync and backup system with multiple export formats, intelligent conflict resolution, and cloud backup support (placeholder implementation).
+**Result**: Complete offline-first data sync and backup system with multiple export formats,
+intelligent conflict resolution, and cloud backup support (placeholder implementation).
 
 ---
 
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [Android Backup Best Practices](https://developer.android.com/guide/topics/data/backup)
 - [Room Database Export/Import](https://developer.android.com/training/data-storage/room)
 - [WorkManager for Scheduled Tasks](https://developer.android.com/topic/libraries/architecture/workmanager)
 
 ### Libraries Used
+
 - **Gson**: JSON serialization/deserialization
 - **Room**: Database with transaction support
 - **WorkManager**: Background task scheduling

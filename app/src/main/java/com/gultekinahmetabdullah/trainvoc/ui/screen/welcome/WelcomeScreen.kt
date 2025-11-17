@@ -49,7 +49,9 @@ fun WelcomeScreen(
     val activity = context as? Activity
 
     fun onLanguageSelected(lang: LanguagePreference) {
-        settingsViewModel.setLanguage(lang, activity)
+        settingsViewModel.setLanguage(lang)
+        // Manually recreate activity for WelcomeScreen since the languageChanged
+        // flow listener in SettingsScreen may not be active during onboarding
         activity?.recreate()
     }
 

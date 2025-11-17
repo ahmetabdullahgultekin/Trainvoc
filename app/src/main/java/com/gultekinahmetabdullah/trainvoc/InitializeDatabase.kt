@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc
 
 import android.app.Application
+import android.content.ComponentCallbacks2
 import androidx.work.Configuration
 import com.gultekinahmetabdullah.trainvoc.performance.PerformanceMonitor
 import com.gultekinahmetabdullah.trainvoc.performance.StartupOptimizer
@@ -100,6 +101,7 @@ class TrainvocApplication : Application(), Configuration.Provider {
                 // Clear caches to avoid being killed
                 PerformanceMonitor.logMemoryUsage("TrimMemory:Running")
             }
+
             ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
                 // App is in background
                 // Good time to clear unnecessary resources

@@ -11,7 +11,7 @@ import android.content.SharedPreferences
  */
 class NotificationPreferences(context: Context) {
 
-    private val prefs: SharedPreferences = 
+    private val prefs: SharedPreferences =
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     // Daily Reminder Settings

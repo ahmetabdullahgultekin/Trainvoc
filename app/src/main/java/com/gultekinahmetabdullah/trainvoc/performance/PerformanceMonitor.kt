@@ -60,7 +60,10 @@ object PerformanceMonitor {
     /**
      * Measure execution time of a suspending function
      */
-    internal suspend inline fun <T> measureTimeSuspend(tag: String, crossinline block: suspend () -> T): T {
+    internal suspend inline fun <T> measureTimeSuspend(
+        tag: String,
+        crossinline block: suspend () -> T
+    ): T {
         if (!ENABLED) return block()
 
         val startTime = SystemClock.elapsedRealtime()
@@ -169,8 +172,10 @@ object PerformanceMonitor {
             Log.d(TAG, "🗄️ Database Queries:")
             queryMetrics.forEach { (query, metrics) ->
                 val avg = if (metrics.count > 0) metrics.totalDuration / metrics.count else 0
-                Log.d(TAG, "  $query: avg=${avg}ms, min=${metrics.minDuration}ms, " +
-                        "max=${metrics.maxDuration}ms, count=${metrics.count}")
+                Log.d(
+                    TAG, "  $query: avg=${avg}ms, min=${metrics.minDuration}ms, " +
+                            "max=${metrics.maxDuration}ms, count=${metrics.count}"
+                )
             }
         }
 
