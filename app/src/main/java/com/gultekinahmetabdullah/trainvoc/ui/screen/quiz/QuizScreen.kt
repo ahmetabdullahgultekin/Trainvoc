@@ -1,49 +1,28 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.quiz
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -57,19 +36,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gultekinahmetabdullah.trainvoc.R
-import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.AnswerOptionCard
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDialog
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable
@@ -88,7 +69,7 @@ fun QuizScreen(
     var showExitDialog by remember { mutableStateOf(false) }
     var showStats by rememberSaveable { mutableStateOf(false) }
 
-    // Uygulama arka plana atıldığında finalizeQuiz çağrılır
+    // Finalize quiz when app goes to background
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -137,15 +118,12 @@ fun QuizScreen(
             )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Info baloncuğu ve ikon
+            // Info icon to toggle stats display
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.TopEnd
             ) {
-                IconButton(onClick = {
-                    showStats = !showStats
-                }) {
+                IconButton(onClick = { showStats = !showStats }) {
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = stringResource(id = R.string.word_stats),
@@ -154,145 +132,13 @@ fun QuizScreen(
                 }
             }
 
-            AnimatedVisibility(
-                visible = showStats && currentStats != null,
-                enter = expandIn(
-                    expandFrom = Alignment.TopEnd
-                ) + fadeIn(),
-                exit = shrinkOut(
-                    shrinkTowards = Alignment.TopEnd
-                ) + fadeOut()
-            ) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    shadowElevation = 8.dp,
-                    color = MaterialTheme.colorScheme.surface
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        // Quiz istatistikleri burada gösterilecek
-                        val questionState = question // recomposition tetikleyici
-                        quizParameter.let { it ->
-                            val totalWords by quizViewModel.totalWords.collectAsState()
-                            val learnedWords by quizViewModel.learnedWords.collectAsState()
-                            val progressPercent by quizViewModel.progressPercent.collectAsState()
-                            DisposableEffect(it, questionState) {
-                                quizViewModel.collectQuizStats(it as QuizParameter)
-                                onDispose { }
-                            }
-                            when (it) {
-                                is QuizParameter.Level -> {
-                                    Text(
-                                        text = stringResource(R.string.story_mode),
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = stringResource(
-                                            R.string.level_with_value,
-                                            it.wordLevel
-                                        )
-                                    )
-                                    Text(
-                                        text = stringResource(
-                                            R.string.total_words_with_value,
-                                            totalWords?.toString() ?: "..."
-                                        )
-                                    )
-                                    Text(
-                                        text = stringResource(
-                                            R.string.learned_words_with_value,
-                                            learnedWords?.toString() ?: "..."
-                                        )
-                                    )
-                                    Text(
-                                        text = stringResource(
-                                            R.string.progress_with_value,
-                                            progressPercent?.toString() ?: "..."
-                                        )
-                                    )
-                                }
-
-                                is QuizParameter.ExamType -> {
-                                    Text(
-                                        text = stringResource(
-                                            R.string.custom_mode_with_value,
-                                            it.exam.exam
-                                        ),
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = stringResource(
-                                            R.string.exam_with_value,
-                                            it.exam.exam
-                                        )
-                                    )
-                                    Text(
-                                        text = stringResource(
-                                            R.string.total_words_with_value,
-                                            totalWords?.toString() ?: "..."
-                                        )
-                                    )
-                                    Text(
-                                        text = stringResource(
-                                            R.string.learned_words_with_value,
-                                            learnedWords?.toString() ?: "..."
-                                        )
-                                    )
-                                    Text(
-                                        text = stringResource(
-                                            R.string.exam_type_with_value,
-                                            it.exam.exam
-                                        )
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                        }
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                        )
-                        Text(
-                            text = stringResource(
-                                id = R.string.word_stats, question?.correctWord?.word ?: ""
-                            ),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = stringResource(
-                                id = R.string.correct
-                            )
-                                    + ": ${currentStats?.correctCount}"
-                        )
-                        Text(
-                            text = stringResource(
-                                id = R.string.wrong
-                            )
-                                    + ": ${currentStats?.wrongCount}"
-                        )
-                        Text(
-                            text = stringResource(
-                                id = R.string.skipped
-                            )
-                                    + ": ${currentStats?.skippedCount}"
-                        )
-                        Text(
-                            if (currentStats?.learned == true) stringResource(
-                                id = R.string.learned
-                            ) else stringResource(
-                                id = R.string.not_learned
-                            )
-                        )
-                    }
-                }
-            }
+            QuizStatsCard(
+                showStats = showStats,
+                currentStats = currentStats,
+                quizParameter = quizParameter,
+                question = question,
+                quizViewModel = quizViewModel
+            )
 
             LazyColumn(
                 modifier = Modifier
@@ -302,7 +148,7 @@ fun QuizScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    ScoreTitle(score = score)
+                    QuizScoreCard(score = score)
                 }
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -338,119 +184,23 @@ fun QuizScreen(
                             fontSize = 18.sp
                         )
                     } else {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(8.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.which_one_is_the_correct_meaning),
-                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Text(
-                                    text = question!!.correctWord.word,
-                                    style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
+                        QuizQuestionCard(word = question!!.correctWord.word)
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Animated Answer Buttons
+                        // Answer options
                         question!!.choices.forEach { choice ->
-                            val backgroundColor by animateColorAsState(
-                                targetValue = when {
-                                    selectedAnswer == choice && isCorrect == true -> Color(
-                                        0xFF66BB6A
-                                    ).copy(
-                                        alpha = 0.7f
-                                    )
-
-                                    selectedAnswer == choice && isCorrect == false -> MaterialTheme.colorScheme.error.copy(
-                                        alpha = 0.7f
-                                    )
-
-                                    choice == question!!.correctWord && isCorrect == false -> Color(
-                                        0xFF66BB6A
-                                    ).copy(alpha = 0.7f)
-
-                                    isTimeUp && choice == question!!.correctWord -> Color(0xFF66BB6A).copy(
-                                        alpha = 0.9f
-                                    )
-
-                                    else -> MaterialTheme.colorScheme.primaryContainer
-                                },
-                                animationSpec = tween(400), label = ""
-                            )
-
-                            val scaleAnim by animateFloatAsState(
-                                targetValue = if (selectedAnswer == choice) 1.08f else 1f,
-                                animationSpec = spring(stiffness = Spring.StiffnessMedium),
-                                label = ""
-                            )
-
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                                    .scale(scaleAnim)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .clickable(
-                                        enabled = selectedAnswer == null && isCorrect == null && !isTimeUp
-                                    ) {
-                                        selectedAnswer = choice
-                                        isCorrect = quizViewModel.checkAnswer(choice)
-                                    },
-                                shape = RoundedCornerShape(16.dp),
-                                colors = CardDefaults.cardColors(containerColor = backgroundColor),
-                                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(14.dp)
-                                        .fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = choice.meaning,
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                                        modifier = Modifier.weight(1f),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-
-                                    if (selectedAnswer == choice) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(32.dp)
-                                                .clip(CircleShape)
-                                                .background(if (isCorrect == true) Color(0xFF66BB6A) else MaterialTheme.colorScheme.error),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = if (isCorrect == true) Icons.Default.CheckCircle else Icons.Default.Close,
-                                                contentDescription = if (isCorrect == true) "Correct" else "Wrong",
-                                                tint = Color.White
-                                            )
-                                        }
-                                    }
+                            AnswerOptionCard(
+                                choice = choice,
+                                correctWord = question!!.correctWord,
+                                selectedAnswer = selectedAnswer,
+                                isCorrect = isCorrect,
+                                isTimeUp = isTimeUp,
+                                onChoiceClick = { selectedChoice ->
+                                    selectedAnswer = selectedChoice
+                                    isCorrect = quizViewModel.checkAnswer(selectedChoice)
                                 }
-                            }
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -486,11 +236,12 @@ fun QuizScreen(
         }
     }
 
-    // Exit dialog
+    // Handle back button press
     BackHandler {
         showExitDialog = true
     }
-    // QuizScreen composable'dan çıkış isteği algılamak için
+
+    // Register exit handler for QuizScreen
     DisposableEffect(Unit) {
         val callback = {
             showExitDialog = true
@@ -500,56 +251,16 @@ fun QuizScreen(
             QuizScreenExitHandler.unregister(callback)
         }
     }
+
+    // Show exit confirmation dialog
     if (showExitDialog) {
-        AlertDialog(
-            onDismissRequest = { showExitDialog = false },
-            title = { Text(stringResource(id = R.string.quit_quiz_title)) },
-            text = { Text(stringResource(id = R.string.quit_quiz_message)) },
-            confirmButton = {
-                Button(onClick = {
-                    onQuit.invoke()
-                    quizViewModel.finalizeQuiz()
-                    showExitDialog = false
-                }) {
-                    Text(stringResource(id = R.string.yes))
-                }
-            },
-            dismissButton = {
-                Button(onClick = { showExitDialog = false }) {
-                    Text(stringResource(id = R.string.no))
-                }
+        QuizExitDialog(
+            onDismiss = { showExitDialog = false },
+            onConfirm = {
+                onQuit.invoke()
+                quizViewModel.finalizeQuiz()
+                showExitDialog = false
             }
         )
-    }
-}
-
-@Composable
-fun ScoreTitle(score: Int) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.score) + ": ",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Text(
-                text = "$score",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
     }
 }
