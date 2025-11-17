@@ -118,47 +118,47 @@ class WordRepository(
     override suspend fun generateTenQuestions(
         quizType: QuizType, quizParameter: QuizParameter
     ): MutableList<Question> {
-
-        val tenQuestions = mutableListOf<Question>()
-        repeat(10) {
-            val fiveWords = getFiveWords(quizType = quizType, parameter = quizParameter)
-            val correctWord = fiveWords.random()
-            val shuffledWords = fiveWords.shuffled()
-            tenQuestions.add(
-                Question(
-                    correctWord = correctWord,
-                    incorrectWords = shuffledWords.filter { it != correctWord },
-                )
-            )
-        }
-        return tenQuestions
-    }
-
-    private suspend fun getFiveWords(quizType: QuizType, parameter: QuizParameter): List<Word> {
         // Determine level filter
-        val level: String? = when (parameter) {
-            is QuizParameter.Level -> parameter.wordLevel.name
+        val level: String? = when (quizParameter) {
+            is QuizParameter.Level -> quizParameter.wordLevel.name
             else -> null
         }
 
         // Determine exam filter (null for "Mixed" exam means all exams)
-        val exam: String? = when (parameter) {
+        val exam: String? = when (quizParameter) {
             is QuizParameter.ExamType -> {
-                if (parameter.exam == Exam.examTypes.last()) null // "Mixed" exam
-                else parameter.exam.exam
+                if (quizParameter.exam == Exam.examTypes.last()) null // "Mixed" exam
+                else quizParameter.exam.exam
             }
             else -> null
         }
 
-        // Use WordQueryBuilder to create dynamic query - replaces 30+ when branches
+        // OPTIMIZED: Batch load 50 words at once instead of 10 separate queries
+        // This reduces database round-trips from 10 to 1 (~10x faster)
         val query = com.gultekinahmetabdullah.trainvoc.database.WordQueryBuilder.buildQuery(
             quizType = quizType,
             level = level,
             exam = exam,
-            limit = 5
+            limit = 50  // Load 50 words (10 questions × 5 words each)
         )
 
-        return wordDao.getWordsByQuery(query)
+        val allWords = wordDao.getWordsByQuery(query)
+
+        // Return empty list if we don't have enough words
+        if (allWords.size < 10) return mutableListOf()
+
+        // Shuffle and split into groups of 5, then create questions
+        return allWords.shuffled()
+            .chunked(5)  // Split into groups of 5
+            .take(10)    // Take first 10 groups
+            .map { fiveWords ->
+                val correctWord = fiveWords.random()
+                Question(
+                    correctWord = correctWord,
+                    incorrectWords = fiveWords.shuffled().filter { it != correctWord }
+                )
+            }
+            .toMutableList()
     }
 
     override suspend fun isLevelUnlocked(level: WordLevel): Boolean {
