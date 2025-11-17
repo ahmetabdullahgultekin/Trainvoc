@@ -3,7 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoryViewModel @Inject constructor(
-    private val wordRepository: WordRepository
+    private val wordRepository: IWordRepository
 ) : ViewModel() {
 
     private val _levels = MutableStateFlow<Map<WordLevel, Boolean>>(emptyMap())
@@ -30,32 +30,25 @@ class StoryViewModel @Inject constructor(
                     async { level to isLevelUnlocked(level) }
                 }.associate { it.await() }
             }
-            println("[StoryViewModel] Loaded levels: $levelStatus")
             _levels.value = levelStatus
         }
     }
 
     /**
-     * Bir seviyenin kilitli olup olmadığını belirler.
-     * Sadece A1 başta açık, diğerleri bir önceki seviyedeki tüm kelimeler learned ise açılır.
+     * Determines if a level is locked or unlocked.
+     * Only A1 is unlocked by default, others unlock when all words in the previous level are learned.
      */
     suspend fun isLevelUnlocked(level: WordLevel): Boolean {
         if (level == WordLevel.A1) {
-            println("[StoryViewModel] isLevelUnlocked: ${level.name} is always unlocked (A1)")
             return true
         }
-        val previous = WordLevel.entries.getOrNull(level.ordinal) ?: run {
-            println("[StoryViewModel] isLevelUnlocked: ${level.name} has no previous level, returning false")
-            return false
-        }
-        val unlocked = wordRepository.isLevelUnlocked(previous)
-        println("[StoryViewModel] isLevelUnlocked: ${level.name}, previous: ${previous.name}, previousUnlocked: $unlocked (details: checking if all words in $previous are learned)")
-        return unlocked
+        val previous = WordLevel.entries.getOrNull(level.ordinal) ?: return false
+        return wordRepository.isLevelUnlocked(previous)
     }
 
     /**
-     * Tüm seviyelerin kilitli/açık durumunu günceller.
-     * A1 her zaman açık, diğerleri bir önceki seviye learned ise açılır.
+     * Refreshes the locked/unlocked status of all levels.
+     * A1 is always unlocked, others unlock when the previous level is completed.
      */
     fun refreshLevelLocks() {
         viewModelScope.launch {
