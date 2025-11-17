@@ -29,6 +29,8 @@ import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 /**
@@ -57,12 +59,12 @@ fun QuizStatsCard(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(12.dp),
+                .padding(horizontal = Spacing.mediumLarge, vertical = Spacing.small),
+            shape = RoundedCornerShape(CornerRadius.medium),
             shadowElevation = 8.dp,
             color = MaterialTheme.colorScheme.surface
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(Spacing.mediumLarge)) {
                 // Quiz statistics section
                 quizParameter?.let { parameter ->
                     val totalWords by quizViewModel.totalWords.collectAsState()
@@ -82,7 +84,7 @@ fun QuizStatsCard(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(Spacing.extraSmall))
                             Text(
                                 text = stringResource(
                                     R.string.level_with_value,
@@ -118,7 +120,7 @@ fun QuizStatsCard(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(Spacing.extraSmall))
                             Text(
                                 text = stringResource(
                                     R.string.exam_with_value,
@@ -145,11 +147,11 @@ fun QuizStatsCard(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(Spacing.medium))
                 }
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = Spacing.small),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                 )
 
@@ -161,7 +163,7 @@ fun QuizStatsCard(
                     ),
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Spacing.small))
                 Text(
                     text = stringResource(id = R.string.correct) + ": ${currentStats?.correctCount}",
                     fontSize = 14.sp
