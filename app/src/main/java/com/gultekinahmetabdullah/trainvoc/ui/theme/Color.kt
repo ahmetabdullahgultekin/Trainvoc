@@ -87,3 +87,66 @@ object GradientColors {
         Color(0xFF121212)   // Dark background
     )
 }
+
+// ============================================================
+// Extension Properties for Theme-Aware Color Access
+// ============================================================
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+
+/**
+ * Theme-aware color extensions for ColorScheme
+ * Automatically selects light/dark variant based on current theme
+ */
+
+val ColorScheme.statsCorrect: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.correctDark else StatsColors.correctLight
+
+val ColorScheme.statsIncorrect: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.incorrectDark else StatsColors.incorrectLight
+
+val ColorScheme.statsSkipped: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.skippedDark else StatsColors.skippedLight
+
+val ColorScheme.statsGold: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.goldDark else StatsColors.goldLight
+
+val ColorScheme.statsAchievement: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.achievementDark else StatsColors.achievementLight
+
+val ColorScheme.statsTime: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.timeDark else StatsColors.timeLight
+
+val ColorScheme.statsAverage: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.averageDark else StatsColors.averageLight
+
+val ColorScheme.statsQuiz: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.quizDark else StatsColors.quizLight
+
+val ColorScheme.statsCategory: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) StatsColors.categoryDark else StatsColors.categoryLight
+
+fun statsGradient(isDark: Boolean): List<Color> {
+    return if (isDark) GradientColors.statsGradientDark else GradientColors.statsGradientLight
+}
