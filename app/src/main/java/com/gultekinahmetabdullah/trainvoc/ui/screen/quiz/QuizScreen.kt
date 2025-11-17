@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.AnswerOptionCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
@@ -102,7 +103,7 @@ fun QuizScreen(
         } else {
             if (isTimeUp) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
         },
-        animationSpec = tween(durationMillis = 500)
+        animationSpec = tween(durationMillis = AnimationDuration.progress)
     )
 
     Box(
