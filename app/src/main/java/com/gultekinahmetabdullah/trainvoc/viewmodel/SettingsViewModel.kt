@@ -3,6 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
@@ -31,6 +32,9 @@ class SettingsViewModel @Inject constructor(
     private val _theme = MutableStateFlow(preferencesRepository.getTheme())
     val theme: StateFlow<ThemePreference> = _theme
 
+    private val _colorPalette = MutableStateFlow(preferencesRepository.getColorPalette())
+    val colorPalette: StateFlow<ColorPalettePreference> = _colorPalette
+
     private val _language = MutableStateFlow(getLanguageWithSystemFallback())
     val language: StateFlow<LanguagePreference> = _language
 
@@ -52,6 +56,13 @@ class SettingsViewModel @Inject constructor(
     fun setTheme(theme: ThemePreference) {
         preferencesRepository.setTheme(theme)
         _theme.value = theme
+    }
+
+    fun getColorPalette(): ColorPalettePreference = preferencesRepository.getColorPalette()
+
+    fun setColorPalette(palette: ColorPalettePreference) {
+        preferencesRepository.setColorPalette(palette)
+        _colorPalette.value = palette
     }
 
     fun isNotificationsEnabled(): Boolean = preferencesRepository.isNotificationsEnabled()

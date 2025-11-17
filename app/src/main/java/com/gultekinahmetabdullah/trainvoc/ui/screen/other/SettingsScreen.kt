@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
@@ -41,12 +42,25 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Locale
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import android.os.Build
 
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val theme by viewModel.theme.collectAsState()
+    val colorPalette by viewModel.colorPalette.collectAsState()
     val language by viewModel.language.collectAsState()
     val configuration = LocalConfiguration.current // Compose context
 
@@ -76,16 +90,25 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     ) {
         Text(stringResource(id = R.string.settings), style = MaterialTheme.typography.headlineSmall)
 
-        // Theme Selection
+        // Theme Customization Section Header
+        Text(
+            text = "Theme Customization",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        // Theme Mode Selection (System, Light, Dark, AMOLED)
         val themeOptions = listOf(
             ThemePreference.SYSTEM,
             ThemePreference.LIGHT,
-            ThemePreference.DARK
+            ThemePreference.DARK,
+            ThemePreference.AMOLED
         )
         val themeLabels = listOf(
             stringResource(id = R.string.system_default),
             stringResource(id = R.string.light),
-            stringResource(id = R.string.dark)
+            stringResource(id = R.string.dark),
+            "AMOLED"
         )
         val selectedThemeIndex = themeOptions.indexOf(theme)
         SettingDropdown(
@@ -99,6 +122,33 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 })
             }
         )
+
+        // Color Palette Selection
+        Text(
+            text = "Color Palette",
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        // Color palette preview cards
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(ColorPalettePreference.entries.toList()) { palette ->
+                // Skip Dynamic on older Android versions
+                if (palette == ColorPalettePreference.DYNAMIC && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                    return@items
+                }
+
+                ColorPaletteCard(
+                    palette = palette,
+                    isSelected = palette == colorPalette,
+                    onClick = { viewModel.setColorPalette(palette) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         // Notification Settings Section
         Text(
@@ -290,4 +340,108 @@ fun SettingSwitchWithDescription(
 // Toast function
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+/**
+ * Color Palette Preview Card
+ *
+ * Displays a preview card for each color palette with:
+ * - Palette name
+ * - Color preview squares showing primary, secondary, and tertiary colors
+ * - Selection indicator (border)
+ */
+@Composable
+fun ColorPaletteCard(
+    palette: ColorPalettePreference,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val colors = getPreviewColors(palette)
+
+    Column(
+        modifier = Modifier
+            .width(100.dp)
+            .clip(RoundedCornerShape(CornerRadius.medium))
+            .border(
+                width = if (isSelected) 3.dp else 1.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(CornerRadius.medium)
+            )
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .clickable(onClick = onClick)
+            .padding(Spacing.small),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(Spacing.extraSmall)
+    ) {
+        // Color preview squares
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            colors.forEach { color ->
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(RoundedCornerShape(CornerRadius.extraSmall))
+                        .background(color)
+                )
+            }
+        }
+
+        // Palette name
+        Text(
+            text = palette.displayName,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
+    }
+}
+
+/**
+ * Get preview colors for each palette
+ * Returns a list of 3 colors representing the palette's primary, secondary, and tertiary colors
+ */
+private fun getPreviewColors(palette: ColorPalettePreference): List<Color> {
+    return when (palette) {
+        ColorPalettePreference.DEFAULT -> listOf(
+            Color(0xFFAAD7D9),  // Primary
+            Color(0xFF92C7CF),  // Secondary
+            Color(0xFF66BB6A)   // Accent (UnlockedLeaf)
+        )
+        ColorPalettePreference.OCEAN -> listOf(
+            Color(0xFF0277BD),  // Deep ocean blue
+            Color(0xFF00ACC1),  // Cyan teal
+            Color(0xFF1976D2)   // Rich blue
+        )
+        ColorPalettePreference.FOREST -> listOf(
+            Color(0xFF2E7D32),  // Forest green
+            Color(0xFF558B2F),  // Olive green
+            Color(0xFF689F38)   // Light green
+        )
+        ColorPalettePreference.SUNSET -> listOf(
+            Color(0xFFE64A19),  // Deep orange
+            Color(0xFF7B1FA2),  // Purple
+            Color(0xFFFF6F00)   // Bright orange
+        )
+        ColorPalettePreference.LAVENDER -> listOf(
+            Color(0xFF6A1B9A),  // Deep purple
+            Color(0xFFAB47BC),  // Medium purple
+            Color(0xFFD81B60)   // Pink
+        )
+        ColorPalettePreference.CRIMSON -> listOf(
+            Color(0xFFC62828),  // Deep red
+            Color(0xFFD84315),  // Red orange
+            Color(0xFFAD1457)   // Pink red
+        )
+        ColorPalettePreference.MINT -> listOf(
+            Color(0xFF00897B),  // Teal
+            Color(0xFF26A69A),  // Light teal
+            Color(0xFF00ACC1)   // Cyan
+        )
+        ColorPalettePreference.DYNAMIC -> listOf(
+            Color(0xFF6750A4),  // Material You default primary
+            Color(0xFF625B71),  // Material You default secondary
+            Color(0xFF7D5260)   // Material You default tertiary
+        )
+    }
 }
