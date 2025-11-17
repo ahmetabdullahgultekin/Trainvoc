@@ -126,75 +126,30 @@ class WordRepository(
     }
 
     private suspend fun getFiveWords(quizType: QuizType, parameter: QuizParameter): List<Word> {
-        return when (parameter) {
-            is QuizParameter.Level -> {
-                val level = when (parameter.wordLevel) {
-                    WordLevel.A1 -> "A1"
-                    WordLevel.A2 -> "A2"
-                    WordLevel.B1 -> "B1"
-                    WordLevel.B2 -> "B2"
-                    WordLevel.C1 -> "C1"
-                    WordLevel.C2 -> "C2"
-                }
-                when (quizType) {
-                    QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWordsByLevel(level)
-                    QuizType.RANDOM -> wordDao.getRandomFiveWordsByLevel(level)
-                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByLevel(level)
-                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByLevel(level)
-                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByLevel(level)
-                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByLevel(level)
-                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByLevel(level)
-                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByLevel(level)
-                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByLevel(level)
-                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByLevel(level)
-                }
-            }
-
-            is QuizParameter.ExamType -> {
-                // If the exam is "Mixed", we treat it as a special case
-                if (parameter.exam == Exam.examTypes.last()) {
-                    when (quizType) {
-                        QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWords()
-                        QuizType.RANDOM -> wordDao.getRandomFiveWords()
-                        QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
-                        QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
-                        QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
-                        QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
-                        QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
-                        QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
-                        QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
-                        QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
-                    }
-                } else {
-                    when (quizType) {
-                        QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWordsByExam(parameter.exam.exam)
-                        QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByExam(parameter.exam.exam)
-                    }
-                }
-            }
-
-            /*else -> {
-                when (quizType) {
-                    QuizType.RANDOM -> wordDao.getRandomFiveWords()
-                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
-                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
-                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
-                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
-                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
-                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
-                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
-                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
-                }
-            }*/
+        // Determine level filter
+        val level: String? = when (parameter) {
+            is QuizParameter.Level -> parameter.wordLevel.name
+            else -> null
         }
+
+        // Determine exam filter (null for "Mixed" exam means all exams)
+        val exam: String? = when (parameter) {
+            is QuizParameter.ExamType -> {
+                if (parameter.exam == Exam.examTypes.last()) null // "Mixed" exam
+                else parameter.exam.exam
+            }
+            else -> null
+        }
+
+        // Use WordQueryBuilder to create dynamic query - replaces 30+ when branches
+        val query = com.gultekinahmetabdullah.trainvoc.database.WordQueryBuilder.buildQuery(
+            quizType = quizType,
+            level = level,
+            exam = exam,
+            limit = 5
+        )
+
+        return wordDao.getWordsByQuery(query)
     }
 
     suspend fun isLevelUnlocked(level: WordLevel): Boolean {
