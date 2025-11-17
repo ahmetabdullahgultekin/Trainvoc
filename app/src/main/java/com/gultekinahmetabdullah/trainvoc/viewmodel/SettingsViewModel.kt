@@ -45,12 +45,6 @@ class SettingsViewModel @Inject constructor(
         MutableStateFlow(preferencesRepository.isNotificationsEnabled())
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled
 
-    init {
-        // Initialize locale on app startup based on saved preferences
-        val lang = _language.value
-        updateLocale(lang.code)
-    }
-
     fun getTheme(): ThemePreference = preferencesRepository.getTheme()
 
     fun setTheme(theme: ThemePreference) {
@@ -92,10 +86,11 @@ class SettingsViewModel @Inject constructor(
 
     fun getLanguage(): LanguagePreference = preferencesRepository.getLanguage()
 
-    fun setLanguage(language: LanguagePreference, activity: android.app.Activity? = null) {
+    fun setLanguage(language: LanguagePreference) {
         preferencesRepository.setLanguage(language)
         _language.value = language
-        updateLocale(language.code, activity)
+        // Emit event to trigger activity recreation
+        // The locale will be applied via MainActivity.attachBaseContext()
         viewModelScope.launch { _languageChanged.emit(Unit) }
     }
 

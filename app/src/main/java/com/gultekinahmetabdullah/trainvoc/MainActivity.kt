@@ -1,6 +1,8 @@
 package com.gultekinahmetabdullah.trainvoc
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets.Type
@@ -55,6 +57,25 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    /**
+     * Override attachBaseContext to apply locale configuration when activity is created.
+     * This is the proper way to handle locale changes on Android N (API 24) and above.
+     */
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val languageCode = prefs.getString("language", null) ?: "en"
+
+        val locale = java.util.Locale(languageCode)
+        java.util.Locale.setDefault(locale)
+
+        val configuration = Configuration(newBase.resources.configuration)
+        configuration.setLocale(locale)
+        configuration.setLayoutDirection(locale)
+
+        val context = newBase.createConfigurationContext(configuration)
+        super.attachBaseContext(context)
+    }
+
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,14 +129,6 @@ class MainActivity : ComponentActivity() {
             val statsViewModel: StatsViewModel = hiltViewModel()
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val storyViewModel: StoryViewModel = hiltViewModel()
-
-            // Get language preference
-            val languagePref by settingsViewModel.language.collectAsState()
-
-            // Update locale when language preference changes
-            LaunchedEffect(languagePref) {
-                settingsViewModel.updateLocale(languagePref.code)
-            }
 
             /**
              * Set the theme based on user preference.
