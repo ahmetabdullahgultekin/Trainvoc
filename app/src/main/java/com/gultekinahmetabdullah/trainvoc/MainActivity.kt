@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
             // Get language preference
             val languagePref by settingsViewModel.language.collectAsState()
 
-            // Dil tercihi değiştiğinde locale'ı güncelle
+            // Update locale when language preference changes
             LaunchedEffect(languagePref) {
                 settingsViewModel.updateLocale(languagePref.code)
             }

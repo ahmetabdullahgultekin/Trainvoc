@@ -56,7 +56,7 @@ class WordNotificationWorker(
             manager.createNotificationChannel(channel)
         }
 
-        // Bildirime tıklanınca MainActivity'ye ve kelime id'sine yönlendiren intent
+        // Intent to redirect to MainActivity and word detail when notification is clicked
         val intent = Intent(applicationContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("wordId", wordId)
