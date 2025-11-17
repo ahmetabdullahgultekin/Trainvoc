@@ -31,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -55,7 +56,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(Spacing.mediumLarge),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -63,7 +64,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         // Search Bar
         OutlinedTextField(
@@ -73,7 +74,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         // Make text fields collapsible
         Button(onClick = { expendedNewWord.value = !expendedNewWord.value }) {
@@ -98,7 +99,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
 
             WordSelectionForm()
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
 
             // Insert Button
             Button(
@@ -119,7 +120,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         // Display Words
         LazyColumn {
@@ -135,10 +136,10 @@ fun WordCard(word: WordAskedInExams) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = Spacing.extraSmall),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(Spacing.mediumLarge)) {
             Text(
                 text = stringResource(id = R.string.word_colon, word.word.word),
                 style = MaterialTheme.typography.titleMedium
@@ -196,7 +197,7 @@ fun WordLevelComboBox() {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Spacing.mediumLarge),
             textStyle = TextStyle.Default
         )
 
@@ -237,7 +238,7 @@ fun WordCategoryComboBox() {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Spacing.mediumLarge),
             textStyle = TextStyle.Default
         )
 
@@ -262,7 +263,7 @@ fun WordCategoryComboBox() {
 fun WordSelectionForm() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(Spacing.mediumLarge)
     ) {
         WordLevelComboBox()
         WordCategoryComboBox()

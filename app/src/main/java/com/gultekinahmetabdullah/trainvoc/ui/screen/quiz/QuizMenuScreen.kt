@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 @Composable
 fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
@@ -44,19 +46,19 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
             .paint(
                 painter = painterResource(id = R.drawable.bg_2),
                 contentScale = ContentScale.FillBounds,
-                alpha = 0.12f
+                alpha = Alpha.surfaceLight
             )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(Spacing.mediumLarge),
         ) {
             Text(
                 text = stringResource(id = R.string.select_quiz_type),
                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier.padding(bottom = Spacing.large)
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -116,7 +118,7 @@ fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: 
         modifier = Modifier
             .fillMaxWidth()
             .height(196.dp)
-            .padding(4.dp)
+            .padding(Spacing.extraSmall)
             .shadow(animatedElevation.dp, RoundedCornerShape(18.dp))
             .scale(scale)
             .clickable(interactionSource = interactionSource, indication = null, onClick = onClick),
@@ -124,7 +126,7 @@ fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: 
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(Spacing.mediumLarge)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ) {
@@ -134,7 +136,7 @@ fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: 
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
             Text(
                 text = description,
                 fontSize = 14.sp,
