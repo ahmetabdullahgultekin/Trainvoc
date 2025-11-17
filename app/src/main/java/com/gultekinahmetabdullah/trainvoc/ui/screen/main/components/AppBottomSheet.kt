@@ -44,6 +44,8 @@ import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -63,20 +65,20 @@ fun AppBottomSheet(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(
-            topStart = 28.dp,
-            topEnd = 28.dp
+            topStart = CornerRadius.round,
+            topEnd = CornerRadius.round
         ),
         content = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(horizontal = Spacing.small, vertical = Spacing.small)
             ) {
                 // Header with close button
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                        .padding(horizontal = Spacing.small, vertical = Spacing.small),
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                 ) {
                     Text(
@@ -99,13 +101,13 @@ fun AppBottomSheet(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(Spacing.extraSmall))
 
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                     thickness = 1.dp
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(Spacing.extraSmall))
 
                 // Menu items list
                 val menuItems = getMenuItems()
@@ -119,12 +121,12 @@ fun AppBottomSheet(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier
-                                .padding(8.dp)
+                                .padding(Spacing.small)
                                 .background(
                                     color = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
                                     shape = MaterialTheme.shapes.medium
                                 )
-                                .padding(12.dp),
+                                .padding(Spacing.medium),
                             fontSize = 18.sp
                         )
                     }
@@ -167,7 +169,7 @@ fun AppBottomSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(Spacing.medium))
                 Button(
                     onClick = {
                         coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -180,10 +182,10 @@ fun AppBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = Spacing.small, vertical = Spacing.extraSmall)
                         .shadow(
                             elevation = 6.dp,
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(CornerRadius.large),
                             ambientColor = MaterialTheme.colorScheme.error,
                             spotColor = MaterialTheme.colorScheme.error,
                             clip = false

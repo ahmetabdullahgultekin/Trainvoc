@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import kotlinx.coroutines.launch
 
 /**
@@ -44,7 +45,7 @@ fun AppTopBar(
         title = {
             Row(
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 4.dp)
+                modifier = Modifier.padding(start = Spacing.extraSmall)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.baseline_generating_tokens_24),
