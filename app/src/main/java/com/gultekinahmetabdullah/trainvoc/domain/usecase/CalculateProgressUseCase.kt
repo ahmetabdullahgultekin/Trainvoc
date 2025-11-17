@@ -26,13 +26,13 @@ class CalculateProgressUseCase @Inject constructor(
     suspend operator fun invoke(parameter: QuizParameter): Result<ProgressInfo> {
         return try {
             val totalWords = when (parameter) {
-                is QuizParameter.Level -> repository.getTotalWordsByLevel(parameter.wordLevel.name)
-                is QuizParameter.ExamType -> repository.getTotalWordsByExam(parameter.exam.exam)
+                is QuizParameter.Level -> repository.getWordCountByLevel(parameter.wordLevel.name)
+                is QuizParameter.ExamType -> repository.getWordCountByExam(parameter.exam.exam)
             }
 
             val learnedWords = when (parameter) {
-                is QuizParameter.Level -> repository.getLearnedWordsByLevel(parameter.wordLevel.name)
-                is QuizParameter.ExamType -> repository.getLearnedWordsByExam(parameter.exam.exam)
+                is QuizParameter.Level -> repository.getLearnedWordCount(parameter.wordLevel.name)
+                is QuizParameter.ExamType -> repository.getLearnedWordCountByExam(parameter.exam.exam)
             }
 
             val progressPercent = if (totalWords > 0) {
