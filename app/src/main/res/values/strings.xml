@@ -94,6 +94,8 @@
     <string name="language">Language</string>
     <string name="spanish">Spanish</string>
     <string name="french">French</string>
+    <string name="german">German</string>
+    <string name="arabic">Arabic</string>
     <string name="language_coming_soon">Language changing will be available soon</string>
     <string name="manage_words">Manage Words</string>
     <string name="progress_reset">Progress reset</string>

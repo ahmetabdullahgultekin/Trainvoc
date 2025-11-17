@@ -51,6 +51,10 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCorrect
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsIncorrect
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsSkipped
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsTime
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import kotlinx.coroutines.launch
 
