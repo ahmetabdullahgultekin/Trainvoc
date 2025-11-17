@@ -94,13 +94,13 @@ class TrainvocApplication : Application(), Configuration.Provider {
 
         // Handle different memory pressure levels
         when (level) {
-            TRIM_MEMORY_RUNNING_LOW,
-            TRIM_MEMORY_RUNNING_CRITICAL -> {
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
                 // App is running but system is low on memory
                 // Clear caches to avoid being killed
                 PerformanceMonitor.logMemoryUsage("TrimMemory:Running")
             }
-            TRIM_MEMORY_UI_HIDDEN -> {
+            ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
                 // App is in background
                 // Good time to clear unnecessary resources
                 PerformanceMonitor.logMemoryUsage("TrimMemory:UIHidden")

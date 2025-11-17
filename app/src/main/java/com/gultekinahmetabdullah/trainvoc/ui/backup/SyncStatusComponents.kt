@@ -307,7 +307,7 @@ fun SyncProgressIndicator(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         LinearProgressIndicator(
-            progress = progress,
+            progress = { progress },
             modifier = Modifier.fillMaxWidth()
         )
 

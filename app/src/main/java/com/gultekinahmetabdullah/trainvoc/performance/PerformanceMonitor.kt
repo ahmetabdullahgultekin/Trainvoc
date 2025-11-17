@@ -46,7 +46,7 @@ object PerformanceMonitor {
      * Measure execution time of a code block
      * Returns the result of the block execution
      */
-    inline fun <T> measureTime(tag: String, block: () -> T): T {
+    internal inline fun <T> measureTime(tag: String, block: () -> T): T {
         if (!ENABLED) return block()
 
         val startTime = SystemClock.elapsedRealtime()
@@ -60,7 +60,7 @@ object PerformanceMonitor {
     /**
      * Measure execution time of a suspending function
      */
-    suspend inline fun <T> measureTimeSuspend(tag: String, crossinline block: suspend () -> T): T {
+    internal suspend inline fun <T> measureTimeSuspend(tag: String, crossinline block: suspend () -> T): T {
         if (!ENABLED) return block()
 
         val startTime = SystemClock.elapsedRealtime()
@@ -205,13 +205,13 @@ object PerformanceMonitor {
 /**
  * Extension function for timing code blocks
  */
-inline fun <T> timeIt(tag: String, block: () -> T): T {
+internal inline fun <T> timeIt(tag: String, block: () -> T): T {
     return PerformanceMonitor.measureTime(tag, block)
 }
 
 /**
  * Extension function for timing suspending code blocks
  */
-suspend inline fun <T> timeItSuspend(tag: String, crossinline block: suspend () -> T): T {
+internal suspend inline fun <T> timeItSuspend(tag: String, crossinline block: suspend () -> T): T {
     return PerformanceMonitor.measureTimeSuspend(tag, block)
 }

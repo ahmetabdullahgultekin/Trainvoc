@@ -314,7 +314,7 @@ fun ConflictDetailItem(conflict: DataConflict) {
                         label = "Local",
                         word = conflict.localVersion.word,
                         meaning = conflict.localVersion.meaning,
-                        level = conflict.localVersion.level,
+                        level = conflict.localVersion.level ?: "Unknown",
                         isLocal = true
                     )
 
@@ -323,7 +323,7 @@ fun ConflictDetailItem(conflict: DataConflict) {
                         label = "Backup",
                         word = conflict.remoteVersion.word,
                         meaning = conflict.remoteVersion.meaning,
-                        level = conflict.remoteVersion.level,
+                        level = conflict.remoteVersion.level ?: "Unknown",
                         isLocal = false
                     )
                 }
