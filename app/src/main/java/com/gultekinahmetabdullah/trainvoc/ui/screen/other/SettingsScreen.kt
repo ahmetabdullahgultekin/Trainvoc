@@ -35,6 +35,7 @@ import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
@@ -48,6 +49,12 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val theme by viewModel.theme.collectAsState()
     val language by viewModel.language.collectAsState()
     val configuration = LocalConfiguration.current // Compose context
+
+    // Notification preferences
+    val notificationPrefs = remember { NotificationPreferences.getInstance(context) }
+    var dailyRemindersEnabled by remember { mutableStateOf(notificationPrefs.dailyRemindersEnabled) }
+    var streakAlertsEnabled by remember { mutableStateOf(notificationPrefs.streakAlertsEnabled) }
+    var wordOfDayEnabled by remember { mutableStateOf(notificationPrefs.wordOfDayEnabled) }
 
     // Listen for language changes and recreate activity to apply new locale
     LaunchedEffect(configuration) {
@@ -93,7 +100,14 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             }
         )
 
-        // Notifications Toggle
+        // Notification Settings Section
+        Text(
+            text = stringResource(id = R.string.notification_settings),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        // Master Notifications Toggle
         SettingSwitch(
             title = stringResource(id = R.string.enable_notifications),
             isChecked = notificationsEnabled,
@@ -106,6 +120,42 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 }
             }
         )
+
+        // Individual notification type controls (only visible when notifications are enabled)
+        if (notificationsEnabled) {
+            // Daily Reminders
+            SettingSwitchWithDescription(
+                title = stringResource(id = R.string.enable_daily_reminders),
+                description = stringResource(id = R.string.daily_reminders_desc),
+                isChecked = dailyRemindersEnabled,
+                onCheckedChange = { isChecked ->
+                    dailyRemindersEnabled = isChecked
+                    notificationPrefs.dailyRemindersEnabled = isChecked
+                }
+            )
+
+            // Streak Alerts
+            SettingSwitchWithDescription(
+                title = stringResource(id = R.string.enable_streak_alerts),
+                description = stringResource(id = R.string.streak_alerts_desc),
+                isChecked = streakAlertsEnabled,
+                onCheckedChange = { isChecked ->
+                    streakAlertsEnabled = isChecked
+                    notificationPrefs.streakAlertsEnabled = isChecked
+                }
+            )
+
+            // Word of the Day
+            SettingSwitchWithDescription(
+                title = stringResource(id = R.string.enable_word_of_day),
+                description = stringResource(id = R.string.word_of_day_desc),
+                isChecked = wordOfDayEnabled,
+                onCheckedChange = { isChecked ->
+                    wordOfDayEnabled = isChecked
+                    notificationPrefs.wordOfDayEnabled = isChecked
+                }
+            )
+        }
 
         // Language Selection
         val languageOptions = listOf(LanguagePreference.ENGLISH, LanguagePreference.TURKISH)
@@ -204,6 +254,35 @@ fun SettingSwitch(title: String, isChecked: Boolean, onCheckedChange: (Boolean) 
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+        Switch(checked = isChecked, onCheckedChange = onCheckedChange)
+    }
+}
+
+// Custom Switch with Description for Notification Types
+@Composable
+fun SettingSwitchWithDescription(
+    title: String,
+    description: String,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = Spacing.medium),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
         Switch(checked = isChecked, onCheckedChange = onCheckedChange)
     }
 }
