@@ -3,15 +3,16 @@ package com.gultekinahmetabdullah.trainvoc.domain.usecase
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import javax.inject.Inject
 
 /**
  * Use Case for generating quiz questions.
  * Extracts complex quiz generation logic from ViewModel.
+ * Follows Dependency Inversion Principle by depending on IWordRepository interface.
  */
 class GenerateQuizQuestionsUseCase @Inject constructor(
-    private val repository: WordRepository
+    private val repository: IWordRepository
 ) {
     /**
      * Generates a list of quiz questions based on parameters and quiz type.

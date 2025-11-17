@@ -1,14 +1,15 @@
 package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import javax.inject.Inject
 
 /**
  * Use Case for calculating quiz/level progress statistics.
+ * Follows Dependency Inversion Principle by depending on IWordRepository interface.
  */
 class CalculateProgressUseCase @Inject constructor(
-    private val repository: WordRepository
+    private val repository: IWordRepository
 ) {
     /**
      * Data class holding progress information

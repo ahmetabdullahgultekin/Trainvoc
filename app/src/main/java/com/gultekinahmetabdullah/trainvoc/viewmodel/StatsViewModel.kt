@@ -3,7 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import android.icu.text.DateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatsViewModel @Inject constructor(
-    private val repository: WordRepository
+    private val repository: IWordRepository
 ) : ViewModel() {
 
     private val _correctAnswers = MutableStateFlow(0)
