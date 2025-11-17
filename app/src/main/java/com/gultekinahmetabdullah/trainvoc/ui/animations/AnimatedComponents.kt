@@ -13,6 +13,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Animated Components
@@ -332,8 +334,9 @@ fun StaggeredListItem(
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay((index * delayMillis).toLong())
-        kotlinx.coroutines.launch {
+        delay((index * delayMillis).toLong())
+        // Run animations in parallel
+        val job1 = launch {
             offsetY.animateTo(
                 targetValue = 0f,
                 animationSpec = spring(
@@ -342,12 +345,14 @@ fun StaggeredListItem(
                 )
             )
         }
-        kotlinx.coroutines.launch {
+        val job2 = launch {
             alpha.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(AnimationSpecs.DURATION_MEDIUM)
             )
         }
+        job1.join()
+        job2.join()
     }
 
     Box(
