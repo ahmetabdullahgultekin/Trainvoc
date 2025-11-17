@@ -72,23 +72,25 @@ fun QuizScreen(
     var showExitDialog by remember { mutableStateOf(false) }
     var showStats by rememberSaveable { mutableStateOf(false) }
 
-    // Finalize quiz when app goes to background
+    // Consolidated effect: lifecycle observation + exit handler + cleanup
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+        val lifecycleObserver = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_PAUSE) {
                 onQuit.invoke()
                 quizViewModel.finalizeQuiz()
             }
         }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
+        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
 
-    DisposableEffect(Unit) {
+        val exitCallback = {
+            showExitDialog = true
+        }
+        QuizScreenExitHandler.register(exitCallback)
+
         onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+            QuizScreenExitHandler.unregister(exitCallback)
             quizViewModel.finalizeQuiz()
         }
     }
@@ -243,17 +245,6 @@ fun QuizScreen(
     // Handle back button press
     BackHandler {
         showExitDialog = true
-    }
-
-    // Register exit handler for QuizScreen
-    DisposableEffect(Unit) {
-        val callback = {
-            showExitDialog = true
-        }
-        QuizScreenExitHandler.register(callback)
-        onDispose {
-            QuizScreenExitHandler.unregister(callback)
-        }
     }
 
     // Show exit confirmation dialog
