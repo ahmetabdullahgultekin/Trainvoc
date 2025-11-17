@@ -48,6 +48,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.AnswerOptionCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDialog
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
@@ -144,7 +146,7 @@ fun QuizScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(Spacing.mediumLarge),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -152,15 +154,15 @@ fun QuizScreen(
                     QuizScoreCard(score = score)
                 }
                 item {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.small))
                 }
                 item {
                     // Animated Progress Bar
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(16.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .height(Spacing.mediumLarge)
+                            .clip(RoundedCornerShape(CornerRadius.small))
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         LinearProgressIndicator(
@@ -168,14 +170,14 @@ fun QuizScreen(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp)),
+                                .clip(RoundedCornerShape(CornerRadius.small)),
                             color = progressColor,
                             trackColor = Color.Transparent
                         )
                     }
                 }
                 item {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.small))
                 }
                 item {
                     if (question == null) {
@@ -188,7 +190,7 @@ fun QuizScreen(
                         val currentQuestion = question
                         QuizQuestionCard(word = currentQuestion.correctWord.word)
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
                         // Answer options
                         currentQuestion.choices.forEach { choice ->
@@ -205,7 +207,7 @@ fun QuizScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(Spacing.large))
 
                         // Next Button
                         Button(
@@ -215,7 +217,7 @@ fun QuizScreen(
                                 quizViewModel.loadNextQuestion()
                             },
                             enabled = selectedAnswer != null || isTimeUp,
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(CornerRadius.medium),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(
@@ -224,7 +226,7 @@ fun QuizScreen(
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
+                                .padding(Spacing.small)
                                 .height(48.dp)
                         ) {
                             Text(
