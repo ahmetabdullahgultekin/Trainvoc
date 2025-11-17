@@ -27,6 +27,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,15 +48,22 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.ui.components.ChartData
+import com.gultekinahmetabdullah.trainvoc.ui.components.ChartLegend
+import com.gultekinahmetabdullah.trainvoc.ui.components.DonutChart
+import com.gultekinahmetabdullah.trainvoc.ui.components.ProgressRing
+import com.gultekinahmetabdullah.trainvoc.ui.components.VerticalBarChart
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 import com.gultekinahmetabdullah.trainvoc.ui.theme.statsAchievement
 import com.gultekinahmetabdullah.trainvoc.ui.theme.statsAverage
 import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCategory
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCorrect
 import com.gultekinahmetabdullah.trainvoc.ui.theme.statsGold
 import com.gultekinahmetabdullah.trainvoc.ui.theme.statsGradient
 import com.gultekinahmetabdullah.trainvoc.ui.theme.statsIncorrect
@@ -247,6 +255,155 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                 )
             }
             item { Spacer(modifier = Modifier.height(Spacing.mediumLarge)) }
+
+            // Progress Ring - Success Rate
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = Elevation.low),
+                    shape = RoundedCornerShape(CornerRadius.large),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = Alpha.high)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Spacing.large),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ProgressRing(
+                            progress = successRate,
+                            color = MaterialTheme.colorScheme.statsCorrect,
+                            size = 160.dp
+                        )
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+
+            // Donut Chart - Answer Distribution
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = Elevation.low),
+                    shape = RoundedCornerShape(CornerRadius.large),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = Alpha.high)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(Spacing.large),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.answer_distribution),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(Spacing.medium))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            DonutChart(
+                                data = listOf(
+                                    ChartData(
+                                        label = stringResource(id = R.string.correct_answers),
+                                        value = correctAnswers.toFloat(),
+                                        color = MaterialTheme.colorScheme.statsCorrect
+                                    ),
+                                    ChartData(
+                                        label = stringResource(id = R.string.incorrect_answers),
+                                        value = incorrectAnswers.toFloat(),
+                                        color = MaterialTheme.colorScheme.statsIncorrect
+                                    ),
+                                    ChartData(
+                                        label = stringResource(id = R.string.skipped_questions),
+                                        value = skippedQuestions.toFloat(),
+                                        color = MaterialTheme.colorScheme.statsSkipped
+                                    )
+                                ),
+                                size = 180.dp,
+                                strokeWidth = 32.dp
+                            )
+
+                            ChartLegend(
+                                data = listOf(
+                                    ChartData(
+                                        label = stringResource(id = R.string.correct_answers),
+                                        value = correctAnswers.toFloat(),
+                                        color = MaterialTheme.colorScheme.statsCorrect
+                                    ),
+                                    ChartData(
+                                        label = stringResource(id = R.string.incorrect_answers),
+                                        value = incorrectAnswers.toFloat(),
+                                        color = MaterialTheme.colorScheme.statsIncorrect
+                                    ),
+                                    ChartData(
+                                        label = stringResource(id = R.string.skipped_questions),
+                                        value = skippedQuestions.toFloat(),
+                                        color = MaterialTheme.colorScheme.statsSkipped
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+
+            // Vertical Bar Chart - Time-based Performance
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = Elevation.low),
+                    shape = RoundedCornerShape(CornerRadius.large),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = Alpha.high)
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(Spacing.large)
+                    ) {
+                        Text(
+                            text = "Performance Trends",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(Spacing.medium))
+
+                        VerticalBarChart(
+                            data = listOf(
+                                ChartData(
+                                    label = "Daily",
+                                    value = dailyCorrect.toFloat(),
+                                    color = MaterialTheme.colorScheme.statsQuiz
+                                ),
+                                ChartData(
+                                    label = "Weekly",
+                                    value = weeklyCorrect.toFloat(),
+                                    color = MaterialTheme.colorScheme.statsAverage
+                                ),
+                                ChartData(
+                                    label = "Total",
+                                    value = correctAnswers.toFloat(),
+                                    color = MaterialTheme.colorScheme.statsCorrect
+                                )
+                            ),
+                            maxHeight = 140.dp
+                        )
+                    }
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+
+            // Original Horizontal Bar Chart
             item {
                 StatsBarChart(
                     correctAnswers, incorrectAnswers, skippedQuestions,
