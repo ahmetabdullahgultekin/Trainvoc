@@ -20,25 +20,25 @@ class WordRepository(
     private val statisticDao: StatisticDao,
     private val wordExamCrossRefDao: WordExamCrossRefDao,
     private val examDao: ExamDao
-) {
+) : IWordRepository {
 
-    suspend fun resetProgress() {
+    override suspend fun resetProgress() {
         statisticDao.resetProgress()
         wordDao.resetAllWordStatIds()
         wordDao.resetAllWords()
     }
 
-    suspend fun getCorrectAnswers(): Int = wordDao.getCorrectAnswers()
+    override suspend fun getCorrectAnswers(): Int = wordDao.getCorrectAnswers()
 
-    suspend fun getWrongAnswers(): Int = wordDao.getWrongAnswers()
+    override suspend fun getWrongAnswers(): Int = wordDao.getWrongAnswers()
 
-    suspend fun getSkippedAnswers(): Int = wordDao.getSkippedAnswers()
+    override suspend fun getSkippedAnswers(): Int = wordDao.getSkippedAnswers()
 
-    suspend fun getTotalTimeSpent(): Int = wordDao.getTotalTimeSpent()
+    override suspend fun getTotalTimeSpent(): Int = wordDao.getTotalTimeSpent()
 
-    suspend fun getLastAnswered(): Long = wordDao.getLastAnswered()
+    override suspend fun getLastAnswered(): Long = wordDao.getLastAnswered()
 
-    suspend fun getAllWordsAskedInExams(): List<WordAskedInExams> = wordDao.getAllWordsWithExams()
+    override suspend fun getAllWordsAskedInExams(): List<WordAskedInExams> = wordDao.getAllWordsWithExams()
 
 
     /*suspend fun updateWordStats(statistic: Statistic, word: Word) {
@@ -48,12 +48,12 @@ class WordRepository(
         wordDao.updateWordStatId(word.statId, word.word)
     }*/
 
-    fun isLearned(statistic: Statistic): Boolean {
+    override fun isLearned(statistic: Statistic): Boolean {
         return statistic.correctCount > (statistic.wrongCount + statistic.skippedCount)
     }
 
     @Transaction
-    suspend fun updateWordStats(statistic: Statistic, word: Word) {
+    override suspend fun updateWordStats(statistic: Statistic, word: Word) {
         val updatedStatistic = statistic.copy(learned = isLearned(statistic))
         val wordCount = statisticDao.getWordCountByStatId(word.statId)
 
@@ -107,23 +107,23 @@ class WordRepository(
         }
     }
 
-    suspend fun getWordStats(word: Word): Statistic {
+    override suspend fun getWordStats(word: Word): Statistic {
         return wordDao.getStatById(word.statId)
     }
 
-    suspend fun updateLastAnswered(word: String) {
+    override suspend fun updateLastAnswered(word: String) {
         wordDao.updateLastReviewed(word, System.currentTimeMillis())
     }
 
-    suspend fun updateSecondsSpent(secondsSpent: Int, word: Word) {
+    override suspend fun updateSecondsSpent(secondsSpent: Int, word: Word) {
         wordDao.updateSecondsSpent(secondsSpent, word.word)
     }
 
-    fun getAllWords(): Flow<List<Word>> = wordDao.getAllWords()
+    override fun getAllWords(): Flow<List<Word>> = wordDao.getAllWords()
 
-    suspend fun insertWord(word: Word) = wordDao.insertWord(word)
+    override suspend fun insertWord(word: Word) = wordDao.insertWord(word)
 
-    suspend fun generateTenQuestions(
+    override suspend fun generateTenQuestions(
         quizType: QuizType, quizParameter: QuizParameter
     ): MutableList<Question> {
 
@@ -169,7 +169,7 @@ class WordRepository(
         return wordDao.getWordsByQuery(query)
     }
 
-    suspend fun isLevelUnlocked(level: WordLevel): Boolean {
+    override suspend fun isLevelUnlocked(level: WordLevel): Boolean {
         // First level is unlocked by default
         if (level == WordLevel.A1) return true
 
@@ -179,58 +179,58 @@ class WordRepository(
         return levelWordCount == levelUnlockerWordCount
     }
 
-    suspend fun getWordById(wordId: String): Word = wordDao.getWord(wordId)
+    override suspend fun getWordById(wordId: String): Word = wordDao.getWord(wordId)
 
-    suspend fun getExamsForWord(wordId: String): List<String> {
+    override suspend fun getExamsForWord(wordId: String): List<String> {
         return wordExamCrossRefDao.getExamNamesByWord(wordId)
     }
 
-    suspend fun markWordAsLearned(statId: Long) {
+    override suspend fun markWordAsLearned(statId: Long) {
         statisticDao.markLearned(statId)
     }
 
-    suspend fun getWordCountByStatId(statId: Int): Int = statisticDao.getWordCountByStatId(statId)
+    override suspend fun getWordCountByStatId(statId: Int): Int = statisticDao.getWordCountByStatId(statId)
 
-    suspend fun getLearnedStatisticByValues(
+    override suspend fun getLearnedStatisticByValues(
         correctCount: Int,
         wrongCount: Int,
         skippedCount: Int
     ): Statistic? =
         statisticDao.getLearnedStatisticByValues(correctCount, wrongCount, skippedCount)
 
-    suspend fun updateWordStatId(statId: Int, word: String) = wordDao.updateWordStatId(statId, word)
+    override suspend fun updateWordStatId(statId: Int, word: String) = wordDao.updateWordStatId(statId, word)
 
-    suspend fun insertStatistic(statistic: Statistic): Long =
+    override suspend fun insertStatistic(statistic: Statistic): Long =
         statisticDao.insertStatistic(statistic)
 
-    // Toplam yapılan quiz sayısı (örnek: Exam tablosu veya benzeri bir tablodan alınabilir)
-    suspend fun getTotalQuizCount(): Int {
+    // Total number of quizzes taken
+    override suspend fun getTotalQuizCount(): Int {
         return statisticDao.getTotalAnsweredQuizCount()
     }
 
-    // Bugün doğru cevaplanan soru sayısı
-    suspend fun getDailyCorrectAnswers(): Int {
+    // Number of correctly answered questions today
+    override suspend fun getDailyCorrectAnswers(): Int {
         return statisticDao.getDailyCorrectAnswers()
     }
 
-    // Bu hafta doğru cevaplanan soru sayısı
-    suspend fun getWeeklyCorrectAnswers(): Int {
+    // Number of correctly answered questions this week
+    override suspend fun getWeeklyCorrectAnswers(): Int {
         return statisticDao.getWeeklyCorrectAnswers()
     }
 
     // Get the word with most wrong answers
-    suspend fun getMostWrongWord(): String? {
+    override suspend fun getMostWrongWord(): String? {
         return wordDao.getMostWrongWord()
     }
 
     // Get the best category (level with most correct answers)
-    suspend fun getBestCategory(): String? {
+    override suspend fun getBestCategory(): String? {
         return wordDao.getBestCategory()
     }
 
-    suspend fun getWordCountByLevel(level: String): Int = wordDao.getWordCountByLevel(level)
-    suspend fun getLearnedWordCount(level: String): Int = wordDao.getLevelUnlockerWordCount(level)
-    suspend fun getWordCountByExam(exam: String): Int = wordDao.getWordCountByExam(exam)
-    suspend fun getLearnedWordCountByExam(exam: String): Int =
+    override suspend fun getWordCountByLevel(level: String): Int = wordDao.getWordCountByLevel(level)
+    override suspend fun getLearnedWordCount(level: String): Int = wordDao.getLevelUnlockerWordCount(level)
+    override suspend fun getWordCountByExam(exam: String): Int = wordDao.getWordCountByExam(exam)
+    override suspend fun getLearnedWordCountByExam(exam: String): Int =
         wordDao.getLearnedWordCountByExam(exam)
 }
