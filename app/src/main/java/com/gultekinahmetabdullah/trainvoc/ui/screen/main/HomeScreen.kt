@@ -78,10 +78,10 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToHelp: () -> Unit,
     onNavigateToStats: () -> Unit,
-    preloadLottie: LottieComposition? = null, // Tip düzeltildi
+    preloadLottie: LottieComposition? = null, // Type corrected
     preloadBg: Painter? = null
 ) {
-    // Lottie animasyonunu ve görseli preload ile kullan
+    // Use Lottie animation and image with preload
     val composition = preloadLottie
         ?: rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_diamond.json")).value
     val progress by animateLottieCompositionAsState(
@@ -103,7 +103,7 @@ fun HomeScreen(
         )
     }
 
-    // İlk açılışta animasyonları yavaş başlat, sonra hızlandır
+    // Start animations slowly on first launch, then speed up
     val animDuration = remember { mutableIntStateOf(2000) }
     LaunchedEffect(Unit) {
         animDuration.intValue = 2000
@@ -124,22 +124,22 @@ fun HomeScreen(
             .fillMaxSize()
             .testTag("HomeScreenRoot")
     ) {
-        // Arka plan animasyonu ve görseli üst üste koy
+        // Layer background animation and image on top of each other
         Box(modifier = Modifier.matchParentSize()) {
             AnimatedBackground(
                 modifier = Modifier.matchParentSize(),
                 duration = animDuration.intValue
             )
-            // bg_3 görseli yarı saydam overlay olarak üstte, alpha daha düşük
+            // bg_3 image as semi-transparent overlay on top, lower alpha
             Image(
                 painter = bgPainter,
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.FillBounds,
-                alpha = 0.1f // Opaklık artırıldı, animasyon daha belirgin olacak
+                alpha = 0.1f // Opacity increased, animation will be more visible
             )
         }
-        // Ana içerik üstte
+        // Main content on top
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -225,7 +225,7 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text(
-                                        text = "Ahmet", // TODO: Kullanıcı adı ile değiştirilebilir
+                                        text = stringResource(id = R.string.username_placeholder), // TODO: Replace with actual username
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -233,7 +233,7 @@ fun HomeScreen(
                                         text = stringResource(
                                             id = R.string.level_colon,
                                             "2"
-                                        ), // TODO: Seviye dinamik yapılabilir
+                                        ), // TODO: Make level dynamic
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
@@ -269,7 +269,7 @@ fun HomeScreen(
                                 )
                             }
                             Text(
-                                text = "1200 / 3000 XP", // TODO: Dinamik XP
+                                text = stringResource(id = R.string.xp_progress, 1200, 3000), // TODO: Make XP dynamic
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.align(Alignment.End)
                             )
@@ -348,7 +348,7 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Günlük Görevler ve Başarımlar (Gamification)
+                    // Daily Tasks and Achievements (Gamification)
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -359,7 +359,7 @@ fun HomeScreen(
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Günlük Görevler",
+                            text = stringResource(id = R.string.daily_tasks),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -369,31 +369,31 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            // Görev 1
+                            // Task 1
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("3 Quiz Çöz", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(id = R.string.task_solve_quizzes), style = MaterialTheme.typography.bodyMedium)
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("0/3", color = MaterialTheme.colorScheme.secondary)
+                                Text(stringResource(id = R.string.task_progress, 0, 3), color = MaterialTheme.colorScheme.secondary)
                             }
-                            // Görev 2
+                            // Task 2
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "10 Yeni Kelime Öğren",
+                                    stringResource(id = R.string.task_learn_words),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("2/10", color = MaterialTheme.colorScheme.secondary)
+                                Text(stringResource(id = R.string.task_progress, 2, 10), color = MaterialTheme.colorScheme.secondary)
                             }
-                            // Görev 3
+                            // Task 3
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("1 Başarı Kazan", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(id = R.string.task_earn_achievement), style = MaterialTheme.typography.bodyMedium)
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("0/1", color = MaterialTheme.colorScheme.secondary)
+                                Text(stringResource(id = R.string.task_progress, 0, 1), color = MaterialTheme.colorScheme.secondary)
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Başarımlar",
+                            text = stringResource(id = R.string.achievements),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -403,28 +403,28 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            // Rozet 1
+                            // Badge 1
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("🥇", fontSize = 32.sp)
-                                Text("İlk Quiz", style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(id = R.string.achievement_first_quiz), style = MaterialTheme.typography.bodySmall)
                             }
-                            // Rozet 2
+                            // Badge 2
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("🔥", fontSize = 32.sp)
-                                Text("Seri Gün", style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(id = R.string.achievement_streak_day), style = MaterialTheme.typography.bodySmall)
                             }
-                            // Rozet 3
+                            // Badge 3
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("📚", fontSize = 32.sp)
-                                Text("100 Kelime", style = MaterialTheme.typography.bodySmall)
+                                Text(stringResource(id = R.string.achievement_100_words), style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Kategoriye Göre Quiz Seçimi (Animasyonlu Kartlar)
+                    // Category-based Quiz Selection (Animated Cards)
                     Text(
-                        text = "Kategoriler",
+                        text = stringResource(id = R.string.categories),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -439,26 +439,26 @@ fun HomeScreen(
                     ) {
                         CategoryCard(
                             emoji = "🧠",
-                            title = "Genel",
-                            onClick = { /* TODO: Genel quiz başlat */ }
+                            title = stringResource(id = R.string.category_general),
+                            onClick = { /* TODO: Start general quiz */ }
                         )
                         CategoryCard(
                             emoji = "🎯",
-                            title = "Hedefli",
-                            onClick = { /* TODO: Hedefli quiz başlat */ }
+                            title = stringResource(id = R.string.category_targeted),
+                            onClick = { /* TODO: Start targeted quiz */ }
                         )
                         CategoryCard(
                             emoji = "⚡",
-                            title = "Hızlı",
-                            onClick = { /* TODO: Hızlı quiz başlat */ }
+                            title = stringResource(id = R.string.category_quick),
+                            onClick = { /* TODO: Start quick quiz */ }
                         )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Hızlı Erişim Butonları (Günün Kelimesi, Favoriler, Son Quiz)
+                    // Quick Access Buttons (Word of the Day, Favorites, Last Quiz)
                     Text(
-                        text = "Hızlı Erişim",
+                        text = stringResource(id = R.string.quick_access),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -473,18 +473,18 @@ fun HomeScreen(
                     ) {
                         QuickAccessCard(
                             emoji = "🌟",
-                            title = "Günün Kelimesi",
-                            onClick = { /* TODO: Günün kelimesi ekranına git */ }
+                            title = stringResource(id = R.string.word_of_the_day),
+                            onClick = { /* TODO: Navigate to word of the day screen */ }
                         )
                         QuickAccessCard(
                             emoji = "❤️",
-                            title = "Favoriler",
-                            onClick = { /* TODO: Favoriler ekranına git */ }
+                            title = stringResource(id = R.string.favorites),
+                            onClick = { /* TODO: Navigate to favorites screen */ }
                         )
                         QuickAccessCard(
                             emoji = "⏱️",
-                            title = "Son Quiz",
-                            onClick = { /* TODO: Son quiz ekranına git */ }
+                            title = stringResource(id = R.string.last_quiz),
+                            onClick = { /* TODO: Navigate to last quiz screen */ }
                         )
                     }
 
@@ -493,7 +493,7 @@ fun HomeScreen(
             }
         ) // End of LazyColumn
     }
-    // Artık burada AnimatedBackground çağrılmıyor
+    // AnimatedBackground is no longer called here
 }
 
 @Composable
@@ -538,9 +538,9 @@ fun HomeNavButton(
     Button(
         onClick = onClick,
         modifier = Modifier
-            .size(110.dp) // Biraz daha büyük kare
+            .size(110.dp) // Slightly larger square
             .then(if (testTag.isNotEmpty()) Modifier.testTag(testTag) else Modifier),
-        shape = RoundedCornerShape(28.dp), // Daha yumuşak köşeler
+        shape = RoundedCornerShape(28.dp), // Softer corners
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(
                 alpha = 0.85f
