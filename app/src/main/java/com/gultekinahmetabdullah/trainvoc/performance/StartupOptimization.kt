@@ -1,9 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.performance
 
-import android.app.Application
 import android.os.StrictMode
 import androidx.work.Configuration
-import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

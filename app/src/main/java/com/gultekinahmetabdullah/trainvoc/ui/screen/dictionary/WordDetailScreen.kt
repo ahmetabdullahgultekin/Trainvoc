@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -420,6 +419,7 @@ fun StatisticItem(
                     modifier = Modifier.size(IconSize.large)
                 )
             }
+
             is androidx.compose.ui.graphics.painter.Painter -> {
                 Icon(
                     painter = icon,

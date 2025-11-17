@@ -19,7 +19,8 @@ class StreakAlertWorker(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val sharedPreferences = applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val streakAlertsEnabled = sharedPreferences.getBoolean("streak_alerts_enabled", true)
 
         if (!streakAlertsEnabled) {

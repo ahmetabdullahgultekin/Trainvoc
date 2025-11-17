@@ -18,7 +18,8 @@ class DailyReminderWorker(
 
     override suspend fun doWork(): Result {
         // Check if daily reminders are enabled
-        val sharedPreferences = applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val dailyRemindersEnabled = sharedPreferences.getBoolean("daily_reminders_enabled", true)
 
         if (dailyRemindersEnabled) {

@@ -39,7 +39,8 @@ object NotificationHelper {
      */
     fun createNotificationChannels(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val manager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             // Daily Reminder Channel
             val dailyReminderChannel = NotificationChannel(
@@ -194,7 +195,14 @@ object NotificationHelper {
             .setContentText("$word - $meaning")
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText(context.getString(R.string.notification_wotd_message, word, meaning, levelLabel))
+                    .bigText(
+                        context.getString(
+                            R.string.notification_wotd_message,
+                            word,
+                            meaning,
+                            levelLabel
+                        )
+                    )
             )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
