@@ -342,10 +342,12 @@ fun StaggeredListItem(
                 )
             )
         }
-        alpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(AnimationSpecs.DURATION_MEDIUM)
-        )
+        kotlinx.coroutines.launch {
+            alpha.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(AnimationSpecs.DURATION_MEDIUM)
+            )
+        }
     }
 
     Box(
