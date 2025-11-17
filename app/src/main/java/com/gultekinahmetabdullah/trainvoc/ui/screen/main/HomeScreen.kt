@@ -163,7 +163,7 @@ fun HomeScreen(
                     // Warning Text for Test Mode
                     Text(
                         text = stringResource(id = R.string.test_mode_warning),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .padding(Spacing.small)
@@ -171,8 +171,7 @@ fun HomeScreen(
                                 color = MaterialTheme.colorScheme.error.copy(alpha = Alpha.surfaceVariant),
                                 shape = MaterialTheme.shapes.medium
                             )
-                            .padding(Spacing.medium),
-                        fontSize = 18.sp
+                            .padding(Spacing.medium)
                     )
                     // App Logo
                     Image(
@@ -189,7 +188,7 @@ fun HomeScreen(
                     // Welcome Message
                     Text(
                         text = stringResource(id = R.string.home_welcome),
-                        fontSize = 24.sp,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.testTag("WelcomeText")
@@ -199,7 +198,7 @@ fun HomeScreen(
 
                     Text(
                         text = stringResource(id = R.string.home_subtitle),
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier
                             .padding(horizontal = Spacing.mediumLarge)
@@ -346,7 +345,10 @@ fun HomeScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(text = stringResource(id = R.string.start_quiz), fontSize = 18.sp)
+                        Text(
+                            text = stringResource(id = R.string.start_quiz),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
@@ -362,7 +364,10 @@ fun HomeScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
                     ) {
-                        Text(text = stringResource(id = R.string.story_mode), fontSize = 18.sp)
+                        Text(
+                            text = stringResource(id = R.string.story_mode),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
@@ -682,7 +687,7 @@ fun HomeNavButton(
             Spacer(modifier = Modifier.height(Spacing.medium))
             Text(
                 text = title,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1

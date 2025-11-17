@@ -132,14 +132,14 @@ fun AnimatedQuizCard(title: String, description: String, color: Color, onClick: 
         ) {
             Text(
                 text = title,
-                fontSize = 20.sp,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.height(Spacing.small))
             Text(
                 text = description,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
             )
         }

@@ -53,6 +53,15 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsAchievement
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsAverage
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCategory
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsGold
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsGradient
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsIncorrect
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsQuiz
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsSkipped
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsTime
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import kotlinx.coroutines.launch
 
@@ -88,16 +97,14 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
         speed = 1f,
     )
 
+    val isDarkTheme = isSystemInDarkTheme()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFB3E5FC), // Daha canlı mavi
-                        Color(0xFFE1BEE7), // Lila
-                        Color(0xFFFFFFFF)  // Beyaz
-                    )
+                    colors = statsGradient(isDarkTheme)
                 )
             )
     ) {
@@ -129,7 +136,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.Star,
                     title = stringResource(id = R.string.total_score),
                     value = "${correctAnswers * 10}",
-                    color = Color(0xFFFFD600),
+                    color = MaterialTheme.colorScheme.statsGold,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -139,7 +146,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = painterResource(id = R.drawable.baseline_leaderboard_24),
                     title = stringResource(id = R.string.total_quizzes),
                     value = "$totalQuizCount",
-                    color = Color(0xFF64B5F6),
+                    color = MaterialTheme.colorScheme.statsTime,
                     isPainter = true,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -149,7 +156,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = painterResource(id = R.drawable.outline_timer_24),
                     title = stringResource(id = R.string.total_time_spent),
                     value = "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
-                    color = Color(0xFF81C784),
+                    color = MaterialTheme.colorScheme.statsAchievement,
                     isPainter = true,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -164,7 +171,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                             "%.2f".format(it)
                         }
                     }s",
-                    color = Color(0xFFBA68C8),
+                    color = MaterialTheme.colorScheme.statsAverage,
                     isPainter = true,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -174,7 +181,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.CheckCircle,
                     title = stringResource(id = R.string.correct_answers),
                     value = "$correctAnswers",
-                    color = UnlockedLeaf,
+                    color = MaterialTheme.colorScheme.statsCorrect,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -184,7 +191,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.Close,
                     title = stringResource(id = R.string.incorrect_answers),
                     value = "$incorrectAnswers",
-                    color = Color(0xFFE57373),
+                    color = MaterialTheme.colorScheme.statsIncorrect,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -194,7 +201,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = painterResource(id = R.drawable.baseline_skip_next_24),
                     title = stringResource(id = R.string.skipped_questions),
                     value = "$skippedQuestions",
-                    color = Color(0xFFB0BEC5),
+                    color = MaterialTheme.colorScheme.statsSkipped,
                     isPainter = true,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -204,7 +211,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.Star,
                     title = stringResource(id = R.string.best_category),
                     value = bestCategory,
-                    color = Color(0xFFFFF176),
+                    color = MaterialTheme.colorScheme.statsCategory,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -214,7 +221,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.Close,
                     title = stringResource(id = R.string.most_wrong_word),
                     value = mostWrongWord,
-                    color = Color(0xFFEF5350),
+                    color = MaterialTheme.colorScheme.statsIncorrect,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -224,7 +231,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.CheckCircle,
                     title = "Daily Correct",
                     value = "$dailyCorrect",
-                    color = Color(0xFF4DD0E1),
+                    color = MaterialTheme.colorScheme.statsQuiz,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -234,7 +241,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     icon = Icons.Default.CheckCircle,
                     title = "Weekly Correct",
                     value = "$weeklyCorrect",
-                    color = Color(0xFF9575CD),
+                    color = MaterialTheme.colorScheme.statsAverage,
                     isPainter = false,
                     iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
@@ -332,30 +339,30 @@ fun StatsBarChart(
         Row(modifier = Modifier.fillMaxWidth()) {
             AnimatedBar(
                 modifier = Modifier.weight(if (successRate <= 0f) 0.01f else successRate),
-                color = UnlockedLeaf,
+                color = MaterialTheme.colorScheme.statsCorrect,
             )
             AnimatedBar(
                 modifier = Modifier.weight(if (skippedRate <= 0f) 0.01f else skippedRate),
-                color = Color(0xFFB0BEC5),
+                color = MaterialTheme.colorScheme.statsSkipped,
             )
             AnimatedBar(
                 modifier = Modifier.weight(if (failureRate <= 0f) 0.01f else failureRate),
-                color = Color(0xFFE57373),
+                color = MaterialTheme.colorScheme.statsIncorrect,
             )
         }
         Spacer(modifier = Modifier.height(Spacing.small))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
                 text = stringResource(id = R.string.correct_colon, correct),
-                color = UnlockedLeaf
+                color = MaterialTheme.colorScheme.statsCorrect
             )
             Text(
                 text = stringResource(id = R.string.skipped_colon, skipped),
-                color = Color(0xFFB0BEC5)
+                color = MaterialTheme.colorScheme.statsSkipped
             )
             Text(
                 text = stringResource(id = R.string.incorrect_colon, incorrect),
-                color = Color(0xFFE57373)
+                color = MaterialTheme.colorScheme.statsIncorrect
             )
         }
     }
