@@ -54,7 +54,7 @@ class WordOfDayWorker(
             applicationContext,
             wordOfDay.word,
             wordOfDay.meaning,
-            wordOfDay.level
+            wordOfDay.level?.ordinal ?: 0
         )
 
         // Save the word of the day in shared preferences

@@ -180,7 +180,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                                 modifier = Modifier
                                     .size(56.dp)
                                     .clip(CircleShape)
-                                    .background(getLevelColor(currentWord.level)),
+                                    .background(getLevelColor(currentWord.level?.ordinal ?: 0)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column(
