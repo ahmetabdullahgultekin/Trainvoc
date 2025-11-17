@@ -205,13 +205,13 @@ object PerformanceMonitor {
 /**
  * Extension function for timing code blocks
  */
-inline fun <T> timeIt(tag: String, block: () -> T): T {
+internal inline fun <T> timeIt(tag: String, block: () -> T): T {
     return PerformanceMonitor.measureTime(tag, block)
 }
 
 /**
  * Extension function for timing suspending code blocks
  */
-suspend inline fun <T> timeItSuspend(tag: String, crossinline block: suspend () -> T): T {
+internal suspend inline fun <T> timeItSuspend(tag: String, crossinline block: suspend () -> T): T {
     return PerformanceMonitor.measureTimeSuspend(tag, block)
 }
