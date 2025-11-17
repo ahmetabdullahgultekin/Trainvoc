@@ -33,6 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 /**
  * Individual answer option card with animations.
@@ -75,15 +78,15 @@ fun AnswerOptionCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(Spacing.small)
             .scale(scaleAnim)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(CornerRadius.large))
             .clickable(
                 enabled = selectedAnswer == null && isCorrect == null && !isTimeUp
             ) {
                 onChoiceClick(choice)
             },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(CornerRadius.large),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
     ) {
@@ -103,7 +106,7 @@ fun AnswerOptionCard(
             if (selectedAnswer == choice) {
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(IconSize.large)
                         .clip(CircleShape)
                         .background(
                             if (isCorrect == true) Color(0xFF66BB6A)
