@@ -218,12 +218,12 @@ class WordRepository(
         return statisticDao.getWeeklyCorrectAnswers()
     }
 
-    // En çok yanlış yapılan kelime
+    // Get the word with most wrong answers
     suspend fun getMostWrongWord(): String? {
         return wordDao.getMostWrongWord()
     }
 
-    // En iyi kategori (en çok doğru yapılan seviye)
+    // Get the best category (level with most correct answers)
     suspend fun getBestCategory(): String? {
         return wordDao.getBestCategory()
     }
