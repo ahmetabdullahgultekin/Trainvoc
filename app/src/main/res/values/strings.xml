@@ -229,4 +229,10 @@
     <string name="quick_access_last_quiz">Last quiz - Clock icon</string>
     <string name="statistics_icon">Statistics information</string>
     <string name="trophy_icon">Trophy icon</string>
+
+    <!-- Dictionary & Word Detail Screen -->
+    <string name="no_words_found">No words found</string>
+    <string name="try_different_search">Try a different search term</string>
+    <string name="statistics">Statistics</string>
+    <string name="success_rate_percent">Success Rate: %1$d%%</string>
 </resources>
