@@ -48,6 +48,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -270,7 +271,7 @@ fun AnimatedStatCard(
 
     val anim = animateFloatAsState(
         targetValue = 1f,
-        animationSpec = tween(durationMillis = 600), label = "cardAnim"
+        animationSpec = tween(durationMillis = AnimationDuration.statCard), label = "cardAnim"
     )
     Card(
         modifier = Modifier

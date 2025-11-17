@@ -75,6 +75,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -107,18 +108,18 @@ fun HomeScreen(
         scaleAnim.animateTo(
             targetValue = 1.05f,
             animationSpec = infiniteRepeatable(
-                animation = tween(1000, easing = FastOutSlowInEasing),
+                animation = tween(AnimationDuration.buttonPulse, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse
             )
         )
     }
 
     // Start animations slowly on first launch, then speed up
-    val animDuration = remember { mutableIntStateOf(2000) }
+    val animDuration = remember { mutableIntStateOf(AnimationDuration.screenInit) }
     LaunchedEffect(Unit) {
-        animDuration.intValue = 2000
+        animDuration.intValue = AnimationDuration.screenInit
         kotlinx.coroutines.delay(1200)
-        animDuration.intValue = 1000
+        animDuration.intValue = AnimationDuration.buttonPulse
     }
 
     val isScreenVisible = rememberUpdatedState(true)
@@ -773,7 +774,7 @@ fun QuickAccessCard(
 @Composable
 fun AnimatedBackground(
     modifier: Modifier = Modifier,
-    duration: Int = 40000
+    duration: Int = AnimationDuration.backgroundSlow
 ) {
     val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
     val isActive = lifecycleState == Lifecycle.State.RESUMED
@@ -799,7 +800,7 @@ fun AnimatedBackground(
             initialValue = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.9f),
             targetValue = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.10f),
             animationSpec = infiniteRepeatable(
-                animation = tween(duration + 12000, easing = FastOutSlowInEasing),
+                animation = tween(duration + AnimationDuration.backgroundOffset, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse
             ), label = "bg2"
         ).value

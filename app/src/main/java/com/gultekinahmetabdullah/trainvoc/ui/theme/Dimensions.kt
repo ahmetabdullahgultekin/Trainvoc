@@ -65,3 +65,20 @@ object ComponentSize {
     val cardElevation: Dp = 4.dp
     val minTouchTarget: Dp = 48.dp    // Material Design minimum touch target
 }
+
+/**
+ * Animation duration tokens for consistent timing across the application.
+ * All durations in milliseconds.
+ */
+object AnimationDuration {
+    const val instant = 100           // Very quick state changes
+    const val fast = 200              // Quick transitions
+    const val normal = 300            // Standard transitions
+    const val answerFeedback = 400    // Answer card color/scale animations
+    const val progress = 500          // Progress bar animations
+    const val statCard = 600          // Stat card entrance animations
+    const val buttonPulse = 1000      // Button scaling pulse animation
+    const val screenInit = 2000       // Initial screen setup animations
+    const val backgroundSlow = 40000  // Slow background gradient animation
+    const val backgroundOffset = 12000 // Offset for secondary background gradient
+}

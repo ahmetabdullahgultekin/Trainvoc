@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -69,7 +70,7 @@ fun AnswerOptionCard(
             isTimeUp && choice == correctWord -> UnlockedLeaf.copy(alpha = 0.9f)
             else -> MaterialTheme.colorScheme.primaryContainer
         },
-        animationSpec = tween(400),
+        animationSpec = tween(AnimationDuration.answerFeedback),
         label = "backgroundColorAnimation"
     )
 
