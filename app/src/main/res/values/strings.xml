@@ -235,4 +235,40 @@
     <string name="try_different_search">Try a different search term</string>
     <string name="statistics">Statistics</string>
     <string name="success_rate_percent">Success Rate: %1$d%%</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_daily_reminder">Daily Reminders</string>
+    <string name="channel_daily_reminder_desc">Daily learning reminders to practice vocabulary</string>
+    <string name="channel_streak_alert">Streak Alerts</string>
+    <string name="channel_streak_alert_desc">Notifications about your learning streak</string>
+    <string name="channel_word_of_day">Word of the Day</string>
+    <string name="channel_word_of_day_desc">Daily featured word notification</string>
+    <string name="channel_general">General</string>
+    <string name="channel_general_desc">General app notifications</string>
+
+    <!-- Daily Reminder Notifications -->
+    <string name="notification_daily_title">Time to practice! 📚</string>
+    <string name="notification_daily_message">Continue your learning streak today</string>
+    <string name="notification_daily_message_expanded">Don\'t forget to practice today! Keep your learning streak alive and improve your vocabulary.</string>
+
+    <!-- Streak Alert Notifications -->
+    <string name="notification_streak_danger_title">🔥 Don\'t break your %1$d day streak!</string>
+    <string name="notification_streak_danger_message">You haven\'t practiced today. Keep your %1$d day streak alive!</string>
+    <string name="notification_streak_milestone_title">🎉 Amazing! %1$d day streak!</string>
+    <string name="notification_streak_milestone_message">Congratulations on your %1$d day learning streak! Keep it up!</string>
+
+    <!-- Word of the Day Notifications -->
+    <string name="notification_wotd_title">📖 Word of the Day</string>
+    <string name="notification_wotd_message">%1$s - %2$s\nLevel: %3$s</string>
+
+    <!-- Notification Settings -->
+    <string name="notification_settings">Notification Settings</string>
+    <string name="enable_daily_reminders">Daily Reminders</string>
+    <string name="daily_reminders_desc">Get reminded to practice every day</string>
+    <string name="enable_streak_alerts">Streak Alerts</string>
+    <string name="streak_alerts_desc">Get notified about your learning streaks</string>
+    <string name="enable_word_of_day">Word of the Day</string>
+    <string name="word_of_day_desc">Receive a featured word daily</string>
+    <string name="notification_time">Notification Time</string>
+    <string name="set_time">Set Time</string>
 </resources>
