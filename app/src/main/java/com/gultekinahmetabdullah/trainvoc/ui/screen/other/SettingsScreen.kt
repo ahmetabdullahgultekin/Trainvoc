@@ -54,10 +54,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import android.os.Build
+import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
+import com.gultekinahmetabdullah.trainvoc.ui.animations.pressClickable
+import com.gultekinahmetabdullah.trainvoc.ui.animations.bounceIn
 
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
+    val haptic = rememberHapticPerformer()
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val theme by viewModel.theme.collectAsState()
     val colorPalette by viewModel.colorPalette.collectAsState()
@@ -224,9 +228,14 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
         // Manage Account
         Button(
-            onClick = { navController.navigate(Route.MANAGEMENT) },
+            onClick = {
+                haptic.click()
+                navController.navigate(Route.MANAGEMENT)
+            },
             shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .pressClickable { }
         ) {
             Text(stringResource(id = R.string.manage_words))
         }
@@ -234,12 +243,15 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
         // Reset Progress
         Button(
             onClick = {
+                haptic.longPress()
                 viewModel.resetProgress()
                 showToast(context, context.getString(R.string.progress_reset))
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
             shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .pressClickable { }
         ) {
             Text(
                 stringResource(id = R.string.reset_progress),
@@ -250,11 +262,14 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
         // Logout
         Button(
             onClick = {
+                haptic.click()
                 viewModel.logout()
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
             shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .pressClickable { }
         ) {
             Text(stringResource(id = R.string.logout), color = MaterialTheme.colorScheme.onError)
         }
@@ -299,12 +314,20 @@ fun SettingDropdown(
 // Custom Switch for Notifications
 @Composable
 fun SettingSwitch(title: String, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    val haptic = rememberHapticPerformer()
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-        Switch(checked = isChecked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = isChecked,
+            onCheckedChange = {
+                haptic.click()
+                onCheckedChange(it)
+            }
+        )
     }
 }
 
@@ -316,6 +339,8 @@ fun SettingSwitchWithDescription(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val haptic = rememberHapticPerformer()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -333,7 +358,13 @@ fun SettingSwitchWithDescription(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        Switch(checked = isChecked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = isChecked,
+            onCheckedChange = {
+                haptic.click()
+                onCheckedChange(it)
+            }
+        )
     }
 }
 
@@ -356,6 +387,7 @@ fun ColorPaletteCard(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val haptic = rememberHapticPerformer()
     val colors = getPreviewColors(palette)
 
     Column(
@@ -368,7 +400,10 @@ fun ColorPaletteCard(
                 shape = RoundedCornerShape(CornerRadius.medium)
             )
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .clickable(onClick = onClick)
+            .pressClickable {
+                haptic.click()
+                onClick()
+            }
             .padding(Spacing.small),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Spacing.extraSmall)
