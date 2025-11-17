@@ -1,0 +1,133 @@
+package com.gultekinahmetabdullah.trainvoc.ui.screen.main.components
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
+import kotlinx.coroutines.launch
+
+/**
+ * Main app top bar with navigation and menu actions.
+ * Extracted from MainScreen for better maintainability.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppTopBar(
+    navBackStackEntry: NavBackStackEntry?,
+    navController: NavController,
+    onMenuClick: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                modifier = Modifier.padding(start = 4.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_generating_tokens_24),
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                        MaterialTheme.colorScheme.primary
+                    ),
+                    contentDescription = stringResource(id = R.string.app_name) + " logo",
+                    modifier = Modifier
+                        .height(36.dp)
+                        .padding(end = 10.dp)
+                )
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        letterSpacing = 2.sp
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        colors = TopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+            navigationIconContentColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            actionIconContentColor = MaterialTheme.colorScheme.secondary
+        ),
+        navigationIcon = {
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            if (currentRoute == Route.HOME) {
+                return@TopAppBar
+            }
+
+            val isSpecialRoute = currentRoute in listOf(
+                Route.QUIZ,
+                Route.QUIZ_MENU,
+                Route.QUIZ_EXAM_MENU,
+                Route.STORY,
+                Route.WORD_DETAIL
+            )
+
+            if (isSpecialRoute) {
+                IconButton(onClick = {
+                    if (currentRoute == Route.QUIZ) {
+                        QuizScreenExitHandler.triggerExit()
+                    } else {
+                        navController.popBackStack()
+                    }
+                }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            } else {
+                IconButton(onClick = { navController.navigate(Route.HOME) }) {
+                    Icon(
+                        Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        },
+        actions = {
+            val coroutineScope = rememberCoroutineScope()
+            IconButton(onClick = {
+                coroutineScope.launch {
+                    if (navController.currentBackStackEntry?.destination?.route == Route.QUIZ) {
+                        QuizScreenExitHandler.triggerExit()
+                    } else {
+                        onMenuClick()
+                    }
+                }
+            }) {
+                Icon(
+                    Icons.Default.MoreVert,
+                    contentDescription = "More",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    )
+}
