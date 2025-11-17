@@ -156,16 +156,6 @@ data class SyncStatus(
 )
 
 /**
- * Conflict resolution result
- * Used when syncing data that conflicts with existing data
- */
-sealed class ConflictResolution {
-    data class KeepLocal(val reason: String) : ConflictResolution()
-    data class KeepRemote(val reason: String) : ConflictResolution()
-    data class Merge(val mergedData: Any) : ConflictResolution()
-}
-
-/**
  * Import/Export format
  */
 enum class BackupFormat {
@@ -209,6 +199,11 @@ sealed class RestoreResult {
         val wordsRestored: Int,
         val wordsFailed: Int,
         val errors: List<String>
+    ) : RestoreResult()
+
+    data class Conflict(
+        val conflicts: List<DataConflict>,
+        val backupData: BackupData
     ) : RestoreResult()
 }
 
