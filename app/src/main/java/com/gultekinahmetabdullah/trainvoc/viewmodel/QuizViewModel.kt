@@ -10,6 +10,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -98,7 +99,7 @@ class QuizViewModel @Inject constructor(
             // Fetch 10 questions from the database until user reaches the end of the list
             // Start the timer for each question
             // Timer will decrease the timeLeft variable every second
-            quizJob = viewModelScope.launch {
+            quizJob = viewModelScope.launch(Dispatchers.IO) {
                 // Initialize the variables
                 // Declare the quiz type
                 _quiz.value = quiz
@@ -162,7 +163,7 @@ class QuizViewModel @Inject constructor(
         if (currentIndex < _quizQuestions.value.size) {
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 _currentWordStats.value =
                     repository.getWordStats(_currentQuestion.value!!.correctWord)
                 addNewQuestions()
@@ -178,12 +179,12 @@ class QuizViewModel @Inject constructor(
         val currentStats = _currentWordStats.value ?: return null
         pauseQuiz()
         val secondsSpent = durationConst - _timeLeft.value
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.updateLastAnswered(currentQuestion.correctWord.word)
             repository.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
         }
         if (choice == null) {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.updateWordStats(
                     currentStats.copy(
                         skippedCount = currentStats.skippedCount + 1
@@ -197,7 +198,7 @@ class QuizViewModel @Inject constructor(
             // Correct answer
             _score.value++
             // Update the entity stats in the database
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.updateWordStats(
                     currentStats.copy(
                         correctCount = currentStats.correctCount + 1
@@ -208,7 +209,7 @@ class QuizViewModel @Inject constructor(
             return true
         } else {
             // Wrong answer
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.updateWordStats(
                     currentStats.copy(
                         wrongCount = currentStats.wrongCount + 1
@@ -263,7 +264,7 @@ class QuizViewModel @Inject constructor(
     }
 
     fun collectQuizStats(parameter: QuizParameter) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             when (parameter) {
                 is QuizParameter.Level -> {
                     val total = repository.getWordCountByLevel(parameter.wordLevel.name)

@@ -10,6 +10,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -111,7 +112,7 @@ class SettingsViewModel @Inject constructor(
             remove("notifications")
             clear()
         }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.resetProgress()
         }
     }
