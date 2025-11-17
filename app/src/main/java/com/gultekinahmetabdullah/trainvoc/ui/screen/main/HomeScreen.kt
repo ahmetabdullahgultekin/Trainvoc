@@ -333,7 +333,10 @@ fun HomeScreen(
                     ) {
                         Text(text = stringResource(id = R.string.start_quiz), fontSize = 18.sp)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = stringResource(R.string.start_quiz_button)
+                        )
                     }
                     DebouncedButton(
                         onClick = onNavigateToStory,
@@ -346,7 +349,10 @@ fun HomeScreen(
                     ) {
                         Text(text = stringResource(id = R.string.story_mode), fontSize = 18.sp)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = stringResource(R.string.start_quiz_button)
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -434,18 +440,39 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             // Badge 1
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("🥇", fontSize = 32.sp)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.semantics(mergeDescendants = true) {}
+                            ) {
+                                Text(
+                                    "🥇",
+                                    fontSize = 32.sp,
+                                    modifier = Modifier.semantics { contentDescription = context.getString(R.string.achievement_first_place) }
+                                )
                                 Text(stringResource(id = R.string.achievement_first_quiz), style = MaterialTheme.typography.bodySmall)
                             }
                             // Badge 2
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("🔥", fontSize = 32.sp)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.semantics(mergeDescendants = true) {}
+                            ) {
+                                Text(
+                                    "🔥",
+                                    fontSize = 32.sp,
+                                    modifier = Modifier.semantics { contentDescription = context.getString(R.string.achievement_streak) }
+                                )
                                 Text(stringResource(id = R.string.achievement_streak_day), style = MaterialTheme.typography.bodySmall)
                             }
                             // Badge 3
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("📚", fontSize = 32.sp)
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.semantics(mergeDescendants = true) {}
+                            ) {
+                                Text(
+                                    "📚",
+                                    fontSize = 32.sp,
+                                    modifier = Modifier.semantics { contentDescription = context.getString(R.string.achievement_books) }
+                                )
                                 Text(stringResource(id = R.string.achievement_100_words), style = MaterialTheme.typography.bodySmall)
                             }
                         }
@@ -470,16 +497,19 @@ fun HomeScreen(
                         CategoryCard(
                             emoji = "🧠",
                             title = stringResource(id = R.string.category_general),
+                            emojiContentDescription = stringResource(id = R.string.category_brain_training),
                             onClick = { /* Planned feature */ }
                         )
                         CategoryCard(
                             emoji = "🎯",
                             title = stringResource(id = R.string.category_targeted),
+                            emojiContentDescription = stringResource(id = R.string.category_target_practice),
                             onClick = { /* Planned feature */ }
                         )
                         CategoryCard(
                             emoji = "⚡",
                             title = stringResource(id = R.string.category_quick),
+                            emojiContentDescription = stringResource(id = R.string.category_quick_quiz),
                             onClick = { /* Planned feature */ }
                         )
                     }
@@ -504,16 +534,19 @@ fun HomeScreen(
                         QuickAccessCard(
                             emoji = "🌟",
                             title = stringResource(id = R.string.word_of_the_day),
+                            emojiContentDescription = stringResource(id = R.string.quick_access_word_of_day),
                             onClick = { /* Planned feature */ }
                         )
                         QuickAccessCard(
                             emoji = "❤️",
                             title = stringResource(id = R.string.favorites),
+                            emojiContentDescription = stringResource(id = R.string.quick_access_favorites),
                             onClick = { /* Planned feature */ }
                         )
                         QuickAccessCard(
                             emoji = "⏱️",
                             title = stringResource(id = R.string.last_quiz),
+                            emojiContentDescription = stringResource(id = R.string.quick_access_last_quiz),
                             onClick = { /* Planned feature */ }
                         )
                     }
@@ -649,6 +682,7 @@ fun AnimatedCard(
 fun CategoryCard(
     emoji: String,
     title: String,
+    emojiContentDescription: String,
     onClick: () -> Unit
 ) {
     AnimatedCard(
@@ -663,12 +697,17 @@ fun CategoryCard(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.semantics(mergeDescendants = true) {}
         ) {
             Text(
                 text = emoji,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .semantics {
+                        contentDescription = emojiContentDescription
+                    }
             )
             Text(
                 text = title,
@@ -683,6 +722,7 @@ fun CategoryCard(
 fun QuickAccessCard(
     emoji: String,
     title: String,
+    emojiContentDescription: String,
     onClick: () -> Unit
 ) {
     AnimatedCard(
@@ -697,12 +737,17 @@ fun QuickAccessCard(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.semantics(mergeDescendants = true) {}
         ) {
             Text(
                 text = emoji,
                 fontSize = 32.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .semantics {
+                        contentDescription = emojiContentDescription
+                    }
             )
             Text(
                 text = title,
