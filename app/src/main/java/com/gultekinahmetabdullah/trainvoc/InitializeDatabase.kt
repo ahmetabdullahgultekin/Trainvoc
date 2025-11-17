@@ -56,9 +56,8 @@ class TrainvocApplication : Application(), Configuration.Provider {
      * - Custom logging level
      * - Optimized scheduler limits
      */
-    override fun getWorkManagerConfiguration(): Configuration {
-        return createOptimizedWorkManagerConfig()
-    }
+    override val workManagerConfiguration: Configuration
+        get() = createOptimizedWorkManagerConfig()
 
     /**
      * Initialize performance monitoring in background

@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.sync
 
 import android.content.Context
+import androidx.room.withTransaction
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
@@ -224,22 +225,22 @@ class DataImporter(
 
                     // Create word backup
                     val wordBackup = WordBackup(
-                        wordId = 0, // Will be generated on insert
-                        word = csvRow.word,
-                        meaning = csvRow.meaning,
-                        level = csvRow.level,
-                        statId = 0 // Will be generated
+                        word = csvRow?.word ?: "",
+                        meaning = csvRow?.meaning ?: "",
+                        level = csvRow?.level,
+                        lastReviewed = null,
+                        statId = 0, // Will be generated
+                        secondsSpent = 0
                     )
                     wordsToImport.add(wordBackup)
 
                     // Create statistic backup
                     val statisticBackup = StatisticBackup(
                         statId = 0, // Will be generated
-                        learned = csvRow.learned,
-                        correctCount = csvRow.correctCount,
-                        wrongCount = csvRow.wrongCount,
-                        skippedCount = 0,
-                        lastReviewed = null
+                        learned = csvRow?.learned ?: false,
+                        correctCount = csvRow?.correctCount ?: 0,
+                        wrongCount = csvRow?.wrongCount ?: 0,
+                        skippedCount = 0
                     )
                     statisticsToImport.add(statisticBackup)
 
@@ -540,8 +541,8 @@ class DataImporter(
         words: List<WordBackup>,
         statistics: List<StatisticBackup>,
         onProgress: ((Float) -> Unit)? = null
-    ): Pair<Int, Int> = withContext(Dispatchers.IO) {
-        database.withTransaction {
+    ): Pair<Int, Int> {
+        return database.withTransaction {
             // First, create all statistics to get their IDs
             val statisticIdMap = mutableMapOf<Int, Int>()
             statistics.forEachIndexed { index, statBackup ->
@@ -555,8 +556,8 @@ class DataImporter(
             // Then import words with correct statId references
             var wordsImported = 0
             words.forEachIndexed { index, wordBackup ->
-                val newStatId = statisticIdMap[wordBackup.statId] ?: 0
-                val word = wordBackup.toWord(newStatId)
+                val newStatId = statisticIdMap[wordBackup.statId] ?: wordBackup.statId
+                val word = wordBackup.toWord().copy(statId = newStatId)
                 database.wordDao().insertWord(word)
                 wordsImported++
 
