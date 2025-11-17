@@ -196,17 +196,19 @@ fun QuizScreen(
 
                         // Answer options
                         currentQuestion.choices.forEach { choice ->
-                            AnswerOptionCard(
-                                choice = choice,
-                                correctWord = currentQuestion.correctWord,
-                                selectedAnswer = selectedAnswer,
-                                isCorrect = isCorrect,
-                                isTimeUp = isTimeUp,
-                                onChoiceClick = { selectedChoice ->
-                                    selectedAnswer = selectedChoice
-                                    isCorrect = quizViewModel.checkAnswer(selectedChoice)
-                                }
-                            )
+                            key(choice.word) {
+                                AnswerOptionCard(
+                                    choice = choice,
+                                    correctWord = currentQuestion.correctWord,
+                                    selectedAnswer = selectedAnswer,
+                                    isCorrect = isCorrect,
+                                    isTimeUp = isTimeUp,
+                                    onChoiceClick = { selectedChoice ->
+                                        selectedAnswer = selectedChoice
+                                        isCorrect = quizViewModel.checkAnswer(selectedChoice)
+                                    }
+                                )
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(Spacing.large))
