@@ -182,7 +182,7 @@ interface WordDao {
     @Query("UPDATE words SET last_reviewed = 0, seconds_spent = 0")
     suspend fun resetAllWords()
 
-    // En çok yanlış yapılan kelime
+    // Get the word with the most wrong answers
     @Query(
         """
         SELECT w.word FROM words w
@@ -192,7 +192,7 @@ interface WordDao {
     )
     suspend fun getMostWrongWord(): String?
 
-    // En iyi kategori (en çok doğru yapılan seviye)
+    // Get the best category (level with most correct answers)
     @Query(
         """
         SELECT w.level FROM words w
@@ -203,7 +203,7 @@ interface WordDao {
     )
     suspend fun getBestCategory(): String?
 
-    // Belirli bir sınava ait toplam kelime sayısı
+    // Get total word count for a specific exam
     @Query(
         """
         SELECT COUNT(*) FROM words
@@ -214,7 +214,7 @@ interface WordDao {
     )
     suspend fun getWordCountByExam(exam: String): Int
 
-    // Belirli bir sınava ait öğrenilen kelime sayısı
+    // Get learned word count for a specific exam
     @Query(
         """
         SELECT COUNT(*) FROM words
