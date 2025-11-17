@@ -34,6 +34,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.other.SettingsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.StatsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizExamMenuScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
