@@ -40,14 +40,6 @@ class WordRepository(
 
     override suspend fun getAllWordsAskedInExams(): List<WordAskedInExams> = wordDao.getAllWordsWithExams()
 
-
-    /*suspend fun updateWordStats(statistic: Statistic, word: Word) {
-        // Update the statistics of the word
-        wordDao.insertStatistic(statistic)
-        // Update the related word statistic id
-        wordDao.updateWordStatId(word.statId, word.word)
-    }*/
-
     override fun isLearned(statistic: Statistic): Boolean {
         return statistic.correctCount > (statistic.wrongCount + statistic.skippedCount)
     }
@@ -175,7 +167,6 @@ class WordRepository(
 
         val levelUnlockerWordCount = wordDao.getLevelUnlockerWordCount(level.name)
         val levelWordCount = wordDao.getWordCountByLevel(level.name)
-        println("Checking if level ${level.name} is unlocked: $levelWordCount words in level, $levelUnlockerWordCount words needed to unlock")
         return levelWordCount == levelUnlockerWordCount
     }
 
