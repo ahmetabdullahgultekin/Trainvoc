@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc
 
 import android.app.Application
+import android.content.ComponentCallbacks2
 import androidx.work.Configuration
 import com.gultekinahmetabdullah.trainvoc.performance.PerformanceMonitor
 import com.gultekinahmetabdullah.trainvoc.performance.StartupOptimizer
