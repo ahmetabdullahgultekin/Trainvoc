@@ -211,10 +211,23 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             )
         }
 
-        // Language Selection
-        val languageOptions = listOf(LanguagePreference.ENGLISH, LanguagePreference.TURKISH)
-        val languageLabels =
-            listOf(stringResource(id = R.string.english), stringResource(id = R.string.turkish))
+        // Language Selection - All 6 supported languages
+        val languageOptions = listOf(
+            LanguagePreference.ENGLISH,
+            LanguagePreference.TURKISH,
+            LanguagePreference.SPANISH,
+            LanguagePreference.GERMAN,
+            LanguagePreference.FRENCH,
+            LanguagePreference.ARABIC
+        )
+        val languageLabels = listOf(
+            stringResource(id = R.string.english),
+            stringResource(id = R.string.turkish),
+            stringResource(id = R.string.spanish),
+            stringResource(id = R.string.german),
+            stringResource(id = R.string.french),
+            stringResource(id = R.string.arabic)
+        )
         val selectedLanguageIndex = languageOptions.indexOf(language)
         SettingDropdown(
             title = stringResource(id = R.string.language),
