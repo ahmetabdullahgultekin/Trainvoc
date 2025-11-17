@@ -37,6 +37,8 @@ import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Locale
@@ -66,8 +68,8 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(Spacing.mediumLarge),
+        verticalArrangement = Arrangement.spacedBy(Spacing.medium)
     ) {
         Text(stringResource(id = R.string.settings), style = MaterialTheme.typography.headlineSmall)
 
@@ -127,7 +129,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
         // Manage Account
         Button(
             onClick = { navController.navigate(Route.MANAGEMENT) },
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(CornerRadius.medium),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(id = R.string.manage_words))
@@ -140,7 +142,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 showToast(context, context.getString(R.string.progress_reset))
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(CornerRadius.medium),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -155,7 +157,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 viewModel.logout()
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(CornerRadius.medium),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(id = R.string.logout), color = MaterialTheme.colorScheme.onError)
@@ -178,7 +180,7 @@ fun SettingDropdown(
         Box(modifier = Modifier.fillMaxWidth()) {
             Button(
                 onClick = { expanded = true },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(CornerRadius.medium),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(selectedOption)
