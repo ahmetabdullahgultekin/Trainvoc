@@ -130,7 +130,10 @@ fun AppBottomSheet(
                             fontSize = 18.sp
                         )
                     }
-                    items(menuItems.size) { index ->
+                    items(
+                        count = menuItems.size,
+                        key = { index -> menuItems[index].third }
+                    ) { index ->
                         val (text, icon, route) = menuItems[index]
                         ListItem(
                             headlineContent = {
