@@ -13,6 +13,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
+import com.gultekinahmetabdullah.trainvoc.accessibility.HighContrastDarkColorScheme
+import com.gultekinahmetabdullah.trainvoc.accessibility.HighContrastLightColorScheme
 
 // ============================================================
 // Default Color Schemes (Original)
@@ -323,15 +325,21 @@ private val MintAmoledColorScheme = darkColorScheme(
 // ============================================================
 
 /**
- * Get the appropriate ColorScheme based on palette and dark mode
+ * Get the appropriate ColorScheme based on palette, dark mode, and accessibility options
  */
 @Composable
 private fun getColorScheme(
     palette: ColorPalettePreference,
     darkTheme: Boolean,
-    amoledMode: Boolean = false
+    amoledMode: Boolean = false,
+    highContrastMode: Boolean = false
 ): ColorScheme {
     val context = LocalContext.current
+
+    // High contrast mode takes precedence over palette selection for accessibility
+    if (highContrastMode) {
+        return if (darkTheme) HighContrastDarkColorScheme else HighContrastLightColorScheme
+    }
 
     return when (palette) {
         ColorPalettePreference.DYNAMIC -> {
@@ -411,6 +419,7 @@ private val AppShapes = Shapes(
  * @param darkTheme Whether to use dark theme (default: follows system)
  * @param amoledMode Whether to use AMOLED true black mode (only applies in dark theme)
  * @param colorPalette Color palette to use (default: DEFAULT)
+ * @param highContrastMode Whether to use WCAG AAA high contrast colors for accessibility
  * @param content The composable content to wrap with the theme
  */
 @Composable
@@ -418,12 +427,14 @@ fun TrainvocTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     amoledMode: Boolean = false,
     colorPalette: ColorPalettePreference = ColorPalettePreference.DEFAULT,
+    highContrastMode: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = getColorScheme(
         palette = colorPalette,
         darkTheme = darkTheme,
-        amoledMode = amoledMode && darkTheme // AMOLED only applies in dark mode
+        amoledMode = amoledMode && darkTheme, // AMOLED only applies in dark mode
+        highContrastMode = highContrastMode
     )
 
     MaterialTheme(
