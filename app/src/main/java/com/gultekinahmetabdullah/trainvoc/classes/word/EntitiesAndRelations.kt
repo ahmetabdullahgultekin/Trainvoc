@@ -11,9 +11,21 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 
 /**
  * Word entity
+ *
+ * PERFORMANCE: Indices added for frequently queried columns to improve query speed.
+ * - level: Used in filtering by word level (A1, A2, B1, etc.)
+ * - stat_id: Used in JOIN operations with statistics table
+ * - last_reviewed: Used in sorting by review date (LEAST_RECENT, MOST_RECENT)
  */
 
-@Entity(tableName = "words")
+@Entity(
+    tableName = "words",
+    indices = [
+        Index(value = ["level"]),
+        Index(value = ["stat_id"]),
+        Index(value = ["last_reviewed"])
+    ]
+)
 data class Word(
     @PrimaryKey
     @ColumnInfo(name = "word") val word: String, // One-to-one relationship with the word
@@ -26,6 +38,12 @@ data class Word(
 
 /**
  * Statistic entity
+ *
+ * PERFORMANCE: Indices added for query optimization:
+ * - Composite index for uniqueness and lookups by stat values
+ * - learned: Used in NOT_LEARNED quiz queries
+ * - correct_count: Used in LEAST_CORRECT/MOST_CORRECT queries
+ * - wrong_count: Used in LEAST_WRONG/MOST_WRONG queries
  */
 
 @Entity(
@@ -35,6 +53,9 @@ data class Word(
             value = ["correct_count", "wrong_count", "skipped_count", "learned"],
             unique = true
         ),
+        Index(value = ["learned"]),
+        Index(value = ["correct_count"]),
+        Index(value = ["wrong_count"])
     ]
 )
 data class Statistic(

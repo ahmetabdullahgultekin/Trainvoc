@@ -53,7 +53,8 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
         Text(stringResource(id = R.string.loading))
         return
     }
-    if (word == null) {
+    val currentWord = word
+    if (currentWord == null) {
         Text(stringResource(id = R.string.word_not_found))
         return
     }
@@ -63,35 +64,35 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = word!!.word, style = MaterialTheme.typography.headlineMedium)
+            Text(text = currentWord.word, style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = word!!.meaning, style = MaterialTheme.typography.bodyLarge)
+            Text(text = currentWord.meaning, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(id = R.string.level, word!!.level.toString()),
+                text = stringResource(id = R.string.level, currentWord.level.toString()),
                 style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(
                     id = R.string.last_reviewed,
-                    word!!.lastReviewed?.toString() ?: "-"
+                    currentWord.lastReviewed?.toString() ?: "-"
                 ), style = MaterialTheme.typography.bodyMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
-            if (statistic != null) {
+            statistic?.let { currentStatistic ->
                 Text(
                     text = stringResource(
                         id = R.string.stats,
-                        statistic!!.correctCount,
-                        statistic!!.wrongCount,
-                        statistic!!.skippedCount
+                        currentStatistic.correctCount,
+                        currentStatistic.wrongCount,
+                        currentStatistic.skippedCount
                     ), style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 // secondsSpent yerine timeSpent kullanıldı (örnek)
                 Text(
-                    text = stringResource(id = R.string.total_seconds, word!!.secondsSpent),
+                    text = stringResource(id = R.string.total_seconds, currentWord.secondsSpent),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

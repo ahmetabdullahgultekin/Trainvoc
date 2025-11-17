@@ -207,4 +207,26 @@
     <string name="last_quiz">Last Quiz</string>
     <string name="xp_progress">%1$d / %2$d XP</string>
     <string name="task_progress">%1$d/%2$d</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_name">Word Reminders</string>
+    <string name="notification_learned_title">Do you remember?</string>
+    <string name="notification_learned_message">Do you remember the word \"%1$s\"?</string>
+    <string name="notification_new_title">Do you know?</string>
+    <string name="notification_new_message">Do you know the meaning of \"%1$s\"?</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="decorative_background">Decorative background image</string>
+    <string name="start_quiz_button">Start quiz</string>
+    <string name="achievement_first_place">First place achievement - Gold medal</string>
+    <string name="achievement_streak">Daily streak achievement - Fire icon</string>
+    <string name="achievement_books">Books achievement - Learning milestone</string>
+    <string name="category_brain_training">Brain training category</string>
+    <string name="category_target_practice">Target practice category</string>
+    <string name="category_quick_quiz">Quick quiz category</string>
+    <string name="quick_access_word_of_day">Word of the day - Star icon</string>
+    <string name="quick_access_favorites">Favorites - Heart icon</string>
+    <string name="quick_access_last_quiz">Last quiz - Clock icon</string>
+    <string name="statistics_icon">Statistics information</string>
+    <string name="trophy_icon">Trophy icon</string>
 </resources>

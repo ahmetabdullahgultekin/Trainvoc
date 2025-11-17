@@ -7,6 +7,8 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.QuizType
 /**
  * Builder for creating dynamic Word queries to eliminate duplicate DAO methods.
  * This class consolidates 30+ nearly identical query methods into a single flexible builder.
+ *
+ * SECURITY: Uses parameterized queries to prevent SQL injection attacks.
  */
 object WordQueryBuilder {
 
@@ -17,7 +19,7 @@ object WordQueryBuilder {
      * @param level Optional word level filter (e.g., "A1", "B2")
      * @param exam Optional exam filter (e.g., "TOEFL", "IELTS")
      * @param limit Number of words to return (default: 5)
-     * @return SupportSQLiteQuery ready to execute via @RawQuery
+     * @return SupportSQLiteQuery ready to execute via @RawQuery with parameterized bind args
      */
     fun buildQuery(
         quizType: QuizType,
@@ -25,6 +27,8 @@ object WordQueryBuilder {
         exam: String? = null,
         limit: Int = 5
     ): SupportSQLiteQuery {
+        val bindArgs = mutableListOf<Any>()
+
         val baseQuery = buildString {
             append("SELECT w.* FROM words w")
 
@@ -41,17 +45,19 @@ object WordQueryBuilder {
                 append(" JOIN exams e ON wec.exam = e.exam")
             }
 
-            // WHERE clause
+            // WHERE clause with parameterized queries
             val whereConditions = mutableListOf<String>()
 
-            // Level filter
+            // Level filter - use parameterized query to prevent SQL injection
             level?.let {
-                whereConditions.add("w.level = '$it'")
+                whereConditions.add("w.level = ?")
+                bindArgs.add(it)
             }
 
-            // Exam filter
+            // Exam filter - use parameterized query to prevent SQL injection
             exam?.let {
-                whereConditions.add("e.exam = '$it'")
+                whereConditions.add("e.exam = ?")
+                bindArgs.add(it)
             }
 
             if (whereConditions.isNotEmpty()) {
@@ -63,11 +69,11 @@ object WordQueryBuilder {
             append(getOrderByClause(quizType))
             append(", RANDOM()")
 
-            // LIMIT
+            // LIMIT - safe as it's an Int parameter
             append(" LIMIT $limit")
         }
 
-        return SimpleSQLiteQuery(baseQuery)
+        return SimpleSQLiteQuery(baseQuery, bindArgs.toTypedArray())
     }
 
     /**

@@ -6,6 +6,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +40,7 @@ class WordViewModel @Inject constructor(
      * Waits 300ms after user stops typing before filtering.
      */
     private fun setupSearchDebounce() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _searchQuery
                 .debounce(300) // Wait 300ms after last input
                 .distinctUntilChanged() // Only process if query changed
@@ -65,13 +66,13 @@ class WordViewModel @Inject constructor(
     }
 
     private fun fetchWords() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _words.value = repository.getAllWordsAskedInExams()
         }
     }
 
     fun insertWord(word: Word) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.insertWord(word)
             fetchWords()
         }

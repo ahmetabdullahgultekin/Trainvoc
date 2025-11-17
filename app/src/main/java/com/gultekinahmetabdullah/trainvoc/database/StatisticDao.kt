@@ -70,7 +70,7 @@ interface StatisticDao {
         skippedCount: Int
     ): Statistic?
 
-    // Bugün doğru cevaplanan soru sayısı (Word tablosundaki last_reviewed üzerinden)
+    // Number of correct answers today (based on last_reviewed in Word table)
     @Query(
         """
         SELECT SUM(s.correct_count) FROM words w
@@ -80,7 +80,7 @@ interface StatisticDao {
     )
     suspend fun getDailyCorrectAnswers(): Int
 
-    // Bu hafta doğru cevaplanan soru sayısı (Word tablosundaki last_reviewed üzerinden)
+    // Number of correct answers this week (based on last_reviewed in Word table)
     @Query(
         """
         SELECT SUM(s.correct_count) FROM words w
@@ -91,7 +91,7 @@ interface StatisticDao {
     )
     suspend fun getWeeklyCorrectAnswers(): Int
 
-    // Toplam cevaplanan soru sayısı
+    // Total number of answered questions
     @Query("SELECT SUM(correct_count + wrong_count + skipped_count) FROM statistics")
     suspend fun getTotalAnsweredQuizCount(): Int
 }
