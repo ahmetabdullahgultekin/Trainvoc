@@ -113,9 +113,9 @@ fun LeafButton(text: String, isUnlocked: Boolean, onClick: () -> Unit) {
             if (isUnlocked) {
                 Text(
                     text,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontWeight = FontWeight.Bold
                 )
             } else {
                 Icon(
@@ -125,8 +125,8 @@ fun LeafButton(text: String, isUnlocked: Boolean, onClick: () -> Unit) {
                 )
                 Text(
                     text = stringResource(id = R.string.locked_level_warning),
-                    color = Color.Red,
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     modifier = Modifier
