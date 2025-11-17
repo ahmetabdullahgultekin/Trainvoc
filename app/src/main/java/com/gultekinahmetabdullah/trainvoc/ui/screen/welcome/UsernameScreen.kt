@@ -31,6 +31,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -65,7 +66,7 @@ fun UsernameScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(Spacing.mediumLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -76,7 +77,7 @@ fun UsernameScreen(navController: NavController) {
             modifier = Modifier.size(260.dp)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         Text(
             text = stringResource(id = R.string.username_prompt),
@@ -84,16 +85,16 @@ fun UsernameScreen(navController: NavController) {
             color = MaterialTheme.colorScheme.primary,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Spacing.small))
 
         Text(
             text = stringResource(id = R.string.welcome_description_2),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(horizontal = Spacing.small)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
         OutlinedTextField(
             value = username,
@@ -104,7 +105,7 @@ fun UsernameScreen(navController: NavController) {
             shape = MaterialTheme.shapes.medium
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Spacing.large))
 
         Button(
             onClick = {
