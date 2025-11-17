@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -45,7 +46,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .padding(Spacing.small)
     ) {
         OutlinedTextField(
             value = search,
@@ -53,7 +54,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
             label = { Text(stringResource(id = R.string.search_word)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = Spacing.small)
         )
         Box(modifier = Modifier.weight(1f)) {
             // Scroll state oluştur
@@ -67,10 +68,10 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp)
+                                .padding(vertical = Spacing.extraSmall)
                                 .clickable { navController.navigate(Route.wordDetail(word.word)) }
                         ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
+                            Column(modifier = Modifier.padding(Spacing.medium)) {
                                 Text(word.word, style = MaterialTheme.typography.titleMedium)
                                 Text(word.meaning, style = MaterialTheme.typography.bodyMedium)
                             }
