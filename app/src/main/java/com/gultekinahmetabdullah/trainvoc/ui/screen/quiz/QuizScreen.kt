@@ -44,19 +44,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.AnswerOptionCard
-import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
-import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
-import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDialog
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable

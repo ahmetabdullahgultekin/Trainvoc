@@ -2,15 +2,26 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -27,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,28 +51,12 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
+import com.gultekinahmetabdullah.trainvoc.ui.animations.pressClickable
+import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.Locale
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import android.os.Build
-import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
-import com.gultekinahmetabdullah.trainvoc.ui.animations.pressClickable
-import com.gultekinahmetabdullah.trainvoc.ui.animations.bounceIn
 
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
@@ -480,36 +477,43 @@ private fun getPreviewColors(palette: ColorPalettePreference): List<Color> {
             Color(0xFF92C7CF),  // Secondary
             Color(0xFF66BB6A)   // Accent (UnlockedLeaf)
         )
+
         ColorPalettePreference.OCEAN -> listOf(
             Color(0xFF0277BD),  // Deep ocean blue
             Color(0xFF00ACC1),  // Cyan teal
             Color(0xFF1976D2)   // Rich blue
         )
+
         ColorPalettePreference.FOREST -> listOf(
             Color(0xFF2E7D32),  // Forest green
             Color(0xFF558B2F),  // Olive green
             Color(0xFF689F38)   // Light green
         )
+
         ColorPalettePreference.SUNSET -> listOf(
             Color(0xFFE64A19),  // Deep orange
             Color(0xFF7B1FA2),  // Purple
             Color(0xFFFF6F00)   // Bright orange
         )
+
         ColorPalettePreference.LAVENDER -> listOf(
             Color(0xFF6A1B9A),  // Deep purple
             Color(0xFFAB47BC),  // Medium purple
             Color(0xFFD81B60)   // Pink
         )
+
         ColorPalettePreference.CRIMSON -> listOf(
             Color(0xFFC62828),  // Deep red
             Color(0xFFD84315),  // Red orange
             Color(0xFFAD1457)   // Pink red
         )
+
         ColorPalettePreference.MINT -> listOf(
             Color(0xFF00897B),  // Teal
             Color(0xFF26A69A),  // Light teal
             Color(0xFF00ACC1)   // Cyan
         )
+
         ColorPalettePreference.DYNAMIC -> listOf(
             Color(0xFF6750A4),  // Material You default primary
             Color(0xFF625B71),  // Material You default secondary

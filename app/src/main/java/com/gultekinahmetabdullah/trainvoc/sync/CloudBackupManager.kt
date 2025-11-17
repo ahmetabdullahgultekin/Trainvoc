@@ -3,14 +3,21 @@ package com.gultekinahmetabdullah.trainvoc.sync
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.WorkerParameters
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
@@ -306,6 +313,7 @@ class CloudBackupManager(
                         downloaded = false,
                         conflictsResolved = 0
                     )
+
                     is CloudBackupResult.Failure -> SyncResult.Failure(result.error)
                 }
             }
@@ -334,10 +342,12 @@ class CloudBackupManager(
                                 conflictsResolved = restoreResult.conflictsResolved
                             )
                         }
+
                         is RestoreResult.Failure -> {
                             _syncState.value = SyncState.Error(restoreResult.error)
                             SyncResult.Failure(restoreResult.error)
                         }
+
                         is RestoreResult.PartialSuccess -> {
                             _syncState.value = SyncState.Synced
                             SyncResult.Success(
@@ -346,12 +356,14 @@ class CloudBackupManager(
                                 conflictsResolved = 0
                             )
                         }
+
                         is RestoreResult.Conflict -> {
                             _syncState.value = SyncState.ConflictDetected
                             SyncResult.Conflict(restoreResult.conflicts)
                         }
                     }
                 }
+
                 localBackupTime > cloudMetadata.timestamp -> {
                     // Local is newer, upload
                     val backupResult = backupToCloud { progress ->
@@ -367,12 +379,14 @@ class CloudBackupManager(
                                 conflictsResolved = 0
                             )
                         }
+
                         is CloudBackupResult.Failure -> {
                             _syncState.value = SyncState.Error(backupResult.error)
                             SyncResult.Failure(backupResult.error)
                         }
                     }
                 }
+
                 else -> {
                     // Already in sync
                     _syncState.value = SyncState.Synced
@@ -394,7 +408,8 @@ class CloudBackupManager(
      * Check if network is available
      */
     private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
 
@@ -405,7 +420,8 @@ class CloudBackupManager(
      * Check if WiFi is available
      */
     fun isWiFiAvailable(): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
 

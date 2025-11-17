@@ -4,7 +4,19 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
-import com.gultekinahmetabdullah.trainvoc.sync.*
+import com.gultekinahmetabdullah.trainvoc.sync.BackupData
+import com.gultekinahmetabdullah.trainvoc.sync.BackupFileInfo
+import com.gultekinahmetabdullah.trainvoc.sync.BackupResult
+import com.gultekinahmetabdullah.trainvoc.sync.CloudBackupManager
+import com.gultekinahmetabdullah.trainvoc.sync.CloudBackupResult
+import com.gultekinahmetabdullah.trainvoc.sync.ConflictStrategy
+import com.gultekinahmetabdullah.trainvoc.sync.DataConflict
+import com.gultekinahmetabdullah.trainvoc.sync.DataExporter
+import com.gultekinahmetabdullah.trainvoc.sync.DataImporter
+import com.gultekinahmetabdullah.trainvoc.sync.RestoreResult
+import com.gultekinahmetabdullah.trainvoc.sync.SyncResult
+import com.gultekinahmetabdullah.trainvoc.sync.SyncState
+import com.gultekinahmetabdullah.trainvoc.sync.ValidationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,6 +96,7 @@ class BackupViewModel @Inject constructor(
                     )
                     loadAvailableBackups()
                 }
+
                 is BackupResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
@@ -111,6 +124,7 @@ class BackupViewModel @Inject constructor(
                     )
                     loadAvailableBackups()
                 }
+
                 is BackupResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
@@ -138,6 +152,7 @@ class BackupViewModel @Inject constructor(
                     )
                     loadAvailableBackups()
                 }
+
                 is BackupResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
@@ -181,9 +196,11 @@ class BackupViewModel @Inject constructor(
                         conflictsResolved = result.conflictsResolved
                     )
                 }
+
                 is RestoreResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
+
                 is RestoreResult.PartialSuccess -> {
                     _uiState.value = BackupUiState.ImportSuccess(
                         wordsRestored = result.wordsRestored,
@@ -191,6 +208,7 @@ class BackupViewModel @Inject constructor(
                         conflictsResolved = 0
                     )
                 }
+
                 is RestoreResult.Conflict -> {
                     _uiState.value = BackupUiState.ConflictDetected(
                         conflicts = result.conflicts,
@@ -229,9 +247,11 @@ class BackupViewModel @Inject constructor(
                         conflictsResolved = result.conflictsResolved
                     )
                 }
+
                 is RestoreResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
+
                 else -> {
                     _uiState.value = BackupUiState.Error("Conflict resolution failed")
                 }
@@ -259,6 +279,7 @@ class BackupViewModel @Inject constructor(
                     )
                     loadCloudBackupState()
                 }
+
                 is CloudBackupResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
@@ -292,9 +313,11 @@ class BackupViewModel @Inject constructor(
                     )
                     loadCloudBackupState()
                 }
+
                 is RestoreResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
+
                 is RestoreResult.PartialSuccess -> {
                     _uiState.value = BackupUiState.ImportSuccess(
                         wordsRestored = result.wordsRestored,
@@ -303,6 +326,7 @@ class BackupViewModel @Inject constructor(
                     )
                     loadCloudBackupState()
                 }
+
                 is RestoreResult.Conflict -> {
                     _uiState.value = BackupUiState.ConflictDetected(
                         conflicts = result.conflicts,
@@ -334,11 +358,14 @@ class BackupViewModel @Inject constructor(
                     )
                     loadCloudBackupState()
                 }
+
                 is SyncResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
+
                 is SyncResult.Conflict -> {
-                    _uiState.value = BackupUiState.Error("Sync conflicts detected. Please resolve manually.")
+                    _uiState.value =
+                        BackupUiState.Error("Sync conflicts detected. Please resolve manually.")
                 }
             }
         }

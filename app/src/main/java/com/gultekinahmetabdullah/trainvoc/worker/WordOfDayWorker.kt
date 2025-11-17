@@ -24,7 +24,8 @@ class WordOfDayWorker(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        val sharedPreferences = applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val wordOfDayEnabled = sharedPreferences.getBoolean("word_of_day_enabled", true)
 
         if (!wordOfDayEnabled) {

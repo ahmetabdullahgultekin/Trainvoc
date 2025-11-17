@@ -101,6 +101,7 @@ class TrainvocApplication : Application(), Configuration.Provider {
                 // Clear caches to avoid being killed
                 PerformanceMonitor.logMemoryUsage("TrimMemory:Running")
             }
+
             ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
                 // App is in background
                 // Good time to clear unnecessary resources

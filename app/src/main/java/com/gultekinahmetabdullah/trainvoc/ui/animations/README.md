@@ -18,6 +18,7 @@ ui/animations/
 ## 🎯 Animation Specifications
 
 ### Duration Constants
+
 ```kotlin
 AnimationSpecs.DURATION_VERY_SHORT  // 100ms - Micro-interactions
 AnimationSpecs.DURATION_SHORT       // 200ms - Quick transitions
@@ -27,6 +28,7 @@ AnimationSpecs.DURATION_EXTRA_LONG  // 500ms - Complex transitions
 ```
 
 ### Easing Functions
+
 ```kotlin
 AnimationSpecs.EasingStandard      // Default for most animations
 AnimationSpecs.EasingEmphasized    // For important state changes
@@ -35,6 +37,7 @@ AnimationSpecs.EasingAccelerate    // For exiting elements
 ```
 
 ### Spring Specifications
+
 ```kotlin
 AnimationSpecs.SpringLowStiffness     // Smooth, slow bounce
 AnimationSpecs.SpringMediumStiffness  // Standard bounce
@@ -45,6 +48,7 @@ AnimationSpecs.SpringNoBounce         // Smooth without bounce
 ## 🎨 Animated Components
 
 ### Press Clickable Button
+
 Adds press scale animation to any composable:
 
 ```kotlin
@@ -56,6 +60,7 @@ Box(
 ```
 
 ### Bounce In
+
 Animate appearance with bounce:
 
 ```kotlin
@@ -65,6 +70,7 @@ Box(modifier = Modifier.bounceIn()) {
 ```
 
 ### Shake Animation
+
 Shake element horizontally (great for errors):
 
 ```kotlin
@@ -79,6 +85,7 @@ triggerShake = true
 ```
 
 ### Pulse Animation
+
 Gentle pulsing effect:
 
 ```kotlin
@@ -89,6 +96,7 @@ Icon(
 ```
 
 ### Card Flip
+
 Flip between front and back content:
 
 ```kotlin
@@ -102,6 +110,7 @@ FlippableCard(
 ```
 
 ### Staggered List Items
+
 Animate list items with delay:
 
 ```kotlin
@@ -117,6 +126,7 @@ LazyColumn {
 ## 🔊 Haptic Feedback
 
 ### Basic Usage
+
 ```kotlin
 val haptic = rememberHapticPerformer()
 
@@ -131,6 +141,7 @@ Button(
 ```
 
 ### Feedback Types
+
 ```kotlin
 haptic.click()       // Quick tap feedback
 haptic.longPress()   // Sustained press feedback
@@ -141,6 +152,7 @@ haptic.error()       // Error/invalid action
 ## ✨ Shimmer Effects
 
 ### Apply Shimmer to Any Component
+
 ```kotlin
 Box(
     modifier = Modifier
@@ -151,6 +163,7 @@ Box(
 ```
 
 ### Pre-built Skeleton Components
+
 ```kotlin
 // Word card skeleton
 WordCardSkeleton()
@@ -171,6 +184,7 @@ ShimmerLoadingScreen(itemCount = 5)
 ## ✅ Success/Error Animations
 
 ### Animated Checkmark
+
 ```kotlin
 var showSuccess by remember { mutableStateOf(false) }
 
@@ -181,6 +195,7 @@ AnimatedCheckmark(
 ```
 
 ### Animated Error Cross
+
 ```kotlin
 var showError by remember { mutableStateOf(false) }
 
@@ -191,6 +206,7 @@ AnimatedErrorCross(
 ```
 
 ### Confetti Celebration
+
 ```kotlin
 var triggerConfetti by remember { mutableStateOf(false) }
 
@@ -201,6 +217,7 @@ ConfettiAnimation(
 ```
 
 ### Complete Success Celebration
+
 ```kotlin
 var celebrateSuccess by remember { mutableStateOf(false) }
 
@@ -214,6 +231,7 @@ SuccessCelebration(
 ```
 
 ### Complete Error Indication
+
 ```kotlin
 var showError by remember { mutableStateOf(false) }
 
@@ -228,6 +246,7 @@ ErrorIndication(
 ## 📊 Progress Indicators
 
 ### Circular Progress with Percentage
+
 ```kotlin
 AnimatedCircularProgress(
     progress = 0.75f,  // 0f to 1f
@@ -238,6 +257,7 @@ AnimatedCircularProgress(
 ```
 
 ### Learning Progress Ring
+
 ```kotlin
 LearningProgressRing(
     learned = 45,
@@ -247,6 +267,7 @@ LearningProgressRing(
 ```
 
 ### Linear Progress Bar
+
 ```kotlin
 AnimatedLinearProgress(
     progress = 0.6f,
@@ -255,6 +276,7 @@ AnimatedLinearProgress(
 ```
 
 ### Segmented Progress Bar
+
 ```kotlin
 SegmentedProgressBar(
     current = 3,
@@ -265,6 +287,7 @@ SegmentedProgressBar(
 ```
 
 ### Quiz Progress Indicator
+
 ```kotlin
 QuizProgressIndicator(
     currentQuestion = 5,
@@ -273,6 +296,7 @@ QuizProgressIndicator(
 ```
 
 ### Streak Progress Indicator
+
 ```kotlin
 StreakProgressIndicator(
     currentStreak = 12,
@@ -281,6 +305,7 @@ StreakProgressIndicator(
 ```
 
 ### Level Progress Bar
+
 ```kotlin
 LevelProgressBar(
     currentXP = 450,
@@ -290,6 +315,7 @@ LevelProgressBar(
 ```
 
 ### Loading Pulse
+
 ```kotlin
 LoadingPulse(
     size = 40.dp,
@@ -300,6 +326,7 @@ LoadingPulse(
 ## 🎬 Screen Transitions
 
 ### Navigation Transitions
+
 ```kotlin
 // Forward navigation (slide right to left)
 enterTransition = AnimationSpecs.slideInFromRight()
@@ -321,6 +348,7 @@ exitTransition = AnimationSpecs.scaleOutFadeOut()
 ## 💡 Usage Examples
 
 ### Quiz Answer Feedback
+
 ```kotlin
 var showSuccess by remember { mutableStateOf(false) }
 var showError by remember { mutableStateOf(false) }
@@ -340,6 +368,7 @@ ErrorIndication(
 ```
 
 ### Button with Haptic Feedback
+
 ```kotlin
 val haptic = rememberHapticPerformer()
 
@@ -355,6 +384,7 @@ Button(
 ```
 
 ### Loading State
+
 ```kotlin
 if (isLoading) {
     ShimmerLoadingScreen(itemCount = 5)
@@ -371,6 +401,7 @@ if (isLoading) {
 ```
 
 ### Streak Achievement
+
 ```kotlin
 var showConfetti by remember { mutableStateOf(false) }
 
