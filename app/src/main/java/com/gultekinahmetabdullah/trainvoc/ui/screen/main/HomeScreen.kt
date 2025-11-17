@@ -147,7 +147,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(Spacing.mediumLarge),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             state = rememberLazyListState(),
@@ -159,12 +159,12 @@ fun HomeScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(Spacing.small)
                             .background(
-                                color = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
+                                color = MaterialTheme.colorScheme.error.copy(alpha = Alpha.surfaceVariant),
                                 shape = MaterialTheme.shapes.medium
                             )
-                            .padding(12.dp),
+                            .padding(Spacing.medium),
                         fontSize = 18.sp
                     )
                     // App Logo
@@ -173,11 +173,11 @@ fun HomeScreen(
                         contentDescription = stringResource(id = R.string.app_icon_desc),
                         modifier = Modifier
                             .size(120.dp)
-                            .padding(8.dp)
+                            .padding(Spacing.small)
                             .testTag("AppLogo")
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
                     // Welcome Message
                     Text(
@@ -188,14 +188,14 @@ fun HomeScreen(
                         modifier = Modifier.testTag("WelcomeText")
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.small))
 
                     Text(
                         text = stringResource(id = R.string.home_subtitle),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.background,
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = Spacing.mediumLarge)
                             .align(Alignment.Center)
                             .testTag("SubtitleText"),
                         fontWeight = FontWeight.Medium
@@ -481,7 +481,7 @@ fun HomeScreen(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
                     // Category-based Quiz Selection (Animated Cards)
                     Text(
@@ -491,12 +491,12 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.small))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
                     ) {
                         CategoryCard(
                             emoji = "🧠",
@@ -518,7 +518,7 @@ fun HomeScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(Spacing.mediumLarge))
 
                     // Quick Access Buttons (Word of the Day, Favorites, Last Quiz)
                     Text(
@@ -528,12 +528,12 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.small))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
                     ) {
                         QuickAccessCard(
                             emoji = "🌟",
@@ -607,10 +607,10 @@ fun HomeNavButton(
         modifier = Modifier
             .size(110.dp) // Slightly larger square
             .then(if (testTag.isNotEmpty()) Modifier.testTag(testTag) else Modifier),
-        shape = RoundedCornerShape(28.dp), // Softer corners
+        shape = RoundedCornerShape(CornerRadius.round), // Softer corners
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(
-                alpha = 0.85f
+                alpha = Alpha.high
             )
         )
     ) {
@@ -624,18 +624,18 @@ fun HomeNavButton(
                     .padding(6.dp)
                     .background(
                         color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(CornerRadius.large)
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = title,
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(IconSize.large),
                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Spacing.medium))
             Text(
                 text = title,
                 fontSize = 15.sp,
@@ -693,10 +693,10 @@ fun CategoryCard(
         modifier = Modifier
             .background(
                 color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(CornerRadius.large)
             )
             .clickable(onClick = onClick)
-            .padding(16.dp)
+            .padding(Spacing.mediumLarge)
             .size(100.dp)
     ) {
         Column(
@@ -708,7 +708,7 @@ fun CategoryCard(
                 text = emoji,
                 fontSize = 32.sp,
                 modifier = Modifier
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = Spacing.small)
                     .semantics {
                         contentDescription = emojiContentDescription
                     }
@@ -733,10 +733,10 @@ fun QuickAccessCard(
         modifier = Modifier
             .background(
                 color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(CornerRadius.large)
             )
             .clickable(onClick = onClick)
-            .padding(16.dp)
+            .padding(Spacing.mediumLarge)
             .size(100.dp)
     ) {
         Column(
@@ -748,7 +748,7 @@ fun QuickAccessCard(
                 text = emoji,
                 fontSize = 32.sp,
                 modifier = Modifier
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = Spacing.small)
                     .semantics {
                         contentDescription = emojiContentDescription
                     }
