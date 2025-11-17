@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -56,8 +57,6 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDial
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
-import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
-import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 
 @Composable

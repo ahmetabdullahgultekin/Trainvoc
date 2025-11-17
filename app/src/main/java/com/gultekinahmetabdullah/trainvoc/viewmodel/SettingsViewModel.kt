@@ -3,6 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
@@ -31,6 +32,9 @@ class SettingsViewModel @Inject constructor(
     private val _theme = MutableStateFlow(preferencesRepository.getTheme())
     val theme: StateFlow<ThemePreference> = _theme
 
+    private val _colorPalette = MutableStateFlow(preferencesRepository.getColorPalette())
+    val colorPalette: StateFlow<ColorPalettePreference> = _colorPalette
+
     private val _language = MutableStateFlow(getLanguageWithSystemFallback())
     val language: StateFlow<LanguagePreference> = _language
 
@@ -52,6 +56,13 @@ class SettingsViewModel @Inject constructor(
     fun setTheme(theme: ThemePreference) {
         preferencesRepository.setTheme(theme)
         _theme.value = theme
+    }
+
+    fun getColorPalette(): ColorPalettePreference = preferencesRepository.getColorPalette()
+
+    fun setColorPalette(palette: ColorPalettePreference) {
+        preferencesRepository.setColorPalette(palette)
+        _colorPalette.value = palette
     }
 
     fun isNotificationsEnabled(): Boolean = preferencesRepository.isNotificationsEnabled()
@@ -88,11 +99,33 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { _languageChanged.emit(Unit) }
     }
 
+    /**
+     * Update the app locale and layout direction based on language preference.
+     * Supports RTL languages like Arabic.
+     */
     fun updateLocale(languageCode: String, activity: android.app.Activity? = null) {
         val locale = java.util.Locale(languageCode)
         java.util.Locale.setDefault(locale)
+
+        // Apply RTL layout direction for RTL languages (e.g., Arabic)
+        val languagePreference = LanguagePreference.fromCode(languageCode)
+        val layoutDirection = if (languagePreference.isRTL) {
+            android.view.View.LAYOUT_DIRECTION_RTL
+        } else {
+            android.view.View.LAYOUT_DIRECTION_LTR
+        }
+
+        // Apply layout direction to the app context
+        val configuration = appContext.resources.configuration
+        configuration.setLocale(locale)
+        configuration.setLayoutDirection(locale)
+
+        // For API 17+ (Jelly Bean MR1), update resources with new configuration
+        @Suppress("DEPRECATION")
+        appContext.resources.updateConfiguration(configuration, appContext.resources.displayMetrics)
+
         // Note: Activity recreation (via activity.recreate()) will automatically
-        // apply the new locale configuration. No need for deprecated updateConfiguration().
+        // apply the new locale configuration and layout direction.
         // The locale change will take effect when the activity is recreated.
     }
 

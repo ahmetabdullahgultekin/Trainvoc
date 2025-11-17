@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name and Basic Strings -->
+    <string name="app_name">Trainvoc</string>
+    <string name="app_icon_desc">Icono de la aplicación</string>
+    <string name="home_welcome">¡Bienvenido a TrainVoc! 🚀</string>
+    <string name="home_subtitle">Mejora tu vocabulario inglés-turco con cuestionarios entretenidos y herramientas de aprendizaje inteligentes.</string>
+    <string name="lottie_desc">Diamante animado</string>
+
+    <!-- Navigation -->
+    <string name="start_quiz">Iniciar Cuestionario Personalizado</string>
+    <string name="story_mode">Modo Historia</string>
+    <string name="settings">Configuración</string>
+    <string name="help">Ayuda</string>
+    <string name="stats">Estadísticas</string>
+    <string name="word_management">Gestión de Palabras</string>
+    <string name="search">Buscar</string>
+
+    <!-- Word Management -->
+    <string name="add_new_word">Agregar Nueva Palabra</string>
+    <string name="add_word">Agregar Palabra</string>
+    <string name="word">Palabra</string>
+    <string name="explanation">Explicación</string>
+    <string name="word_colon">Palabra: %1$s</string>
+    <string name="meaning_colon">Significado: %1$s</string>
+    <string name="level_colon">Nivel: %1$s</string>
+    <string name="category_colon">Categoría: %1$s</string>
+    <string name="last_reviewed_colon">Última Revisión: %1$s</string>
+    <string name="stat_id_colon">ID de Estadística: %1$s</string>
+
+    <!-- Quiz -->
+    <string name="select_level">Seleccionar Nivel</string>
+    <string name="select_category">Seleccionar Categoría</string>
+    <string name="level">Nivel</string>
+    <string name="category">Categoría</string>
+    <string name="na">N/A</string>
+    <string name="select_quiz_category">Seleccionar Categoría del Cuestionario</string>
+    <string name="test_your_knowledge_with">Pon a prueba tu conocimiento con palabras de nivel %1$s</string>
+    <string name="select_quiz_type">Seleccionar Tipo de Cuestionario</string>
+    <string name="loading_questions">Cargando Preguntas…</string>
+    <string name="which_one_is_the_correct_meaning">¿Cuál es el significado correcto de:</string>
+    <string name="next_question">Siguiente Pregunta</string>
+    <string name="score">Puntuación</string>
+
+    <!-- Statistics -->
+    <string name="quiz_statistics">Estadísticas del Cuestionario</string>
+    <string name="total_questions">Preguntas Totales</string>
+    <string name="correct_answers">Respuestas Correctas</string>
+    <string name="incorrect_answers">Respuestas Incorrectas</string>
+    <string name="skipped_questions">Preguntas Omitidas</string>
+    <string name="success_rate">Tasa de Éxito</string>
+    <string name="failure_rate">Tasa de Fallos</string>
+    <string name="skipped_rate">Tasa de Omisión</string>
+    <string name="total_score">Puntuación Total</string>
+    <string name="total_time_spent">Tiempo Total Empleado</string>
+    <string name="last_answered">Última Respuesta</string>
+    <string name="answer_distribution">Distribución de Respuestas</string>
+    <string name="correct_colon">Correcto: %1$d</string>
+    <string name="skipped_colon">Omitido: %1$d</string>
+    <string name="incorrect_colon">Incorrecto: %1$d</string>
+
+    <!-- Settings -->
+    <string name="theme">Tema</string>
+    <string name="system_default">Predeterminado del Sistema</string>
+    <string name="light">Claro</string>
+    <string name="dark">Oscuro</string>
+    <string name="enable_notifications">Habilitar Notificaciones</string>
+    <string name="language">Idioma</string>
+    <string name="spanish">Español</string>
+    <string name="english">Inglés</string>
+    <string name="turkish">Turco</string>
+    <string name="german">Alemán</string>
+    <string name="french">Francés</string>
+    <string name="arabic">Árabe</string>
+    <string name="manage_words">Gestionar Palabras</string>
+    <string name="progress_reset">Progreso reiniciado</string>
+    <string name="reset_progress">Reiniciar tu progreso</string>
+    <string name="logout">Cerrar sesión</string>
+
+    <!-- Notifications -->
+    <string name="notification_settings">Configuración de Notificaciones</string>
+    <string name="enable_daily_reminders">Recordatorios Diarios</string>
+    <string name="daily_reminders_desc">Recibe recordatorios para practicar cada día</string>
+    <string name="enable_streak_alerts">Alertas de Racha</string>
+    <string name="streak_alerts_desc">Recibe notificaciones sobre tus rachas de aprendizaje</string>
+    <string name="enable_word_of_day">Palabra del Día</string>
+    <string name="word_of_day_desc">Recibe una palabra destacada diariamente</string>
+    <string name="notifications_enabled">Notificaciones activadas</string>
+    <string name="notifications_disabled">Notificaciones desactivadas</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_daily_reminder">Recordatorios Diarios</string>
+    <string name="channel_daily_reminder_desc">Recordatorios diarios de aprendizaje para practicar vocabulario</string>
+    <string name="channel_streak_alert">Alertas de Racha</string>
+    <string name="channel_streak_alert_desc">Notificaciones sobre tu racha de aprendizaje</string>
+    <string name="channel_word_of_day">Palabra del Día</string>
+    <string name="channel_word_of_day_desc">Notificación de palabra destacada diaria</string>
+    <string name="channel_general">General</string>
+    <string name="channel_general_desc">Notificaciones generales de la aplicación</string>
+
+    <!-- Daily Reminder Notifications -->
+    <string name="notification_daily_title">¡Es hora de practicar! 📚</string>
+    <string name="notification_daily_message">Continúa tu racha de aprendizaje hoy</string>
+    <string name="notification_daily_message_expanded">¡No olvides practicar hoy! Mantén tu racha de aprendizaje activa y mejora tu vocabulario.</string>
+
+    <!-- Streak Alert Notifications -->
+    <string name="notification_streak_danger_title">🔥 ¡No rompas tu racha de %1$d días!</string>
+    <string name="notification_streak_danger_message">No has practicado hoy. ¡Mantén tu racha de %1$d días activa!</string>
+    <string name="notification_streak_milestone_title">🎉 ¡Increíble! ¡Racha de %1$d días!</string>
+    <string name="notification_streak_milestone_message">¡Felicidades por tu racha de aprendizaje de %1$d días! ¡Sigue así!</string>
+
+    <!-- Word of the Day Notifications -->
+    <string name="notification_wotd_title">📖 Palabra del Día</string>
+    <string name="notification_wotd_message">%1$s - %2$s\nNivel: %3$s</string>
+
+    <!--  Accessibility -->
+    <string name="statistics_icon">Icono de estadísticas</string>
+
+    <!-- Help & Support -->
+    <string name="help_welcome">¡Bienvenido al centro de ayuda! Aquí puedes encontrar respuestas a preguntas comunes, contactar con soporte y enviarnos tus comentarios.</string>
+    <string name="help_support">Ayuda y Soporte</string>
+    <string name="faq_title">Preguntas Frecuentes</string>
+    <string name="contact_support">Contactar Soporte</string>
+    <string name="give_feedback">Enviar Comentarios</string>
+
+    <!-- About -->
+    <string name="version">Versión: %1$s</string>
+    <string name="about_app_desc">Trainvoc es una aplicación que te ayuda a mejorar tu vocabulario de una manera divertida.</string>
+</resources>

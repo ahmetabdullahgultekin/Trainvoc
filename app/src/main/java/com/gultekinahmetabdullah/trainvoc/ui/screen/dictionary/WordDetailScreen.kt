@@ -51,6 +51,10 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCorrect
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsIncorrect
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsSkipped
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsTime
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import kotlinx.coroutines.launch
 
@@ -176,7 +180,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                                 modifier = Modifier
                                     .size(56.dp)
                                     .clip(CircleShape)
-                                    .background(getLevelColor(currentWord.level)),
+                                    .background(getLevelColor(currentWord.level?.ordinal ?: 0)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column(
@@ -265,7 +269,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                             )
 
                             Spacer(modifier = Modifier.height(Spacing.medium))
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                             Spacer(modifier = Modifier.height(Spacing.medium))
 
                             // Statistics Row
@@ -294,7 +298,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                             }
 
                             Spacer(modifier = Modifier.height(Spacing.medium))
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                             Spacer(modifier = Modifier.height(Spacing.medium))
 
                             // Time Spent

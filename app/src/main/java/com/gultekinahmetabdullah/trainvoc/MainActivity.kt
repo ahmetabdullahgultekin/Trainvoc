@@ -46,6 +46,8 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationScheduler
 import com.gultekinahmetabdullah.trainvoc.worker.WordNotificationWorker
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
@@ -123,11 +125,16 @@ class MainActivity : ComponentActivity() {
              * we use the system default theme.
              */
             val themePref by settingsViewModel.theme.collectAsState()
+            val colorPalettePref by settingsViewModel.colorPalette.collectAsState()
+
             val darkTheme = when (themePref) {
                 ThemePreference.LIGHT -> false
                 ThemePreference.DARK -> true
+                ThemePreference.AMOLED -> true
                 else -> isSystemInDarkTheme()
             }
+
+            val amoledMode = themePref == ThemePreference.AMOLED
 
             // Initialize the navigation controller
             val navController = rememberNavController()
@@ -147,7 +154,11 @@ class MainActivity : ComponentActivity() {
              * We wrap the Scaffold and NavHost inside the TrainvocTheme
              * to apply the theme to the entire app.
              */
-            TrainvocTheme(darkTheme = darkTheme) {
+            TrainvocTheme(
+                darkTheme = darkTheme,
+                amoledMode = amoledMode,
+                colorPalette = colorPalettePref
+            ) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     // Sağ üst köşede her zaman "alpha close test" ve versiyon yazısı
                     val context = LocalContext.current
@@ -201,27 +212,26 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        /** * Initialize the WorkManager for word notifications.
-         * We check the shared preferences to see if notifications are enabled.
-         * If they are, we enqueue a periodic work request
-         * to show word notifications every hour.
-         * We also enqueue a one-time work request for testing purposes.
+        /**
+         * Initialize the notification system
+         *
+         * This sets up:
+         * - Notification channels for different types of notifications
+         * - Scheduled workers for daily reminders, streak alerts, and word of the day
+         * - Handles notification permissions for Android 13+
          */
+
+        // Create notification channels (required for Android 8.0+)
+        NotificationHelper.createNotificationChannels(this)
+
+        // Schedule all enabled notifications
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val notificationsEnabled = sharedPreferences.getBoolean("notifications", true)
         if (notificationsEnabled) {
-            val workRequest =
-                PeriodicWorkRequestBuilder<WordNotificationWorker>(1, TimeUnit.HOURS).build()
-            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "word_notification_work",
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest
-            )
-
-            val testRequest = OneTimeWorkRequestBuilder<WordNotificationWorker>().build()
-            WorkManager.getInstance(this).enqueue(testRequest)
+            NotificationScheduler.scheduleAllNotifications(this)
         }
-        // Android 13+ için çalışma zamanında bildirim izni iste
+
+        // Request notification permission for Android 13+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
         }
