@@ -37,7 +37,8 @@ class SettingsViewModel @Inject constructor(
     private val _languageChanged = MutableSharedFlow<Unit>()
     val languageChanged = _languageChanged
 
-    private val _notificationsEnabled = MutableStateFlow(preferencesRepository.isNotificationsEnabled())
+    private val _notificationsEnabled =
+        MutableStateFlow(preferencesRepository.isNotificationsEnabled())
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled
 
     init {

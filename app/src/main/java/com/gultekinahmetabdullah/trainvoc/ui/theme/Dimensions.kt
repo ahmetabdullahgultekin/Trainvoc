@@ -2,7 +2,6 @@ package com.gultekinahmetabdullah.trainvoc.ui.theme
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 /**
  * Design token system for consistent spacing throughout the application.
