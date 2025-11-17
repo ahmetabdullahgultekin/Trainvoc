@@ -123,7 +123,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.total_score),
                     value = "${correctAnswers * 10}",
                     color = Color(0xFFFFD600),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -132,7 +133,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.total_quizzes),
                     value = "$totalQuizCount",
                     color = Color(0xFF64B5F6),
-                    isPainter = true
+                    isPainter = true,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -141,7 +143,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.total_time_spent),
                     value = "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
                     color = Color(0xFF81C784),
-                    isPainter = true
+                    isPainter = true,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -155,7 +158,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                         }
                     }s",
                     color = Color(0xFFBA68C8),
-                    isPainter = true
+                    isPainter = true,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -164,7 +168,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.correct_answers),
                     value = "$correctAnswers",
                     color = Color(0xFF66BB6A),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -173,7 +178,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.incorrect_answers),
                     value = "$incorrectAnswers",
                     color = Color(0xFFE57373),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -182,7 +188,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.skipped_questions),
                     value = "$skippedQuestions",
                     color = Color(0xFFB0BEC5),
-                    isPainter = true
+                    isPainter = true,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -191,7 +198,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.best_category),
                     value = bestCategory,
                     color = Color(0xFFFFF176),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -200,7 +208,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = stringResource(id = R.string.most_wrong_word),
                     value = mostWrongWord,
                     color = Color(0xFFEF5350),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -209,7 +218,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = "Daily Correct",
                     value = "$dailyCorrect",
                     color = Color(0xFF4DD0E1),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item {
@@ -218,7 +228,8 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     title = "Weekly Correct",
                     value = "$weeklyCorrect",
                     color = Color(0xFF9575CD),
-                    isPainter = false
+                    isPainter = false,
+                    iconContentDescription = stringResource(id = R.string.statistics_icon)
                 )
             }
             item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -246,7 +257,8 @@ fun AnimatedStatCard(
     title: String,
     value: String,
     color: Color,
-    isPainter: Boolean = false
+    isPainter: Boolean = false,
+    iconContentDescription: String? = null
 ) {
     val anim = animateFloatAsState(
         targetValue = 1f,
@@ -272,13 +284,13 @@ fun AnimatedStatCard(
                 if (isPainter) {
                     Image(
                         painter = icon as Painter,
-                        contentDescription = null,
+                        contentDescription = iconContentDescription,
                         modifier = Modifier.size(32.dp)
                     )
                 } else {
                     Icon(
                         icon as ImageVector,
-                        contentDescription = null,
+                        contentDescription = iconContentDescription,
                         tint = color,
                         modifier = Modifier.size(32.dp)
                     )

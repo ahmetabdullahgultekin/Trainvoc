@@ -33,9 +33,11 @@ class WordNotificationWorker(
         val stat = word.statId.let { statsDao.getStatisticById(it.toLong()) }
 
         val (title, message) = if (stat != null && stat.learned) {
-            "Hatırlıyor musun?" to "\"${word.word}\" kelimesini hatırlıyor musun?"
+            applicationContext.getString(R.string.notification_learned_title) to
+                applicationContext.getString(R.string.notification_learned_message, word.word)
         } else {
-            "Biliyor musun?" to "\"${word.word}\" kelimesinin anlamını biliyor musun?"
+            applicationContext.getString(R.string.notification_new_title) to
+                applicationContext.getString(R.string.notification_new_message, word.word)
         }
 
         sendNotification(title, message, word.word)
@@ -50,7 +52,7 @@ class WordNotificationWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Kelime Hatırlatma",
+                applicationContext.getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             manager.createNotificationChannel(channel)
