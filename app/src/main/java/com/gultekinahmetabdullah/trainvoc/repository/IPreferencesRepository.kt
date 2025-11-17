@@ -55,4 +55,14 @@ interface IPreferencesRepository {
      * @param language The language preference to store
      */
     fun setLanguage(language: LanguagePreference)
+
+    /**
+     * Clear all preferences (used for reset/logout).
+     */
+    fun clearAll()
+
+    /**
+     * Remove the username (logout).
+     */
+    fun clearUsername()
 }
