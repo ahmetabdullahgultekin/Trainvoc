@@ -34,10 +34,10 @@ class WordNotificationWorker(
 
         val (title, message) = if (stat != null && stat.learned) {
             applicationContext.getString(R.string.notification_learned_title) to
-                applicationContext.getString(R.string.notification_learned_message, word.word)
+                    applicationContext.getString(R.string.notification_learned_message, word.word)
         } else {
             applicationContext.getString(R.string.notification_new_title) to
-                applicationContext.getString(R.string.notification_new_message, word.word)
+                    applicationContext.getString(R.string.notification_new_message, word.word)
         }
 
         sendNotification(title, message, word.word)

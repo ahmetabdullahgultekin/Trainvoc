@@ -2,7 +2,6 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
@@ -51,16 +49,14 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val language by viewModel.language.collectAsState()
     val configuration = LocalConfiguration.current // Compose context
 
-    // Listen for language changes and set locale in activity context, then recreate
+    // Listen for language changes and recreate activity to apply new locale
     LaunchedEffect(configuration) {
         viewModel.languageChanged.collectLatest {
             val activity = context as? Activity
             val localeCode = language.code
             val locale = Locale(localeCode)
             Locale.setDefault(locale)
-            val config = Configuration(configuration)
-            config.setLocale(locale)
-            context.resources.updateConfiguration(config, context.resources.displayMetrics)
+            // Activity recreation will automatically apply the new configuration
             activity?.recreate()
         }
     }

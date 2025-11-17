@@ -306,7 +306,11 @@ fun HomeScreen(
                                 )
                             }
                             Text(
-                                text = stringResource(id = R.string.xp_progress, 1200, 3000), // Placeholder: awaiting XP tracking system
+                                text = stringResource(
+                                    id = R.string.xp_progress,
+                                    1200,
+                                    3000
+                                ), // Placeholder: awaiting XP tracking system
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.align(Alignment.End)
                             )
@@ -414,9 +418,15 @@ fun HomeScreen(
                         ) {
                             // Task 1
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(stringResource(id = R.string.task_solve_quizzes), style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    stringResource(id = R.string.task_solve_quizzes),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(stringResource(id = R.string.task_progress, 0, 3), color = MaterialTheme.colorScheme.secondary)
+                                Text(
+                                    stringResource(id = R.string.task_progress, 0, 3),
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
                             }
                             // Task 2
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -425,13 +435,22 @@ fun HomeScreen(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(stringResource(id = R.string.task_progress, 2, 10), color = MaterialTheme.colorScheme.secondary)
+                                Text(
+                                    stringResource(id = R.string.task_progress, 2, 10),
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
                             }
                             // Task 3
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(stringResource(id = R.string.task_earn_achievement), style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    stringResource(id = R.string.task_earn_achievement),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(stringResource(id = R.string.task_progress, 0, 1), color = MaterialTheme.colorScheme.secondary)
+                                Text(
+                                    stringResource(id = R.string.task_progress, 0, 1),
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
@@ -454,9 +473,15 @@ fun HomeScreen(
                                 Text(
                                     "🥇",
                                     fontSize = 32.sp,
-                                    modifier = Modifier.semantics { contentDescription = context.getString(R.string.achievement_first_place) }
+                                    modifier = Modifier.semantics {
+                                        contentDescription =
+                                            context.getString(R.string.achievement_first_place)
+                                    }
                                 )
-                                Text(stringResource(id = R.string.achievement_first_quiz), style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    stringResource(id = R.string.achievement_first_quiz),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                             // Badge 2
                             Column(
@@ -466,9 +491,15 @@ fun HomeScreen(
                                 Text(
                                     "🔥",
                                     fontSize = 32.sp,
-                                    modifier = Modifier.semantics { contentDescription = context.getString(R.string.achievement_streak) }
+                                    modifier = Modifier.semantics {
+                                        contentDescription =
+                                            context.getString(R.string.achievement_streak)
+                                    }
                                 )
-                                Text(stringResource(id = R.string.achievement_streak_day), style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    stringResource(id = R.string.achievement_streak_day),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                             // Badge 3
                             Column(
@@ -478,9 +509,15 @@ fun HomeScreen(
                                 Text(
                                     "📚",
                                     fontSize = 32.sp,
-                                    modifier = Modifier.semantics { contentDescription = context.getString(R.string.achievement_books) }
+                                    modifier = Modifier.semantics {
+                                        contentDescription =
+                                            context.getString(R.string.achievement_books)
+                                    }
                                 )
-                                Text(stringResource(id = R.string.achievement_100_words), style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    stringResource(id = R.string.achievement_100_words),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }

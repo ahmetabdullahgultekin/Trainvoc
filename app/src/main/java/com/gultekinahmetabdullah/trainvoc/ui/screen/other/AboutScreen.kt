@@ -218,7 +218,11 @@ fun SocialLink(title: String, icon: ImageVector, link: String, onClick: () -> Un
             .padding(Spacing.medium),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = title, modifier = Modifier.size(IconSize.medium))
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            modifier = Modifier.size(IconSize.medium)
+        )
         Spacer(modifier = Modifier.width(Spacing.small))
         Text(text = link, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
     }
