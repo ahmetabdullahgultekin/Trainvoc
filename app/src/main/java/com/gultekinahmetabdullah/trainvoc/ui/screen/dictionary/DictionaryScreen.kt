@@ -193,29 +193,12 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                         items = filteredWords,
                         key = { it.word }
                     ) { word ->
-                        AnimatedVisibility(
-                            visible = true,
-                            enter = fadeIn(
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ) + scaleIn(
-                                initialScale = 0.9f,
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            ),
-                            modifier = Modifier.animateItemPlacement()
-                        ) {
-                            WordCard(
-                                word = word.word,
-                                meaning = word.meaning,
-                                level = word.level,
-                                onClick = { navController.navigate(Route.wordDetail(word.word)) }
-                            )
-                        }
+                        WordCard(
+                            word = word.word,
+                            meaning = word.meaning,
+                            level = word.level?.ordinal ?: 0,
+                            onClick = { navController.navigate(Route.wordDetail(word.word)) }
+                        )
                     }
                 }
             }
