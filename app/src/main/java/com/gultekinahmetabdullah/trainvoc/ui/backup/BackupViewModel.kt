@@ -184,6 +184,13 @@ class BackupViewModel @Inject constructor(
                 is RestoreResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
                 }
+                is RestoreResult.PartialSuccess -> {
+                    _uiState.value = BackupUiState.ImportSuccess(
+                        wordsRestored = result.wordsRestored,
+                        statisticsRestored = 0,
+                        conflictsResolved = 0
+                    )
+                }
                 is RestoreResult.Conflict -> {
                     _uiState.value = BackupUiState.ConflictDetected(
                         conflicts = result.conflicts,
@@ -287,6 +294,14 @@ class BackupViewModel @Inject constructor(
                 }
                 is RestoreResult.Failure -> {
                     _uiState.value = BackupUiState.Error(result.error)
+                }
+                is RestoreResult.PartialSuccess -> {
+                    _uiState.value = BackupUiState.ImportSuccess(
+                        wordsRestored = result.wordsRestored,
+                        statisticsRestored = 0,
+                        conflictsResolved = 0
+                    )
+                    loadCloudBackupState()
                 }
                 is RestoreResult.Conflict -> {
                     _uiState.value = BackupUiState.ConflictDetected(

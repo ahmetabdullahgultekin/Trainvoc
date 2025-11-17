@@ -385,9 +385,9 @@ class ConflictResolver {
             }
         }
 
-        // Priority 3: Prefer version with more recent review
-        if (localStat?.lastReviewed != null && remoteStat?.lastReviewed != null) {
-            return remoteStat.lastReviewed!! > localStat.lastReviewed!!
+        // Priority 3: Prefer version with more recent review (from Word entity)
+        if (localWord.lastReviewed != null && remoteWord.lastReviewed != null) {
+            return remoteWord.lastReviewed!! > localWord.lastReviewed!!
         }
 
         // Priority 4: Prefer version with more complete data (longer meaning)
@@ -415,8 +415,7 @@ class ConflictResolver {
         return local.learned != remote.learned ||
                local.correctCount != remote.correctCount ||
                local.wrongCount != remote.wrongCount ||
-               local.skippedCount != remote.skippedCount ||
-               local.lastReviewed != remote.lastReviewed
+               local.skippedCount != remote.skippedCount
     }
 
     /**
@@ -435,7 +434,7 @@ class ConflictResolver {
     }
 
     /**
-     * Merge statistics intelligently (max values for counts, latest for timestamps)
+     * Merge statistics intelligently (max values for counts)
      * Useful for combining statistics from multiple sources
      */
     fun mergeStatistics(
@@ -447,8 +446,7 @@ class ConflictResolver {
             learned = stat1.learned || stat2.learned, // If learned in either, mark as learned
             correctCount = maxOf(stat1.correctCount, stat2.correctCount),
             wrongCount = maxOf(stat1.wrongCount, stat2.wrongCount),
-            skippedCount = maxOf(stat1.skippedCount, stat2.skippedCount),
-            lastReviewed = maxOfNullable(stat1.lastReviewed, stat2.lastReviewed)
+            skippedCount = maxOf(stat1.skippedCount, stat2.skippedCount)
         )
     }
 

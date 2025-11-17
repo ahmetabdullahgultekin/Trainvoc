@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object PerformanceMonitor {
     private const val TAG = "PerformanceMonitor"
-    private const val ENABLED = true // Set to false in release builds
+    internal const val ENABLED = true // Set to false in release builds
 
     private val executionTimes = ConcurrentHashMap<String, MutableList<Long>>()
     private val queryMetrics = ConcurrentHashMap<String, QueryMetrics>()
