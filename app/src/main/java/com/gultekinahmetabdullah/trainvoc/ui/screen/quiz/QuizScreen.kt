@@ -185,15 +185,16 @@ fun QuizScreen(
                             fontSize = 18.sp
                         )
                     } else {
-                        QuizQuestionCard(word = question!!.correctWord.word)
+                        val currentQuestion = question
+                        QuizQuestionCard(word = currentQuestion.correctWord.word)
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Answer options
-                        question!!.choices.forEach { choice ->
+                        currentQuestion.choices.forEach { choice ->
                             AnswerOptionCard(
                                 choice = choice,
-                                correctWord = question!!.correctWord,
+                                correctWord = currentQuestion.correctWord,
                                 selectedAnswer = selectedAnswer,
                                 isCorrect = isCorrect,
                                 isTimeUp = isTimeUp,

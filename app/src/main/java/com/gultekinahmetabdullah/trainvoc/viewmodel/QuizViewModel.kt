@@ -152,8 +152,10 @@ class QuizViewModel @Inject constructor(
 
     private suspend fun loadQuizQuestions() {
         // Add new questions to the dynamic list
+        val quizType = _quiz.value?.type ?: return
+        val parameter = _quizParameter.value ?: return
         _quizQuestions.value.addAll(
-            repository.generateTenQuestions(_quiz.value!!.type, _quizParameter.value!!)
+            repository.generateTenQuestions(quizType, parameter)
         )
     }
 
@@ -164,8 +166,9 @@ class QuizViewModel @Inject constructor(
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
             viewModelScope.launch(Dispatchers.IO) {
-                _currentWordStats.value =
-                    repository.getWordStats(_currentQuestion.value!!.correctWord)
+                _currentQuestion.value?.correctWord?.let { correctWord ->
+                    _currentWordStats.value = repository.getWordStats(correctWord)
+                }
                 addNewQuestions()
             }
             _isTimeRunning.value = true
