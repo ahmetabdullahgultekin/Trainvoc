@@ -9,14 +9,18 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class QuizViewModel(private val repository: WordRepository) : ViewModel() {
+@HiltViewModel
+class QuizViewModel @Inject constructor(
+    private val repository: WordRepository
+) : ViewModel() {
 
     private val durationConst = 60
     private val progressConst = 1f

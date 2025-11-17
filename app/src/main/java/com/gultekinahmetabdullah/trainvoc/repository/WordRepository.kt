@@ -56,33 +56,50 @@ class WordRepository(
     suspend fun updateWordStats(statistic: Statistic, word: Word) {
         val updatedStatistic = statistic.copy(learned = isLearned(statistic))
         val wordCount = statisticDao.getWordCountByStatId(word.statId)
-        // TODO: There is a error here, SQLConstraintException: UNIQUE constraint failed: statistics.stat_id
+
         if (wordCount == 1) {
-            // Stat sadece bu kelimeye ait, doğrudan güncelle
+            // Statistic belongs only to this word, update it directly
             statisticDao.updateStatistic(updatedStatistic.copy(statId = word.statId))
         } else {
-            // Aynı değerlere ve learned alanına sahip bir Statistic var mı?
+            // Check if a Statistic with these exact values already exists
             val existingStatistic = wordDao.getStatByValues(
                 updatedStatistic.correctCount,
                 updatedStatistic.wrongCount,
                 updatedStatistic.skippedCount,
                 updatedStatistic.learned
             )
+
             if (existingStatistic != null && existingStatistic.learned == updatedStatistic.learned) {
-                // Eğer zaten aynı statId'ye sahipse hiçbir şey yapma
+                // Reuse existing statistic if it's not already assigned to this word
                 if (word.statId != existingStatistic.statId) {
                     wordDao.updateWordStatId(existingStatistic.statId, word.word)
                 }
-                // Güncelleme veya ekleme yapma, çakışmayı önle
             } else {
-                // Yeni bir Statistic oluştur ve statId'yi ona güncelle
+                // Try to insert new statistic
                 val newStatId = statisticDao.insertStatistic(
                     updatedStatistic.copy(statId = 0)
-                ).toInt()
-                wordDao.updateWordStatId(newStatId, word.word)
+                )
+
+                // Handle race condition: if insert returned -1 (conflict due to UNIQUE constraint)
+                if (newStatId == -1L) {
+                    // Another thread inserted the same statistic, query for it again
+                    val raceConditionStat = wordDao.getStatByValues(
+                        updatedStatistic.correctCount,
+                        updatedStatistic.wrongCount,
+                        updatedStatistic.skippedCount,
+                        updatedStatistic.learned
+                    )
+                    if (raceConditionStat != null) {
+                        wordDao.updateWordStatId(raceConditionStat.statId, word.word)
+                    }
+                } else {
+                    // Successfully inserted, use the new stat ID
+                    wordDao.updateWordStatId(newStatId.toInt(), word.word)
+                }
             }
         }
-        // Önceki Statistic'e bağlı kelime kalmadıysa sil
+
+        // Delete previous statistic if no words are using it
         val previousStatId = word.statId
         val prevWordCount = statisticDao.getWordCountByStatId(previousStatId)
         if (prevWordCount == 0) {
@@ -126,75 +143,30 @@ class WordRepository(
     }
 
     private suspend fun getFiveWords(quizType: QuizType, parameter: QuizParameter): List<Word> {
-        return when (parameter) {
-            is QuizParameter.Level -> {
-                val level = when (parameter.wordLevel) {
-                    WordLevel.A1 -> "A1"
-                    WordLevel.A2 -> "A2"
-                    WordLevel.B1 -> "B1"
-                    WordLevel.B2 -> "B2"
-                    WordLevel.C1 -> "C1"
-                    WordLevel.C2 -> "C2"
-                }
-                when (quizType) {
-                    QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWordsByLevel(level)
-                    QuizType.RANDOM -> wordDao.getRandomFiveWordsByLevel(level)
-                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByLevel(level)
-                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByLevel(level)
-                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByLevel(level)
-                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByLevel(level)
-                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByLevel(level)
-                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByLevel(level)
-                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByLevel(level)
-                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByLevel(level)
-                }
-            }
-
-            is QuizParameter.ExamType -> {
-                // If the exam is "Mixed", we treat it as a special case
-                if (parameter.exam == Exam.examTypes.last()) {
-                    when (quizType) {
-                        QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWords()
-                        QuizType.RANDOM -> wordDao.getRandomFiveWords()
-                        QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
-                        QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
-                        QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
-                        QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
-                        QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
-                        QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
-                        QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
-                        QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
-                    }
-                } else {
-                    when (quizType) {
-                        QuizType.NOT_LEARNED -> wordDao.getRandomFiveNotLearnedWordsByExam(parameter.exam.exam)
-                        QuizType.RANDOM -> wordDao.getRandomFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWordsByExam(parameter.exam.exam)
-                        QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWordsByExam(parameter.exam.exam)
-                        QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWordsByExam(parameter.exam.exam)
-                    }
-                }
-            }
-
-            /*else -> {
-                when (quizType) {
-                    QuizType.RANDOM -> wordDao.getRandomFiveWords()
-                    QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectFiveWords()
-                    QuizType.LEAST_WRONG -> wordDao.getLeastWrongFiveWords()
-                    QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedFiveWords()
-                    QuizType.LEAST_RECENT -> wordDao.getLeastRecentFiveWords()
-                    QuizType.MOST_CORRECT -> wordDao.getMostCorrectFiveWords()
-                    QuizType.MOST_WRONG -> wordDao.getMostWrongFiveWords()
-                    QuizType.MOST_REVIEWED -> wordDao.getMostReviewedFiveWords()
-                    QuizType.MOST_RECENT -> wordDao.getMostRecentFiveWords()
-                }
-            }*/
+        // Determine level filter
+        val level: String? = when (parameter) {
+            is QuizParameter.Level -> parameter.wordLevel.name
+            else -> null
         }
+
+        // Determine exam filter (null for "Mixed" exam means all exams)
+        val exam: String? = when (parameter) {
+            is QuizParameter.ExamType -> {
+                if (parameter.exam == Exam.examTypes.last()) null // "Mixed" exam
+                else parameter.exam.exam
+            }
+            else -> null
+        }
+
+        // Use WordQueryBuilder to create dynamic query - replaces 30+ when branches
+        val query = com.gultekinahmetabdullah.trainvoc.database.WordQueryBuilder.buildQuery(
+            quizType = quizType,
+            level = level,
+            exam = exam,
+            limit = 5
+        )
+
+        return wordDao.getWordsByQuery(query)
     }
 
     suspend fun isLevelUnlocked(level: WordLevel): Boolean {
