@@ -30,7 +30,7 @@ class QuizViewModel @Inject constructor(
     val quiz: StateFlow<Quiz?> = _quiz
 
     private val _quizParameter = MutableStateFlow<QuizParameter?>(null)
-    val quizParameter: StateFlow<Any?> = _quizParameter
+    val quizParameter: StateFlow<QuizParameter?> = _quizParameter
 
     private val _quizQuestions = MutableStateFlow<MutableList<Question>>(mutableListOf())
     val quizQuestions: StateFlow<List<Question>> = _quizQuestions

@@ -26,7 +26,7 @@ class GenerateQuizQuestionsUseCase @Inject constructor(
         quiz: Quiz
     ): Result<List<Question>> {
         return try {
-            val questions = repository.generateQuestions(parameter, quiz)
+            val questions = repository.generateTenQuestions(quiz.type, parameter)
             if (questions.isEmpty()) {
                 Result.failure(Exception("No questions could be generated. Please check your quiz parameters."))
             } else {
