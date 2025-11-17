@@ -269,7 +269,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                             )
 
                             Spacer(modifier = Modifier.height(Spacing.medium))
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                             Spacer(modifier = Modifier.height(Spacing.medium))
 
                             // Statistics Row
@@ -298,7 +298,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                             }
 
                             Spacer(modifier = Modifier.height(Spacing.medium))
-                            Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                            androidx.compose.material3.HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                             Spacer(modifier = Modifier.height(Spacing.medium))
 
                             // Time Spent
