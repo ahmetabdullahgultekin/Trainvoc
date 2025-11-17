@@ -151,6 +151,11 @@ fun MainScreen(
                 composable(Route.SETTINGS) {
                     SettingsScreen(navController, settingsViewModel)
                 }
+                composable(Route.BACKUP) {
+                    com.gultekinahmetabdullah.trainvoc.ui.backup.BackupScreen(
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
                 composable(Route.HELP) {
                     HelpScreen()
                 }
