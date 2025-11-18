@@ -273,4 +273,26 @@
     <string name="word_of_day_desc">Receive a featured word daily</string>
     <string name="notification_time">Notification Time</string>
     <string name="set_time">Set Time</string>
+
+    <!-- Word Quiz Notification Channel -->
+    <string name="channel_word_quiz">Word Quiz</string>
+    <string name="channel_word_quiz_desc">Interactive word quiz notifications</string>
+
+    <!-- Word Quiz Notification Content -->
+    <string name="word_quiz_title">🎓 Trainvoc Word Quiz</string>
+    <string name="word_quiz_question">Do you know this word?</string>
+
+    <!-- Word Quiz Notification Actions -->
+    <string name="i_know_it">I Know It</string>
+    <string name="show_answer">Show Answer</string>
+    <string name="skip">Skip</string>
+    <string name="got_it">Got It ✓</string>
+    <string name="need_practice">Need Practice</string>
+    <string name="next_word">Next</string>
+
+    <!-- Word Quiz Feedback -->
+    <string name="great_job">Great job! 🎉</string>
+    <string name="word_marked_correct">"%1$s" marked as known</string>
+    <string name="keep_practicing">Keep practicing!</string>
+    <string name="word_marked_wrong">"%1$s" added to practice list</string>
 </resources>
