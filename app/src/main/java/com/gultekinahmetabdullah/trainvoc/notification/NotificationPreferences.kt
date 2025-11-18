@@ -90,6 +90,46 @@ class NotificationPreferences(context: Context) {
         get() = prefs.getLong("word_of_day_timestamp", 0)
         set(value) = prefs.edit().putLong("word_of_day_timestamp", value).apply()
 
+    // Word Quiz Notification Settings
+    var wordQuizEnabled: Boolean
+        get() = prefs.getBoolean("word_quiz_enabled", true)
+        set(value) = prefs.edit().putBoolean("word_quiz_enabled", value).apply()
+
+    var wordQuizIntervalMinutes: Int
+        get() = prefs.getInt("word_quiz_interval", 60) // Default 1 hour
+        set(value) = prefs.edit().putInt("word_quiz_interval", value).apply()
+
+    // Word Filter Settings for Notifications
+    var enabledLevels: Set<String>
+        get() = prefs.getStringSet("notification_levels",
+            setOf("A1", "A2", "B1", "B2", "C1", "C2")) ?: emptySet()
+        set(value) = prefs.edit().putStringSet("notification_levels", value).apply()
+
+    var enabledExams: Set<String>
+        get() = prefs.getStringSet("notification_exams", setOf("YDS")) ?: emptySet()
+        set(value) = prefs.edit().putStringSet("notification_exams", value).apply()
+
+    var includeLearnedWords: Boolean
+        get() = prefs.getBoolean("notification_include_learned", false)
+        set(value) = prefs.edit().putBoolean("notification_include_learned", value).apply()
+
+    var includeLowAccuracyWords: Boolean
+        get() = prefs.getBoolean("notification_low_accuracy", true)
+        set(value) = prefs.edit().putBoolean("notification_low_accuracy", value).apply()
+
+    // Quiet Hours Settings
+    var quietHoursEnabled: Boolean
+        get() = prefs.getBoolean("quiet_hours_enabled", false)
+        set(value) = prefs.edit().putBoolean("quiet_hours_enabled", value).apply()
+
+    var quietHoursStart: Int
+        get() = prefs.getInt("quiet_hours_start", 22) // 10 PM
+        set(value) = prefs.edit().putInt("quiet_hours_start", value).apply()
+
+    var quietHoursEnd: Int
+        get() = prefs.getInt("quiet_hours_end", 8) // 8 AM
+        set(value) = prefs.edit().putInt("quiet_hours_end", value).apply()
+
     private val context = context.applicationContext
 
     companion object {

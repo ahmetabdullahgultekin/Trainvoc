@@ -25,6 +25,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Notification Action Receiver for handling notification button clicks -->
+        <receiver
+            android:name=".notification.NotificationActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_I_KNOW" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_SHOW_ANSWER" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_SKIP" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_GOT_IT" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_NEED_PRACTICE" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_NEXT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

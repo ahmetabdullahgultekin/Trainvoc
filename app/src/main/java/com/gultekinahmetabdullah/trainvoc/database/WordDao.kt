@@ -225,4 +225,41 @@ interface WordDao {
         """
     )
     suspend fun getLearnedWordCountByExam(exam: String): Int
+
+    /**
+     * Get a random word for notifications with optional filtering
+     * Used by WordNotificationWorker for word quiz notifications
+     */
+    @Query(
+        """
+        SELECT w.* FROM words w
+        LEFT JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE (:includeLearned = 1 OR s.learned = 0 OR s.learned IS NULL)
+        AND (:level IS NULL OR w.level = :level)
+        ORDER BY RANDOM()
+        LIMIT 1
+        """
+    )
+    suspend fun getRandomWordForNotification(
+        includeLearned: Boolean = false,
+        level: String? = null
+    ): Word?
+
+    /**
+     * Get a random word from specified levels for notifications
+     */
+    @Query(
+        """
+        SELECT w.* FROM words w
+        LEFT JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE (:includeLearned = 1 OR s.learned = 0 OR s.learned IS NULL)
+        AND w.level IN (:levels)
+        ORDER BY RANDOM()
+        LIMIT 1
+        """
+    )
+    suspend fun getRandomWordFromLevels(
+        levels: List<String>,
+        includeLearned: Boolean = false
+    ): Word?
 }
