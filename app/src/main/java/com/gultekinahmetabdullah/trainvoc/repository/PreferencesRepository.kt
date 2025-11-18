@@ -77,7 +77,9 @@ class PreferencesRepository @Inject constructor(
     }
 
     override fun setLanguage(language: LanguagePreference) {
-        prefs.edit { putString(KEY_LANGUAGE, language.code) }
+        // Use commit() instead of apply() to ensure synchronous write
+        // This is critical because activity recreation reads this value immediately
+        prefs.edit().putString(KEY_LANGUAGE, language.code).commit()
     }
 
     override fun clearAll() {

@@ -9,6 +9,10 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.gultekinahmetabdullah.trainvoc.MainActivity
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Centralized notification management system
@@ -26,12 +30,15 @@ object NotificationHelper {
     const val CHANNEL_DAILY_REMINDER = "daily_reminder_channel"
     const val CHANNEL_STREAK_ALERT = "streak_alert_channel"
     const val CHANNEL_WORD_OF_DAY = "word_of_day_channel"
+    const val CHANNEL_WORD_QUIZ = "word_quiz_channel"
     const val CHANNEL_GENERAL = "general_channel"
 
     // Notification IDs
     const val NOTIFICATION_ID_DAILY_REMINDER = 1001
     const val NOTIFICATION_ID_STREAK_ALERT = 1002
     const val NOTIFICATION_ID_WORD_OF_DAY = 1003
+
+    private const val FLAGS = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
     /**
      * Initialize all notification channels
@@ -81,12 +88,23 @@ object NotificationHelper {
                 description = context.getString(R.string.channel_general_desc)
             }
 
+            // Word Quiz Channel
+            val wordQuizChannel = NotificationChannel(
+                CHANNEL_WORD_QUIZ,
+                context.getString(R.string.channel_word_quiz),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = context.getString(R.string.channel_word_quiz_desc)
+                enableVibration(true)
+            }
+
             manager.createNotificationChannels(
                 listOf(
                     dailyReminderChannel,
                     streakAlertChannel,
                     wordOfDayChannel,
-                    generalChannel
+                    generalChannel,
+                    wordQuizChannel
                 )
             )
         }
@@ -242,5 +260,88 @@ object NotificationHelper {
     fun cancelAllNotifications(context: Context) {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancelAll()
+    }
+
+    /**
+     * Send an interactive word quiz notification with action buttons
+     *
+     * This notification allows users to:
+     * - Claim they know the word
+     * - Request to see the answer
+     * - Skip to the next word
+     */
+    fun sendWordQuizNotification(context: Context) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = AppDatabase.DatabaseBuilder.getInstance(context)
+            val prefs = NotificationPreferences.getInstance(context)
+
+            // Get enabled levels from preferences
+            val enabledLevels = prefs.enabledLevels.toList()
+            val includeLearned = prefs.includeLearnedWords
+
+            // Get a random word based on filters
+            val word = if (enabledLevels.isNotEmpty()) {
+                db.wordDao().getRandomWordFromLevels(enabledLevels, includeLearned)
+            } else {
+                db.wordDao().getRandomWordForNotification(includeLearned)
+            }
+
+            if (word == null) return@launch
+
+            val notificationId = System.currentTimeMillis().toInt()
+
+            // Create action intents
+            val iKnowIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+                action = NotificationActionReceiver.ACTION_I_KNOW
+                putExtra(NotificationActionReceiver.EXTRA_WORD, word.word)
+                putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
+                putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+            }
+
+            val showAnswerIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+                action = NotificationActionReceiver.ACTION_SHOW_ANSWER
+                putExtra(NotificationActionReceiver.EXTRA_WORD, word.word)
+                putExtra(NotificationActionReceiver.EXTRA_MEANING, word.meaning)
+                putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
+                putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+            }
+
+            val skipIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+                action = NotificationActionReceiver.ACTION_SKIP
+                putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
+                putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+            }
+
+            // Build notification with action buttons
+            val notification = NotificationCompat.Builder(context, CHANNEL_WORD_QUIZ)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(context.getString(R.string.word_quiz_title))
+                .setContentText(context.getString(R.string.word_quiz_question))
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(context.getString(R.string.word_quiz_question) + "\n\n\"${word.word.uppercase()}\"")
+                )
+                .addAction(
+                    R.drawable.ic_launcher_foreground,
+                    context.getString(R.string.i_know_it),
+                    PendingIntent.getBroadcast(context, 0, iKnowIntent, FLAGS)
+                )
+                .addAction(
+                    R.drawable.ic_launcher_foreground,
+                    context.getString(R.string.show_answer),
+                    PendingIntent.getBroadcast(context, 1, showAnswerIntent, FLAGS)
+                )
+                .addAction(
+                    R.drawable.ic_launcher_foreground,
+                    context.getString(R.string.skip),
+                    PendingIntent.getBroadcast(context, 2, skipIntent, FLAGS)
+                )
+                .setAutoCancel(false)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build()
+
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(notificationId, notification)
+        }
     }
 }
