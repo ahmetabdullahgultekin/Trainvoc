@@ -39,6 +39,13 @@
                 <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_NEXT" />
             </intent-filter>
         </receiver>
+
+        <!-- Disable default WorkManager initialization since we use on-demand initialization -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="remove" />
     </application>
 
 </manifest>

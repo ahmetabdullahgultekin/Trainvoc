@@ -3,28 +3,34 @@
 ## Core Design Principles
 
 ### SOLID Principles
+
 - **S - Single Responsibility Principle**: Each class should have one reason to change
 - **O - Open/Closed Principle**: Open for extension, closed for modification
 - **L - Liskov Substitution Principle**: Subtypes must be substitutable for their base types
-- **I - Interface Segregation Principle**: Many client-specific interfaces over one general-purpose interface
+- **I - Interface Segregation Principle**: Many client-specific interfaces over one general-purpose
+  interface
 - **D - Dependency Inversion Principle**: Depend on abstractions, not concretions
 
 ### DRY, KISS, YAGNI
+
 - **DRY (Don't Repeat Yourself)**: Avoid code duplication, extract reusable components
 - **KISS (Keep It Simple, Stupid)**: Favor simplicity over complexity
 - **YAGNI (You Aren't Gonna Need It)**: Don't build features until they're actually needed
 
 ### Separation of Concerns
+
 - Divide program into distinct sections, each addressing a separate concern
 - Layer your architecture appropriately (presentation, business logic, data access)
 
 ### Composition Over Inheritance
+
 - Prefer object composition to class inheritance for better flexibility
 - Avoid deep inheritance hierarchies
 
 ## Design Patterns
 
 ### Creational Patterns
+
 - **Singleton**: Ensure a class has only one instance
 - **Factory Method**: Create objects without specifying exact class
 - **Abstract Factory**: Create families of related objects
@@ -32,6 +38,7 @@
 - **Prototype**: Clone existing objects
 
 ### Structural Patterns
+
 - **Adapter**: Make incompatible interfaces work together
 - **Decorator**: Add behavior to objects dynamically
 - **Facade**: Provide simplified interface to complex subsystem
@@ -39,6 +46,7 @@
 - **Composite**: Compose objects into tree structures
 
 ### Behavioral Patterns
+
 - **Observer**: Define one-to-many dependency between objects
 - **Strategy**: Define family of algorithms, make them interchangeable
 - **Command**: Encapsulate requests as objects
@@ -48,6 +56,7 @@
 ## Common Anti-Patterns & Flaws to Avoid
 
 ### Code Smells
+
 - **God Object**: Classes that know too much or do too much
 - **Spaghetti Code**: Unstructured and difficult-to-maintain code
 - **Magic Numbers**: Unexplained numeric constants in code
@@ -58,6 +67,7 @@
 - **Large Classes**: Classes with too many responsibilities
 
 ### Architecture Anti-Patterns
+
 - **Big Ball of Mud**: System lacking perceivable architecture
 - **Golden Hammer**: Using familiar solution for every problem
 - **Lava Flow**: Dead code and forgotten design decisions
@@ -65,6 +75,7 @@
 - **Premature Optimization**: Optimizing before knowing bottlenecks
 
 ### Development Anti-Patterns
+
 - **Copy-Paste Programming**: Duplicating code instead of abstracting
 - **Hard Coding**: Embedding configuration in source code
 - **Not Invented Here**: Rejecting existing solutions in favor of building own
@@ -73,6 +84,7 @@
 ## Code Quality Principles
 
 ### Clean Code
+
 - Meaningful and descriptive names for variables, functions, classes
 - Functions should be small and do one thing well
 - Minimize function arguments (ideally 0-2)
@@ -81,6 +93,7 @@
 - Consistent formatting and style
 
 ### Error Handling
+
 - Use exceptions rather than return codes
 - Provide context with exceptions
 - Don't return or pass null when possible
@@ -88,6 +101,7 @@
 - Handle errors at appropriate abstraction level
 
 ### Testing
+
 - Write unit tests for all business logic
 - Aim for high code coverage (but not as sole metric)
 - Test behavior, not implementation
@@ -98,12 +112,14 @@
 ## Architecture Principles
 
 ### Modularity & Coupling
+
 - High cohesion within modules
 - Loose coupling between modules
 - Clear module boundaries and interfaces
 - Minimize dependencies between components
 
 ### Scalability Considerations
+
 - Design for horizontal scaling when possible
 - Stateless services are easier to scale
 - Use caching strategically
@@ -111,6 +127,7 @@
 - Plan for database scaling early
 
 ### Security First
+
 - Never trust user input - validate and sanitize
 - Use parameterized queries to prevent SQL injection
 - Implement proper authentication and authorization
