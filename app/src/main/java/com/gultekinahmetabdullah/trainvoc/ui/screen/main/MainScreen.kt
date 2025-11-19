@@ -32,6 +32,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.other.AboutScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.HelpScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.SettingsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.StatsScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.settings.NotificationSettingsScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizExamMenuScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
@@ -155,6 +156,9 @@ fun MainScreen(
                     com.gultekinahmetabdullah.trainvoc.ui.backup.BackupScreen(
                         onNavigateBack = { navController.popBackStack() }
                     )
+                }
+                composable(Route.NOTIFICATION_SETTINGS) {
+                    NotificationSettingsScreen(navController = navController)
                 }
                 composable(Route.HELP) {
                     HelpScreen()

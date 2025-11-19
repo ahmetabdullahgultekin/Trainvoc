@@ -6,6 +6,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.gultekinahmetabdullah.trainvoc.worker.DailyReminderWorker
 import com.gultekinahmetabdullah.trainvoc.worker.StreakAlertWorker
+import com.gultekinahmetabdullah.trainvoc.worker.WordNotificationWorker
 import com.gultekinahmetabdullah.trainvoc.worker.WordOfDayWorker
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -24,6 +25,7 @@ object NotificationScheduler {
     private const val DAILY_REMINDER_WORK = "daily_reminder_work"
     private const val STREAK_ALERT_WORK = "streak_alert_work"
     private const val WORD_OF_DAY_WORK = "word_of_day_work"
+    private const val WORD_QUIZ_WORK = "word_quiz_work"
 
     /**
      * Schedule all enabled notifications
@@ -32,6 +34,7 @@ object NotificationScheduler {
         scheduleDailyReminder(context)
         scheduleStreakAlert(context)
         scheduleWordOfDay(context)
+        scheduleWordQuiz(context)
     }
 
     /**
@@ -117,6 +120,35 @@ object NotificationScheduler {
     }
 
     /**
+     * Schedule word quiz notifications
+     * Uses customizable interval from preferences (default: 60 minutes)
+     * Respects quiet hours and word filters
+     */
+    fun scheduleWordQuiz(context: Context) {
+        val prefs = NotificationPreferences.getInstance(context)
+        val isEnabled = prefs.wordQuizEnabled
+
+        if (isEnabled) {
+            val intervalMinutes = prefs.wordQuizIntervalMinutes.toLong()
+
+            // WorkManager requires minimum 15 minutes for periodic work
+            val actualInterval = maxOf(intervalMinutes, 15L)
+
+            val workRequest = PeriodicWorkRequestBuilder<WordNotificationWorker>(
+                actualInterval, TimeUnit.MINUTES
+            ).build()
+
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                WORD_QUIZ_WORK,
+                ExistingPeriodicWorkPolicy.UPDATE,
+                workRequest
+            )
+        } else {
+            cancelWordQuiz(context)
+        }
+    }
+
+    /**
      * Cancel daily reminder notification
      */
     fun cancelDailyReminder(context: Context) {
@@ -138,12 +170,20 @@ object NotificationScheduler {
     }
 
     /**
+     * Cancel word quiz notifications
+     */
+    fun cancelWordQuiz(context: Context) {
+        WorkManager.getInstance(context).cancelUniqueWork(WORD_QUIZ_WORK)
+    }
+
+    /**
      * Cancel all scheduled notifications
      */
     fun cancelAllNotifications(context: Context) {
         cancelDailyReminder(context)
         cancelStreakAlert(context)
         cancelWordOfDay(context)
+        cancelWordQuiz(context)
     }
 
     /**
