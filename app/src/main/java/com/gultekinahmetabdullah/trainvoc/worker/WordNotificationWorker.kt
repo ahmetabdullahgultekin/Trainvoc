@@ -1,81 +1,68 @@
 package com.gultekinahmetabdullah.trainvoc.worker
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.os.Build
-import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.gultekinahmetabdullah.trainvoc.MainActivity
-import com.gultekinahmetabdullah.trainvoc.R
-import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
+import java.util.Calendar
 
+/**
+ * Worker that sends interactive word quiz notifications.
+ *
+ * Features:
+ * - Respects quiet hours settings
+ * - Uses filtered word selection based on user preferences
+ * - Sends notifications with action buttons for interactive learning
+ *
+ * The actual notification building is handled by NotificationHelper.sendWordQuizNotification()
+ * which creates notifications with "I Know It", "Show Answer", and "Skip" buttons.
+ */
 class WordNotificationWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        val db = AppDatabase.DatabaseBuilder.getInstance(applicationContext)
-        val wordDao = db.wordDao()
-        val statsDao = db.statisticDao()
-        val words = wordDao.getAllWords().first()
-        if (words.isEmpty()) return@withContext Result.success()
+        val prefs = NotificationPreferences.getInstance(applicationContext)
 
-        val word = words[Random.nextInt(words.size)]
-        val stat = word.statId.let { statsDao.getStatisticById(it.toLong()) }
-
-        val (title, message) = if (stat != null && stat.learned) {
-            applicationContext.getString(R.string.notification_learned_title) to
-                    applicationContext.getString(R.string.notification_learned_message, word.word)
-        } else {
-            applicationContext.getString(R.string.notification_new_title) to
-                    applicationContext.getString(R.string.notification_new_message, word.word)
+        // Check if notifications are enabled
+        if (!prefs.wordQuizEnabled) {
+            return@withContext Result.success()
         }
 
-        sendNotification(title, message, word.word)
+        // Check quiet hours
+        if (isQuietHours(prefs)) {
+            return@withContext Result.success()
+        }
+
+        // Send the interactive word quiz notification
+        NotificationHelper.sendWordQuizNotification(applicationContext)
+
         Result.success()
     }
 
-    private fun sendNotification(title: String, message: String, wordId: String) {
-        val channelId = "word_reminder_channel"
-        val manager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    /**
+     * Check if current time is within quiet hours
+     */
+    private fun isQuietHours(prefs: NotificationPreferences): Boolean {
+        if (!prefs.quietHoursEnabled) return false
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                applicationContext.getString(R.string.notification_channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            manager.createNotificationChannel(channel)
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+
+        val startHour = prefs.quietHoursStart
+        val endHour = prefs.quietHoursEnd
+
+        // Handle overnight quiet hours (e.g., 22:00 to 08:00)
+        return if (startHour > endHour) {
+            // Quiet hours span midnight
+            currentHour >= startHour || currentHour < endHour
+        } else {
+            // Quiet hours within same day
+            currentHour >= startHour && currentHour < endHour
         }
-
-        // Intent to redirect to MainActivity and word detail when notification is clicked
-        val intent = Intent(applicationContext, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("wordId", wordId)
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext, wordId.hashCode(), intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .build()
-
-        manager.notify(System.currentTimeMillis().toInt(), notification)
     }
 }
