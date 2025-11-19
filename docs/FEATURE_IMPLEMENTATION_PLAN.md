@@ -1,7 +1,9 @@
 # Trainvoc Feature Implementation Plan
 
 ## Overview
-This document outlines the implementation plan for enhancing Trainvoc with advanced notifications, UI improvements, cloud backup, and local import/export features.
+
+This document outlines the implementation plan for enhancing Trainvoc with advanced notifications,
+UI improvements, cloud backup, and local import/export features.
 
 ---
 
@@ -9,7 +11,8 @@ This document outlines the implementation plan for enhancing Trainvoc with advan
 
 ### 1.1 Interactive Word Quiz Notifications
 
-**Concept**: Transform word notifications into micro-learning experiences with actionable buttons that allow users to learn without opening the app.
+**Concept**: Transform word notifications into micro-learning experiences with actionable buttons
+that allow users to learn without opening the app.
 
 #### Notification Flow
 
@@ -49,32 +52,35 @@ This document outlines the implementation plan for enhancing Trainvoc with advan
 
 #### Action Buttons - Phase 1 (Question)
 
-| Button | Action | Database Update |
-|--------|--------|-----------------|
-| **I Know It** | User claims to know - show brief confirmation | `correctCount++`, update `lastReviewed` |
-| **Show Answer** | Reveal meaning in expanded notification | None (wait for phase 2 response) |
-| **Skip** | Skip this word, send another | `skippedCount++`, trigger new notification |
+| Button          | Action                                        | Database Update                            |
+|-----------------|-----------------------------------------------|--------------------------------------------|
+| **I Know It**   | User claims to know - show brief confirmation | `correctCount++`, update `lastReviewed`    |
+| **Show Answer** | Reveal meaning in expanded notification       | None (wait for phase 2 response)           |
+| **Skip**        | Skip this word, send another                  | `skippedCount++`, trigger new notification |
 
 #### Action Buttons - Phase 2 (After Reveal)
 
-| Button | Action | Database Update |
-|--------|--------|-----------------|
-| **Got It** | User confirmed they knew it | `correctCount++`, potentially `learned = true` |
-| **Need Practice** | User didn't know it | `wrongCount++`, reset learning progress |
-| **Next** | Continue to next word | None, trigger new notification |
+| Button            | Action                      | Database Update                                |
+|-------------------|-----------------------------|------------------------------------------------|
+| **Got It**        | User confirmed they knew it | `correctCount++`, potentially `learned = true` |
+| **Need Practice** | User didn't know it         | `wrongCount++`, reset learning progress        |
+| **Next**          | Continue to next word       | None, trigger new notification                 |
 
 #### Technical Implementation
 
 **New Files:**
+
 - `NotificationActionReceiver.kt` - BroadcastReceiver for notification actions
 - `NotificationActionService.kt` - Service to handle database updates
 
 **Modified Files:**
+
 - `WordNotificationWorker.kt` - Add action buttons to notifications
 - `NotificationHelper.kt` - Add notification update methods
 - `AndroidManifest.xml` - Register receiver and service
 
 **Database Updates:**
+
 ```kotlin
 // StatisticDao.kt - Add quick update methods
 @Query("UPDATE statistics SET correct_count = correct_count + 1, last_reviewed = :timestamp WHERE stat_id = :statId")
@@ -91,6 +97,7 @@ suspend fun markLearnedIfThreshold(statId: Int, threshold: Int = 5)
 ```
 
 **Notification Builder with Actions:**
+
 ```kotlin
 fun createQuizNotification(word: Word, statId: Int): Notification {
     val iKnowIntent = Intent(context, NotificationActionReceiver::class.java).apply {
@@ -140,6 +147,7 @@ fun createQuizNotification(word: Word, statId: Int): Notification {
 #### Filter Options
 
 **By Level:**
+
 - [ ] A1 (Beginner)
 - [ ] A2 (Elementary)
 - [ ] B1 (Intermediate)
@@ -148,6 +156,7 @@ fun createQuizNotification(word: Word, statId: Int): Notification {
 - [ ] C2 (Mastery)
 
 **By Exam Category:**
+
 - [ ] YDS
 - [ ] YÖKDİL
 - [ ] TOEFL
@@ -155,6 +164,7 @@ fun createQuizNotification(word: Word, statId: Int): Notification {
 - [ ] General
 
 **By Learning Status:**
+
 - [ ] Unlearned words only
 - [ ] Learned words (for review)
 - [ ] Words with low accuracy
@@ -226,6 +236,7 @@ suspend fun getFilteredRandomWord(
 #### Frequency Options
 
 **Presets:**
+
 - Every 15 minutes
 - Every 30 minutes
 - Every hour (default)
@@ -235,6 +246,7 @@ suspend fun getFilteredRandomWord(
 - Once daily
 
 **Custom:**
+
 - Slider from 5 minutes to 24 hours
 - Minutes/Hours toggle
 
@@ -448,6 +460,7 @@ fun NotificationSettingsScreen(
 ## Phase 3: Cloud Backup (Google Drive)
 
 ### Features
+
 - Auto-backup scheduling
 - Manual backup/restore
 - Conflict resolution
@@ -455,6 +468,7 @@ fun NotificationSettingsScreen(
 - Encrypted storage
 
 ### Implementation
+
 - Google Sign-In integration
 - Drive API v3
 - Backup serialization (JSON)
@@ -465,11 +479,13 @@ fun NotificationSettingsScreen(
 ## Phase 4: Local Import/Export
 
 ### Export Formats
+
 - JSON (full backup with stats)
 - CSV (word list)
 - Plain text
 
 ### Import Features
+
 - File picker integration
 - Format auto-detection
 - Duplicate handling
@@ -479,15 +495,15 @@ fun NotificationSettingsScreen(
 
 ## Implementation Priority
 
-| Phase | Feature | Effort | Priority |
-|-------|---------|--------|----------|
-| 1.1 | Interactive Quiz Notifications | 3-4 days | **CRITICAL** |
-| 1.2 | Word Notification Filtering | 2-3 days | HIGH |
-| 1.3 | Frequency Control | 1-2 days | HIGH |
-| 1.4 | Notification Settings UI | 2-3 days | HIGH |
-| 4 | Local Import/Export | 3-4 days | MEDIUM |
-| 2 | UI/UX Enhancements | 4-5 days | MEDIUM |
-| 3 | Cloud Backup | 5-7 days | LOW |
+| Phase | Feature                        | Effort   | Priority     |
+|-------|--------------------------------|----------|--------------|
+| 1.1   | Interactive Quiz Notifications | 3-4 days | **CRITICAL** |
+| 1.2   | Word Notification Filtering    | 2-3 days | HIGH         |
+| 1.3   | Frequency Control              | 1-2 days | HIGH         |
+| 1.4   | Notification Settings UI       | 2-3 days | HIGH         |
+| 4     | Local Import/Export            | 3-4 days | MEDIUM       |
+| 2     | UI/UX Enhancements             | 4-5 days | MEDIUM       |
+| 3     | Cloud Backup                   | 5-7 days | LOW          |
 
 ---
 
@@ -558,6 +574,7 @@ app/src/main/java/.../trainvoc/
 ## Testing Checklist
 
 ### Interactive Notifications
+
 - [ ] "I Know It" updates stats correctly
 - [ ] "Show Answer" reveals meaning
 - [ ] "Skip" sends new word notification
@@ -567,6 +584,7 @@ app/src/main/java/.../trainvoc/
 - [ ] Notifications use filtered word list
 
 ### Filtering
+
 - [ ] Level filters work correctly
 - [ ] Exam category filters work
 - [ ] Learned/unlearned filter works
@@ -574,6 +592,7 @@ app/src/main/java/.../trainvoc/
 - [ ] Empty filter shows warning
 
 ### Scheduling
+
 - [ ] Custom frequency applies
 - [ ] Quiet hours prevent notifications
 - [ ] WorkManager survives device restart

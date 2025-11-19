@@ -101,8 +101,10 @@ class NotificationPreferences(context: Context) {
 
     // Word Filter Settings for Notifications
     var enabledLevels: Set<String>
-        get() = prefs.getStringSet("notification_levels",
-            setOf("A1", "A2", "B1", "B2", "C1", "C2")) ?: emptySet()
+        get() = prefs.getStringSet(
+            "notification_levels",
+            setOf("A1", "A2", "B1", "B2", "C1", "C2")
+        ) ?: emptySet()
         set(value) = prefs.edit().putStringSet("notification_levels", value).apply()
 
     var enabledExams: Set<String>
