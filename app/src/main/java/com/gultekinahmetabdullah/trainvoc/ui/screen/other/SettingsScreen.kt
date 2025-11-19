@@ -207,6 +207,22 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                     notificationPrefs.wordOfDayEnabled = isChecked
                 }
             )
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
+            // Advanced Notification Settings button
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.NOTIFICATION_SETTINGS)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text(stringResource(id = R.string.advanced_notification_settings))
+            }
         }
 
         // Backup & Sync Section
