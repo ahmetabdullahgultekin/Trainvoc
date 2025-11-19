@@ -17,6 +17,7 @@ object Route {
     const val SETTINGS = "settings"
     const val DICTIONARY = "dictionary"
     const val BACKUP = "backup"
+    const val NOTIFICATION_SETTINGS = "notification_settings"
     const val WORD_DETAIL = "word_detail/{wordId}"
 
     fun wordDetail(wordId: String) = "word_detail/$wordId"
