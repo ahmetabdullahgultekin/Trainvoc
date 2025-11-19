@@ -271,6 +271,7 @@
     <string name="streak_alerts_desc">Get notified about your learning streaks</string>
     <string name="enable_word_of_day">Word of the Day</string>
     <string name="word_of_day_desc">Receive a featured word daily</string>
+    <string name="advanced_notification_settings">Advanced Notification Settings</string>
     <string name="notification_time">Notification Time</string>
     <string name="set_time">Set Time</string>
 
