@@ -122,6 +122,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
         }
 
         // Build expanded notification with answer
+        // Use unique request codes per notification to avoid PendingIntent collision
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(word.uppercase())
@@ -130,17 +131,17 @@ class NotificationActionReceiver : BroadcastReceiver() {
             .addAction(
                 R.drawable.ic_launcher_foreground,
                 context.getString(R.string.got_it),
-                PendingIntent.getBroadcast(context, 0, gotItIntent, FLAGS)
+                PendingIntent.getBroadcast(context, notificationId * 10 + 3, gotItIntent, FLAGS)
             )
             .addAction(
                 R.drawable.ic_launcher_foreground,
                 context.getString(R.string.need_practice),
-                PendingIntent.getBroadcast(context, 1, needPracticeIntent, FLAGS)
+                PendingIntent.getBroadcast(context, notificationId * 10 + 4, needPracticeIntent, FLAGS)
             )
             .addAction(
                 R.drawable.ic_launcher_foreground,
                 context.getString(R.string.next_word),
-                PendingIntent.getBroadcast(context, 2, nextIntent, FLAGS)
+                PendingIntent.getBroadcast(context, notificationId * 10 + 5, nextIntent, FLAGS)
             )
             .setAutoCancel(false)
             .setOngoing(false)

@@ -155,13 +155,16 @@ class NotificationSettingsViewModel @Inject constructor(
     // Frequency presets for the UI
     companion object {
         val FREQUENCY_PRESETS = listOf(
+            1 to "1 min",
+            5 to "5 min",
             15 to "15 min",
             30 to "30 min",
             60 to "1 hour",
             120 to "2 hours",
             240 to "4 hours",
             480 to "8 hours",
-            1440 to "Daily"
+            720 to "12 hours",
+            1440 to "24 hours"
         )
 
         val LEVELS = listOf("A1", "A2", "B1", "B2", "C1", "C2")
