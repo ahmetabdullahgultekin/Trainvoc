@@ -8,9 +8,9 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,9 +18,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing quiz state and logic
+ *
+ * Dependencies injected for testability:
+ * - IWordRepository: For database operations and quiz generation
+ * - DispatcherProvider: For testable coroutine dispatchers
+ */
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: IWordRepository
+    private val repository: IWordRepository,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     private val durationConst = 60
@@ -99,7 +107,7 @@ class QuizViewModel @Inject constructor(
             // Fetch 10 questions from the database until user reaches the end of the list
             // Start the timer for each question
             // Timer will decrease the timeLeft variable every second
-            quizJob = viewModelScope.launch(Dispatchers.IO) {
+            quizJob = viewModelScope.launch(dispatchers.io) {
                 // Initialize the variables
                 // Declare the quiz type
                 _quiz.value = quiz
@@ -165,7 +173,7 @@ class QuizViewModel @Inject constructor(
         if (currentIndex < _quizQuestions.value.size) {
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 _currentQuestion.value?.correctWord?.let { correctWord ->
                     _currentWordStats.value = repository.getWordStats(correctWord)
                 }
@@ -182,12 +190,12 @@ class QuizViewModel @Inject constructor(
         val currentStats = _currentWordStats.value ?: return null
         pauseQuiz()
         val secondsSpent = durationConst - _timeLeft.value
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             repository.updateLastAnswered(currentQuestion.correctWord.word)
             repository.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
         }
         if (choice == null) {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 repository.updateWordStats(
                     currentStats.copy(
                         skippedCount = currentStats.skippedCount + 1
@@ -201,7 +209,7 @@ class QuizViewModel @Inject constructor(
             // Correct answer
             _score.value++
             // Update the entity stats in the database
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 repository.updateWordStats(
                     currentStats.copy(
                         correctCount = currentStats.correctCount + 1
@@ -212,7 +220,7 @@ class QuizViewModel @Inject constructor(
             return true
         } else {
             // Wrong answer
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 repository.updateWordStats(
                     currentStats.copy(
                         wrongCount = currentStats.wrongCount + 1
@@ -267,7 +275,7 @@ class QuizViewModel @Inject constructor(
     }
 
     fun collectQuizStats(parameter: QuizParameter) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             when (parameter) {
                 is QuizParameter.Level -> {
                     val total = repository.getWordCountByLevel(parameter.wordLevel.name)
