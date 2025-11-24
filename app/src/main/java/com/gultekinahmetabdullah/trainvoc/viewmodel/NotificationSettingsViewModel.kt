@@ -153,10 +153,9 @@ class NotificationSettingsViewModel @Inject constructor(
     }
 
     // Frequency presets for the UI
+    // Android WorkManager requires minimum 15 minutes for periodic work
     companion object {
         val FREQUENCY_PRESETS = listOf(
-            1 to "1 min",
-            5 to "5 min",
             15 to "15 min",
             30 to "30 min",
             60 to "1 hour",

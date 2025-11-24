@@ -114,20 +114,17 @@ fun NotificationSettingsScreen(
                         fontWeight = FontWeight.Medium
                     )
 
+                    Text(
+                        text = "Android requires a minimum of 15 minutes for periodic notifications",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
                     FrequencySelector(
                         currentMinutes = wordQuizInterval,
                         onFrequencyChanged = { viewModel.setWordQuizInterval(it) }
                     )
-
-                    // Note about Android limitation
-                    if (wordQuizInterval < 15) {
-                        Text(
-                            text = "Note: Android requires minimum 15 minutes for periodic notifications",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
