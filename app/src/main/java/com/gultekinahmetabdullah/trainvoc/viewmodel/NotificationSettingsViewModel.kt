@@ -2,9 +2,9 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import com.gultekinahmetabdullah.trainvoc.notification.INotificationHelper
+import com.gultekinahmetabdullah.trainvoc.notification.INotificationScheduler
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
-import com.gultekinahmetabdullah.trainvoc.notification.NotificationScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +15,19 @@ import javax.inject.Inject
 /**
  * ViewModel for managing notification settings.
  * Provides reactive state for the NotificationSettingsScreen UI.
+ *
+ * Dependencies are injected for testability:
+ * - NotificationPreferences: For reading/writing settings
+ * - INotificationScheduler: For scheduling/canceling notifications
+ * - INotificationHelper: For sending test notifications
  */
 @HiltViewModel
 class NotificationSettingsViewModel @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val prefs: NotificationPreferences,
+    private val scheduler: INotificationScheduler,
+    private val notificationHelper: INotificationHelper
 ) : ViewModel() {
-
-    private val prefs = NotificationPreferences.getInstance(context)
 
     // Word Quiz Settings
     private val _wordQuizEnabled = MutableStateFlow(prefs.wordQuizEnabled)
@@ -68,9 +74,9 @@ class NotificationSettingsViewModel @Inject constructor(
         prefs.wordQuizEnabled = enabled
         _wordQuizEnabled.value = enabled
         if (enabled) {
-            NotificationScheduler.scheduleWordQuiz(context)
+            scheduler.scheduleWordQuiz(context)
         } else {
-            NotificationScheduler.cancelWordQuiz(context)
+            scheduler.cancelWordQuiz(context)
         }
     }
 
@@ -78,7 +84,7 @@ class NotificationSettingsViewModel @Inject constructor(
         prefs.wordQuizIntervalMinutes = minutes
         _wordQuizInterval.value = minutes
         if (prefs.wordQuizEnabled) {
-            NotificationScheduler.scheduleWordQuiz(context)
+            scheduler.scheduleWordQuiz(context)
         }
     }
 
@@ -149,7 +155,7 @@ class NotificationSettingsViewModel @Inject constructor(
 
     // Test notification
     fun sendTestNotification() {
-        NotificationHelper.sendWordQuizNotification(context)
+        notificationHelper.sendWordQuizNotification(context)
     }
 
     // Frequency presets for the UI
