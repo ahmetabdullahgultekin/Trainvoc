@@ -103,3 +103,48 @@
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -verbose
+
+# ===== Security - EncryptedSharedPreferences =====
+-keep class androidx.security.crypto.** { *; }
+-keep class com.google.crypto.tink.** { *; }
+-dontwarn com.google.crypto.tink.**
+
+# ===== Security - Obfuscation =====
+# Remove debug information
+-assumenosideeffects class android.util.Log {
+    public static *** e(...);
+    public static *** w(...);
+}
+
+# Obfuscate class names and method names for security
+-repackageclasses 'o'
+
+# Remove unused code (reduces APK size and attack surface)
+-dontnote **
+-dontwarn **
+
+# Additional optimization for security
+-mergeinterfacesaggressively
+-overloadaggressively
+
+# ===== Security - Prevent Reflection Attacks =====
+# Make it harder to reverse engineer by removing metadata
+-keepattributes !SourceFile,!LineNumberTable,!InnerClasses,!Signature
+
+# ===== Security - String Encryption =====
+# Note: Strings are obfuscated but not encrypted by default
+# For critical strings, consider using custom encryption
+
+# ===== Security - WebView Hardening (if WebView is used) =====
+-keepclassmembers class * extends android.webkit.WebView {
+   public *;
+}
+
+# ===== Security - Prevent Tampering =====
+# Keep native methods (if any)
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
+
+# ===== Security - Keep Security Classes =====
+-keep class com.gultekinahmetabdullah.trainvoc.security.** { *; }

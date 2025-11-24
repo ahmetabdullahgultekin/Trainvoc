@@ -6,17 +6,25 @@ import androidx.core.content.edit
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.security.SecurePreferencesManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository implementation for managing user preferences using SharedPreferences.
+ * Repository implementation for managing user preferences.
+ *
+ * Security Features:
+ * - Sensitive data (username) stored in EncryptedSharedPreferences
+ * - Non-sensitive data (theme, language) in regular SharedPreferences
+ * - Hardware-backed encryption when available
+ *
  * Centralizes all preference access and provides type-safe methods.
  */
 @Singleton
 class PreferencesRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val securePrefs: SecurePreferencesManager
 ) : IPreferencesRepository {
 
     companion object {
@@ -32,10 +40,10 @@ class PreferencesRepository @Inject constructor(
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     override fun getUsername(): String? =
-        prefs.getString(KEY_USERNAME, null)
+        securePrefs.getString(KEY_USERNAME, null)
 
     override fun setUsername(username: String) {
-        prefs.edit { putString(KEY_USERNAME, username) }
+        securePrefs.putString(KEY_USERNAME, username)
     }
 
     override fun getTheme(): ThemePreference {
@@ -87,6 +95,6 @@ class PreferencesRepository @Inject constructor(
     }
 
     override fun clearUsername() {
-        prefs.edit { remove(KEY_USERNAME) }
+        securePrefs.remove(KEY_USERNAME)
     }
 }

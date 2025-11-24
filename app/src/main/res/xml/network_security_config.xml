@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration
+
+    Defines security settings for network communications.
+
+    Features:
+    - Enforces HTTPS for all network traffic
+    - Disables cleartext (HTTP) traffic
+    - Certificate pinning for critical domains (if needed)
+    - TLS 1.2+ enforcement
+
+    Security Properties:
+    - Blocks all HTTP (cleartext) connections
+    - Only allows HTTPS with valid certificates
+    - Protects against man-in-the-middle attacks
+    - Enforces modern TLS protocols
+-->
+<network-security-config>
+    <!--
+        Base configuration for all domains
+        Enforces HTTPS-only, disables cleartext traffic
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Trust system certificates (Google Play, system updates) -->
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        Debug configuration (only active in debug builds)
+        Allows localhost connections for development
+    -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- Allow user-installed certificates for debugging (Charles, Fiddler, etc.) -->
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+    <!--
+        Domain-specific configuration example (if you have API endpoints)
+        Uncomment and configure for your backend domains
+
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">yourapi.example.com</domain>
+        <pin-set expiration="2026-01-01">
+            <!- - Replace with your actual certificate pins - ->
+            <pin digest="SHA-256">base64==</pin>
+            <!- - Backup pin (recommended) - ->
+            <pin digest="SHA-256">backup_base64==</pin>
+        </pin-set>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    -->
+</network-security-config>

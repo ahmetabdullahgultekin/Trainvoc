@@ -92,6 +92,9 @@ dependencies {
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Security
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
     // Other
     implementation(libs.lottie.compose)
     implementation(libs.androidx.core.splashscreen)
