@@ -307,13 +307,14 @@ class DataExporter(
 
     /**
      * Calculate checksum for data integrity verification
+     * Uses SHA-256 for cryptographically secure hashing
      */
     private fun calculateChecksum(
         words: List<WordBackup>,
         statistics: List<StatisticBackup>
     ): String {
         val data = words.joinToString { it.word } + statistics.joinToString { it.statId.toString() }
-        val digest = MessageDigest.getInstance("MD5")
+        val digest = MessageDigest.getInstance("SHA-256")
         val hashBytes = digest.digest(data.toByteArray())
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
