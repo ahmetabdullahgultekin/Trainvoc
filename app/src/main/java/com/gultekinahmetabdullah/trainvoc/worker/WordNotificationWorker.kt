@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
@@ -19,29 +20,68 @@ import java.util.Calendar
  *
  * The actual notification building is handled by NotificationHelper.sendWordQuizNotification()
  * which creates notifications with "I Know It", "Show Answer", and "Skip" buttons.
+ *
+ * Error Handling:
+ * - Returns Result.retry() on transient failures (network, etc.)
+ * - Returns Result.failure() on permanent failures
+ * - Logs all errors for debugging
  */
 class WordNotificationWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
 
+    companion object {
+        private const val TAG = "WordNotificationWorker"
+        private const val MAX_RETRY_ATTEMPTS = 3
+    }
+
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        val prefs = NotificationPreferences.getInstance(applicationContext)
+        try {
+            Log.d(TAG, "Starting word notification worker")
 
-        // Check if notifications are enabled
-        if (!prefs.wordQuizEnabled) {
-            return@withContext Result.success()
+            val prefs = NotificationPreferences.getInstance(applicationContext)
+
+            // Check if notifications are enabled
+            if (!prefs.wordQuizEnabled) {
+                Log.i(TAG, "Word quiz notifications disabled, skipping")
+                return@withContext Result.success()
+            }
+
+            // Check quiet hours
+            if (isQuietHours(prefs)) {
+                Log.i(TAG, "Currently in quiet hours, skipping notification")
+                return@withContext Result.success()
+            }
+
+            // Send the interactive word quiz notification
+            NotificationHelper.sendWordQuizNotification(applicationContext)
+
+            Log.d(TAG, "Word quiz notification sent successfully")
+            Result.success()
+
+        } catch (e: SecurityException) {
+            // Notification permission denied - permanent failure
+            Log.e(TAG, "Security exception: Notification permission may be denied", e)
+            Result.failure()
+
+        } catch (e: IllegalStateException) {
+            // Invalid state - permanent failure
+            Log.e(TAG, "Illegal state exception in word notification", e)
+            Result.failure()
+
+        } catch (e: Exception) {
+            // Generic error - retry if under max attempts
+            Log.e(TAG, "Error in word notification worker", e)
+
+            if (runAttemptCount < MAX_RETRY_ATTEMPTS) {
+                Log.w(TAG, "Retrying word notification (attempt ${runAttemptCount + 1}/$MAX_RETRY_ATTEMPTS)")
+                Result.retry()
+            } else {
+                Log.e(TAG, "Max retry attempts reached, failing")
+                Result.failure()
+            }
         }
-
-        // Check quiet hours
-        if (isQuietHours(prefs)) {
-            return@withContext Result.success()
-        }
-
-        // Send the interactive word quiz notification
-        NotificationHelper.sendWordQuizNotification(applicationContext)
-
-        Result.success()
     }
 
     /**
