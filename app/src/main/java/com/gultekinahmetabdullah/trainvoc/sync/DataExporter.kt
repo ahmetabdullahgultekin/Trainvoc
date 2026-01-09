@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.security.EncryptionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -53,11 +54,13 @@ class DataExporter(
      *
      * @param includeStatistics Include word statistics in backup
      * @param includePreferences Include user preferences in backup
+     * @param encrypt Encrypt the backup file using AES-256-GCM (default: true for security)
      * @return BackupResult with file path or error
      */
     suspend fun exportToJson(
         includeStatistics: Boolean = true,
-        includePreferences: Boolean = true
+        includePreferences: Boolean = true,
+        encrypt: Boolean = true
     ): BackupResult = withContext(Dispatchers.IO) {
         try {
             // Fetch all data
@@ -106,13 +109,34 @@ class DataExporter(
             val json = gson.toJson(backupData)
 
             // Save to file
-            val file = createBackupFile("trainvoc_backup", "json")
-            file.writeText(json)
+            val tempFile = createBackupFile("trainvoc_backup", "json")
+            tempFile.writeText(json)
+
+            // Encrypt if requested
+            val finalFile = if (encrypt) {
+                val encryptedFile = createBackupFile("trainvoc_backup", "enc")
+                val encryptionHelper = EncryptionHelper(context)
+
+                val encryptionSuccess = encryptionHelper.encryptFile(tempFile, encryptedFile)
+
+                if (encryptionSuccess) {
+                    // Delete unencrypted temp file
+                    tempFile.delete()
+                    encryptedFile
+                } else {
+                    // Encryption failed, return unencrypted file with warning
+                    // In production, you might want to fail completely instead
+                    tempFile
+                }
+            } else {
+                tempFile
+            }
 
             BackupResult.Success(
-                filePath = file.absolutePath,
+                filePath = finalFile.absolutePath,
                 wordCount = words.size,
-                sizeBytes = file.length()
+                sizeBytes = finalFile.length(),
+                encrypted = encrypt && finalFile.extension == "enc"
             )
         } catch (e: Exception) {
             BackupResult.Failure(
