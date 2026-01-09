@@ -22,6 +22,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Optimize resources: keep only required densities and languages
+        // This significantly reduces APK size by excluding unused resources
+        resConfigs += listOf("en", "tr") // Only English and Turkish
+        resConfigs += listOf("xxhdpi", "xxxhdpi") // Modern device densities
     }
 
     buildTypes {
@@ -32,13 +37,31 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // Disable PNG crunching for faster builds
+            // WebP is more efficient anyway
+            isCrunchPngs = false
         }
         debug {
             isMinifyEnabled = false
+            isCrunchPngs = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    // Enable Android App Bundle optimizations
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
         }
     }
     compileOptions {
