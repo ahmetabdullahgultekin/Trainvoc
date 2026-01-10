@@ -124,6 +124,9 @@ dependencies {
     // Security
     implementation(libs.androidx.security.crypto)
 
+    // Google Play Games Services
+    implementation(libs.google.play.games)
+
     // Google Drive & Auth
     implementation(libs.google.auth)
     implementation(libs.google.drive)
