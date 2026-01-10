@@ -7,8 +7,8 @@ import javax.inject.Singleton
 /**
  * Picture Match Game Logic
  *
- * Players match words with corresponding images.
- * Visual learning helps with memory retention and makes learning fun.
+ * Players match words with their meanings using visual cards.
+ * Shows the Turkish meaning and players select the correct English word.
  */
 @Singleton
 class PictureMatchGame @Inject constructor(
@@ -17,11 +17,16 @@ class PictureMatchGame @Inject constructor(
 
     data class PictureQuestion(
         val word: Word,
-        val imageUrl: String,
-        val options: List<String>, // 4 word options
+        val displayText: String, // The meaning or hint to display
+        val options: List<String>, // 4 word options (always distinct)
         val correctAnswer: String,
-        val showWord: Boolean // If false, show image and select word; if true, reverse
+        val questionType: QuestionType
     )
+
+    enum class QuestionType {
+        MEANING_TO_WORD,  // Show meaning, select word
+        WORD_TO_MEANING   // Show word, select meaning
+    }
 
     data class GameState(
         val questions: List<PictureQuestion>,
@@ -54,28 +59,28 @@ class PictureMatchGame @Inject constructor(
     suspend fun startGame(
         difficulty: String = "medium",
         questionCount: Int = 12,
-        showWord: Boolean = false // Default: show image, select word
+        questionType: QuestionType = QuestionType.MEANING_TO_WORD
     ): GameState {
         val words = when (difficulty) {
             "easy" -> gamesDao.getWordsForGames(
                 minLevel = "A1",
                 maxLevel = "A2",
-                limit = questionCount * 2
+                limit = questionCount * 3 // Get more words for better distractor variety
             )
             "medium" -> gamesDao.getWordsForGames(
                 minLevel = "A2",
                 maxLevel = "B1",
-                limit = questionCount * 2
+                limit = questionCount * 3
             )
             "hard" -> gamesDao.getWordsForGames(
                 minLevel = "B2",
                 maxLevel = "C2",
-                limit = questionCount * 2
+                limit = questionCount * 3
             )
             else -> gamesDao.getWordsForGames(
                 minLevel = "A1",
                 maxLevel = "B1",
-                limit = questionCount * 2
+                limit = questionCount * 3
             )
         }
 
@@ -84,11 +89,15 @@ class PictureMatchGame @Inject constructor(
             return GameState(questions = emptyList())
         }
 
-        // Select random words for the game (all words use placeholder images)
-        val selectedWords = words.shuffled().take(questionCount)
+        // Filter words with unique meanings and words
+        val uniqueWords = words.distinctBy { it.word.lowercase() }
+            .filter { it.meaning.isNotBlank() }
+
+        // Select random words for the game
+        val selectedWords = uniqueWords.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
-            createQuestion(word, words, showWord)
+            createQuestion(word, uniqueWords, questionType)
         }
 
         return GameState(questions = questions)
@@ -100,39 +109,50 @@ class PictureMatchGame @Inject constructor(
     private fun createQuestion(
         word: Word,
         allWords: List<Word>,
-        showWord: Boolean
+        questionType: QuestionType
     ): PictureQuestion {
-        // Get image URL (generate placeholder)
-        val imageUrl = generatePlaceholderImageUrl(word.word)
+        return when (questionType) {
+            QuestionType.MEANING_TO_WORD -> {
+                // Show Turkish meaning, select English word
+                val distractors = allWords
+                    .filter { it.word.lowercase() != word.word.lowercase() }
+                    .filter { it.meaning.lowercase() != word.meaning.lowercase() }
+                    .map { it.word }
+                    .distinct()
+                    .shuffled()
+                    .take(3)
 
-        // Generate distractor options
-        val distractors = allWords
-            .filter { it.word != word.word }
-            .filter { it.level == word.level } // Same level for fair difficulty
-            .map { it.word }
-            .distinct()
-            .shuffled()
-            .take(3)
+                val options = (listOf(word.word) + distractors).shuffled()
 
-        val options = (listOf(word.word) + distractors).shuffled()
+                PictureQuestion(
+                    word = word,
+                    displayText = word.meaning,
+                    options = options,
+                    correctAnswer = word.word,
+                    questionType = questionType
+                )
+            }
+            QuestionType.WORD_TO_MEANING -> {
+                // Show English word, select Turkish meaning
+                val distractors = allWords
+                    .filter { it.word.lowercase() != word.word.lowercase() }
+                    .filter { it.meaning.lowercase() != word.meaning.lowercase() }
+                    .map { it.meaning }
+                    .distinct()
+                    .shuffled()
+                    .take(3)
 
-        return PictureQuestion(
-            word = word,
-            imageUrl = imageUrl,
-            options = options,
-            correctAnswer = word.word,
-            showWord = showWord
-        )
-    }
+                val options = (listOf(word.meaning) + distractors).shuffled()
 
-    /**
-     * Generate placeholder image URL
-     * In production, use actual image database or API (Unsplash, Pexels, etc.)
-     */
-    private fun generatePlaceholderImageUrl(word: String): String {
-        // Using Unsplash Source API as placeholder
-        // In production, store actual image URLs in database
-        return "https://source.unsplash.com/400x400/?$word"
+                PictureQuestion(
+                    word = word,
+                    displayText = word.word,
+                    options = options,
+                    correctAnswer = word.meaning,
+                    questionType = questionType
+                )
+            }
+        }
     }
 
     /**
@@ -183,15 +203,15 @@ class PictureMatchGame @Inject constructor(
      */
     fun getHint(question: PictureQuestion): String {
         return buildString {
-            append("Meaning: ${question.word.meaning}\n")
+            when (question.questionType) {
+                QuestionType.MEANING_TO_WORD -> {
+                    append("The answer starts with: ${question.correctAnswer.first().uppercaseChar()}\n")
+                }
+                QuestionType.WORD_TO_MEANING -> {
+                    append("The meaning is in Turkish\n")
+                }
+            }
             append("Level: ${question.word.level?.name ?: "Unknown"}")
         }
-    }
-
-    /**
-     * Preload images for smoother experience
-     */
-    fun getImagesToPreload(gameState: GameState): List<String> {
-        return gameState.questions.map { it.imageUrl }
     }
 }

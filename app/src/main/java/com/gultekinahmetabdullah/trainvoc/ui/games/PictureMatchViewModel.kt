@@ -39,11 +39,12 @@ class PictureMatchViewModel @Inject constructor(
             val question = currentState.currentQuestion ?: return@launch
             val isCorrect = pictureMatchGame.checkAnswer(question, answer)
 
-            // Show feedback
+            // Show feedback with correct answer
             _uiState.value = PictureMatchUiState.ShowingFeedback(
                 gameState = currentState,
                 selectedAnswer = answer,
-                isCorrect = isCorrect
+                isCorrect = isCorrect,
+                correctAnswer = question.correctAnswer
             )
 
             // Wait for feedback animation
@@ -98,7 +99,8 @@ sealed class PictureMatchUiState {
     data class ShowingFeedback(
         val gameState: PictureMatchGame.GameState,
         val selectedAnswer: String,
-        val isCorrect: Boolean
+        val isCorrect: Boolean,
+        val correctAnswer: String
     ) : PictureMatchUiState()
     data class Complete(val gameState: PictureMatchGame.GameState) : PictureMatchUiState()
     data class Error(val message: String) : PictureMatchUiState()

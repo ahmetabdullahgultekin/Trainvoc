@@ -1,24 +1,23 @@
 package com.gultekinahmetabdullah.trainvoc.ui.games
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 
 @Composable
 fun PictureMatchScreen(
@@ -45,6 +44,7 @@ fun PictureMatchScreen(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
+                correctAnswer = null,
                 onAnswerSelected = { viewModel.selectAnswer(it) },
                 onNavigateBack = onNavigateBack
             )
@@ -55,6 +55,7 @@ fun PictureMatchScreen(
                 gameState = state.gameState,
                 selectedAnswer = state.selectedAnswer,
                 isCorrect = state.isCorrect,
+                correctAnswer = state.correctAnswer,
                 onAnswerSelected = { },
                 onNavigateBack = onNavigateBack
             )
@@ -65,6 +66,7 @@ fun PictureMatchScreen(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
+                correctAnswer = null,
                 onAnswerSelected = { },
                 onNavigateBack = onNavigateBack
             )
@@ -106,6 +108,7 @@ private fun PictureMatchGameContent(
     gameState: com.gultekinahmetabdullah.trainvoc.games.PictureMatchGame.GameState,
     selectedAnswer: String?,
     isCorrect: Boolean?,
+    correctAnswer: String?,
     onAnswerSelected: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
@@ -156,45 +159,66 @@ private fun PictureMatchGameContent(
                     }
                 }
 
-                // Image display
+                // Display card with meaning/word
                 item {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f),
+                            .height(180.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                     ) {
                         Box(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            MaterialTheme.colorScheme.primaryContainer,
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                                        )
+                                    )
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(question.imageUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = "Picture to match",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(12.dp)),
-                                contentScale = ContentScale.Crop,
-                                placeholder = androidx.compose.ui.graphics.painter.ColorPainter(
-                                    MaterialTheme.colorScheme.surfaceVariant
-                                ),
-                                error = androidx.compose.ui.graphics.painter.ColorPainter(
-                                    MaterialTheme.colorScheme.errorContainer
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Translate,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(32.dp),
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
-                            )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = question.displayText,
+                                    style = MaterialTheme.typography.headlineMedium.copy(
+                                        fontSize = 28.sp
+                                    ),
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
                         }
                     }
                 }
 
                 // Instruction
                 item {
+                    val instructionText = when (question.questionType) {
+                        com.gultekinahmetabdullah.trainvoc.games.PictureMatchGame.QuestionType.MEANING_TO_WORD ->
+                            "Select the English word for this meaning:"
+                        com.gultekinahmetabdullah.trainvoc.games.PictureMatchGame.QuestionType.WORD_TO_MEANING ->
+                            "Select the Turkish meaning:"
+                    }
                     Text(
-                        text = "What is this in English?",
+                        text = instructionText,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -207,11 +231,13 @@ private fun PictureMatchGameContent(
                 // Options
                 items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
+                    val isTheCorrectAnswer = isCorrect == false && option == correctAnswer
 
                     OptionButton(
                         text = option,
                         isSelected = isSelected,
                         isCorrect = if (isSelected) isCorrect else null,
+                        isTheCorrectAnswer = isTheCorrectAnswer,
                         onClick = { onAnswerSelected(option) }
                     )
                 }

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 
 /**
  * Common Game Screen Template
@@ -266,6 +267,7 @@ fun GameResultDialog(
 
 /**
  * Flip Card Component for Memory Game
+ * Shows a popup with full content when card content is long
  */
 @Composable
 fun FlipCard(
@@ -275,42 +277,103 @@ fun FlipCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showPopup by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped || isMatched) 180f else 0f,
         animationSpec = tween(durationMillis = 300)
     )
 
+    val backgroundColor = when {
+        isMatched -> Color(0xFF4CAF50) // Green for matched
+        isFlipped -> MaterialTheme.colorScheme.primaryContainer
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+
+    val contentColor = when {
+        isMatched -> Color.White
+        isFlipped -> MaterialTheme.colorScheme.onPrimaryContainer
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Card(
         modifier = modifier
             .aspectRatio(1f)
-            .clickable(enabled = !isMatched) { onClick() },
+            .clickable(enabled = !isMatched) {
+                onClick()
+                // Show popup briefly for flipped cards with long content
+                if ((isFlipped || isMatched) && content.length > 8) {
+                    showPopup = true
+                    scope.launch {
+                        delay(2000)
+                        showPopup = false
+                    }
+                }
+            },
         colors = CardDefaults.cardColors(
-            containerColor = if (isMatched)
-                MaterialTheme.colorScheme.primary
-            else
-                MaterialTheme.colorScheme.primaryContainer
+            containerColor = backgroundColor,
+            contentColor = contentColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             if (isFlipped || isMatched) {
+                // Auto-sizing text for card content
+                val textSize = when {
+                    content.length > 15 -> 10.sp
+                    content.length > 10 -> 12.sp
+                    content.length > 6 -> 14.sp
+                    else -> 16.sp
+                }
                 Text(
                     text = content,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = textSize),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(8.dp)
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(4.dp),
+                    maxLines = 3
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.QuestionMark,
                     contentDescription = "Card face down",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
+    }
+
+    // Popup dialog for long content
+    if (showPopup && (isFlipped || isMatched)) {
+        AlertDialog(
+            onDismissRequest = { showPopup = false },
+            title = null,
+            text = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = content,
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showPopup = false }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
 

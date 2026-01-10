@@ -46,8 +46,9 @@ fun ContextCluesScreen(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
+                correctAnswer = null,
                 onAnswerSelected = { viewModel.selectAnswer(it) },
-                onShowClue = { viewModel.showClue() },
+                onRevealHint = { viewModel.revealHint() },
                 onSkip = { viewModel.skipQuestion() },
                 onNavigateBack = onNavigateBack
             )
@@ -58,8 +59,9 @@ fun ContextCluesScreen(
                 gameState = state.gameState,
                 selectedAnswer = state.selectedAnswer,
                 isCorrect = state.isCorrect,
+                correctAnswer = state.gameState.currentQuestion?.correctAnswer,
                 onAnswerSelected = { },
-                onShowClue = { },
+                onRevealHint = { },
                 onSkip = { },
                 onNavigateBack = onNavigateBack
             )
@@ -70,8 +72,9 @@ fun ContextCluesScreen(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
+                correctAnswer = null,
                 onAnswerSelected = { },
-                onShowClue = { },
+                onRevealHint = { },
                 onSkip = { },
                 onNavigateBack = onNavigateBack
             )
@@ -111,15 +114,16 @@ private fun ContextCluesGameContent(
     gameState: com.gultekinahmetabdullah.trainvoc.games.ContextCluesGame.GameState,
     selectedAnswer: String?,
     isCorrect: Boolean?,
+    correctAnswer: String?,
     onAnswerSelected: (String) -> Unit,
-    onShowClue: () -> Unit,
+    onRevealHint: () -> Unit,
     onSkip: () -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Context Clues",
+        title = "Word Detective",
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score
@@ -145,7 +149,7 @@ private fun ContextCluesGameContent(
                 // Instruction
                 item {
                     Text(
-                        text = "Read the sentence and guess the meaning of the highlighted word:",
+                        text = "Use the hints to guess the word's meaning:",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -153,101 +157,65 @@ private fun ContextCluesGameContent(
                     )
                 }
 
-                // Context sentence with highlighted word
+                // Hints Card - Show revealed hints progressively
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        )
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp)
+                                .padding(20.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            // Build annotated string with highlighted word
-                            val annotatedText = buildAnnotatedString {
-                                val context = question.context
-                                val wordInContext = question.wordInContext
-                                val startIndex = context.indexOf(wordInContext, ignoreCase = true)
-
-                                if (startIndex != -1) {
-                                    // Text before highlighted word
-                                    append(context.substring(0, startIndex))
-
-                                    // Highlighted word
-                                    withStyle(
-                                        style = SpanStyle(
-                                            background = Color(0xFFFEF3C7),
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF92400E)
-                                        )
-                                    ) {
-                                        append(context.substring(startIndex, startIndex + wordInContext.length))
-                                    }
-
-                                    // Text after highlighted word
-                                    append(context.substring(startIndex + wordInContext.length))
-                                } else {
-                                    append(context)
-                                }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.Lightbulb,
+                                    contentDescription = "Hints",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Hints (${question.hintsRevealed}/${question.hints.size})",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
                             }
 
-                            Text(
-                                text = annotatedText,
-                                style = MaterialTheme.typography.bodyLarge,
-                                lineHeight = MaterialTheme.typography.bodyLarge.lineHeight.times(1.5f)
-                            )
-                        }
-                    }
-                }
-
-                // Clue card (if shown)
-                if (gameState.showingClue && question.additionalClue != null) {
-                    item {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                            )
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
+                            // Show revealed hints
+                            question.currentHints.forEachIndexed { index, hint ->
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        Icons.Default.Lightbulb,
-                                        contentDescription = "Hint icon",
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                                    Text(
+                                        text = "${index + 1}.",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Clue:",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                                        text = hint,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 }
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = question.additionalClue,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                                )
                             }
                         }
                     }
                 }
 
-                // Question
+                // Question prompt
                 item {
                     Text(
-                        text = "What does \"${question.wordInContext}\" mean?",
+                        text = "What is the Turkish meaning?",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth(),
@@ -258,11 +226,13 @@ private fun ContextCluesGameContent(
                 // Options
                 items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
+                    val isTheCorrectAnswer = isCorrect == false && option == correctAnswer
 
                     OptionButton(
                         text = option,
                         isSelected = isSelected,
                         isCorrect = if (isSelected) isCorrect else null,
+                        isTheCorrectAnswer = isTheCorrectAnswer,
                         onClick = { onAnswerSelected(option) }
                     )
                 }
@@ -273,15 +243,15 @@ private fun ContextCluesGameContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Clue button
+                        // Reveal more hints button
                         OutlinedButton(
-                            onClick = onShowClue,
+                            onClick = onRevealHint,
                             modifier = Modifier.weight(1f),
-                            enabled = !gameState.showingClue
+                            enabled = gameState.canRevealMoreHints
                         ) {
-                            Icon(Icons.Default.Lightbulb, contentDescription = "Show clue")
+                            Icon(Icons.Default.Lightbulb, contentDescription = "Reveal hint")
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Clue")
+                            Text("More Hints")
                         }
 
                         // Skip button
@@ -308,7 +278,7 @@ private fun ContextCluesGameContent(
                             value = "${gameState.accuracy.toInt()}%"
                         )
                         StatChip(
-                            label = "Clues Used",
+                            label = "Hints Used",
                             value = "${gameState.cluesUsed}"
                         )
                     }

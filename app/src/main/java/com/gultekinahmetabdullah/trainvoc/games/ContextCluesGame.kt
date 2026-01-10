@@ -5,10 +5,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Context Clues Game Logic
+ * Context Clues Game Logic (Word Detective)
  *
- * Players read sentences and determine word meanings from context.
- * Develops reading comprehension and contextual understanding skills.
+ * Players discover word meanings using progressive hints.
+ * Tests vocabulary deduction skills and strengthens word associations.
+ *
+ * Players see hints about the word and must guess its meaning from options.
  */
 @Singleton
 class ContextCluesGame @Inject constructor(
@@ -17,20 +19,21 @@ class ContextCluesGame @Inject constructor(
 
     data class ContextQuestion(
         val word: Word,
-        val context: String, // Sentence with the word
-        val wordInContext: String, // The actual word as it appears
+        val hints: List<String>, // Progressive hints
         val options: List<String>, // 4 meaning options (Turkish translations)
         val correctAnswer: String,
-        val additionalClue: String? = null
-    )
+        val hintsRevealed: Int = 1 // How many hints are currently shown
+    ) {
+        val currentHints: List<String>
+            get() = hints.take(hintsRevealed)
+    }
 
     data class GameState(
         val questions: List<ContextQuestion>,
         val currentQuestionIndex: Int = 0,
         val correctAnswers: Int = 0,
         val cluesUsed: Int = 0,
-        val startTime: Long = System.currentTimeMillis(),
-        val showingClue: Boolean = false
+        val startTime: Long = System.currentTimeMillis()
     ) {
         val isComplete: Boolean
             get() = currentQuestionIndex >= questions.size
@@ -46,7 +49,11 @@ class ContextCluesGame @Inject constructor(
                     else (correctAnswers.toFloat() / currentQuestionIndex) * 100f
 
         val score: Int
-            get() = (correctAnswers * 10) - (cluesUsed * 2)
+            get() = maxOf(0, (correctAnswers * 10) - (cluesUsed * 2))
+
+        // Check if more hints can be revealed for current question
+        val canRevealMoreHints: Boolean
+            get() = currentQuestion?.let { it.hintsRevealed < it.hints.size } ?: false
     }
 
     /**
@@ -95,34 +102,50 @@ class ContextCluesGame @Inject constructor(
     }
 
     /**
-     * Create a context clues question
+     * Create a context clues question with progressive hints
      */
     private fun createQuestion(
         word: Word,
         allWords: List<Word>
     ): ContextQuestion {
-        // Create a sample context sentence using the word
-        val context = "The word '${word.word}' means: ${word.meaning}"
-
-        // The word as it appears in context
-        val wordInContext = word.word
+        // Generate progressive hints (from easy to revealing)
+        val hints = generateProgressiveHints(word)
 
         // Generate distractor options (wrong meanings)
         val distractors = generateDistractors(word, allWords, count = 3)
 
         val options = (listOf(word.meaning) + distractors).shuffled()
 
-        // Generate additional clue
-        val additionalClue = generateAdditionalClue(word)
-
         return ContextQuestion(
             word = word,
-            context = context,
-            wordInContext = wordInContext,
+            hints = hints,
             options = options,
             correctAnswer = word.meaning,
-            additionalClue = additionalClue
+            hintsRevealed = 1
         )
+    }
+
+    /**
+     * Generate progressive hints for the word
+     */
+    private fun generateProgressiveHints(word: Word): List<String> {
+        val hints = mutableListOf<String>()
+
+        // Hint 1: Word length and level
+        hints.add("${word.word.length} letters • Level: ${word.level?.name ?: "A1"}")
+
+        // Hint 2: First letter
+        hints.add("Starts with: ${word.word.first().uppercaseChar()}")
+
+        // Hint 3: First and last letters
+        if (word.word.length > 2) {
+            hints.add("Starts with '${word.word.first().uppercaseChar()}' and ends with '${word.word.last()}'")
+        }
+
+        // Hint 4: Reveal the word itself
+        hints.add("The word is: ${word.word}")
+
+        return hints
     }
 
     /**
@@ -158,16 +181,6 @@ class ContextCluesGame @Inject constructor(
     }
 
     /**
-     * Generate additional contextual clue
-     */
-    private fun generateAdditionalClue(word: Word): String {
-        return buildString {
-            append("Level: ${word.level?.name ?: "Unknown"}")
-            append("\nFirst letter: ${word.word.firstOrNull()?.uppercase() ?: ""}")
-        }
-    }
-
-    /**
      * Check if answer is correct
      */
     fun checkAnswer(question: ContextQuestion, answer: String): Boolean {
@@ -184,30 +197,35 @@ class ContextCluesGame @Inject constructor(
         return gameState.copy(
             currentQuestionIndex = gameState.currentQuestionIndex + 1,
             correctAnswers = if (isCorrect) gameState.correctAnswers + 1 else gameState.correctAnswers,
-            showingClue = false
+            // Reset hints for next question
+            questions = gameState.questions.mapIndexed { index, q ->
+                if (index == gameState.currentQuestionIndex + 1) {
+                    q.copy(hintsRevealed = 1)
+                } else q
+            }
         )
     }
 
     /**
-     * Show additional clue
+     * Reveal next hint for current question
      */
-    fun showClue(gameState: GameState): GameState {
-        if (gameState.showingClue) return gameState
+    fun revealNextHint(gameState: GameState): GameState {
+        val question = gameState.currentQuestion ?: return gameState
+
+        // Check if there are more hints to reveal
+        if (question.hintsRevealed >= question.hints.size) return gameState
+
+        // Update the current question with more hints revealed
+        val updatedQuestions = gameState.questions.mapIndexed { index, q ->
+            if (index == gameState.currentQuestionIndex) {
+                q.copy(hintsRevealed = q.hintsRevealed + 1)
+            } else q
+        }
 
         return gameState.copy(
-            cluesUsed = gameState.cluesUsed + 1,
-            showingClue = true
+            questions = updatedQuestions,
+            cluesUsed = gameState.cluesUsed + 1
         )
-    }
-
-    /**
-     * Highlight word in context for better visibility
-     */
-    fun getHighlightedContext(question: ContextQuestion): String {
-        val pattern = "\\b${Regex.escape(question.wordInContext)}\\b".toRegex(RegexOption.IGNORE_CASE)
-        return question.context.replace(pattern) { match ->
-            "**${match.value}**" // Markdown bold
-        }
     }
 
     /**
@@ -287,8 +305,7 @@ class ContextCluesGame @Inject constructor(
      */
     fun skipQuestion(gameState: GameState): GameState {
         return gameState.copy(
-            currentQuestionIndex = gameState.currentQuestionIndex + 1,
-            showingClue = false
+            currentQuestionIndex = gameState.currentQuestionIndex + 1
         )
     }
 }
