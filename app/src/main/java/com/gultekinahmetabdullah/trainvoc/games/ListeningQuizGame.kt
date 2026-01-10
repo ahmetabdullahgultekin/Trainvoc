@@ -85,6 +85,11 @@ class ListeningQuizGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(questions = emptyList())
+        }
+
         // Filter words with audio (for now, assume all words have TTS capability)
         val wordsWithAudio = words.take(questionCount)
 
@@ -256,7 +261,7 @@ class ListeningQuizGame @Inject constructor(
         return when (question.questionType) {
             QuestionType.WORD_TO_TRANSLATION -> "English word: ${question.word.word}"
             QuestionType.TRANSLATION_TO_WORD -> "Meaning: ${question.word.meaning}"
-            QuestionType.WORD_TO_SPELLING -> "First letter: ${question.word.word.first().uppercase()}"
+            QuestionType.WORD_TO_SPELLING -> "First letter: ${question.word.word.firstOrNull()?.uppercase() ?: "?"}"
         }
     }
 }

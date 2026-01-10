@@ -93,6 +93,15 @@ class FlipCardsGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(
+                cards = emptyList(),
+                gridSize = gridSize,
+                bestMoves = null
+            )
+        }
+
         // Create pairs of cards (Word + Meaning)
         val cards = mutableListOf<Card>()
         words.forEachIndexed { index, word ->
@@ -143,8 +152,10 @@ class FlipCardsGame @Inject constructor(
 
         // Check for match if two cards are flipped
         if (newFlippedCards.size == 2) {
-            val card1 = updatedCards[newFlippedCards[0]]
-            val card2 = updatedCards[newFlippedCards[1]]
+            val idx1 = newFlippedCards.getOrNull(0) ?: return gameState
+            val idx2 = newFlippedCards.getOrNull(1) ?: return gameState
+            val card1 = updatedCards.getOrNull(idx1) ?: return gameState
+            val card2 = updatedCards.getOrNull(idx2) ?: return gameState
 
             val isMatch = card1.wordId == card2.wordId && card1.type != card2.type
 

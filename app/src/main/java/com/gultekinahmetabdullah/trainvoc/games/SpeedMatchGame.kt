@@ -87,6 +87,16 @@ class SpeedMatchGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(
+                pairs = emptyList(),
+                leftOptions = emptyList(),
+                rightOptions = emptyList(),
+                timeRemaining = 0 // Game ends immediately
+            )
+        }
+
         val pairs = words.map { word ->
             MatchPair(
                 word = word,
@@ -123,8 +133,8 @@ class SpeedMatchGame @Inject constructor(
 
         val leftIndex = gameState.selectedLeft ?: return gameState.copy(selectedRight = index)
 
-        val leftWord = gameState.leftOptions[leftIndex]
-        val rightWord = gameState.rightOptions[index]
+        val leftWord = gameState.leftOptions.getOrNull(leftIndex) ?: return gameState
+        val rightWord = gameState.rightOptions.getOrNull(index) ?: return gameState
 
         // Check if they match
         val matchingPair = gameState.pairs.find {

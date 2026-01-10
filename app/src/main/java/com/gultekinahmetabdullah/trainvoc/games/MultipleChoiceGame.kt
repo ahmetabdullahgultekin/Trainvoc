@@ -21,10 +21,27 @@ class MultipleChoiceGame @Inject constructor(
     suspend fun startGame(difficulty: String = "medium"): GameState {
         gameManager.reset()
         val words = wordDao.getAllWordsList()
+
+        // Handle empty database - return empty completed game
+        if (words.isEmpty()) {
+            currentState = GameState(
+                questions = emptyList(),
+                currentQuestionIndex = 0,
+                currentQuestion = null,
+                score = 0,
+                correctAnswers = 0,
+                incorrectAnswers = 0,
+                totalQuestions = 0,
+                isComplete = true // Mark as complete to prevent further interaction
+            )
+            return currentState!!
+        }
+
         val questions = mutableListOf<MultipleChoiceQuestion>()
 
-        // Generate 10 questions
-        val shuffledWords = words.shuffled().take(10)
+        // Generate up to 10 questions (or fewer if not enough words)
+        val questionCount = minOf(10, words.size)
+        val shuffledWords = words.shuffled().take(questionCount)
         shuffledWords.forEach { word ->
             questions.add(gameManager.generateQuestion(word, words))
         }
@@ -37,7 +54,7 @@ class MultipleChoiceGame @Inject constructor(
             correctAnswers = 0,
             incorrectAnswers = 0,
             totalQuestions = questions.size,
-            isComplete = false
+            isComplete = questions.isEmpty()
         )
         return currentState!!
     }
@@ -58,7 +75,7 @@ class MultipleChoiceGame @Inject constructor(
             correctAnswers = state.correctAnswers + if (isCorrect) 1 else 0,
             incorrectAnswers = state.incorrectAnswers + if (!isCorrect) 1 else 0,
             currentQuestionIndex = nextIndex,
-            currentQuestion = if (isComplete) null else state.questions[nextIndex],
+            currentQuestion = if (isComplete) null else state.questions.getOrNull(nextIndex),
             isComplete = isComplete
         )
         return currentState!!

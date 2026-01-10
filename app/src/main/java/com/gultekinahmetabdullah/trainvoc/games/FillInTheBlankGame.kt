@@ -76,6 +76,11 @@ class FillInTheBlankGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(questions = emptyList())
+        }
+
         // Select random words for the game
         val selectedWords = words.shuffled().take(questionCount)
 
@@ -184,7 +189,7 @@ class FillInTheBlankGame @Inject constructor(
     fun getHint(question: FillInTheBlankQuestion): String {
         return buildString {
             append("Level: ${question.word.level?.name ?: "Unknown"}\n")
-            append("First letter: ${question.correctAnswer.first().uppercase()}\n")
+            append("First letter: ${question.correctAnswer.firstOrNull()?.uppercase() ?: "?"}\n")
             append("Length: ${question.correctAnswer.length} letters")
         }
     }

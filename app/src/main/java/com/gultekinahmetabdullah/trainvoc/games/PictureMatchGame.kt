@@ -79,6 +79,11 @@ class PictureMatchGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(questions = emptyList())
+        }
+
         // Select random words for the game (all words use placeholder images)
         val selectedWords = words.shuffled().take(questionCount)
 

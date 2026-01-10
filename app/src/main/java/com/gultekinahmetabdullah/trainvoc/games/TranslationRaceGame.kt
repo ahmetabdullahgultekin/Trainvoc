@@ -100,6 +100,14 @@ class TranslationRaceGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(
+                questions = emptyList(),
+                timeRemaining = 0
+            )
+        }
+
         val selectedWords = words.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
