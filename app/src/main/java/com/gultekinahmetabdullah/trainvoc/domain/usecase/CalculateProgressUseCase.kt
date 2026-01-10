@@ -1,15 +1,17 @@
 package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
+import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import javax.inject.Inject
 
 /**
  * Use Case for calculating quiz/level progress statistics.
- * Follows Dependency Inversion Principle by depending on IWordRepository interface.
+ * Follows Dependency Inversion and Interface Segregation Principles.
  */
 class CalculateProgressUseCase @Inject constructor(
-    private val repository: IWordRepository
+    private val progressService: IProgressService,
+    private val analyticsService: IAnalyticsService
 ) {
     /**
      * Data class holding progress information
@@ -26,13 +28,13 @@ class CalculateProgressUseCase @Inject constructor(
     suspend operator fun invoke(parameter: QuizParameter): Result<ProgressInfo> {
         return try {
             val totalWords = when (parameter) {
-                is QuizParameter.Level -> repository.getWordCountByLevel(parameter.wordLevel.name)
-                is QuizParameter.ExamType -> repository.getWordCountByExam(parameter.exam.exam)
+                is QuizParameter.Level -> progressService.getWordCountByLevel(parameter.wordLevel.name)
+                is QuizParameter.ExamType -> progressService.getWordCountByExam(parameter.exam.exam)
             }
 
             val learnedWords = when (parameter) {
-                is QuizParameter.Level -> repository.getLearnedWordCount(parameter.wordLevel.name)
-                is QuizParameter.ExamType -> repository.getLearnedWordCountByExam(parameter.exam.exam)
+                is QuizParameter.Level -> progressService.getLearnedWordCount(parameter.wordLevel.name)
+                is QuizParameter.ExamType -> progressService.getLearnedWordCountByExam(parameter.exam.exam)
             }
 
             val progressPercent = if (totalWords > 0) {
@@ -58,7 +60,7 @@ class CalculateProgressUseCase @Inject constructor(
      */
     suspend fun getDailyStats(): Result<Int> {
         return try {
-            val dailyCorrect = repository.getDailyCorrectAnswers()
+            val dailyCorrect = analyticsService.getDailyCorrectAnswers()
             Result.success(dailyCorrect)
         } catch (e: Exception) {
             Result.failure(e)
@@ -70,7 +72,7 @@ class CalculateProgressUseCase @Inject constructor(
      */
     suspend fun getWeeklyStats(): Result<Int> {
         return try {
-            val weeklyCorrect = repository.getWeeklyCorrectAnswers()
+            val weeklyCorrect = analyticsService.getWeeklyCorrectAnswers()
             Result.success(weeklyCorrect)
         } catch (e: Exception) {
             Result.failure(e)

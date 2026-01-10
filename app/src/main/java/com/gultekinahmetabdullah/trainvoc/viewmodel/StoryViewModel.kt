@@ -3,7 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoryViewModel @Inject constructor(
-    private val wordRepository: IWordRepository
+    private val progressService: IProgressService
 ) : ViewModel() {
 
     private val _levels = MutableStateFlow<Map<WordLevel, Boolean>>(emptyMap())
@@ -44,7 +44,7 @@ class StoryViewModel @Inject constructor(
             return true
         }
         val previous = WordLevel.entries.getOrNull(level.ordinal) ?: return false
-        return wordRepository.isLevelUnlocked(previous)
+        return progressService.isLevelUnlocked(previous)
     }
 
     /**
