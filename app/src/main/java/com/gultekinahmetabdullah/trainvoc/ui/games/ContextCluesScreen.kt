@@ -324,9 +324,7 @@ private fun ContextCluesResultDialog(
     onPlayAgain: () -> Unit,
     onMainMenu: () -> Unit
 ) {
-    val comprehensionLevel = com.gultekinahmetabdullah.trainvoc.games.ContextCluesGame(
-        com.gultekinahmetabdullah.trainvoc.games.GamesDao::class.java.newInstance()
-    ).getComprehensionLevel(gameState)
+    val comprehensionLevel = com.gultekinahmetabdullah.trainvoc.games.ContextCluesGame.getComprehensionLevel(gameState)
 
     AlertDialog(
         onDismissRequest = { },
@@ -356,7 +354,7 @@ private fun ContextCluesResultDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 StatRow(label = "Correct Answers", value = "${gameState.correctAnswers}/${gameState.totalQuestions}")
                 StatRow(label = "Accuracy", value = "${gameState.accuracy.toInt()}%")

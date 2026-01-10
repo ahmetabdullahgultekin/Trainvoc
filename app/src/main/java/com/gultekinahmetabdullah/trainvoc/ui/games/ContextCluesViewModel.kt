@@ -87,7 +87,7 @@ class ContextCluesViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: ContextCluesGame.GameState) {
-        val comprehensionLevel = contextCluesGame.getComprehensionLevel(gameState)
+        val comprehensionLevel = ContextCluesGame.getComprehensionLevel(gameState)
 
         // Check for excellent comprehension - award quiz achievement
         if (comprehensionLevel == ContextCluesGame.ComprehensionLevel.EXCELLENT) {

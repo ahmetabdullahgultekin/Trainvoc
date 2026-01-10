@@ -129,7 +129,7 @@ fun OfflineDataDownloadCard(
                 }
             }
 
-            Divider()
+            HorizontalDivider()
 
             // Download Progress
             when (downloadProgress) {
@@ -180,7 +180,7 @@ fun OfflineDataDownloadCard(
                         }
 
                         LinearProgressIndicator(
-                            progress = downloadProgress.progress / 100f,
+                            progress = { downloadProgress.progress / 100f },
                             modifier = Modifier.fillMaxWidth()
                         )
 

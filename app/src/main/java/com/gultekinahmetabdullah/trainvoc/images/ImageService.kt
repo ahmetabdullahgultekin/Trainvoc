@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.images
 
 import android.content.Context
 import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.ImageRequest
@@ -189,6 +190,7 @@ class ImageService @Inject constructor(
     /**
      * Clear all cached images
      */
+    @OptIn(ExperimentalCoilApi::class)
     suspend fun clearCache() {
         cacheDir.listFiles()?.forEach { it.delete() }
         wordImageDao.clearAllImages()

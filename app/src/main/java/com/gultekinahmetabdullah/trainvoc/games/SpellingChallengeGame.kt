@@ -190,23 +190,25 @@ class SpellingChallengeGame @Inject constructor(
         )
     }
 
-    /**
-     * Show word length hint
-     */
-    fun getWordLengthHint(question: SpellingQuestion): String {
-        val length = question.correctSpelling.length
-        return "_ ".repeat(length).trim() + " ($length letters)"
-    }
+    companion object {
+        /**
+         * Show word length hint
+         */
+        fun getWordLengthHint(question: SpellingQuestion): String {
+            val length = question.correctSpelling.length
+            return "_ ".repeat(length).trim() + " ($length letters)"
+        }
 
-    /**
-     * Show pattern hint (first and last letters)
-     */
-    fun getPatternHint(question: SpellingQuestion): String {
-        val word = question.correctSpelling
-        return if (word.length >= 3) {
-            "${word.first()}${"_".repeat(word.length - 2)}${word.last()}"
-        } else {
-            "_".repeat(word.length)
+        /**
+         * Show pattern hint (first and last letters)
+         */
+        fun getPatternHint(question: SpellingQuestion): String {
+            val word = question.correctSpelling
+            return if (word.length >= 3) {
+                "${word.first()}${"_".repeat(word.length - 2)}${word.last()}"
+            } else {
+                "_".repeat(word.length)
+            }
         }
     }
 

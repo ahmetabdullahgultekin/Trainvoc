@@ -175,9 +175,7 @@ private fun SpellingChallengeGameContent(
 
                 // Word length hint
                 item {
-                    val hint = com.gultekinahmetabdullah.trainvoc.games.SpellingChallengeGame(
-                        com.gultekinahmetabdullah.trainvoc.games.GamesDao::class.java.newInstance()
-                    ).getWordLengthHint(question)
+                    val hint = com.gultekinahmetabdullah.trainvoc.games.SpellingChallengeGame.getWordLengthHint(question)
 
                     Text(
                         text = hint,
