@@ -50,7 +50,7 @@ fun GameScreenTemplate(
 ) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -526,6 +526,48 @@ fun GameLoadingState() {
                 text = "Loading game...",
                 style = MaterialTheme.typography.titleMedium
             )
+        }
+    }
+}
+
+/**
+ * Generic Error State
+ */
+@Composable
+fun ErrorStateGeneric(
+    message: String,
+    onRetry: () -> Unit,
+    onBack: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(32.dp)
+        ) {
+            Text(
+                text = "Error",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(onClick = onBack) {
+                    Text("Back")
+                }
+                Button(onClick = onRetry) {
+                    Text("Retry")
+                }
+            }
         }
     }
 }

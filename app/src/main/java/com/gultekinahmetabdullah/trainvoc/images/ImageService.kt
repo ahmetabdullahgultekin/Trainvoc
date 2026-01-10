@@ -199,7 +199,7 @@ class ImageService @Inject constructor(
     /**
      * Get ImageLoader for use in Compose
      */
-    fun getImageLoader(): ImageLoader = imageLoader
+    fun provideImageLoader(): ImageLoader = imageLoader
 }
 
 /**

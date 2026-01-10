@@ -95,18 +95,16 @@ class SpeedMatchViewModel @Inject constructor(
     private suspend fun checkAchievements(gameState: SpeedMatchGame.GameState) {
         // Check for perfect match (all pairs matched)
         if (gameState.matchedPairs == gameState.totalPairs && gameState.incorrectAttempts == 0) {
-            unlockAchievement(Achievement.SPEED_MATCH_PERFECT)
-        }
-
-        // Check for high combo
-        if (gameState.maxCombo >= 10) {
-            unlockAchievement(Achievement.COMBO_10)
+            unlockAchievement(Achievement.PERFECT_10)
         }
 
         // Check speed achievement (completed in under 30 seconds)
         if (gameState.matchedPairs == gameState.totalPairs && gameState.timeRemaining >= 30) {
             unlockAchievement(Achievement.SPEED_DEMON)
         }
+
+        // Award quiz completion achievement
+        unlockAchievement(Achievement.QUIZ_10)
     }
 
     private suspend fun unlockAchievement(achievement: Achievement) {
@@ -114,7 +112,7 @@ class SpeedMatchViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

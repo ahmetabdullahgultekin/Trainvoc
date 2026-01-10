@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.features
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import com.gultekinahmetabdullah.trainvoc.features.repository.IFeatureFlagRepository
 import javax.inject.Inject

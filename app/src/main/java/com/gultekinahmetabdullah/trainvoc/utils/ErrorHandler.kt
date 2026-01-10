@@ -172,12 +172,12 @@ sealed class AppResult<out T> {
         is Loading -> throw IllegalStateException("Cannot get value from Loading state")
     }
 
-    fun getOrElse(defaultValue: T): T = when (this) {
+    fun getOrElse(defaultValue: @UnsafeVariance T): T = when (this) {
         is Success -> data
         else -> defaultValue
     }
 
-    fun getOrElse(defaultValue: () -> T): T = when (this) {
+    fun getOrElse(defaultValue: () -> @UnsafeVariance T): T = when (this) {
         is Success -> data
         else -> defaultValue()
     }

@@ -81,4 +81,24 @@ object DatabaseModule {
     fun provideGamificationDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao {
         return database.gamificationDao()
     }
+
+    @Provides
+    fun provideGamesDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.games.GamesDao {
+        return database.gamesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): androidx.work.WorkManager {
+        return androidx.work.WorkManager.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataExporter(
+        @ApplicationContext context: Context,
+        database: AppDatabase
+    ): com.gultekinahmetabdullah.trainvoc.sync.DataExporter {
+        return com.gultekinahmetabdullah.trainvoc.sync.DataExporter(context, database)
+    }
 }

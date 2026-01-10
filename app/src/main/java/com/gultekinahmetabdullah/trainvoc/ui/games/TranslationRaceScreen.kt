@@ -139,12 +139,13 @@ private fun TranslationRaceGameContent(
                         ) {
                             Text(
                                 text = "🔥 ${gameState.combo}x COMBO!",
-                                modifier = Modifier.padding(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
-                                color = Color.White,
-                                modifier = Modifier.fillMaxWidth()
+                                color = Color.White
                             )
                         }
                     }

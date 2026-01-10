@@ -53,7 +53,7 @@ class StreakWidgetProvider : AppWidgetProvider() {
     ) {
         scope.launch {
             try {
-                val database = AppDatabase.getInstance(context)
+                val database = AppDatabase.DatabaseBuilder.getInstance(context)
                 val dao = database.gamificationDao()
                 val streak = dao.getStreakTracking() ?: return@launch
 

@@ -32,7 +32,8 @@ object PerformanceMonitor {
     private const val TAG = "PerformanceMonitor"
     internal const val ENABLED = true // Set to false in release builds
 
-    private val executionTimes = ConcurrentHashMap<String, MutableList<Long>>()
+    @PublishedApi
+    internal val executionTimes = ConcurrentHashMap<String, MutableList<Long>>()
     private val queryMetrics = ConcurrentHashMap<String, QueryMetrics>()
 
     data class QueryMetrics(

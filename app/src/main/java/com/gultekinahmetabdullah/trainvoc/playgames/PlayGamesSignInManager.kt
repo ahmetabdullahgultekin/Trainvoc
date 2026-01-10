@@ -82,15 +82,16 @@ class PlayGamesSignInManager @Inject constructor(
 
     /**
      * Sign out
+     * Note: The new Play Games Services SDK (v2) doesn't provide a signOut() method.
+     * Users manage their Google account sign-out through system settings.
+     * This method returns success as a no-op for API compatibility.
      */
+    @Suppress("RedundantSuspendModifier")
     suspend fun signOut(): Result<Unit> {
-        return try {
-            val client = PlayGames.getGamesSignInClient(context as Activity)
-            client.signOut().await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        // Play Games Services v2 SDK does not support programmatic sign-out.
+        // Users can manage sign-out through Google account settings on the device.
+        // We return success to maintain API compatibility.
+        return Result.success(Unit)
     }
 
     /**

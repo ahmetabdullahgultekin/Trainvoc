@@ -101,20 +101,19 @@ class TranslationRaceViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: TranslationRaceGame.GameState) {
-        // Check for high combo
-        if (gameState.maxCombo >= 15) {
-            unlockAchievement(Achievement.COMBO_15)
-        }
-
         // Check for speed demon (high answers per minute)
         if (gameState.answersPerMinute >= 40 && gameState.correctAnswers >= 20) {
             unlockAchievement(Achievement.SPEED_DEMON)
         }
 
-        // Check for high accuracy
-        if (gameState.accuracy >= 95 && (gameState.correctAnswers + gameState.incorrectAnswers) >= 20) {
-            unlockAchievement(Achievement.TRANSLATION_MASTER)
+        // Check for perfect score
+        val totalAnswers = gameState.correctAnswers + gameState.incorrectAnswers
+        if (gameState.accuracy >= 95 && totalAnswers >= 10) {
+            unlockAchievement(Achievement.PERFECT_10)
         }
+
+        // Award quiz completion achievement
+        unlockAchievement(Achievement.QUIZ_10)
     }
 
     private suspend fun unlockAchievement(achievement: Achievement) {
@@ -122,7 +121,7 @@ class TranslationRaceViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

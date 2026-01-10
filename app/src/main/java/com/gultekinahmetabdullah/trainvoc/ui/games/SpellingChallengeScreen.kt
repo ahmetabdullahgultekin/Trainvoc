@@ -231,11 +231,12 @@ private fun SpellingChallengeGameContent(
                                 } else {
                                     "Incorrect. Correct spelling: ${question.correctSpelling}"
                                 },
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                textAlign = TextAlign.Center
                             )
                         }
                     }

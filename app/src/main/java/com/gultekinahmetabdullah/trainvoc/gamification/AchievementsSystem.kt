@@ -42,164 +42,164 @@ class AchievementsSystem {
     /**
      * All available achievements in the system
      */
-    val allAchievements: List<Achievement> = listOf(
+    val allAchievements: List<DynamicAchievement> = listOf(
         // Learning Milestones
-        Achievement(
+        DynamicAchievement(
             id = "first_word",
             title = "First Steps",
             description = "Learn your first word",
             icon = "🎯",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.LEARNING,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.LEARNING,
             requirement = { it.learnedWords >= 1 },
             progressCalculator = { minOf(it.learnedWords, 1) to 1 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "ten_words",
             title = "Getting Started",
             description = "Learn 10 words",
             icon = "📚",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.LEARNING,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.LEARNING,
             requirement = { it.learnedWords >= 10 },
             progressCalculator = { minOf(it.learnedWords, 10) to 10 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "fifty_words",
             title = "Building Vocabulary",
             description = "Learn 50 words",
             icon = "📖",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.LEARNING,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.LEARNING,
             requirement = { it.learnedWords >= 50 },
             progressCalculator = { minOf(it.learnedWords, 50) to 50 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "hundred_words",
             title = "Centurion",
             description = "Learn 100 words",
             icon = "🏆",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.LEARNING,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.LEARNING,
             requirement = { it.learnedWords >= 100 },
             progressCalculator = { minOf(it.learnedWords, 100) to 100 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "five_hundred_words",
             title = "Vocabulary Master",
             description = "Learn 500 words",
             icon = "👑",
-            tier = AchievementTier.PLATINUM,
-            category = AchievementCategory.LEARNING,
+            tier = DynamicAchievementTier.PLATINUM,
+            category = DynamicAchievementCategory.LEARNING,
             requirement = { it.learnedWords >= 500 },
             progressCalculator = { minOf(it.learnedWords, 500) to 500 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "thousand_words",
             title = "Linguist",
             description = "Learn 1,000 words",
             icon = "⭐",
-            tier = AchievementTier.PLATINUM,
-            category = AchievementCategory.LEARNING,
+            tier = DynamicAchievementTier.PLATINUM,
+            category = DynamicAchievementCategory.LEARNING,
             requirement = { it.learnedWords >= 1000 },
             progressCalculator = { minOf(it.learnedWords, 1000) to 1000 }
         ),
 
         // Streak Achievements
-        Achievement(
+        DynamicAchievement(
             id = "three_day_streak",
             title = "Consistent Learner",
             description = "Study for 3 days in a row",
             icon = "🔥",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.STREAKS,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.STREAKS,
             requirement = { it.currentStreak >= 3 },
             progressCalculator = { minOf(it.currentStreak, 3) to 3 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "week_streak",
             title = "Week Warrior",
             description = "Study for 7 days in a row",
             icon = "🔥🔥",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.STREAKS,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.STREAKS,
             requirement = { it.currentStreak >= 7 },
             progressCalculator = { minOf(it.currentStreak, 7) to 7 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "two_week_streak",
             title = "Dedicated Student",
             description = "Study for 14 days in a row",
             icon = "🔥🔥🔥",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.STREAKS,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.STREAKS,
             requirement = { it.currentStreak >= 14 },
             progressCalculator = { minOf(it.currentStreak, 14) to 14 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "month_streak",
             title = "Unstoppable",
             description = "Study for 30 days in a row",
             icon = "🔥🔥🔥🔥",
-            tier = AchievementTier.PLATINUM,
-            category = AchievementCategory.STREAKS,
+            tier = DynamicAchievementTier.PLATINUM,
+            category = DynamicAchievementCategory.STREAKS,
             requirement = { it.currentStreak >= 30 },
             progressCalculator = { minOf(it.currentStreak, 30) to 30 }
         ),
 
         // Accuracy Achievements
-        Achievement(
+        DynamicAchievement(
             id = "accurate_learner",
             title = "Sharp Mind",
             description = "Achieve 80% accuracy",
             icon = "🎯",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.ACCURACY,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.ACCURACY,
             requirement = { it.averageAccuracy >= 80f },
             progressCalculator = { minOf(it.averageAccuracy.toInt(), 80) to 80 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "perfectionist",
             title = "Perfectionist",
             description = "Achieve 90% accuracy",
             icon = "💎",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.ACCURACY,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.ACCURACY,
             requirement = { it.averageAccuracy >= 90f },
             progressCalculator = { minOf(it.averageAccuracy.toInt(), 90) to 90 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "flawless",
             title = "Flawless",
             description = "Achieve 95% accuracy",
             icon = "⭐",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.ACCURACY,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.ACCURACY,
             requirement = { it.averageAccuracy >= 95f },
             progressCalculator = { minOf(it.averageAccuracy.toInt(), 95) to 95 }
         ),
 
         // Speed Achievements
-        Achievement(
+        DynamicAchievement(
             id = "speed_learner",
             title = "Quick Thinker",
             description = "Average 5 seconds per word",
             icon = "⚡",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.SPEED,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.SPEED,
             requirement = { it.averageTimePerWord <= 5 },
             progressCalculator = {
                 val progress = maxOf(0, 10 - it.averageTimePerWord)
                 progress to 5
             }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "lightning_fast",
             title = "Lightning Fast",
             description = "Average 3 seconds per word",
             icon = "⚡⚡",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.SPEED,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.SPEED,
             requirement = { it.averageTimePerWord <= 3 },
             progressCalculator = {
                 val progress = maxOf(0, 10 - it.averageTimePerWord)
@@ -208,67 +208,67 @@ class AchievementsSystem {
         ),
 
         // Study Time Achievements
-        Achievement(
+        DynamicAchievement(
             id = "one_hour",
             title = "First Hour",
             description = "Study for 1 hour total",
             icon = "⏰",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.TIME,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.TIME,
             requirement = { it.totalStudyTime >= 3600 },
             progressCalculator = { minOf(it.totalStudyTime, 3600) to 3600 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "ten_hours",
             title = "Committed Learner",
             description = "Study for 10 hours total",
             icon = "⏰⏰",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.TIME,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.TIME,
             requirement = { it.totalStudyTime >= 36000 },
             progressCalculator = { minOf(it.totalStudyTime, 36000) to 36000 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "fifty_hours",
             title = "Dedicated Scholar",
             description = "Study for 50 hours total",
             icon = "⏰⏰⏰",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.TIME,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.TIME,
             requirement = { it.totalStudyTime >= 180000 },
             progressCalculator = { minOf(it.totalStudyTime, 180000) to 180000 }
         ),
 
         // Progress Achievements
-        Achievement(
+        DynamicAchievement(
             id = "weekly_warrior",
             title = "Weekly Warrior",
             description = "Learn 50 words in one week",
             icon = "📅",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.PROGRESS,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.PROGRESS,
             requirement = { it.weeklyProgress >= 50 },
             progressCalculator = { minOf(it.weeklyProgress, 50) to 50 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "monthly_master",
             title = "Monthly Master",
             description = "Learn 200 words in one month",
             icon = "📆",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.PROGRESS,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.PROGRESS,
             requirement = { it.monthlyProgress >= 200 },
             progressCalculator = { minOf(it.monthlyProgress, 200) to 200 }
         ),
 
         // Level Achievements
-        Achievement(
+        DynamicAchievement(
             id = "basic_complete",
             title = "Basic Foundations",
             description = "Master all A1 level words",
             icon = "🎓",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.LEVELS,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.LEVELS,
             requirement = {
                 it.levelDistribution[WordLevel.A1]?.let { count ->
                     count >= 100  // Assuming 100 A1 words
@@ -279,13 +279,13 @@ class AchievementsSystem {
                 minOf(progress, 100) to 100
             }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "intermediate_complete",
             title = "Intermediate Scholar",
             description = "Master all B1 level words",
             icon = "🎓",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.LEVELS,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.LEVELS,
             requirement = {
                 it.levelDistribution[WordLevel.B1]?.let { count ->
                     count >= 100
@@ -296,13 +296,13 @@ class AchievementsSystem {
                 minOf(progress, 100) to 100
             }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "advanced_complete",
             title = "Advanced Expert",
             description = "Master all C1 level words",
             icon = "🎓",
-            tier = AchievementTier.GOLD,
-            category = AchievementCategory.LEVELS,
+            tier = DynamicAchievementTier.GOLD,
+            category = DynamicAchievementCategory.LEVELS,
             requirement = {
                 it.levelDistribution[WordLevel.C1]?.let { count ->
                     count >= 100
@@ -315,23 +315,23 @@ class AchievementsSystem {
         ),
 
         // Review Achievements
-        Achievement(
+        DynamicAchievement(
             id = "diligent_reviewer",
             title = "Diligent Reviewer",
             description = "Complete 50 reviews",
             icon = "🔄",
-            tier = AchievementTier.BRONZE,
-            category = AchievementCategory.REVIEW,
+            tier = DynamicAchievementTier.BRONZE,
+            category = DynamicAchievementCategory.REVIEW,
             requirement = { it.wordsReviewedToday >= 50 },
             progressCalculator = { minOf(it.wordsReviewedToday, 50) to 50 }
         ),
-        Achievement(
+        DynamicAchievement(
             id = "review_champion",
             title = "Review Champion",
             description = "Complete 200 reviews",
             icon = "🔄🔄",
-            tier = AchievementTier.SILVER,
-            category = AchievementCategory.REVIEW,
+            tier = DynamicAchievementTier.SILVER,
+            category = DynamicAchievementCategory.REVIEW,
             requirement = { it.wordsReviewedToday >= 200 },
             progressCalculator = { minOf(it.wordsReviewedToday, 200) to 200 }
         )
@@ -347,7 +347,7 @@ class AchievementsSystem {
     fun checkNewlyUnlockedAchievements(
         stats: LearningStats,
         previouslyUnlocked: Set<String>
-    ): List<Achievement> {
+    ): List<DynamicAchievement> {
         return allAchievements.filter { achievement ->
             achievement.id !in previouslyUnlocked && achievement.isUnlocked(stats)
         }
@@ -363,12 +363,12 @@ class AchievementsSystem {
     fun getAllAchievementsWithProgress(
         stats: LearningStats,
         unlockedIds: Set<String>
-    ): List<AchievementProgress> {
+    ): List<DynamicAchievementProgress> {
         return allAchievements.map { achievement ->
             val (current, total) = achievement.calculateProgress(stats)
             val isUnlocked = achievement.id in unlockedIds
 
-            AchievementProgress(
+            DynamicAchievementProgress(
                 achievement = achievement,
                 currentProgress = current,
                 totalRequired = total,
@@ -388,24 +388,24 @@ class AchievementsSystem {
     fun getAchievementSummary(
         stats: LearningStats,
         unlockedIds: Set<String>
-    ): AchievementSummary {
+    ): DynamicAchievementSummary {
         val totalAchievements = allAchievements.size
         val unlockedCount = unlockedIds.size
         val progressPercentage = (unlockedCount.toFloat() / totalAchievements * 100)
 
-        val tierCounts = AchievementTier.entries.associateWith { tier ->
+        val tierCounts = DynamicAchievementTier.entries.associateWith { tier ->
             val totalInTier = allAchievements.count { it.tier == tier }
             val unlockedInTier = allAchievements.count { it.id in unlockedIds && it.tier == tier }
             unlockedInTier to totalInTier
         }
 
-        val categoryCounts = AchievementCategory.entries.associateWith { category ->
+        val categoryCounts = DynamicAchievementCategory.entries.associateWith { category ->
             val totalInCategory = allAchievements.count { it.category == category }
             val unlockedInCategory = allAchievements.count { it.id in unlockedIds && it.category == category }
             unlockedInCategory to totalInCategory
         }
 
-        return AchievementSummary(
+        return DynamicAchievementSummary(
             totalAchievements = totalAchievements,
             unlockedAchievements = unlockedCount,
             progressPercentage = progressPercentage,
@@ -417,28 +417,28 @@ class AchievementsSystem {
     /**
      * Get achievements by category
      */
-    fun getAchievementsByCategory(category: AchievementCategory): List<Achievement> {
+    fun getAchievementsByCategory(category: DynamicAchievementCategory): List<DynamicAchievement> {
         return allAchievements.filter { it.category == category }
     }
 
     /**
      * Get achievements by tier
      */
-    fun getAchievementsByTier(tier: AchievementTier): List<Achievement> {
+    fun getAchievementsByTier(tier: DynamicAchievementTier): List<DynamicAchievement> {
         return allAchievements.filter { it.tier == tier }
     }
 }
 
 /**
- * Individual achievement
+ * Dynamic achievement with lambda-based requirements
  */
-data class Achievement(
+data class DynamicAchievement(
     val id: String,
     val title: String,
     val description: String,
     val icon: String,
-    val tier: AchievementTier,
-    val category: AchievementCategory,
+    val tier: DynamicAchievementTier,
+    val category: DynamicAchievementCategory,
     private val requirement: (LearningStats) -> Boolean,
     private val progressCalculator: (LearningStats) -> Pair<Int, Int>
 ) {
@@ -447,9 +447,9 @@ data class Achievement(
 }
 
 /**
- * Achievement tier (difficulty/rarity)
+ * Achievement tier for dynamic achievements
  */
-enum class AchievementTier(val displayName: String, val color: String) {
+enum class DynamicAchievementTier(val displayName: String, val color: String) {
     BRONZE("Bronze", "#CD7F32"),
     SILVER("Silver", "#C0C0C0"),
     GOLD("Gold", "#FFD700"),
@@ -457,9 +457,9 @@ enum class AchievementTier(val displayName: String, val color: String) {
 }
 
 /**
- * Achievement category
+ * Achievement category for dynamic achievements
  */
-enum class AchievementCategory(val displayName: String) {
+enum class DynamicAchievementCategory(val displayName: String) {
     LEARNING("Learning Milestones"),
     STREAKS("Consistency"),
     ACCURACY("Accuracy"),
@@ -471,10 +471,10 @@ enum class AchievementCategory(val displayName: String) {
 }
 
 /**
- * Achievement progress information
+ * Dynamic achievement progress information
  */
-data class AchievementProgress(
-    val achievement: Achievement,
+data class DynamicAchievementProgress(
+    val achievement: DynamicAchievement,
     val currentProgress: Int,
     val totalRequired: Int,
     val isUnlocked: Boolean,
@@ -482,12 +482,12 @@ data class AchievementProgress(
 )
 
 /**
- * Achievement summary statistics
+ * Dynamic achievement summary statistics
  */
-data class AchievementSummary(
+data class DynamicAchievementSummary(
     val totalAchievements: Int,
     val unlockedAchievements: Int,
     val progressPercentage: Float,
-    val tierProgress: Map<AchievementTier, Pair<Int, Int>>,  // unlocked to total
-    val categoryProgress: Map<AchievementCategory, Pair<Int, Int>>
+    val tierProgress: Map<DynamicAchievementTier, Pair<Int, Int>>,
+    val categoryProgress: Map<DynamicAchievementCategory, Pair<Int, Int>>
 )

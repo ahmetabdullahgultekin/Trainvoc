@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.billing.database
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
@@ -128,12 +129,12 @@ interface SubscriptionDao {
         FROM purchase_history
         GROUP BY subscription_tier
     """)
-    suspend fun getPurchaseCountByTier(): Map<String, Int>
+    suspend fun getPurchaseCountByTier(): Map<@MapColumn(columnName = "subscription_tier") String, @MapColumn(columnName = "count") Int>
 
     @Query("""
         SELECT subscription_period, COUNT(*) as count
         FROM purchase_history
         GROUP BY subscription_period
     """)
-    suspend fun getPurchaseCountByPeriod(): Map<String, Int>
+    suspend fun getPurchaseCountByPeriod(): Map<@MapColumn(columnName = "subscription_period") String, @MapColumn(columnName = "count") Int>
 }

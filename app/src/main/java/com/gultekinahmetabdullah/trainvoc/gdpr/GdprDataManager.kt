@@ -7,6 +7,7 @@ import com.gultekinahmetabdullah.trainvoc.repository.PreferencesRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
@@ -115,20 +116,20 @@ class GdprDataManager(
 
                 // Count data before deletion for verification
                 val wordCount = database.wordDao().getAllWords().first().size
-                val statCount = database.statisticDao().getAllStatistics().size
+                val statCount = database.statisticDao().getAllStatistics().first().size
 
                 // Delete all database records
                 database.clearAllTables()
 
                 // Clear all preferences
-                preferencesRepository.clearAllPreferences()
+                preferencesRepository.clearAll()
 
                 // Clear cache directory
                 context.cacheDir.deleteRecursively()
 
                 // Verify deletion
                 val wordsAfter = database.wordDao().getAllWords().first().size
-                val statsAfter = database.statisticDao().getAllStatistics().size
+                val statsAfter = database.statisticDao().getAllStatistics().first().size
 
                 if (wordsAfter == 0 && statsAfter == 0) {
                     Log.d(TAG, "User data deletion verified successful")
@@ -198,7 +199,7 @@ class GdprDataManager(
         return withContext(Dispatchers.IO) {
             try {
                 val words = database.wordDao().getAllWords().first()
-                val statistics = database.statisticDao().getAllStatistics().size
+                val statistics = database.statisticDao().getAllStatistics().first().size
 
                 DataSummary(
                     wordCount = words.size,
@@ -218,7 +219,7 @@ class GdprDataManager(
 
     private suspend fun collectUserData(includeMetadata: Boolean): UserDataExport {
         val words = database.wordDao().getAllWords().first()
-        val statistics = database.statisticDao().getAllStatistics()
+        val statistics = database.statisticDao().getAllStatistics().first()
 
         return UserDataExport(
             exportDate = SimpleDateFormat(DATE_FORMAT, Locale.US).format(Date()),
@@ -228,7 +229,6 @@ class GdprDataManager(
                     word = word.word,
                     meaning = word.meaning,
                     level = word.level?.name,
-                    exam = word.exam,
                     lastReviewed = if (includeMetadata) word.lastReviewed else null,
                     secondsSpent = if (includeMetadata) word.secondsSpent else null
                 )
@@ -244,7 +244,7 @@ class GdprDataManager(
             },
             preferences = UserPreferencesData(
                 username = preferencesRepository.getUsername(),
-                language = preferencesRepository.getLanguage()
+                language = preferencesRepository.getLanguage().code
             )
         )
     }
@@ -282,7 +282,6 @@ data class WordData(
     val word: String,
     val meaning: String,
     val level: String?,
-    val exam: String?,
     val lastReviewed: Long?,
     val secondsSpent: Int?
 )
@@ -296,7 +295,7 @@ data class StatisticData(
 )
 
 data class UserPreferencesData(
-    val username: String,
+    val username: String?,
     val language: String
 )
 

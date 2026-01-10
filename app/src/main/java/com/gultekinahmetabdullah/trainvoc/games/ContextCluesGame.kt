@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,9 +79,8 @@ class ContextCluesGame @Inject constructor(
             )
         }
 
-        // Filter words that have example sentences
-        val wordsWithExamples = words.filter { !it.exampleSentence.isNullOrBlank() }
-        val selectedWords = wordsWithExamples.shuffled().take(questionCount)
+        // Select random words for the game
+        val selectedWords = words.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
             createQuestion(word, words)
@@ -97,17 +96,16 @@ class ContextCluesGame @Inject constructor(
         word: Word,
         allWords: List<Word>
     ): ContextQuestion {
-        val context = word.exampleSentence ?: ""
+        // Create a sample context sentence using the word
+        val context = "The word '${word.word}' means: ${word.meaning}"
 
-        // Find the word in the sentence (may be in different case/form)
-        val wordPattern = "\\b${Regex.escape(word.english)}\\w*\\b".toRegex(RegexOption.IGNORE_CASE)
-        val match = wordPattern.find(context)
-        val wordInContext = match?.value ?: word.english
+        // The word as it appears in context
+        val wordInContext = word.word
 
         // Generate distractor options (wrong meanings)
         val distractors = generateDistractors(word, allWords, count = 3)
 
-        val options = (listOf(word.turkish) + distractors).shuffled()
+        val options = (listOf(word.meaning) + distractors).shuffled()
 
         // Generate additional clue
         val additionalClue = generateAdditionalClue(word)
@@ -117,7 +115,7 @@ class ContextCluesGame @Inject constructor(
             context = context,
             wordInContext = wordInContext,
             options = options,
-            correctAnswer = word.turkish,
+            correctAnswer = word.meaning,
             additionalClue = additionalClue
         )
     }
@@ -130,12 +128,11 @@ class ContextCluesGame @Inject constructor(
         allWords: List<Word>,
         count: Int
     ): List<String> {
-        // Prioritize words from the same part of speech and level
+        // Prioritize words from the same level
         val similarWords = allWords
-            .filter { it.id != targetWord.id }
-            .filter { it.partOfSpeech == targetWord.partOfSpeech }
+            .filter { it.word != targetWord.word }
             .filter { it.level == targetWord.level }
-            .map { it.turkish }
+            .map { it.meaning }
             .distinct()
             .shuffled()
             .take(count)
@@ -143,9 +140,9 @@ class ContextCluesGame @Inject constructor(
         // Fill with any other words if needed
         if (similarWords.size < count) {
             val additional = allWords
-                .filter { it.id != targetWord.id }
-                .filter { !similarWords.contains(it.turkish) }
-                .map { it.turkish }
+                .filter { it.word != targetWord.word }
+                .filter { !similarWords.contains(it.meaning) }
+                .map { it.meaning }
                 .distinct()
                 .shuffled()
                 .take(count - similarWords.size)
@@ -160,13 +157,8 @@ class ContextCluesGame @Inject constructor(
      */
     private fun generateAdditionalClue(word: Word): String {
         return buildString {
-            append("Part of speech: ${word.partOfSpeech}")
-            word.definition?.let { def ->
-                if (def.isNotBlank()) {
-                    append("\nDefinition hint: ${def.take(50)}")
-                    if (def.length > 50) append("...")
-                }
-            }
+            append("Level: ${word.level?.name ?: "Unknown"}")
+            append("\nFirst letter: ${word.word.firstOrNull()?.uppercase() ?: ""}")
         }
     }
 
@@ -217,11 +209,11 @@ class ContextCluesGame @Inject constructor(
      * Get word difficulty indicator
      */
     fun getDifficultyIndicator(word: Word): String {
-        return when (word.level) {
-            "A1", "A2" -> "⭐ Beginner"
-            "B1", "B2" -> "⭐⭐ Intermediate"
-            "C1", "C2" -> "⭐⭐⭐ Advanced"
-            else -> "⭐ Beginner"
+        return when (word.level?.name) {
+            "A1", "A2" -> "Beginner"
+            "B1", "B2" -> "Intermediate"
+            "C1", "C2" -> "Advanced"
+            else -> "Beginner"
         }
     }
 
@@ -233,11 +225,10 @@ class ContextCluesGame @Inject constructor(
 
         val session = GameSession(
             gameType = "context_clues",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalQuestions,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
-            completed = true,
+            timeSpentSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
             completedAt = System.currentTimeMillis()
         )
 

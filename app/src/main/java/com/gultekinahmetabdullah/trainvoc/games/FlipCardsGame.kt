@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -93,25 +93,25 @@ class FlipCardsGame @Inject constructor(
             )
         }
 
-        // Create pairs of cards (English + Turkish)
+        // Create pairs of cards (Word + Meaning)
         val cards = mutableListOf<Card>()
         words.forEachIndexed { index, word ->
-            // English card
+            // Word card (English)
             cards.add(
                 Card(
                     id = index * 2,
-                    content = word.english,
+                    content = word.word,
                     type = CardType.ENGLISH,
-                    wordId = word.id
+                    wordId = index.toLong()
                 )
             )
-            // Turkish card
+            // Meaning card (Turkish)
             cards.add(
                 Card(
                     id = index * 2 + 1,
-                    content = word.turkish,
+                    content = word.meaning,
                     type = CardType.TURKISH,
-                    wordId = word.id
+                    wordId = index.toLong()
                 )
             )
         }
@@ -202,11 +202,10 @@ class FlipCardsGame @Inject constructor(
         // Save game session
         val session = GameSession(
             gameType = "flip_cards",
-            difficulty = gameState.gridSize,
+            difficultyLevel = gameState.gridSize,
             totalQuestions = gameState.totalPairs,
             correctAnswers = gameState.matchedPairs,
-            timeSeconds = timeSeconds,
-            completed = true,
+            timeSpentSeconds = timeSeconds,
             completedAt = System.currentTimeMillis()
         )
         gamesDao.insertGameSession(session)

@@ -6,9 +6,8 @@ import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import com.gultekinahmetabdullah.trainvoc.images.ImageService
 import com.gultekinahmetabdullah.trainvoc.images.WordImageDao
-import com.gultekinahmetabdullah.trainvoc.classes.database.Word
-import com.gultekinahmetabdullah.trainvoc.classes.database.WordDao
-import kotlinx.coroutines.flow.Flow
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -49,8 +48,8 @@ class OfflineDataManager @Inject constructor(
         return try {
             _downloadProgress.value = DownloadProgress.InProgress(0, "Preparing...")
 
-            // Get all words
-            val words = wordDao.getAllWords()
+            // Get all words (getAllWordsList returns List<Word> instead of Flow)
+            val words = wordDao.getAllWordsList()
             val totalItems = words.size * 2 // Images + Audio
             var completed = 0
 
@@ -62,8 +61,8 @@ class OfflineDataManager @Inject constructor(
                         message = "Downloading image for ${word.word}..."
                     )
 
-                    // Get image for word
-                    val existingImage = wordImageDao.getPrimaryImage(word.id)
+                    // Get image for word (use word.word as the primary key)
+                    val existingImage = wordImageDao.getPrimaryImage(word.word)
                     if (existingImage != null) {
                         imageService.downloadImageForOffline(existingImage)
                     }
@@ -80,8 +79,8 @@ class OfflineDataManager @Inject constructor(
                         message = "Downloading audio for ${word.word}..."
                     )
 
-                    // Generate and cache audio
-                    ttsService.generateAndCacheAudio(word.word, word.id)
+                    // Generate and cache audio (use word.word as the identifier)
+                    ttsService.generateAndCacheAudio(word.word, word.word)
 
                     completed++
                 }
@@ -107,7 +106,7 @@ class OfflineDataManager @Inject constructor(
      * Get offline storage usage
      */
     suspend fun getOfflineStorageUsage(): StorageUsage {
-        val audioCacheSize = audioCacheDao.getTotalCacheSize()
+        val audioCacheSize = audioCacheDao.getTotalCacheSize() ?: 0L
         val imageCount = wordImageDao.getCachedImageCount()
 
         return StorageUsage(
@@ -122,7 +121,7 @@ class OfflineDataManager @Inject constructor(
      */
     suspend fun clearOfflineCache(includeAudio: Boolean = true, includeImages: Boolean = true) {
         if (includeAudio) {
-            audioCacheDao.deleteAll()
+            audioCacheDao.clearAllCache()
         }
 
         if (includeImages) {

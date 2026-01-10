@@ -40,6 +40,9 @@ interface WordDao {
     @Query("SELECT * FROM words ORDER BY word ASC")
     fun getAllWords(): Flow<List<Word>>
 
+    @Query("SELECT * FROM words ORDER BY RANDOM() LIMIT 100")
+    suspend fun getAllWordsList(): List<Word>
+
     // Get word count of a specific level
     @Query("SELECT COUNT(*) FROM words WHERE level = :level")
     suspend fun getWordCountByLevel(level: String): Int

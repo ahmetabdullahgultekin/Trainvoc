@@ -24,7 +24,7 @@ import javax.inject.Inject
 class TrainvocApplication : Application(), Configuration.Provider {
 
     @Inject
-    lateinit fun featureFlagManager: FeatureFlagManager
+    lateinit var featureFlagManager: FeatureFlagManager
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -101,11 +101,10 @@ class TrainvocApplication : Application(), Configuration.Provider {
      * - Enables Hilt dependency injection in Workers
      * - Uses optimized configuration for performance
      */
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.INFO)
             .setMaxSchedulerLimit(20)
             .build()
-    }
 }

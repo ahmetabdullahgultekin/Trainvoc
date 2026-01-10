@@ -69,18 +69,11 @@ class PictureMatchViewModel @Inject constructor(
     private suspend fun checkAchievements(gameState: PictureMatchGame.GameState) {
         // Check for perfect score
         if (gameState.correctAnswers == gameState.totalQuestions && gameState.totalQuestions >= 5) {
-            unlockAchievement(Achievement.PICTURE_PERFECT)
+            unlockAchievement(Achievement.PERFECT_10)
         }
 
-        // Check for high streak
-        if (gameState.bestStreak >= 10) {
-            unlockAchievement(Achievement.STREAK_10)
-        }
-
-        // Check for completing with high accuracy
-        if (gameState.accuracy >= 90 && gameState.totalQuestions >= 10) {
-            unlockAchievement(Achievement.VISUAL_LEARNER)
-        }
+        // Award quiz completion achievement
+        unlockAchievement(Achievement.QUIZ_10)
     }
 
     private suspend fun unlockAchievement(achievement: Achievement) {
@@ -88,7 +81,7 @@ class PictureMatchViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

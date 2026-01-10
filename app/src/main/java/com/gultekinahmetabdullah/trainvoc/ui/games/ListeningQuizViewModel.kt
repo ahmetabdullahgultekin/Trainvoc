@@ -67,13 +67,17 @@ class ListeningQuizViewModel @Inject constructor(
 
     private fun playTextToSpeech(question: ListeningQuizGame.ListeningQuestion) {
         textToSpeech?.let { tts ->
-            val (text, locale) = when (question.questionType) {
+            val text: String
+            val locale: java.util.Locale
+            when (question.questionType) {
                 ListeningQuizGame.QuestionType.WORD_TO_TRANSLATION,
                 ListeningQuizGame.QuestionType.WORD_TO_SPELLING -> {
-                    Pair(question.word.english, java.util.Locale.US)
+                    text = question.word.word
+                    locale = java.util.Locale.US
                 }
                 ListeningQuizGame.QuestionType.TRANSLATION_TO_WORD -> {
-                    Pair(question.word.turkish, java.util.Locale("tr", "TR"))
+                    text = question.word.meaning
+                    locale = java.util.Locale("tr", "TR")
                 }
             }
 
@@ -116,15 +120,13 @@ class ListeningQuizViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: ListeningQuizGame.GameState) {
-        // Check for perfect score
+        // Check for perfect score - award perfect achievement
         if (gameState.correctAnswers == gameState.totalQuestions && gameState.totalQuestions >= 5) {
-            unlockAchievement(Achievement.LISTENING_PERFECT)
+            unlockAchievement(Achievement.PERFECT_10)
         }
 
-        // Check for completing without replays
-        if (gameState.correctAnswers == gameState.totalQuestions && gameState.canReplay == 3) {
-            unlockAchievement(Achievement.LISTENING_NO_REPLAY)
-        }
+        // Award quiz completion achievement
+        unlockAchievement(Achievement.QUIZ_10)
     }
 
     private suspend fun unlockAchievement(achievement: Achievement) {
@@ -132,7 +134,7 @@ class ListeningQuizViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

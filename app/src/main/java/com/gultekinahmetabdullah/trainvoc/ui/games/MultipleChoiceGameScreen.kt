@@ -147,7 +147,10 @@ private fun MultipleChoiceGameContent(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = question.questionText,
+                                text = when (question.questionType) {
+                                    com.gultekinahmetabdullah.trainvoc.games.QuestionType.WORD_TO_DEFINITION -> question.word.word
+                                    com.gultekinahmetabdullah.trainvoc.games.QuestionType.DEFINITION_TO_WORD -> question.word.meaning
+                                },
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
@@ -174,17 +177,20 @@ private fun MultipleChoiceGameContent(
                 // Stats
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
+                    val accuracy = if (gameState.currentQuestionIndex > 0) {
+                        (gameState.correctAnswers.toFloat() / gameState.currentQuestionIndex * 100).toInt()
+                    } else 0
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatChip(
                             label = "Accuracy",
-                            value = "${gameState.accuracy.toInt()}%"
+                            value = "$accuracy%"
                         )
                         StatChip(
                             label = "Difficulty",
-                            value = question.difficulty.capitalize()
+                            value = question.difficulty.name.lowercase().capitalize()
                         )
                     }
                 }

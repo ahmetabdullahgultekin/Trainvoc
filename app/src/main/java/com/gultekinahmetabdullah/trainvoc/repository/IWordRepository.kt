@@ -47,6 +47,7 @@ interface IWordRepository {
     suspend fun markWordAsLearned(statId: Long)
 
     // Statistic Operations
+    suspend fun getAllStatistics(): List<Statistic>
     suspend fun getWordCountByStatId(statId: Int): Int
     suspend fun getLearnedStatisticByValues(
         correctCount: Int,

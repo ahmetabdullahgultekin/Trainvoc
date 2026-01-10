@@ -55,21 +55,26 @@ import kotlin.system.measureTimeMillis
  */
 object PerformanceMonitor {
 
-    private const val TAG = "PerformanceMonitor"
+    @PublishedApi
+    internal const val TAG = "PerformanceMonitor"
 
     // Startup tracking
     private var appStartTime: Long = 0
     private var coldStartCompleteTime: Long = 0
 
     // Performance thresholds
-    private const val SLOW_SCREEN_LOAD_MS = 500
-    private const val SLOW_OPERATION_MS = 100
+    @PublishedApi
+    internal const val SLOW_SCREEN_LOAD_MS = 500
+    @PublishedApi
+    internal const val SLOW_OPERATION_MS = 100
     private const val HIGH_MEMORY_MB = 100
     private const val TARGET_FPS = 60
 
     // Metrics storage
-    private val operationTimings = mutableMapOf<String, MutableList<Long>>()
-    private val screenLoadTimings = mutableMapOf<String, MutableList<Long>>()
+    @PublishedApi
+    internal val operationTimings = mutableMapOf<String, MutableList<Long>>()
+    @PublishedApi
+    internal val screenLoadTimings = mutableMapOf<String, MutableList<Long>>()
     private val memorySnapshots = mutableListOf<MemorySnapshot>()
 
     /**

@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -76,9 +76,8 @@ class FillInTheBlankGame @Inject constructor(
             )
         }
 
-        // Filter words that have example sentences
-        val wordsWithExamples = words.filter { !it.exampleSentence.isNullOrBlank() }
-        val selectedWords = wordsWithExamples.shuffled().take(questionCount)
+        // Select random words for the game
+        val selectedWords = words.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
             createQuestion(word, words)
@@ -90,37 +89,24 @@ class FillInTheBlankGame @Inject constructor(
     /**
      * Create a fill-in-the-blank question from a word
      */
-    private suspend fun createQuestion(
+    private fun createQuestion(
         word: Word,
         allWords: List<Word>
     ): FillInTheBlankQuestion {
-        val exampleSentence = word.exampleSentence ?: ""
-
-        // Create the sentence with a blank
-        // Replace the word (case-insensitive) with a blank marker
-        val wordPattern = "\\b${Regex.escape(word.english)}\\b".toRegex(RegexOption.IGNORE_CASE)
-        val match = wordPattern.find(exampleSentence)
-
-        val (sentenceWithBlank, blankPosition) = if (match != null) {
-            val position = match.range.first
-            val before = exampleSentence.substring(0, match.range.first)
-            val after = exampleSentence.substring(match.range.last + 1)
-            Pair("$before _____ $after", position)
-        } else {
-            // Fallback: put blank at the end
-            Pair("$exampleSentence: _____", exampleSentence.length)
-        }
+        // Create a sentence with a blank for the word
+        val sentenceWithBlank = "The meaning of _____ is: ${word.meaning}"
+        val blankPosition = 15 // Position after "The meaning of "
 
         // Generate distractor options (wrong answers)
         val distractors = generateDistractors(word, allWords, count = 3)
 
         // Combine correct answer with distractors and shuffle
-        val options = (listOf(word.english) + distractors).shuffled()
+        val options = (listOf(word.word) + distractors).shuffled()
 
         return FillInTheBlankQuestion(
             word = word,
             sentenceWithBlank = sentenceWithBlank.trim(),
-            correctAnswer = word.english,
+            correctAnswer = word.word,
             options = options,
             blankPosition = blankPosition
         )
@@ -129,30 +115,29 @@ class FillInTheBlankGame @Inject constructor(
     /**
      * Generate distractor options (wrong answers)
      */
-    private suspend fun generateDistractors(
+    private fun generateDistractors(
         targetWord: Word,
         allWords: List<Word>,
         count: Int
     ): List<String> {
-        // Get words of similar level and part of speech
+        // Get words of similar level
         val similarWords = allWords
-            .filter { it.id != targetWord.id }
+            .filter { it.word != targetWord.word }
             .filter { it.level == targetWord.level }
-            .filter { it.partOfSpeech == targetWord.partOfSpeech }
             .shuffled()
             .take(count)
 
         // If not enough similar words, add any other words
         if (similarWords.size < count) {
             val additionalWords = allWords
-                .filter { it.id != targetWord.id }
+                .filter { it.word != targetWord.word }
                 .filter { !similarWords.contains(it) }
                 .shuffled()
                 .take(count - similarWords.size)
-            return (similarWords + additionalWords).map { it.english }
+            return (similarWords + additionalWords).map { it.word }
         }
 
-        return similarWords.map { it.english }
+        return similarWords.map { it.word }
     }
 
     /**
@@ -183,11 +168,10 @@ class FillInTheBlankGame @Inject constructor(
 
         val session = GameSession(
             gameType = "fill_in_blank",
-            difficulty = "medium", // TODO: Store difficulty in GameState
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalQuestions,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
-            completed = true,
+            timeSpentSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
             completedAt = System.currentTimeMillis()
         )
 
@@ -199,7 +183,7 @@ class FillInTheBlankGame @Inject constructor(
      */
     fun getHint(question: FillInTheBlankQuestion): String {
         return buildString {
-            append("Part of speech: ${question.word.partOfSpeech}\n")
+            append("Level: ${question.word.level?.name ?: "Unknown"}\n")
             append("First letter: ${question.correctAnswer.first().uppercase()}\n")
             append("Length: ${question.correctAnswer.length} letters")
         }

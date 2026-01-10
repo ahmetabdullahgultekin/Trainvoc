@@ -51,7 +51,7 @@ class DailyGoalsWidgetProvider : AppWidgetProvider() {
     ) {
         scope.launch {
             try {
-                val database = AppDatabase.getInstance(context)
+                val database = AppDatabase.DatabaseBuilder.getInstance(context)
                 val dao = database.gamificationDao()
                 val goals = dao.getDailyGoal() ?: return@launch
 
