@@ -7,7 +7,7 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
-import com.gultekinahmetabdullah.trainvoc.database.dao.WordDao
+import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
