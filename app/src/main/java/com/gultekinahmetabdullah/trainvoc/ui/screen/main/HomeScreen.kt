@@ -11,7 +11,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -345,7 +346,7 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Main Call-to-Action Button
+                    // Main Call-to-Action Buttons - Equal treatment for Quiz, Story, and Games
                     DebouncedButton(
                         onClick = onNavigateToQuiz,
                         modifier = Modifier
@@ -355,16 +356,19 @@ fun HomeScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(id = R.string.start_quiz),
                             style = MaterialTheme.typography.titleMedium
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = stringResource(R.string.start_quiz_button)
-                        )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     DebouncedButton(
                         onClick = onNavigateToStory,
                         modifier = Modifier
@@ -374,18 +378,40 @@ fun HomeScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Book,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(id = R.string.story_mode),
                             style = MaterialTheme.typography.titleMedium
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    DebouncedButton(
+                        onClick = onNavigateToGames,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .scale(scaleAnim.value)
+                            .testTag("GamesMainButton"),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = stringResource(R.string.start_quiz_button)
+                            imageVector = Icons.Default.SportsEsports,
+                            contentDescription = null
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(id = R.string.games),
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Navigation Buttons
                     Row(
@@ -557,30 +583,34 @@ fun HomeScreen(
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
                     Spacer(modifier = Modifier.height(Spacing.small))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
                     ) {
-                        CategoryCard(
-                            emoji = "🧠",
-                            title = stringResource(id = R.string.category_general),
-                            emojiContentDescription = stringResource(id = R.string.category_brain_training),
-                            onClick = { /* Planned feature */ }
-                        )
-                        CategoryCard(
-                            emoji = "🎯",
-                            title = stringResource(id = R.string.category_targeted),
-                            emojiContentDescription = stringResource(id = R.string.category_target_practice),
-                            onClick = { /* Planned feature */ }
-                        )
-                        CategoryCard(
-                            emoji = "⚡",
-                            title = stringResource(id = R.string.category_quick),
-                            emojiContentDescription = stringResource(id = R.string.category_quick_quiz),
-                            onClick = { /* Planned feature */ }
-                        )
+                        item {
+                            CategoryCard(
+                                emoji = "🧠",
+                                title = stringResource(id = R.string.category_general),
+                                emojiContentDescription = stringResource(id = R.string.category_brain_training),
+                                onClick = onNavigateToQuiz
+                            )
+                        }
+                        item {
+                            CategoryCard(
+                                emoji = "🎯",
+                                title = stringResource(id = R.string.category_targeted),
+                                emojiContentDescription = stringResource(id = R.string.category_target_practice),
+                                onClick = onNavigateToStory
+                            )
+                        }
+                        item {
+                            CategoryCard(
+                                emoji = "⚡",
+                                title = stringResource(id = R.string.category_quick),
+                                emojiContentDescription = stringResource(id = R.string.category_quick_quiz),
+                                onClick = onNavigateToGames
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(Spacing.mediumLarge))
@@ -594,30 +624,34 @@ fun HomeScreen(
                         modifier = Modifier.align(Alignment.CenterStart)
                     )
                     Spacer(modifier = Modifier.height(Spacing.small))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
                     ) {
-                        QuickAccessCard(
-                            emoji = "🌟",
-                            title = stringResource(id = R.string.word_of_the_day),
-                            emojiContentDescription = stringResource(id = R.string.quick_access_word_of_day),
-                            onClick = { /* Planned feature */ }
-                        )
-                        QuickAccessCard(
-                            emoji = "❤️",
-                            title = stringResource(id = R.string.favorites),
-                            emojiContentDescription = stringResource(id = R.string.quick_access_favorites),
-                            onClick = { /* Planned feature */ }
-                        )
-                        QuickAccessCard(
-                            emoji = "⏱️",
-                            title = stringResource(id = R.string.last_quiz),
-                            emojiContentDescription = stringResource(id = R.string.quick_access_last_quiz),
-                            onClick = { /* Planned feature */ }
-                        )
+                        item {
+                            QuickAccessCard(
+                                emoji = "🌟",
+                                title = stringResource(id = R.string.word_of_the_day),
+                                emojiContentDescription = stringResource(id = R.string.quick_access_word_of_day),
+                                onClick = onNavigateToQuiz
+                            )
+                        }
+                        item {
+                            QuickAccessCard(
+                                emoji = "❤️",
+                                title = stringResource(id = R.string.favorites),
+                                emojiContentDescription = stringResource(id = R.string.quick_access_favorites),
+                                onClick = onNavigateToStats
+                            )
+                        }
+                        item {
+                            QuickAccessCard(
+                                emoji = "⏱️",
+                                title = stringResource(id = R.string.last_quiz),
+                                emojiContentDescription = stringResource(id = R.string.quick_access_last_quiz),
+                                onClick = onNavigateToGames
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
