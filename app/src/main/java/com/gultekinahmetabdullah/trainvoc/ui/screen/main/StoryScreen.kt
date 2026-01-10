@@ -57,7 +57,7 @@ fun StoryScreen(
             contentPadding = PaddingValues(vertical = Spacing.mediumLarge),
             verticalArrangement = Arrangement.spacedBy(64.dp)
         ) {
-            items(levels.size) { index ->
+            items(levels.size, key = { index -> levels.entries.elementAt(index).key }) { index ->
                 val (level, isUnlocked) = levels.entries.elementAt(index)
                 Box(
                     modifier = Modifier

@@ -140,7 +140,7 @@ private fun FlipCardsContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(8.dp)
             ) {
-                itemsIndexed(gameState.cards) { index, card ->
+                itemsIndexed(gameState.cards, key = { index, _ -> index }) { index, card ->
                     FlipCard(
                         content = card.content,
                         isFlipped = card.isFlipped,

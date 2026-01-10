@@ -204,7 +204,7 @@ private fun PictureMatchGameContent(
                 }
 
                 // Options
-                items(question.options) { option ->
+                items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
 
                     OptionButton(

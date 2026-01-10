@@ -137,7 +137,7 @@ private fun SpeedMatchGameContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    itemsIndexed(gameState.leftOptions) { index, option ->
+                    itemsIndexed(gameState.leftOptions, key = { _, option -> option }) { index, option ->
                         val pair = gameState.pairs.find { it.leftOption == option }
                         val isMatched = pair?.isMatched == true
                         val isSelected = gameState.selectedLeft == index
@@ -156,7 +156,7 @@ private fun SpeedMatchGameContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    itemsIndexed(gameState.rightOptions) { index, option ->
+                    itemsIndexed(gameState.rightOptions, key = { _, option -> option }) { index, option ->
                         val pair = gameState.pairs.find { it.rightOption == option }
                         val isMatched = pair?.isMatched == true
                         val isSelected = gameState.selectedRight == index

@@ -144,7 +144,7 @@ private fun SignedOutContent(
     ) {
         Icon(
             imageVector = Icons.Default.CloudOff,
-            contentDescription = null,
+            contentDescription = "Cloud backup disabled",
             modifier = Modifier.size(80.dp),
             tint = MaterialTheme.colorScheme.primary
         )
@@ -193,7 +193,7 @@ private fun SignedOutContent(
             onClick = onSignIn,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(Icons.Default.Login, contentDescription = null)
+            Icon(Icons.Default.Login, contentDescription = "Sign in")
             Spacer(modifier = Modifier.width(8.dp))
             Text("Sign in with Google")
         }
@@ -312,7 +312,7 @@ private fun SignedInContent(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
-                Icon(Icons.Default.CloudUpload, contentDescription = null)
+                Icon(Icons.Default.CloudUpload, contentDescription = "Upload backup")
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text("Backup Now")
@@ -349,7 +349,7 @@ private fun SignedInContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.CloudQueue,
-                        contentDescription = null,
+                        contentDescription = "No backups",
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.outline
                     )
@@ -366,7 +366,7 @@ private fun SignedInContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(backups) { backup ->
+                items(backups, key = { it.fileId }) { backup ->
                     BackupListItem(
                         backup = backup,
                         onRestore = { onRestoreBackup(backup.fileId) },

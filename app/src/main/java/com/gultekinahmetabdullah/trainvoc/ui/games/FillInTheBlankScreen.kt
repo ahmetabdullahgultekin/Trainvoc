@@ -195,7 +195,7 @@ private fun FillInTheBlankContent(
                         onClick = onHintToggle,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Lightbulb, contentDescription = null)
+                        Icon(Icons.Default.Lightbulb, contentDescription = "Toggle hint")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(if (showHint) "Hide Hint" else "Show Hint")
                     }
@@ -225,7 +225,7 @@ private fun FillInTheBlankContent(
                 }
 
                 // Options
-                items(question.options) { option ->
+                items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
 
                     OptionButton(
