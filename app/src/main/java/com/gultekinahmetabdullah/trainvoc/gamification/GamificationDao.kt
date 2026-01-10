@@ -27,6 +27,9 @@ interface GamificationDao {
     @Update
     suspend fun updateStreakTracking(streak: StreakTracking)
 
+    // Upsert (insert or update) - for cloud sync
+    suspend fun upsertStreakTracking(streak: StreakTracking) = insertStreakTracking(streak)
+
     @Query("UPDATE streak_tracking SET current_streak = :streak, longest_streak = :longestStreak, last_activity_date = :date WHERE user_id = :userId")
     suspend fun updateStreak(
         userId: String = "local_user",
@@ -60,6 +63,9 @@ interface GamificationDao {
 
     @Update
     suspend fun updateDailyGoal(goal: DailyGoal)
+
+    // Upsert (insert or update) - for cloud sync
+    suspend fun upsertDailyGoal(goal: DailyGoal) = insertDailyGoal(goal)
 
     @Query("""
         UPDATE daily_goals
