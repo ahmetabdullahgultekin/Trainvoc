@@ -17,16 +17,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun FillInTheBlankScreen(
     onNavigateBack: () -> Unit,
     difficulty: String = "medium",
-    viewModel: FillInTheBlankViewModel = hiltViewModel()
+    viewModel: FillInTheBlankViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     val showHint by viewModel.showHint.collectAsState()
     var showDifficultyDialog by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.FILL_IN_BLANK)) {
+            tutorialViewModel.startTutorial(GameType.FILL_IN_BLANK)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!showDifficultyDialog) {
@@ -107,6 +117,16 @@ fun FillInTheBlankScreen(
                 showDifficultyDialog = false
                 viewModel.startGame(difficulty)
             }
+        )
+    }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.FILL_IN_BLANK) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
         )
     }
 }

@@ -20,15 +20,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun ContextCluesScreen(
     onNavigateBack: () -> Unit,
     difficulty: String = "medium",
-    viewModel: ContextCluesViewModel = hiltViewModel()
+    viewModel: ContextCluesViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     var showDifficultyDialog by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.CONTEXT_CLUES)) {
+            tutorialViewModel.startTutorial(GameType.CONTEXT_CLUES)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!showDifficultyDialog) {
@@ -105,6 +115,16 @@ fun ContextCluesScreen(
                 showDifficultyDialog = false
                 viewModel.startGame(difficulty)
             }
+        )
+    }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.CONTEXT_CLUES) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
         )
     }
 }

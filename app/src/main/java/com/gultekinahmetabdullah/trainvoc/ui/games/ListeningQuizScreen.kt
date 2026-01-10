@@ -17,14 +17,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun ListeningQuizScreen(
     onNavigateBack: () -> Unit,
     difficulty: String = "medium",
-    viewModel: ListeningQuizViewModel = hiltViewModel()
+    viewModel: ListeningQuizViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     var showDifficultyDialog by remember { mutableStateOf(true) }
     val context = LocalContext.current
 
@@ -47,6 +51,12 @@ fun ListeningQuizScreen(
         onDispose {
             ttsInstance?.stop()
             ttsInstance?.shutdown()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.LISTENING_QUIZ)) {
+            tutorialViewModel.startTutorial(GameType.LISTENING_QUIZ)
         }
     }
 
@@ -125,6 +135,16 @@ fun ListeningQuizScreen(
                 showDifficultyDialog = false
                 viewModel.startGame(difficulty)
             }
+        )
+    }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.LISTENING_QUIZ) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
         )
     }
 }
