@@ -19,6 +19,8 @@ object Route {
     const val BACKUP = "backup"
     const val NOTIFICATION_SETTINGS = "notification_settings"
     const val WORD_DETAIL = "word_detail/{wordId}"
+    const val FEATURE_FLAGS_ADMIN = "feature_flags_admin"
+    const val FEATURE_FLAGS_USER = "feature_flags_user"
 
     fun wordDetail(wordId: String) = "word_detail/$wordId"
 }
