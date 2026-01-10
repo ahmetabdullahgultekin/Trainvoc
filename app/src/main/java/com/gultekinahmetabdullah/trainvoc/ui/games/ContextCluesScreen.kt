@@ -222,7 +222,7 @@ private fun ContextCluesGameContent(
                                 ) {
                                     Icon(
                                         Icons.Default.Lightbulb,
-                                        contentDescription = null,
+                                        contentDescription = "Hint icon",
                                         tint = MaterialTheme.colorScheme.onTertiaryContainer
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
@@ -256,7 +256,7 @@ private fun ContextCluesGameContent(
                 }
 
                 // Options
-                items(question.options) { option ->
+                items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
 
                     OptionButton(
@@ -279,7 +279,7 @@ private fun ContextCluesGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = !gameState.showingClue
                         ) {
-                            Icon(Icons.Default.Lightbulb, contentDescription = null)
+                            Icon(Icons.Default.Lightbulb, contentDescription = "Show clue")
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Clue")
                         }
@@ -289,7 +289,7 @@ private fun ContextCluesGameContent(
                             onClick = onSkip,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.SkipNext, contentDescription = null)
+                            Icon(Icons.Default.SkipNext, contentDescription = "Skip question")
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Skip")
                         }

@@ -222,7 +222,7 @@ private fun WordScrambleContent(
                             onClick = onSkip,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.SkipNext, contentDescription = null)
+                            Icon(Icons.Default.SkipNext, contentDescription = "Skip question")
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Skip")
                         }

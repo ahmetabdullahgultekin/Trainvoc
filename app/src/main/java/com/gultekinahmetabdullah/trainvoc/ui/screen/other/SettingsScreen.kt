@@ -1,9 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
 import android.app.Activity
-import android.content.Context
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +25,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
@@ -62,6 +66,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
     val haptic = rememberHapticPerformer()
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
     val theme by viewModel.theme.collectAsState()
     val colorPalette by viewModel.colorPalette.collectAsState()
@@ -83,245 +89,259 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(Spacing.mediumLarge),
-        verticalArrangement = Arrangement.spacedBy(Spacing.medium)
-    ) {
-        Text(stringResource(id = R.string.settings), style = MaterialTheme.typography.headlineSmall)
-
-        // Theme Customization Section Header
-        Text(
-            text = "Theme Customization",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        // Theme Mode Selection (System, Light, Dark, AMOLED)
-        val themeOptions = listOf(
-            ThemePreference.SYSTEM,
-            ThemePreference.LIGHT,
-            ThemePreference.DARK,
-            ThemePreference.AMOLED
-        )
-        val themeLabels = listOf(
-            stringResource(id = R.string.system_default),
-            stringResource(id = R.string.light),
-            stringResource(id = R.string.dark),
-            "AMOLED"
-        )
-        val selectedThemeIndex = themeOptions.indexOf(theme)
-        SettingDropdown(
-            title = stringResource(id = R.string.theme),
-            options = themeLabels,
-            selectedOption = themeLabels.getOrElse(selectedThemeIndex) { themeLabels[0] },
-            onOptionSelected = { label ->
-                val index = themeLabels.indexOf(label)
-                viewModel.setTheme(themeOptions.getOrElse(index) {
-                    ThemePreference.SYSTEM
-                })
-            }
-        )
-
-        // Color Palette Selection
-        Text(
-            text = "Color Palette",
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        // Color palette preview cards
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.small),
-            modifier = Modifier.fillMaxWidth()
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .padding(Spacing.mediumLarge),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            items(ColorPalettePreference.entries.toList()) { palette ->
-                // Skip Dynamic on older Android versions
-                if (palette == ColorPalettePreference.DYNAMIC && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                    return@items
-                }
+            Text(stringResource(id = R.string.settings), style = MaterialTheme.typography.headlineSmall)
 
-                ColorPaletteCard(
-                    palette = palette,
-                    isSelected = palette == colorPalette,
-                    onClick = { viewModel.setColorPalette(palette) }
-                )
+            // Theme Customization Section Header
+            Text(
+                text = "Theme Customization",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // Theme Mode Selection (System, Light, Dark, AMOLED)
+            val themeOptions = listOf(
+                ThemePreference.SYSTEM,
+                ThemePreference.LIGHT,
+                ThemePreference.DARK,
+                ThemePreference.AMOLED
+            )
+            val themeLabels = listOf(
+                stringResource(id = R.string.system_default),
+                stringResource(id = R.string.light),
+                stringResource(id = R.string.dark),
+                "AMOLED"
+            )
+            val selectedThemeIndex = themeOptions.indexOf(theme)
+            SettingDropdown(
+                title = stringResource(id = R.string.theme),
+                options = themeLabels,
+                selectedOption = themeLabels.getOrElse(selectedThemeIndex) { themeLabels[0] },
+                onOptionSelected = { label ->
+                    val index = themeLabels.indexOf(label)
+                    viewModel.setTheme(themeOptions.getOrElse(index) {
+                        ThemePreference.SYSTEM
+                    })
+                }
+            )
+
+            // Color Palette Selection
+            Text(
+                text = "Color Palette",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            // Color palette preview cards
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(ColorPalettePreference.entries.toList(), key = { it }) { palette ->
+                    // Skip Dynamic on older Android versions
+                    if (palette == ColorPalettePreference.DYNAMIC && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                        return@items
+                    }
+
+                    ColorPaletteCard(
+                        palette = palette,
+                        isSelected = palette == colorPalette,
+                        onClick = { viewModel.setColorPalette(palette) }
+                    )
+                }
             }
-        }
-
-        Spacer(modifier = Modifier.height(Spacing.small))
-
-        // Notification Settings Section
-        Text(
-            text = stringResource(id = R.string.notification_settings),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        // Master Notifications Toggle
-        SettingSwitch(
-            title = stringResource(id = R.string.enable_notifications),
-            isChecked = notificationsEnabled,
-            onCheckedChange = { isChecked ->
-                viewModel.setNotificationsEnabled(isChecked)
-                if (isChecked) {
-                    showToast(context, context.getString(R.string.notifications_enabled))
-                } else {
-                    showToast(context, context.getString(R.string.notifications_disabled))
-                }
-            }
-        )
-
-        // Individual notification type controls (only visible when notifications are enabled)
-        if (notificationsEnabled) {
-            // Daily Reminders
-            SettingSwitchWithDescription(
-                title = stringResource(id = R.string.enable_daily_reminders),
-                description = stringResource(id = R.string.daily_reminders_desc),
-                isChecked = dailyRemindersEnabled,
-                onCheckedChange = { isChecked ->
-                    dailyRemindersEnabled = isChecked
-                    notificationPrefs.dailyRemindersEnabled = isChecked
-                }
-            )
-
-            // Streak Alerts
-            SettingSwitchWithDescription(
-                title = stringResource(id = R.string.enable_streak_alerts),
-                description = stringResource(id = R.string.streak_alerts_desc),
-                isChecked = streakAlertsEnabled,
-                onCheckedChange = { isChecked ->
-                    streakAlertsEnabled = isChecked
-                    notificationPrefs.streakAlertsEnabled = isChecked
-                }
-            )
-
-            // Word of the Day
-            SettingSwitchWithDescription(
-                title = stringResource(id = R.string.enable_word_of_day),
-                description = stringResource(id = R.string.word_of_day_desc),
-                isChecked = wordOfDayEnabled,
-                onCheckedChange = { isChecked ->
-                    wordOfDayEnabled = isChecked
-                    notificationPrefs.wordOfDayEnabled = isChecked
-                }
-            )
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
-            // Advanced Notification Settings button
+            // Notification Settings Section
+            Text(
+                text = stringResource(id = R.string.notification_settings),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // Master Notifications Toggle
+            SettingSwitch(
+                title = stringResource(id = R.string.enable_notifications),
+                isChecked = notificationsEnabled,
+                onCheckedChange = { isChecked ->
+                    viewModel.setNotificationsEnabled(isChecked)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(
+                                if (isChecked) R.string.notifications_enabled
+                                else R.string.notifications_disabled
+                            ),
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            )
+
+            // Individual notification type controls (only visible when notifications are enabled)
+            if (notificationsEnabled) {
+                // Daily Reminders
+                SettingSwitchWithDescription(
+                    title = stringResource(id = R.string.enable_daily_reminders),
+                    description = stringResource(id = R.string.daily_reminders_desc),
+                    isChecked = dailyRemindersEnabled,
+                    onCheckedChange = { isChecked ->
+                        dailyRemindersEnabled = isChecked
+                        notificationPrefs.dailyRemindersEnabled = isChecked
+                    }
+                )
+
+                // Streak Alerts
+                SettingSwitchWithDescription(
+                    title = stringResource(id = R.string.enable_streak_alerts),
+                    description = stringResource(id = R.string.streak_alerts_desc),
+                    isChecked = streakAlertsEnabled,
+                    onCheckedChange = { isChecked ->
+                        streakAlertsEnabled = isChecked
+                        notificationPrefs.streakAlertsEnabled = isChecked
+                    }
+                )
+
+                // Word of the Day
+                SettingSwitchWithDescription(
+                    title = stringResource(id = R.string.enable_word_of_day),
+                    description = stringResource(id = R.string.word_of_day_desc),
+                    isChecked = wordOfDayEnabled,
+                    onCheckedChange = { isChecked ->
+                        wordOfDayEnabled = isChecked
+                        notificationPrefs.wordOfDayEnabled = isChecked
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(Spacing.small))
+
+                // Advanced Notification Settings button
+                Button(
+                    onClick = {
+                        haptic.click()
+                        navController.navigate(Route.NOTIFICATION_SETTINGS)
+                    },
+                    shape = RoundedCornerShape(CornerRadius.medium),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pressClickable { }
+                ) {
+                    Text(stringResource(id = R.string.advanced_notification_settings))
+                }
+            }
+
+            // Backup & Sync Section
+            Text(
+                text = "Backup & Sync",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // Backup & Sync button
             Button(
                 onClick = {
                     haptic.click()
-                    navController.navigate(Route.NOTIFICATION_SETTINGS)
+                    navController.navigate(Route.BACKUP)
                 },
                 shape = RoundedCornerShape(CornerRadius.medium),
                 modifier = Modifier
                     .fillMaxWidth()
                     .pressClickable { }
             ) {
-                Text(stringResource(id = R.string.advanced_notification_settings))
+                Text("Backup & Restore")
             }
-        }
 
-        // Backup & Sync Section
-        Text(
-            text = "Backup & Sync",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
+            Spacer(modifier = Modifier.height(Spacing.small))
 
-        // Backup & Sync button
-        Button(
-            onClick = {
-                haptic.click()
-                navController.navigate(Route.BACKUP)
-            },
-            shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier
-                .fillMaxWidth()
-                .pressClickable { }
-        ) {
-            Text("Backup & Restore")
-        }
-
-        Spacer(modifier = Modifier.height(Spacing.small))
-
-        // Language Selection - All 6 supported languages
-        val languageOptions = listOf(
-            LanguagePreference.ENGLISH,
-            LanguagePreference.TURKISH,
-            LanguagePreference.SPANISH,
-            LanguagePreference.GERMAN,
-            LanguagePreference.FRENCH,
-            LanguagePreference.ARABIC
-        )
-        val languageLabels = listOf(
-            stringResource(id = R.string.english),
-            stringResource(id = R.string.turkish),
-            stringResource(id = R.string.spanish),
-            stringResource(id = R.string.german),
-            stringResource(id = R.string.french),
-            stringResource(id = R.string.arabic)
-        )
-        val selectedLanguageIndex = languageOptions.indexOf(language)
-        SettingDropdown(
-            title = stringResource(id = R.string.language),
-            options = languageLabels,
-            selectedOption = languageLabels.getOrElse(selectedLanguageIndex) { languageLabels[0] },
-            onOptionSelected = { label ->
-                val index = languageLabels.indexOf(label)
-                viewModel.setLanguage(languageOptions.getOrElse(index) { LanguagePreference.ENGLISH })
-            }
-        )
-
-        // Manage Account
-        Button(
-            onClick = {
-                haptic.click()
-                navController.navigate(Route.MANAGEMENT)
-            },
-            shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier
-                .fillMaxWidth()
-                .pressClickable { }
-        ) {
-            Text(stringResource(id = R.string.manage_words))
-        }
-
-        // Reset Progress
-        Button(
-            onClick = {
-                haptic.longPress()
-                viewModel.resetProgress()
-                showToast(context, context.getString(R.string.progress_reset))
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-            shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier
-                .fillMaxWidth()
-                .pressClickable { }
-        ) {
-            Text(
-                stringResource(id = R.string.reset_progress),
-                color = MaterialTheme.colorScheme.onError
+            // Language Selection - All 6 supported languages
+            val languageOptions = listOf(
+                LanguagePreference.ENGLISH,
+                LanguagePreference.TURKISH,
+                LanguagePreference.SPANISH,
+                LanguagePreference.GERMAN,
+                LanguagePreference.FRENCH,
+                LanguagePreference.ARABIC
             )
-        }
+            val languageLabels = listOf(
+                stringResource(id = R.string.english),
+                stringResource(id = R.string.turkish),
+                stringResource(id = R.string.spanish),
+                stringResource(id = R.string.german),
+                stringResource(id = R.string.french),
+                stringResource(id = R.string.arabic)
+            )
+            val selectedLanguageIndex = languageOptions.indexOf(language)
+            SettingDropdown(
+                title = stringResource(id = R.string.language),
+                options = languageLabels,
+                selectedOption = languageLabels.getOrElse(selectedLanguageIndex) { languageLabels[0] },
+                onOptionSelected = { label ->
+                    val index = languageLabels.indexOf(label)
+                    viewModel.setLanguage(languageOptions.getOrElse(index) { LanguagePreference.ENGLISH })
+                }
+            )
 
-        // Logout
-        Button(
-            onClick = {
-                haptic.click()
-                viewModel.logout()
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-            shape = RoundedCornerShape(CornerRadius.medium),
-            modifier = Modifier
-                .fillMaxWidth()
-                .pressClickable { }
-        ) {
-            Text(stringResource(id = R.string.logout), color = MaterialTheme.colorScheme.onError)
+            // Manage Account
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.MANAGEMENT)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text(stringResource(id = R.string.manage_words))
+            }
+
+            // Reset Progress
+            Button(
+                onClick = {
+                    haptic.longPress()
+                    viewModel.resetProgress()
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.progress_reset),
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text(
+                    stringResource(id = R.string.reset_progress),
+                    color = MaterialTheme.colorScheme.onError
+                )
+            }
+
+            // Logout
+            Button(
+                onClick = {
+                    haptic.click()
+                    viewModel.logout()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text(stringResource(id = R.string.logout), color = MaterialTheme.colorScheme.onError)
+            }
         }
     }
 }
@@ -416,11 +436,6 @@ fun SettingSwitchWithDescription(
             }
         )
     }
-}
-
-// Toast function
-fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
 /**

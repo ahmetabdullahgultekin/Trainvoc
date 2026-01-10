@@ -150,8 +150,8 @@ fun OptionButton(
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = when {
-        isCorrect == true -> Color(0xFF10B981)
-        isCorrect == false -> Color(0xFFEF4444)
+        isCorrect == true -> MaterialTheme.colorScheme.primary
+        isCorrect == false -> MaterialTheme.colorScheme.error
         isSelected -> MaterialTheme.colorScheme.primaryContainer
         else -> MaterialTheme.colorScheme.surface
     }
@@ -204,6 +204,14 @@ fun GameResultDialog(
                 )
             },
             text = {
+                val accuracy by remember {
+                    derivedStateOf {
+                        if (totalQuestions > 0)
+                            (correctAnswers.toFloat() / totalQuestions * 100).toInt()
+                        else 0
+                    }
+                }
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -219,9 +227,6 @@ fun GameResultDialog(
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    val accuracy = if (totalQuestions > 0)
-                        (correctAnswers.toFloat() / totalQuestions * 100).toInt()
-                    else 0
                     Text(
                         text = "Accuracy: $accuracy%",
                         style = MaterialTheme.typography.titleMedium
@@ -264,7 +269,7 @@ fun FlipCard(
             .clickable(enabled = !isMatched) { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = if (isMatched)
-                Color(0xFF10B981)
+                MaterialTheme.colorScheme.primary
             else
                 MaterialTheme.colorScheme.primaryContainer
         ),
@@ -284,7 +289,7 @@ fun FlipCard(
             } else {
                 Icon(
                     imageVector = Icons.Default.QuestionMark,
-                    contentDescription = null,
+                    contentDescription = "Card face down",
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -302,9 +307,9 @@ fun TimerDisplay(
 ) {
     val progress = (timeRemaining / 60f).coerceIn(0f, 1f)
     val color = when {
-        timeRemaining < 10 -> Color(0xFFEF4444)
-        timeRemaining < 30 -> Color(0xFFF59E0B)
-        else -> Color(0xFF10B981)
+        timeRemaining < 10 -> MaterialTheme.colorScheme.error
+        timeRemaining < 30 -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.primary
     }
 
     Column(
@@ -352,7 +357,7 @@ fun ComboDisplay(
             Card(
                 modifier = modifier,
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF59E0B)
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
@@ -406,7 +411,7 @@ fun HintButton(
         modifier = modifier,
         enabled = hintsRemaining > 0
     ) {
-        Icon(Icons.Default.Lightbulb, contentDescription = null)
+        Icon(Icons.Default.Lightbulb, contentDescription = "Get hint")
         Spacer(modifier = Modifier.width(8.dp))
         Text("Hint ($hintsRemaining)")
     }
@@ -469,7 +474,7 @@ fun AchievementPopup(
                 .fillMaxWidth()
                 .padding(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFF59E0B)
+                containerColor = MaterialTheme.colorScheme.tertiary
             )
         ) {
             Row(
@@ -481,21 +486,21 @@ fun AchievementPopup(
             ) {
                 Icon(
                     Icons.Default.Stars,
-                    contentDescription = null,
-                    tint = Color.White,
+                    contentDescription = "Achievement unlocked",
+                    tint = MaterialTheme.colorScheme.onTertiary,
                     modifier = Modifier.size(40.dp)
                 )
                 Column {
                     Text(
                         text = "Achievement Unlocked!",
                         style = MaterialTheme.typography.titleSmall,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onTertiary
                     )
                     Text(
                         text = achievementName ?: "",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onTertiary
                     )
                 }
             }

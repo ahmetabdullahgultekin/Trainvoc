@@ -158,7 +158,7 @@ private fun MultipleChoiceGameContent(
                 }
 
                 // Options
-                items(question.options) { option ->
+                items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
                     val showCorrect = isSelected && isCorrect == true
                     val showIncorrect = isSelected && isCorrect == false

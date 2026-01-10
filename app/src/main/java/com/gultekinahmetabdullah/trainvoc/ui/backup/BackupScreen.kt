@@ -377,7 +377,7 @@ fun LocalBackupTab(
                 }
             }
         } else {
-            items(availableBackups) { backup ->
+            items(availableBackups, key = { it.filePath }) { backup ->
                 BackupFileItem(
                     backup = backup,
                     selected = backup == selectedBackup,
