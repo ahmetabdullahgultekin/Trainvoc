@@ -40,11 +40,12 @@ class MultipleChoiceGameViewModel @Inject constructor(
             val question = currentState.currentQuestion ?: return@launch
             val isCorrect = question.isCorrect(answer)
 
-            // Show feedback
+            // Show feedback with correct answer
             _uiState.value = MultipleChoiceUiState.ShowingFeedback(
                 gameState = currentState,
                 selectedAnswer = answer,
-                isCorrect = isCorrect
+                isCorrect = isCorrect,
+                correctAnswer = question.correctAnswer
             )
 
             // Wait for feedback animation
@@ -100,7 +101,8 @@ sealed class MultipleChoiceUiState {
     data class ShowingFeedback(
         val gameState: MultipleChoiceGame.GameState,
         val selectedAnswer: String,
-        val isCorrect: Boolean
+        val isCorrect: Boolean,
+        val correctAnswer: String
     ) : MultipleChoiceUiState()
     data class Complete(val gameState: MultipleChoiceGame.GameState) : MultipleChoiceUiState()
     data class Error(val message: String) : MultipleChoiceUiState()

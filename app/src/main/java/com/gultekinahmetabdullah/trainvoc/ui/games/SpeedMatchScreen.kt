@@ -181,6 +181,17 @@ private fun MatchOptionButton(
     isMatched: Boolean,
     onClick: () -> Unit
 ) {
+    val backgroundColor = when {
+        isMatched -> androidx.compose.ui.graphics.Color(0xFF4CAF50) // Bright green for matched
+        isSelected -> androidx.compose.ui.graphics.Color(0xFF2196F3) // Bright blue for selected
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
+
+    val contentColor = when {
+        isMatched || isSelected -> androidx.compose.ui.graphics.Color.White
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -188,21 +199,16 @@ private fun MatchOptionButton(
             .height(60.dp),
         enabled = !isMatched,
         colors = ButtonDefaults.buttonColors(
-            containerColor = when {
-                isMatched -> MaterialTheme.colorScheme.tertiary
-                isSelected -> MaterialTheme.colorScheme.primary
-                else -> MaterialTheme.colorScheme.surface
-            },
-            contentColor = when {
-                isMatched -> MaterialTheme.colorScheme.onTertiary
-                isSelected -> MaterialTheme.colorScheme.onPrimary
-                else -> MaterialTheme.colorScheme.onSurface
-            }
+            containerColor = backgroundColor,
+            contentColor = contentColor,
+            disabledContainerColor = backgroundColor.copy(alpha = 0.8f),
+            disabledContentColor = contentColor.copy(alpha = 0.8f)
         )
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (isSelected || isMatched) FontWeight.Bold else FontWeight.Normal,
             textAlign = TextAlign.Center
         )
     }

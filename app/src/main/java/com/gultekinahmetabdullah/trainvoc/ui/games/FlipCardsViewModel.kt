@@ -71,8 +71,16 @@ class FlipCardsViewModel @Inject constructor(
     }
 
     private suspend fun finishGame(gameState: FlipCardsGame.GameState) {
-        flipCardsGame.saveGameResult(gameState)
-        checkAchievements(gameState)
+        try {
+            flipCardsGame.saveGameResult(gameState)
+        } catch (e: Exception) {
+            // Ignore save errors - still show completion
+        }
+        try {
+            checkAchievements(gameState)
+        } catch (e: Exception) {
+            // Ignore achievement errors - still show completion
+        }
         _uiState.value = FlipCardsUiState.Complete(gameState)
     }
 

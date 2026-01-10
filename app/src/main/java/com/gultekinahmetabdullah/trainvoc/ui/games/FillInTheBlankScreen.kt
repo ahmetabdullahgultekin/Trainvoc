@@ -123,6 +123,15 @@ private fun FillInTheBlankContent(
     onNavigateBack: () -> Unit
 ) {
     val question = gameState.currentQuestion
+    var userInput by remember(gameState.currentQuestionIndex) { mutableStateOf("") }
+    var hasSubmitted by remember(gameState.currentQuestionIndex) { mutableStateOf(false) }
+
+    // Update hasSubmitted when feedback is shown
+    LaunchedEffect(isCorrect) {
+        if (isCorrect != null) {
+            hasSubmitted = true
+        }
+    }
 
     GameScreenTemplate(
         title = "Fill in the Blank",
@@ -161,7 +170,7 @@ private fun FillInTheBlankContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Complete the sentence:",
+                                text = "Type the missing word:",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -192,6 +201,70 @@ private fun FillInTheBlankContent(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
+                    }
+                }
+
+                // Text input field
+                item {
+                    OutlinedTextField(
+                        value = userInput,
+                        onValueChange = { if (!hasSubmitted) userInput = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !hasSubmitted,
+                        label = { Text("Your answer") },
+                        placeholder = { Text("Type the word...") },
+                        singleLine = true,
+                        isError = isCorrect == false,
+                        supportingText = if (isCorrect == false) {
+                            { Text("Correct answer: ${question.correctAnswer}", color = MaterialTheme.colorScheme.error) }
+                        } else null,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = if (isCorrect == true) androidx.compose.ui.graphics.Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = when (isCorrect) {
+                                true -> androidx.compose.ui.graphics.Color(0xFF4CAF50)
+                                false -> MaterialTheme.colorScheme.error
+                                null -> MaterialTheme.colorScheme.outline
+                            }
+                        ),
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                            imeAction = androidx.compose.ui.text.input.ImeAction.Done
+                        ),
+                        keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                            onDone = {
+                                if (userInput.isNotBlank() && !hasSubmitted) {
+                                    onAnswerSelected(userInput.trim())
+                                }
+                            }
+                        )
+                    )
+                }
+
+                // Submit button
+                item {
+                    Button(
+                        onClick = {
+                            if (userInput.isNotBlank() && !hasSubmitted) {
+                                onAnswerSelected(userInput.trim())
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = userInput.isNotBlank() && !hasSubmitted,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = when (isCorrect) {
+                                true -> androidx.compose.ui.graphics.Color(0xFF4CAF50)
+                                false -> MaterialTheme.colorScheme.error
+                                null -> MaterialTheme.colorScheme.primary
+                            }
+                        )
+                    ) {
+                        Text(
+                            text = when (isCorrect) {
+                                true -> "Correct!"
+                                false -> "Incorrect"
+                                null -> "Submit"
+                            },
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
 
@@ -228,18 +301,6 @@ private fun FillInTheBlankContent(
                             )
                         }
                     }
-                }
-
-                // Options
-                items(question.options, key = { it }) { option ->
-                    val isSelected = option == selectedAnswer
-
-                    OptionButton(
-                        text = option,
-                        isSelected = isSelected,
-                        isCorrect = if (isSelected) isCorrect else null,
-                        onClick = { onAnswerSelected(option) }
-                    )
                 }
 
                 // Accuracy

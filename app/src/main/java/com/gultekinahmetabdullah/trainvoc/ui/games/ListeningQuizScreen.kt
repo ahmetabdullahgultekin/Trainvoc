@@ -78,6 +78,7 @@ fun ListeningQuizScreen(
                 gameState = state.gameState,
                 selectedAnswer = state.selectedAnswer,
                 isCorrect = state.isCorrect,
+                correctAnswer = state.correctAnswer,
                 onAnswerSelected = { },
                 onPlayAudio = { },
                 onReplayAudio = { },
@@ -133,6 +134,7 @@ private fun ListeningQuizGameContent(
     gameState: com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.GameState,
     selectedAnswer: String?,
     isCorrect: Boolean?,
+    correctAnswer: String? = null,
     onAnswerSelected: (String) -> Unit,
     onPlayAudio: () -> Unit,
     onReplayAudio: () -> Unit,
@@ -199,28 +201,27 @@ private fun ListeningQuizGameContent(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
 
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                // Play button
-                                Button(
-                                    onClick = onPlayAudio,
-                                    enabled = !gameState.audioPlayed || gameState.canReplayAudio
-                                ) {
-                                    Icon(Icons.Default.PlayArrow, contentDescription = "Play audio")
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(if (!gameState.audioPlayed) "Play" else "Replay")
-                                }
-
-                                // Replay counter
-                                if (gameState.audioPlayed) {
-                                    OutlinedButton(
-                                        onClick = onReplayAudio,
-                                        enabled = gameState.canReplayAudio
-                                    ) {
-                                        Text("Replays: ${gameState.canReplay}")
+                            // Single unified play button
+                            Button(
+                                onClick = {
+                                    if (!gameState.audioPlayed) {
+                                        onPlayAudio()
+                                    } else {
+                                        onReplayAudio()
                                     }
-                                }
+                                },
+                                enabled = !gameState.audioPlayed || gameState.canReplayAudio,
+                                modifier = Modifier.padding(horizontal = 32.dp)
+                            ) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = "Play audio")
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    if (!gameState.audioPlayed) {
+                                        "Play Audio"
+                                    } else {
+                                        "Replay (${gameState.canReplay} left)"
+                                    }
+                                )
                             }
                         }
                     }
@@ -239,13 +240,14 @@ private fun ListeningQuizGameContent(
                 // Options
                 items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
-                    val showCorrect = isSelected && isCorrect == true
-                    val showIncorrect = isSelected && isCorrect == false
+                    // Show this option as the correct answer if user was wrong
+                    val isTheCorrectAnswer = isCorrect == false && option == correctAnswer
 
                     OptionButton(
                         text = option,
                         isSelected = isSelected,
                         isCorrect = if (isSelected) isCorrect else null,
+                        isTheCorrectAnswer = isTheCorrectAnswer,
                         onClick = { if (gameState.audioPlayed) onAnswerSelected(option) }
                     )
                 }
@@ -253,18 +255,29 @@ private fun ListeningQuizGameContent(
                 // Stats
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
                     ) {
-                        StatChip(
-                            label = "Accuracy",
-                            value = "${gameState.accuracy.toInt()}%"
-                        )
-                        StatChip(
-                            label = "Replays Left",
-                            value = "${gameState.canReplay}"
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Accuracy",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "${gameState.accuracy.toInt()}%",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
