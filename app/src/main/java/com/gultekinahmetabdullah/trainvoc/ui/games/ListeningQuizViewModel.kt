@@ -92,11 +92,12 @@ class ListeningQuizViewModel @Inject constructor(
             val question = currentState.currentQuestion ?: return@launch
             val isCorrect = listeningQuizGame.checkAnswer(question, answer)
 
-            // Show feedback
+            // Show feedback with correct answer
             _uiState.value = ListeningQuizUiState.ShowingFeedback(
                 gameState = currentState,
                 selectedAnswer = answer,
-                isCorrect = isCorrect
+                isCorrect = isCorrect,
+                correctAnswer = question.correctAnswer
             )
 
             // Wait for feedback animation
@@ -157,7 +158,8 @@ sealed class ListeningQuizUiState {
     data class ShowingFeedback(
         val gameState: ListeningQuizGame.GameState,
         val selectedAnswer: String,
-        val isCorrect: Boolean
+        val isCorrect: Boolean,
+        val correctAnswer: String
     ) : ListeningQuizUiState()
     data class Complete(val gameState: ListeningQuizGame.GameState) : ListeningQuizUiState()
     data class Error(val message: String) : ListeningQuizUiState()

@@ -141,33 +141,48 @@ private fun GameProgressBar(
 
 /**
  * Multiple Choice Option Button
+ * Enhanced with correct answer highlighting on wrong answers
  */
 @Composable
 fun OptionButton(
     text: String,
     isSelected: Boolean = false,
     isCorrect: Boolean? = null,
+    isTheCorrectAnswer: Boolean = false, // Highlight this as the correct answer
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = when {
-        isCorrect == true -> MaterialTheme.colorScheme.primary
-        isCorrect == false -> MaterialTheme.colorScheme.error
+        isTheCorrectAnswer -> Color(0xFF2E7D32) // Dark green for correct answer
+        isCorrect == true -> Color(0xFF4CAF50) // Green for user's correct selection
+        isCorrect == false -> Color(0xFFE53935) // Red for user's wrong selection
         isSelected -> MaterialTheme.colorScheme.primaryContainer
-        else -> MaterialTheme.colorScheme.surface
+        else -> MaterialTheme.colorScheme.surfaceVariant
     }
 
     val contentColor = when {
-        isCorrect != null -> Color.White
+        isTheCorrectAnswer || isCorrect != null -> Color.White
         isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
         else -> MaterialTheme.colorScheme.onSurface
+    }
+
+    val borderColor = when {
+        isTheCorrectAnswer -> Color(0xFF1B5E20) // Dark green border
+        isCorrect == true -> Color(0xFF388E3C)
+        isCorrect == false -> Color(0xFFC62828)
+        else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
     }
 
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(60.dp),
+            .height(60.dp)
+            .border(
+                width = if (isTheCorrectAnswer || isCorrect != null) 2.dp else 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(12.dp)
+            ),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor
@@ -177,6 +192,7 @@ fun OptionButton(
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
+            fontWeight = if (isTheCorrectAnswer) FontWeight.Bold else FontWeight.Normal,
             textAlign = TextAlign.Center
         )
     }

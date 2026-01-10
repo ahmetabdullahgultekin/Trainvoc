@@ -47,6 +47,7 @@ fun MultipleChoiceGameScreen(
                 gameState = state.gameState,
                 selectedAnswer = state.selectedAnswer,
                 isCorrect = state.isCorrect,
+                correctAnswer = state.correctAnswer,
                 onAnswerSelected = { }, // Disabled during feedback
                 onNavigateBack = onNavigateBack
             )
@@ -99,6 +100,7 @@ private fun MultipleChoiceGameContent(
     gameState: com.gultekinahmetabdullah.trainvoc.games.MultipleChoiceGame.GameState,
     selectedAnswer: String?,
     isCorrect: Boolean?,
+    correctAnswer: String? = null,
     onAnswerSelected: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
@@ -163,13 +165,14 @@ private fun MultipleChoiceGameContent(
                 // Options
                 items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
-                    val showCorrect = isSelected && isCorrect == true
-                    val showIncorrect = isSelected && isCorrect == false
+                    // Show this option as the correct answer if user was wrong
+                    val isTheCorrectAnswer = isCorrect == false && option == correctAnswer
 
                     OptionButton(
                         text = option,
                         isSelected = isSelected,
                         isCorrect = if (isSelected) isCorrect else null,
+                        isTheCorrectAnswer = isTheCorrectAnswer,
                         onClick = { onAnswerSelected(option) }
                     )
                 }
