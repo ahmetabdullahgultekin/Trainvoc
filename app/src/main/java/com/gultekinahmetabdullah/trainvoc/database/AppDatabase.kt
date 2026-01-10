@@ -16,6 +16,7 @@ import com.gultekinahmetabdullah.trainvoc.features.database.FeatureUsageLog
 import com.gultekinahmetabdullah.trainvoc.features.database.GlobalFeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.database.UserFeatureFlag
 import com.gultekinahmetabdullah.trainvoc.images.WordImage
+import com.gultekinahmetabdullah.trainvoc.offline.SyncQueue
 
 @Database(
     entities = [
@@ -28,9 +29,10 @@ import com.gultekinahmetabdullah.trainvoc.images.WordImage
         FeatureUsageLog::class,
         AudioCache::class,
         WordImage::class,
-        ExampleSentence::class
+        ExampleSentence::class,
+        SyncQueue::class
     ],
-    version = 7
+    version = 8
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -42,6 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun audioCacheDao(): com.gultekinahmetabdullah.trainvoc.audio.AudioCacheDao
     abstract fun wordImageDao(): com.gultekinahmetabdullah.trainvoc.images.WordImageDao
     abstract fun exampleSentenceDao(): com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao
+    abstract fun syncQueueDao(): com.gultekinahmetabdullah.trainvoc.offline.SyncQueueDao
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "trainvoc-db"
@@ -274,6 +277,47 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 7 to 8: Add sync queue table
+         *
+         * OFFLINE MODE & SYNC SYSTEM:
+         * - Adds table for queuing actions when offline
+         * - Enables local-first architecture
+         * - Automatic background sync when online
+         * - Conflict resolution support
+         * - Retry mechanism for failed syncs
+         *
+         * Purpose:
+         * - Queue data changes when offline
+         * - Sync to server when connection restored
+         * - Track sync status and retry failed operations
+         * - Support seamless offline/online transition
+         */
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS sync_queue (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        actionType TEXT NOT NULL,
+                        entityType TEXT NOT NULL,
+                        entity_id TEXT NOT NULL,
+                        entity_data TEXT NOT NULL,
+                        timestamp INTEGER NOT NULL,
+                        synced INTEGER NOT NULL DEFAULT 0,
+                        attempt_count INTEGER NOT NULL DEFAULT 0,
+                        last_error TEXT,
+                        last_attempt INTEGER,
+                        priority INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_queue_synced ON sync_queue(synced)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_queue_entity_type ON sync_queue(entityType)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_queue_timestamp ON sync_queue(timestamp)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_sync_queue_priority ON sync_queue(priority)")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -292,7 +336,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_3_4,
                 MIGRATION_4_5,
                 MIGRATION_5_6,
-                MIGRATION_6_7
+                MIGRATION_6_7,
+                MIGRATION_7_8
             )
             .build()
     }

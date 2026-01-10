@@ -74,4 +74,13 @@ interface WordImageDao {
 
     @Query("DELETE FROM word_images")
     suspend fun clearAllImages()
+
+    @Query("SELECT COUNT(*) FROM word_images WHERE cached_file_path IS NOT NULL")
+    suspend fun getCachedImageCount(): Int
+
+    @Query("UPDATE word_images SET cached_file_path = NULL, file_size_bytes = 0")
+    suspend fun clearAllCachedPaths()
+
+    @Query("UPDATE word_images SET cached_file_path = :filePath, file_size_bytes = :fileSize WHERE id = :imageId")
+    suspend fun setCachedFilePath(imageId: Long, filePath: String, fileSize: Long)
 }

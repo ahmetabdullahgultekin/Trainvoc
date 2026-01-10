@@ -5,6 +5,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import com.gultekinahmetabdullah.trainvoc.features.worker.DailyUsageResetWorker
+import com.gultekinahmetabdullah.trainvoc.offline.SyncWorker
 import com.gultekinahmetabdullah.trainvoc.performance.PerformanceMonitor
 import com.gultekinahmetabdullah.trainvoc.performance.StartupOptimizer
 import com.gultekinahmetabdullah.trainvoc.performance.createOptimizedWorkManagerConfig
@@ -45,6 +46,7 @@ class TrainvocApplication : Application(), Configuration.Provider {
         StartupOptimizer.initInBackground {
             initializeFeatureFlags()
             scheduleDailyReset()
+            scheduleBackgroundSync()
         }
 
         // Log startup time
@@ -74,6 +76,20 @@ class TrainvocApplication : Application(), Configuration.Provider {
     private fun scheduleDailyReset() {
         try {
             DailyUsageResetWorker.schedule(this)
+        } catch (e: Exception) {
+            // Log error but don't crash app
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Schedule background sync worker
+     * - Syncs offline changes when device comes online
+     * - Runs periodically (every 15 minutes)
+     */
+    private fun scheduleBackgroundSync() {
+        try {
+            SyncWorker.schedule(this)
         } catch (e: Exception) {
             // Log error but don't crash app
             e.printStackTrace()
