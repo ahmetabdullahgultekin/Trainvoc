@@ -95,23 +95,31 @@ fun HomeScreen(
     // Use Lottie animation and image with preload
     val composition = preloadLottie
         ?: rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_diamond.json")).value
+    // Lifecycle-aware animations: pause when app is in background to save battery
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
+    val isActive = lifecycleState == Lifecycle.State.RESUMED
+
     val progress by animateLottieCompositionAsState(
         composition,
         iterations = LottieConstants.IterateForever,
-        isPlaying = true,
+        isPlaying = isActive, // Only play when app is active
     )
     val bgPainter = preloadBg ?: painterResource(id = R.drawable.bg_3)
 
-    // Button Scaling Animation
+    // Button Scaling Animation (lifecycle-aware)
     val scaleAnim = remember { Animatable(1f) }
-    LaunchedEffect(Unit) {
-        scaleAnim.animateTo(
-            targetValue = 1.05f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(AnimationDuration.buttonPulse, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
+    LaunchedEffect(isActive) {
+        if (isActive) {
+            scaleAnim.animateTo(
+                targetValue = 1.05f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(AnimationDuration.buttonPulse, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
             )
-        )
+        } else {
+            scaleAnim.snapTo(1f) // Reset to original size when paused
+        }
     }
 
     // Start animations slowly on first launch, then speed up

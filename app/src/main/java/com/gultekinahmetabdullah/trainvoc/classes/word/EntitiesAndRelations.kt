@@ -17,6 +17,13 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
  * - level: Used in filtering by word level (A1, A2, B1, etc.)
  * - stat_id: Used in JOIN operations with statistics table
  * - last_reviewed: Used in sorting by review date (LEAST_RECENT, MOST_RECENT)
+ * - next_review_date: Used for spaced repetition scheduling
+ *
+ * SPACED REPETITION (SM-2 Algorithm):
+ * - next_review_date: Timestamp for when word should be reviewed next
+ * - easiness_factor: Learning difficulty (1.3-3.5, default 2.5)
+ * - interval_days: Current interval between reviews
+ * - repetitions: Consecutive successful reviews
  */
 
 @Entity(
@@ -24,7 +31,8 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
     indices = [
         Index(value = ["level"]),
         Index(value = ["stat_id"]),
-        Index(value = ["last_reviewed"])
+        Index(value = ["last_reviewed"]),
+        Index(value = ["next_review_date"]) // For efficient due date queries
     ]
 )
 @Immutable
@@ -35,7 +43,13 @@ data class Word(
     @ColumnInfo(name = "level") val level: WordLevel? = null, // One-to-many relationship with the level
     @ColumnInfo(name = "last_reviewed") val lastReviewed: Long? = null, // One-to-one relationship with the last reviewed
     @ColumnInfo(name = "stat_id") val statId: Int = 0, // One-to-many relationship with the statistic
-    @ColumnInfo(name = "seconds_spent") val secondsSpent: Int = 0 // One-to-one relationship with the seconds spent
+    @ColumnInfo(name = "seconds_spent") val secondsSpent: Int = 0, // One-to-one relationship with the seconds spent
+
+    // Spaced repetition fields (SM-2 algorithm)
+    @ColumnInfo(name = "next_review_date") val nextReviewDate: Long? = null, // Next review timestamp
+    @ColumnInfo(name = "easiness_factor") val easinessFactor: Float = 2.5f, // Learning difficulty (1.3-3.5)
+    @ColumnInfo(name = "interval_days") val intervalDays: Int = 0, // Days between reviews
+    @ColumnInfo(name = "repetitions") val repetitions: Int = 0 // Consecutive successful reviews
 )
 
 /**

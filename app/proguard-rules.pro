@@ -55,6 +55,11 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
+# ===== Security Crypto (EncryptedSharedPreferences) =====
+-keep class androidx.security.crypto.** { *; }
+-keep class com.google.crypto.tink.** { *; }
+-dontwarn com.google.crypto.tink.**
+
 # ===== Jetpack Compose =====
 -keep class androidx.compose.** { *; }
 -keep @androidx.compose.runtime.Composable class * { *; }

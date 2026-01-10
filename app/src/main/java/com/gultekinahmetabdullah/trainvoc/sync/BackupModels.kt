@@ -171,7 +171,8 @@ sealed class BackupResult {
     data class Success(
         val filePath: String,
         val wordCount: Int,
-        val sizeBytes: Long
+        val sizeBytes: Long,
+        val encrypted: Boolean = false
     ) : BackupResult()
 
     data class Failure(
