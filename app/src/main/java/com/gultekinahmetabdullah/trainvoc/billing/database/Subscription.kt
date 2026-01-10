@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.billing.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.gultekinahmetabdullah.trainvoc.billing.SubscriptionPeriod
 import com.gultekinahmetabdullah.trainvoc.billing.SubscriptionTier
@@ -11,7 +12,14 @@ import com.gultekinahmetabdullah.trainvoc.billing.SubscriptionTier
  *
  * Tracks current subscription, purchase history, and renewal status
  */
-@Entity(tableName = "subscriptions")
+@Entity(
+    tableName = "subscriptions",
+    indices = [
+        Index(value = ["tier"], name = "index_subscriptions_tier"),
+        Index(value = ["is_active"], name = "index_subscriptions_is_active"),
+        Index(value = ["expiry_time"], name = "index_subscriptions_expiry_time")
+    ]
+)
 data class Subscription(
     @PrimaryKey
     @ColumnInfo(name = "user_id")
@@ -128,7 +136,14 @@ data class Subscription(
 /**
  * Purchase history record
  */
-@Entity(tableName = "purchase_history")
+@Entity(
+    tableName = "purchase_history",
+    indices = [
+        Index(value = ["order_id"], name = "index_purchase_history_order_id"),
+        Index(value = ["purchase_token"], name = "index_purchase_history_purchase_token"),
+        Index(value = ["purchase_time"], name = "index_purchase_history_purchase_time")
+    ]
+)
 data class PurchaseRecord(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

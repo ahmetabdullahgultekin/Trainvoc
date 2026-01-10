@@ -2,13 +2,22 @@ package com.gultekinahmetabdullah.trainvoc.offline
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
  * Represents an action that needs to be synced to the server when online
  * Part of offline-first architecture for seamless offline/online experience
  */
-@Entity(tableName = "sync_queue")
+@Entity(
+    tableName = "sync_queue",
+    indices = [
+        Index(value = ["synced"], name = "index_sync_queue_synced"),
+        Index(value = ["entityType"], name = "index_sync_queue_entity_type"),
+        Index(value = ["timestamp"], name = "index_sync_queue_timestamp"),
+        Index(value = ["priority"], name = "index_sync_queue_priority")
+    ]
+)
 data class SyncQueue(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
