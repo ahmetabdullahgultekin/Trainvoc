@@ -10,15 +10,21 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
+import com.gultekinahmetabdullah.trainvoc.features.database.FeatureUsageLog
+import com.gultekinahmetabdullah.trainvoc.features.database.GlobalFeatureFlag
+import com.gultekinahmetabdullah.trainvoc.features.database.UserFeatureFlag
 
 @Database(
     entities = [
         Word::class,
         Statistic::class,
         Exam::class,
-        WordExamCrossRef::class
+        WordExamCrossRef::class,
+        GlobalFeatureFlag::class,
+        UserFeatureFlag::class,
+        FeatureUsageLog::class
     ],
-    version = 3
+    version = 4
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -26,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun examDao(): ExamDao
     abstract fun wordExamCrossRefDao(): WordExamCrossRefDao
     abstract fun statisticDao(): StatisticDao
+    abstract fun featureFlagDao(): com.gultekinahmetabdullah.trainvoc.features.database.FeatureFlagDao
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "trainvoc-db"
@@ -83,6 +90,73 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 3 to 4: Add feature flag system
+         *
+         * FEATURE FLAG SYSTEM:
+         * - Adds three tables for comprehensive feature management:
+         *   1. feature_flags_global: Admin controls for global feature toggles
+         *   2. feature_flags_user: User preferences for features
+         *   3. feature_usage_log: Usage tracking and cost monitoring
+         *
+         * Purpose:
+         * - Cost control for expensive features (TTS, Speech Recognition, etc.)
+         * - User preferences (opt-in/opt-out)
+         * - A/B testing and gradual rollout
+         * - Usage analytics and cost tracking
+         */
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create feature_flags_global table (admin controls)
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS feature_flags_global (
+                        feature_key TEXT PRIMARY KEY NOT NULL,
+                        enabled INTEGER NOT NULL,
+                        rollout_percentage INTEGER NOT NULL DEFAULT 100,
+                        max_daily_usage INTEGER,
+                        current_daily_usage INTEGER NOT NULL DEFAULT 0,
+                        last_reset_date INTEGER NOT NULL,
+                        total_cost REAL NOT NULL DEFAULT 0.0,
+                        notes TEXT,
+                        last_modified INTEGER NOT NULL,
+                        modified_by TEXT
+                    )
+                """.trimIndent())
+
+                // Create feature_flags_user table (user preferences)
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS feature_flags_user (
+                        feature_key TEXT PRIMARY KEY NOT NULL,
+                        user_enabled INTEGER NOT NULL,
+                        has_used_feature INTEGER NOT NULL DEFAULT 0,
+                        usage_count INTEGER NOT NULL DEFAULT 0,
+                        last_used INTEGER,
+                        feedback_provided INTEGER NOT NULL DEFAULT 0,
+                        feedback_rating INTEGER
+                    )
+                """.trimIndent())
+
+                // Create feature_usage_log table (usage tracking)
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS feature_usage_log (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        feature_key TEXT NOT NULL,
+                        timestamp INTEGER NOT NULL,
+                        api_calls_made INTEGER NOT NULL DEFAULT 0,
+                        estimated_cost REAL NOT NULL DEFAULT 0.0,
+                        success INTEGER NOT NULL DEFAULT 1,
+                        error_message TEXT,
+                        user_id TEXT
+                    )
+                """.trimIndent())
+
+                // Create indices for efficient queries
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_feature_usage_log_feature_key ON feature_usage_log(feature_key)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_feature_usage_log_timestamp ON feature_usage_log(timestamp)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_feature_usage_log_success ON feature_usage_log(success)")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -95,7 +169,7 @@ abstract class AppDatabase : RoomDatabase() {
             DATABASE_NAME
         )
             .createFromAsset("database/trainvoc-db.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .build()
     }
 }
