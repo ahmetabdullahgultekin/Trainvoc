@@ -79,7 +79,7 @@ fun QuizExamMenuScreen(onExamSelected: (QuizParameter) -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(categories.size) { index ->
+                items(categories.size, key = { index -> categories[index].titleRes }) { index ->
                     val cat = categories[index]
                     val color =
                         if (cat.color == Color.Unspecified) MaterialTheme.colorScheme.primary else cat.color

@@ -198,7 +198,12 @@ fun ConflictResolutionDialog(
 
                     // Conflict details
                     if (showDetails) {
-                        items(conflicts) { conflict ->
+                        items(conflicts, key = { conflict ->
+                            when(conflict) {
+                                is DataConflict.WordConflict -> "word_${conflict.word}"
+                                is DataConflict.StatisticConflict -> "stat_${conflict.word}"
+                            }
+                        }) { conflict ->
                             ConflictDetailItem(conflict)
                         }
                     }

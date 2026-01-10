@@ -124,7 +124,7 @@ fun WordManagementScreen(wordViewModel: WordViewModel) {
 
         // Display Words
         LazyColumn {
-            items(filteredWords) { word ->
+            items(filteredWords, key = { it.word.word }) { word ->
                 WordCard(word)
             }
         }

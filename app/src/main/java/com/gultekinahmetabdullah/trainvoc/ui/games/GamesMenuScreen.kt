@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.utils.getAdaptiveColumnCount
 
 /**
  * Games Menu Screen
@@ -66,14 +67,20 @@ fun GamesMenuScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Games grid
+            // Games grid - adaptive columns based on screen size
+            val columnCount = getAdaptiveColumnCount(
+                compact = 2,  // Phone portrait
+                medium = 3,   // Tablet or phone landscape
+                expanded = 4  // Large tablet
+            )
+
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(columnCount),
                 contentPadding = PaddingValues(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(GameType.values()) { gameType ->
+                items(GameType.values(), key = { it.route }) { gameType ->
                     GameCard(
                         gameType = gameType,
                         gamesPlayed = uiState.getGamesPlayed(gameType),
@@ -136,7 +143,7 @@ private fun StatItem(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = null,
+            contentDescription = label,
             tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -186,7 +193,7 @@ private fun GameCard(
                 // Icon
                 Icon(
                     imageVector = gameType.icon,
-                    contentDescription = null,
+                    contentDescription = gameType.displayName,
                     modifier = Modifier.size(40.dp),
                     tint = Color.White
                 )

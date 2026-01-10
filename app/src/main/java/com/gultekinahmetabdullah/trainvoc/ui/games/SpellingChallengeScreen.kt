@@ -253,7 +253,7 @@ private fun SpellingChallengeGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = !isShowingFeedback && gameState.revealedLetters.size < question.correctSpelling.length
                         ) {
-                            Icon(Icons.Default.Lightbulb, contentDescription = null)
+                            Icon(Icons.Default.Lightbulb, contentDescription = "Show hint")
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Hint")
                         }
@@ -273,7 +273,7 @@ private fun SpellingChallengeGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = !isShowingFeedback
                         ) {
-                            Icon(Icons.Default.SkipNext, contentDescription = null)
+                            Icon(Icons.Default.SkipNext, contentDescription = "Skip question")
                             Spacer(modifier = Modifier.width(4.dp))
                             Text("Skip")
                         }

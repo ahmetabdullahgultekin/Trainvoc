@@ -200,7 +200,7 @@ private fun ListeningQuizGameContent(
                                     onClick = onPlayAudio,
                                     enabled = !gameState.audioPlayed || gameState.canReplayAudio
                                 ) {
-                                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                                    Icon(Icons.Default.PlayArrow, contentDescription = "Play audio")
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(if (!gameState.audioPlayed) "Play" else "Replay")
                                 }
@@ -230,7 +230,7 @@ private fun ListeningQuizGameContent(
                 }
 
                 // Options
-                items(question.options) { option ->
+                items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
                     val showCorrect = isSelected && isCorrect == true
                     val showIncorrect = isSelected && isCorrect == false

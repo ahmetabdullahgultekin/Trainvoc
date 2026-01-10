@@ -363,7 +363,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                         }
                     }
                 }
-                items(exams) { exam ->
+                items(exams, key = { it }) { exam ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

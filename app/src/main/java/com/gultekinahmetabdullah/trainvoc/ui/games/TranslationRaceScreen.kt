@@ -172,7 +172,7 @@ private fun TranslationRaceGameContent(
                         )
                         Icon(
                             Icons.Default.ArrowForward,
-                            contentDescription = null,
+                            contentDescription = "Translation direction",
                             modifier = Modifier.padding(horizontal = 8.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -216,7 +216,7 @@ private fun TranslationRaceGameContent(
                 }
 
                 // Options
-                items(question.options) { option ->
+                items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
 
                     OptionButton(
