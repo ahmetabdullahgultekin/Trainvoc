@@ -6,13 +6,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.gultekinahmetabdullah.trainvoc.audio.AudioCache
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
+import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentence
 import com.gultekinahmetabdullah.trainvoc.features.database.FeatureUsageLog
 import com.gultekinahmetabdullah.trainvoc.features.database.GlobalFeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.database.UserFeatureFlag
+import com.gultekinahmetabdullah.trainvoc.images.WordImage
 
 @Database(
     entities = [
@@ -22,9 +25,12 @@ import com.gultekinahmetabdullah.trainvoc.features.database.UserFeatureFlag
         WordExamCrossRef::class,
         GlobalFeatureFlag::class,
         UserFeatureFlag::class,
-        FeatureUsageLog::class
+        FeatureUsageLog::class,
+        AudioCache::class,
+        WordImage::class,
+        ExampleSentence::class
     ],
-    version = 4
+    version = 7
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -33,6 +39,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun wordExamCrossRefDao(): WordExamCrossRefDao
     abstract fun statisticDao(): StatisticDao
     abstract fun featureFlagDao(): com.gultekinahmetabdullah.trainvoc.features.database.FeatureFlagDao
+    abstract fun audioCacheDao(): com.gultekinahmetabdullah.trainvoc.audio.AudioCacheDao
+    abstract fun wordImageDao(): com.gultekinahmetabdullah.trainvoc.images.WordImageDao
+    abstract fun exampleSentenceDao(): com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "trainvoc-db"
@@ -157,6 +166,114 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 4 to 5: Add audio cache table
+         *
+         * AUDIO CACHING SYSTEM:
+         * - Adds table for caching TTS-generated audio files
+         * - Reduces API calls and costs
+         * - Improves performance and offline support
+         * - LRU cache management
+         *
+         * Purpose:
+         * - Cache audio files locally to avoid repeated TTS API calls
+         * - Track audio usage for cache management
+         * - Support offline audio playback
+         */
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create audio_cache table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS audio_cache (
+                        word_id TEXT PRIMARY KEY NOT NULL,
+                        word_text TEXT NOT NULL,
+                        language TEXT NOT NULL DEFAULT 'en',
+                        tts_generated INTEGER NOT NULL DEFAULT 1,
+                        cached_file_path TEXT,
+                        file_size_bytes INTEGER NOT NULL DEFAULT 0,
+                        created_at INTEGER NOT NULL,
+                        last_accessed INTEGER NOT NULL,
+                        access_count INTEGER NOT NULL DEFAULT 0,
+                        audio_url TEXT
+                    )
+                """.trimIndent())
+
+                // Create indices for efficient queries
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_audio_cache_word_id ON audio_cache(word_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_audio_cache_last_accessed ON audio_cache(last_accessed)")
+            }
+        }
+
+        /**
+         * Migration from version 5 to 6: Add word images table
+         *
+         * WORD IMAGES SYSTEM:
+         * - Adds table for storing images associated with words
+         * - Supports multiple image sources (Unsplash, Pixabay, user uploads)
+         * - Local caching for offline support
+         * - Visual learning enhancement
+         */
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS word_images (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        word_id TEXT NOT NULL,
+                        word_text TEXT NOT NULL,
+                        image_url TEXT NOT NULL,
+                        thumbnail_url TEXT,
+                        source TEXT NOT NULL,
+                        cached_file_path TEXT,
+                        file_size_bytes INTEGER NOT NULL DEFAULT 0,
+                        attribution TEXT,
+                        photographer TEXT,
+                        photographer_url TEXT,
+                        created_at INTEGER NOT NULL,
+                        last_updated INTEGER NOT NULL,
+                        is_primary INTEGER NOT NULL DEFAULT 1,
+                        access_count INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_word_images_word_id ON word_images(word_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_word_images_source ON word_images(source)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_word_images_last_updated ON word_images(last_updated)")
+            }
+        }
+
+        /**
+         * Migration from version 6 to 7: Add example sentences table
+         *
+         * EXAMPLE SENTENCES SYSTEM:
+         * - Adds table for storing example sentences
+         * - Shows words used in context
+         * - Multiple difficulty levels and usage contexts
+         * - Supports Tatoeba, AI-generated, and manual examples
+         */
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS example_sentences (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        word_id TEXT NOT NULL,
+                        word_text TEXT NOT NULL,
+                        sentence TEXT NOT NULL,
+                        translation TEXT NOT NULL,
+                        difficulty TEXT NOT NULL,
+                        context TEXT NOT NULL,
+                        source TEXT NOT NULL,
+                        audio_url TEXT,
+                        created_at INTEGER NOT NULL,
+                        is_favorite INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_example_sentences_word_id ON example_sentences(word_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_example_sentences_difficulty ON example_sentences(difficulty)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_example_sentences_context ON example_sentences(context)")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -169,7 +286,14 @@ abstract class AppDatabase : RoomDatabase() {
             DATABASE_NAME
         )
             .createFromAsset("database/trainvoc-db.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(
+                MIGRATION_1_2,
+                MIGRATION_2_3,
+                MIGRATION_3_4,
+                MIGRATION_4_5,
+                MIGRATION_5_6,
+                MIGRATION_6_7
+            )
             .build()
     }
 }
