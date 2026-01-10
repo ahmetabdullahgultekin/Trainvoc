@@ -41,6 +41,7 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
+import com.gultekinahmetabdullah.trainvoc.navigation.gamesNavGraph
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +99,7 @@ fun MainScreen(
                         onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
                         onNavigateToStats = { navController.navigate(Route.STATS) },
                         onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
+                        onNavigateToGames = { navController.navigate(Route.GAMES_MENU) },
                     )
                 }
                 composable(Route.STORY) {
@@ -185,6 +187,9 @@ fun MainScreen(
                         wordViewModel = wordViewModel
                     )
                 }
+
+                // Memory Games Navigation
+                gamesNavGraph(navController)
             }
         }
     }

@@ -9,6 +9,7 @@
     <string name="settings">Settings</string>
     <string name="help">Help</string>
     <string name="stats">Stats</string>
+    <string name="games">Games</string>
     <string name="word_management">Word Management</string>
     <string name="search">Search</string>
     <string name="add_new_word">Add New Word</string>
@@ -296,4 +297,8 @@
     <string name="word_marked_correct">"%1$s" marked as known</string>
     <string name="keep_practicing">Keep practicing!</string>
     <string name="word_marked_wrong">"%1$s" added to practice list</string>
+
+    <!-- Widget Descriptions -->
+    <string name="widget_streak_description">Track your learning streak on your home screen</string>
+    <string name="widget_goals_description">Monitor your daily learning goals progress</string>
 </resources>

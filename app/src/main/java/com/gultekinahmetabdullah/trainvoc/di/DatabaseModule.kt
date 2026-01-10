@@ -51,4 +51,34 @@ object DatabaseModule {
     fun provideStatisticDao(database: AppDatabase): StatisticDao {
         return database.statisticDao()
     }
+
+    @Provides
+    fun provideAudioCacheDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.audio.AudioCacheDao {
+        return database.audioCacheDao()
+    }
+
+    @Provides
+    fun provideWordImageDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.images.WordImageDao {
+        return database.wordImageDao()
+    }
+
+    @Provides
+    fun provideExampleSentenceDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao {
+        return database.exampleSentenceDao()
+    }
+
+    @Provides
+    fun provideSyncQueueDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.offline.SyncQueueDao {
+        return database.syncQueueDao()
+    }
+
+    @Provides
+    fun provideSubscriptionDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.billing.database.SubscriptionDao {
+        return database.subscriptionDao()
+    }
+
+    @Provides
+    fun provideGamificationDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao {
+        return database.gamificationDao()
+    }
 }
