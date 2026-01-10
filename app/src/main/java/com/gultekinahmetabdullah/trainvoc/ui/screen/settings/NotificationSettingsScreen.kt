@@ -126,7 +126,7 @@ fun NotificationSettingsScreen(
                         onClick = { viewModel.sendTestNotification() },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Notifications, contentDescription = null)
+                        Icon(Icons.Default.Notifications, contentDescription = "Send test notification")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Send Test Notification")
                     }

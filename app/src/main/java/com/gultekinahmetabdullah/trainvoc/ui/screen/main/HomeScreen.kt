@@ -154,7 +154,7 @@ fun HomeScreen(
             // bg_3 image as semi-transparent overlay on top, lower alpha
             Image(
                 painter = bgPainter,
-                contentDescription = null,
+                contentDescription = "Background decoration",
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.FillBounds,
                 alpha = 0.1f // Opacity increased, animation will be more visible

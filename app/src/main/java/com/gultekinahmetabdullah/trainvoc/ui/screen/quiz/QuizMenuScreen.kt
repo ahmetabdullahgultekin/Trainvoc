@@ -65,7 +65,7 @@ fun QuizMenuScreen(onQuizSelected: (Quiz) -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(Quiz.quizTypes.size) { index ->
+                items(Quiz.quizTypes.size, key = { index -> Quiz.quizTypes[index].name }) { index ->
                     val quiz = Quiz.quizTypes[index]
                     AnimatedQuizCard(
                         title = stringResource(

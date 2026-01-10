@@ -142,7 +142,7 @@ fun AppBottomSheet(
                             leadingContent = {
                                 Icon(
                                     icon,
-                                    contentDescription = null,
+                                    contentDescription = text,
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             },
