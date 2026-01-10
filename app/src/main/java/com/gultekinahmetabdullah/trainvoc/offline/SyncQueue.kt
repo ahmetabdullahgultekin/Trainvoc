@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.offline
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -13,33 +14,43 @@ data class SyncQueue(
     val id: Long = 0,
 
     /** Type of action to sync */
+    @ColumnInfo(name = "actionType")
     val actionType: SyncAction,
 
     /** Type of entity being synced */
+    @ColumnInfo(name = "entityType")
     val entityType: EntityType,
 
     /** ID of the entity */
+    @ColumnInfo(name = "entity_id")
     val entityId: String,
 
     /** Serialized JSON data for the entity */
+    @ColumnInfo(name = "entity_data")
     val entityData: String,
 
     /** When the action was queued */
+    @ColumnInfo(name = "timestamp")
     val timestamp: Long = System.currentTimeMillis(),
 
     /** Whether this has been successfully synced */
+    @ColumnInfo(name = "synced", defaultValue = "0")
     val synced: Boolean = false,
 
     /** Number of sync attempts */
+    @ColumnInfo(name = "attempt_count", defaultValue = "0")
     val attemptCount: Int = 0,
 
     /** Last error message if sync failed */
+    @ColumnInfo(name = "last_error")
     val lastError: String? = null,
 
     /** Last attempt timestamp */
+    @ColumnInfo(name = "last_attempt")
     val lastAttempt: Long? = null,
 
     /** Priority (higher = more important) */
+    @ColumnInfo(name = "priority", defaultValue = "0")
     val priority: Int = 0
 )
 
