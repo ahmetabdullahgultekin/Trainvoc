@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -123,7 +124,14 @@ enum class DifficultyLevel {
 /**
  * Game Session tracking
  */
-@Entity(tableName = "game_sessions")
+@Entity(
+    tableName = "game_sessions",
+    indices = [
+        Index(value = ["user_id"], name = "index_game_sessions_user_id"),
+        Index(value = ["game_type"], name = "index_game_sessions_game_type"),
+        Index(value = ["started_at"], name = "index_game_sessions_started_at")
+    ]
+)
 data class GameSession(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

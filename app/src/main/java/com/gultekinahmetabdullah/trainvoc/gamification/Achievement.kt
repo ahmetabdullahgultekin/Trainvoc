@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.gamification
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
@@ -113,7 +114,15 @@ enum class AchievementTier(val displayName: String, val color: String) {
  * User achievement entity
  * Tracks which achievements user has unlocked
  */
-@Entity(tableName = "user_achievements")
+@Entity(
+    tableName = "user_achievements",
+    indices = [
+        Index(value = ["user_id"], name = "index_user_achievements_user_id"),
+        Index(value = ["achievement_id"], name = "index_user_achievements_achievement_id"),
+        Index(value = ["is_unlocked"], name = "index_user_achievements_is_unlocked"),
+        Index(value = ["user_id", "achievement_id"], name = "index_user_achievements_user_achievement")
+    ]
+)
 data class UserAchievement(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

@@ -135,7 +135,13 @@ interface GamesDao {
 
 // ========== Flip Cards Game Stats Entity ==========
 
-@Entity(tableName = "flip_card_stats")
+@Entity(
+    tableName = "flip_card_stats",
+    indices = [
+        Index(value = ["user_id"], name = "index_flip_card_stats_user_id"),
+        Index(value = ["grid_size"], name = "index_flip_card_stats_grid_size")
+    ]
+)
 data class FlipCardGameStats(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -164,7 +170,14 @@ data class FlipCardGameStats(
 
 // ========== SRS Card Entity ==========
 
-@Entity(tableName = "srs_cards")
+@Entity(
+    tableName = "srs_cards",
+    indices = [
+        Index(value = ["word_id"], name = "index_srs_cards_word_id"),
+        Index(value = ["user_id"], name = "index_srs_cards_user_id"),
+        Index(value = ["next_review_date"], name = "index_srs_cards_next_review_date")
+    ]
+)
 data class SRSCard(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -260,7 +273,13 @@ data class SRSCard(
 
 // ========== Speed Match Stats Entity ==========
 
-@Entity(tableName = "speed_match_stats")
+@Entity(
+    tableName = "speed_match_stats",
+    indices = [
+        Index(value = ["user_id"], name = "index_speed_match_stats_user_id"),
+        Index(value = ["pair_count"], name = "index_speed_match_stats_pair_count")
+    ]
+)
 data class SpeedMatchStats(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
