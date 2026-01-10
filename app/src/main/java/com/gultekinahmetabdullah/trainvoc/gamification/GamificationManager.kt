@@ -1,5 +1,9 @@
 package com.gultekinahmetabdullah.trainvoc.gamification
 
+import android.content.Context
+import com.gultekinahmetabdullah.trainvoc.widget.DailyGoalsWidgetProvider
+import com.gultekinahmetabdullah.trainvoc.widget.StreakWidgetProvider
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -14,7 +18,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class GamificationManager @Inject constructor(
-    private val dao: GamificationDao
+    private val dao: GamificationDao,
+    @ApplicationContext private val context: Context
 ) {
 
     // ============ Streak Tracking ============
@@ -54,6 +59,9 @@ class GamificationManager @Inject constructor(
 
         // Check streak achievements
         checkStreakAchievements(newStreak.currentStreak)
+
+        // Update widgets
+        StreakWidgetProvider.requestUpdate(context)
     }
 
     /**
@@ -137,6 +145,9 @@ class GamificationManager @Inject constructor(
         checkAchievement(Achievement.WORDS_500, goal.wordsToday)
         checkAchievement(Achievement.WORDS_1000, goal.wordsToday)
         checkAchievement(Achievement.WORDS_5000, goal.wordsToday)
+
+        // Update widgets
+        DailyGoalsWidgetProvider.requestUpdate(context)
     }
 
     /**
@@ -153,6 +164,9 @@ class GamificationManager @Inject constructor(
         checkAchievement(Achievement.REVIEWS_500, goal.reviewsToday)
         checkAchievement(Achievement.REVIEWS_1000, goal.reviewsToday)
         checkAchievement(Achievement.REVIEWS_5000, goal.reviewsToday)
+
+        // Update widgets
+        DailyGoalsWidgetProvider.requestUpdate(context)
     }
 
     /**
@@ -182,6 +196,9 @@ class GamificationManager @Inject constructor(
 
         // Check special achievements
         checkSpecialAchievements()
+
+        // Update widgets
+        DailyGoalsWidgetProvider.requestUpdate(context)
     }
 
     /**
@@ -198,6 +215,9 @@ class GamificationManager @Inject constructor(
         checkAchievement(Achievement.TIME_20, goal.timeTodayMinutes)
         checkAchievement(Achievement.TIME_50, goal.timeTodayMinutes)
         checkAchievement(Achievement.TIME_100, goal.timeTodayMinutes)
+
+        // Update widgets
+        DailyGoalsWidgetProvider.requestUpdate(context)
     }
 
     /**

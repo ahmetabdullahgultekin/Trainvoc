@@ -296,4 +296,8 @@
     <string name="word_marked_correct">"%1$s" marked as known</string>
     <string name="keep_practicing">Keep practicing!</string>
     <string name="word_marked_wrong">"%1$s" added to practice list</string>
+
+    <!-- Widget Descriptions -->
+    <string name="widget_streak_description">Track your learning streak on your home screen</string>
+    <string name="widget_goals_description">Monitor your daily learning goals progress</string>
 </resources>

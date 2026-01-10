@@ -40,6 +40,32 @@
             </intent-filter>
         </receiver>
 
+        <!-- Streak Widget -->
+        <receiver
+            android:name=".widget.StreakWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_UPDATE_STREAK_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_streak_info" />
+        </receiver>
+
+        <!-- Daily Goals Widget -->
+        <receiver
+            android:name=".widget.DailyGoalsWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.gultekinahmetabdullah.trainvoc.ACTION_UPDATE_GOALS_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_daily_goals_info" />
+        </receiver>
+
         <!-- Disable default WorkManager initialization since we use on-demand initialization -->
         <provider
             android:name="androidx.startup.InitializationProvider"
