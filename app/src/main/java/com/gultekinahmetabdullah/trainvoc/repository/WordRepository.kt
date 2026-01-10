@@ -14,6 +14,7 @@ import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.database.WordExamCrossRefDao
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class WordRepository(
     private val wordDao: WordDao,
@@ -181,6 +182,9 @@ class WordRepository(
     override suspend fun markWordAsLearned(statId: Long) {
         statisticDao.markLearned(statId)
     }
+
+    override suspend fun getAllStatistics(): List<Statistic> =
+        statisticDao.getAllStatistics().first()
 
     override suspend fun getWordCountByStatId(statId: Int): Int =
         statisticDao.getWordCountByStatId(statId)

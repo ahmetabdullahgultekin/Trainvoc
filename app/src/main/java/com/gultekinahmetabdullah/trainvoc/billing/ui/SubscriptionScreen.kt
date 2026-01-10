@@ -277,7 +277,7 @@ fun SubscriptionCard(
 
             // Price
             Row(
-                verticalAlignment = Alignment.Baseline
+                verticalAlignment = Alignment.Bottom
             ) {
                 Text(
                     text = "$${String.format("%.2f", price)}",

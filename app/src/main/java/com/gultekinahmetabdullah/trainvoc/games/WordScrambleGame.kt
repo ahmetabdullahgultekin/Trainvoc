@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -76,7 +76,7 @@ class WordScrambleGame @Inject constructor(
         }
 
         // Filter words that are good for scrambling (4-12 letters)
-        val suitableWords = words.filter { it.english.length in 4..12 }
+        val suitableWords = words.filter { it.word.length in 4..12 }
         val selectedWords = suitableWords.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
@@ -90,12 +90,12 @@ class WordScrambleGame @Inject constructor(
      * Create a scramble question from a word
      */
     private fun createQuestion(word: Word): ScrambleQuestion {
-        val scrambled = scrambleWord(word.english)
+        val scrambled = scrambleWord(word.word)
 
         return ScrambleQuestion(
             word = word,
             scrambledWord = scrambled,
-            hint = word.turkish
+            hint = word.meaning
         )
     }
 
@@ -125,7 +125,7 @@ class WordScrambleGame @Inject constructor(
      * Check if the answer is correct
      */
     fun checkAnswer(question: ScrambleQuestion, answer: String): Boolean {
-        return answer.trim().equals(question.word.english, ignoreCase = true)
+        return answer.trim().equals(question.word.word, ignoreCase = true)
     }
 
     /**
@@ -146,7 +146,7 @@ class WordScrambleGame @Inject constructor(
      */
     fun useHint(gameState: GameState, currentInput: String): Pair<GameState, String> {
         val question = gameState.currentQuestion ?: return Pair(gameState, "")
-        val correctWord = question.word.english
+        val correctWord = question.word.word
 
         // Find next letter to reveal
         val revealedLetters = currentInput.length
@@ -167,8 +167,8 @@ class WordScrambleGame @Inject constructor(
      * Get letter hint without revealing
      */
     fun getLetterHint(question: ScrambleQuestion, position: Int): String {
-        return if (position < question.word.english.length) {
-            "Letter ${position + 1}: ${question.word.english[position].uppercase()}"
+        return if (position < question.word.word.length) {
+            "Letter ${position + 1}: ${question.word.word[position].uppercase()}"
         } else {
             "No more letters"
         }
@@ -182,11 +182,10 @@ class WordScrambleGame @Inject constructor(
 
         val session = GameSession(
             gameType = "word_scramble",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalQuestions,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
-            completed = true,
+            timeSpentSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
             completedAt = System.currentTimeMillis()
         )
 

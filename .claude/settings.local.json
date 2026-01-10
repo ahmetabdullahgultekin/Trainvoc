@@ -8,7 +8,13 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(./gradlew build:*)",
+      "WebSearch",
+      "Bash(.\\\\gradlew.bat :app:compileDebugKotlin:*)",
+      "Bash(gradlew.bat:*)",
+      "Bash(C:/Users/ahabg/StudioProjects/Trainvoc/gradlew.bat :app:compileDebugKotlin --no-daemon)",
+      "Bash(./gradlew :app:compileDebugKotlin:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -106,8 +106,8 @@ class ListeningQuizGame @Inject constructor(
         // Generate audio URL (using TTS or pre-recorded audio)
         val audioUrl = when (questionType) {
             QuestionType.WORD_TO_TRANSLATION,
-            QuestionType.WORD_TO_SPELLING -> generateAudioUrl(word.english, "en")
-            QuestionType.TRANSLATION_TO_WORD -> generateAudioUrl(word.turkish, "tr")
+            QuestionType.WORD_TO_SPELLING -> generateAudioUrl(word.word, "en")
+            QuestionType.TRANSLATION_TO_WORD -> generateAudioUrl(word.meaning, "tr")
         }
 
         // Generate options based on question type
@@ -115,29 +115,29 @@ class ListeningQuizGame @Inject constructor(
             QuestionType.WORD_TO_TRANSLATION -> {
                 // Hear English, select Turkish
                 val distractors = allWords
-                    .filter { it.id != word.id }
-                    .map { it.turkish }
+                    .filter { it.word != word.word }
+                    .map { it.meaning }
                     .distinct()
                     .shuffled()
                     .take(3)
-                Pair(word.turkish, (listOf(word.turkish) + distractors).shuffled())
+                Pair(word.meaning, (listOf(word.meaning) + distractors).shuffled())
             }
             QuestionType.TRANSLATION_TO_WORD -> {
                 // Hear Turkish, select English
                 val distractors = allWords
-                    .filter { it.id != word.id }
-                    .map { it.english }
+                    .filter { it.word != word.word }
+                    .map { it.word }
                     .distinct()
                     .shuffled()
                     .take(3)
-                Pair(word.english, (listOf(word.english) + distractors).shuffled())
+                Pair(word.word, (listOf(word.word) + distractors).shuffled())
             }
             QuestionType.WORD_TO_SPELLING -> {
                 // Hear English, select correct spelling
-                val distractors = generateSpellingVariants(word.english)
-                    .filter { it != word.english }
+                val distractors = generateSpellingVariants(word.word)
+                    .filter { it != word.word }
                     .take(3)
-                Pair(word.english, (listOf(word.english) + distractors).shuffled())
+                Pair(word.word, (listOf(word.word) + distractors).shuffled())
             }
         }
 
@@ -239,11 +239,10 @@ class ListeningQuizGame @Inject constructor(
 
         val session = GameSession(
             gameType = "listening_quiz",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalQuestions,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
-            completed = true,
+            timeSpentSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
             completedAt = System.currentTimeMillis()
         )
 
@@ -255,9 +254,9 @@ class ListeningQuizGame @Inject constructor(
      */
     fun getHint(question: ListeningQuestion): String {
         return when (question.questionType) {
-            QuestionType.WORD_TO_TRANSLATION -> "English word: ${question.word.english}"
-            QuestionType.TRANSLATION_TO_WORD -> "Turkish word: ${question.word.turkish}"
-            QuestionType.WORD_TO_SPELLING -> "First letter: ${question.word.english.first().uppercase()}"
+            QuestionType.WORD_TO_TRANSLATION -> "English word: ${question.word.word}"
+            QuestionType.TRANSLATION_TO_WORD -> "Meaning: ${question.word.meaning}"
+            QuestionType.WORD_TO_SPELLING -> "First letter: ${question.word.word.first().uppercase()}"
         }
     }
 }

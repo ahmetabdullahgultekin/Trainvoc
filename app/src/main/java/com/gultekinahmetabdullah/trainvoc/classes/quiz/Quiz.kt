@@ -10,6 +10,18 @@ data class Quiz(
     val type: QuizType
 ) {
     companion object {
+        // Convenience accessors for quiz types
+        val NotLearned get() = quizTypes[0]
+        val Random get() = quizTypes[1]
+        val LeastCorrect get() = quizTypes[2]
+        val LeastWrong get() = quizTypes[3]
+        val LeastRecent get() = quizTypes[4]
+        val LeastReviewed get() = quizTypes[5]
+        val MostCorrect get() = quizTypes[6]
+        val MostWrong get() = quizTypes[7]
+        val MostRecent get() = quizTypes[8]
+        val MostReviewed get() = quizTypes[9]
+
         val quizTypes = listOf(
             // Quiz types with their IDs, names, descriptions, colors, and types
             // Warning: First quiz type must be "Not Learned" with ID 1

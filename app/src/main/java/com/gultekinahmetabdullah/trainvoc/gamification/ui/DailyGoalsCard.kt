@@ -141,9 +141,8 @@ fun DailyGoalsCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(12.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.Default.Star,

@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -80,7 +80,7 @@ class SpellingChallengeGame @Inject constructor(
         }
 
         // Filter words suitable for spelling (4-15 letters)
-        val suitableWords = words.filter { it.english.length in 4..15 }
+        val suitableWords = words.filter { it.word.length in 4..15 }
         val selectedWords = suitableWords.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
@@ -94,12 +94,12 @@ class SpellingChallengeGame @Inject constructor(
      * Create a spelling question
      */
     private fun createQuestion(word: Word): SpellingQuestion {
-        val audioUrl = "tts://en/${word.english}" // TTS URL
+        val audioUrl = "tts://en/${word.word}" // TTS URL
 
         return SpellingQuestion(
             word = word,
-            prompt = word.turkish,
-            correctSpelling = word.english,
+            prompt = word.meaning,
+            correctSpelling = word.word,
             audioUrl = audioUrl
         )
     }
@@ -229,11 +229,10 @@ class SpellingChallengeGame @Inject constructor(
 
         val session = GameSession(
             gameType = "spelling_challenge",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalQuestions,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
-            completed = true,
+            timeSpentSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
             completedAt = System.currentTimeMillis()
         )
 

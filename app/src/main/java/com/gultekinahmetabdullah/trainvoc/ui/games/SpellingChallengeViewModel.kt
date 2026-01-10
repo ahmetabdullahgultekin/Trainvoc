@@ -94,20 +94,13 @@ class SpellingChallengeViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: SpellingChallengeGame.GameState) {
-        // Check for perfect spellings (no hints used)
-        if (gameState.perfectSpellings >= 10) {
-            unlockAchievement(Achievement.PERFECT_SPELLING)
+        // Check for perfect score
+        if (gameState.correctAnswers == gameState.totalQuestions && gameState.totalQuestions >= 5) {
+            unlockAchievement(Achievement.PERFECT_10)
         }
 
-        // Check for completing all questions
-        if (gameState.correctAnswers == gameState.totalQuestions && gameState.totalQuestions >= 10) {
-            unlockAchievement(Achievement.SPELLING_MASTER)
-        }
-
-        // Check for high accuracy
-        if (gameState.accuracy >= 90 && gameState.totalQuestions >= 15) {
-            unlockAchievement(Achievement.SPELLING_ACE)
-        }
+        // Award quiz completion achievement
+        unlockAchievement(Achievement.QUIZ_10)
     }
 
     private suspend fun unlockAchievement(achievement: Achievement) {
@@ -115,7 +108,7 @@ class SpellingChallengeViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -90,8 +90,8 @@ class SpeedMatchGame @Inject constructor(
         val pairs = words.map { word ->
             MatchPair(
                 word = word,
-                leftOption = word.english,
-                rightOption = word.turkish
+                leftOption = word.word,
+                rightOption = word.meaning
             )
         }
 
@@ -187,21 +187,21 @@ class SpeedMatchGame @Inject constructor(
         // Save game session
         val session = GameSession(
             gameType = "speed_match",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalPairs,
             correctAnswers = gameState.matchedPairs,
-            timeSeconds = timeElapsed,
-            completed = gameState.matchedPairs >= gameState.totalPairs,
-            completedAt = System.currentTimeMillis()
+            timeSpentSeconds = timeElapsed,
+            completedAt = if (gameState.matchedPairs >= gameState.totalPairs) System.currentTimeMillis() else null
         )
         gamesDao.insertGameSession(session)
 
         // Save speed match stats
-        val stats = SpeedMatchGameStats(
-            totalPairs = gameState.totalPairs,
-            matchedPairs = gameState.matchedPairs,
-            maxCombo = gameState.maxCombo,
-            timeSeconds = timeElapsed,
+        val stats = SpeedMatchStats(
+            pairCount = gameState.totalPairs,
+            completionTimeMs = (timeElapsed * 1000).toLong(),
+            mistakes = gameState.incorrectAttempts,
+            comboMax = gameState.maxCombo,
+            score = gameState.score,
             completed = gameState.matchedPairs >= gameState.totalPairs,
             completedAt = System.currentTimeMillis()
         )

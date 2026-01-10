@@ -8,6 +8,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinxCoroutinesTest = "1.7.3"
+kotlinxCoroutinesPlayServices = "1.7.3"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2025.06.00"
@@ -21,17 +22,19 @@ navigationCompose = "2.9.0"
 coreTesting = "2.2.0"
 roomTesting = "2.7.1"
 workRuntimeKtx = "2.10.1"
-hilt = "2.52"
+hilt = "2.56"
 hiltNavigationCompose = "1.2.0"
 securityCrypto = "1.1.0-alpha06"
 mockk = "1.13.14"
 turbine = "1.2.0"
-kover = "0.9.0"
+kover = "0.9.4"
 googleAuth = "21.2.0"
-googlePlayGames = "23.2.0"
+googlePlayGames = "20.0.0"
 googleDrive = "v3-rev20240903-2.0.0"
 googleApiClient = "2.7.2"
 googleHttpClient = "1.45.1"
+billing = "7.1.1"
+coil = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,12 +62,15 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltNavigationCompose" }
+hilt-androidx-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltNavigationCompose" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
@@ -75,6 +81,8 @@ google-play-games = { group = "com.google.android.gms", name = "play-services-ga
 google-drive = { group = "com.google.apis", name = "google-api-services-drive", version.ref = "googleDrive" }
 google-api-client-android = { group = "com.google.api-client", name = "google-api-client-android", version.ref = "googleApiClient" }
 google-http-client-gson = { group = "com.google.http-client", name = "google-http-client-gson", version.ref = "googleHttpClient" }
+google-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

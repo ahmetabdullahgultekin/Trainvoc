@@ -89,19 +89,14 @@ class ContextCluesViewModel @Inject constructor(
     private suspend fun checkAchievements(gameState: ContextCluesGame.GameState) {
         val comprehensionLevel = contextCluesGame.getComprehensionLevel(gameState)
 
-        // Check for excellent comprehension
+        // Check for excellent comprehension - award quiz achievement
         if (comprehensionLevel == ContextCluesGame.ComprehensionLevel.EXCELLENT) {
-            unlockAchievement(Achievement.CONTEXT_MASTER)
+            unlockAchievement(Achievement.QUIZ_10)
         }
 
-        // Check for completing without clues
-        if (gameState.correctAnswers == gameState.totalQuestions && gameState.cluesUsed == 0) {
-            unlockAchievement(Achievement.NO_CLUES_NEEDED)
-        }
-
-        // Check for high accuracy
+        // Check for perfect score with high accuracy
         if (gameState.accuracy >= 90 && gameState.totalQuestions >= 10) {
-            unlockAchievement(Achievement.READING_EXPERT)
+            unlockAchievement(Achievement.PERFECT_10)
         }
     }
 
@@ -110,7 +105,7 @@ class ContextCluesViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

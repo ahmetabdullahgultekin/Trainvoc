@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class SyncRepository @Inject constructor(
     private val syncQueueDao: SyncQueueDao,
-    private val gson: Gson
+    @PublishedApi internal val gson: Gson
 ) {
 
     // ========== Queue Management ==========

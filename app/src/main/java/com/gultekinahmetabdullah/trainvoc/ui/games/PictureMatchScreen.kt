@@ -197,9 +197,10 @@ private fun PictureMatchGameContent(
                         text = "What is this in English?",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        textAlign = TextAlign.Center
                     )
                 }
 

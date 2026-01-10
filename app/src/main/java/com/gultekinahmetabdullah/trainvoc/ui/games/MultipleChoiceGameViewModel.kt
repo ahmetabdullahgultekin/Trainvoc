@@ -38,7 +38,7 @@ class MultipleChoiceGameViewModel @Inject constructor(
             val currentState = (_uiState.value as? MultipleChoiceUiState.Playing)?.gameState ?: return@launch
 
             val question = currentState.currentQuestion ?: return@launch
-            val isCorrect = multipleChoiceGame.checkAnswer(question, answer)
+            val isCorrect = question.isCorrect(answer)
 
             // Show feedback
             _uiState.value = MultipleChoiceUiState.ShowingFeedback(
@@ -50,13 +50,10 @@ class MultipleChoiceGameViewModel @Inject constructor(
             // Wait for feedback animation
             kotlinx.coroutines.delay(1000)
 
-            // Move to next question
-            val newGameState = multipleChoiceGame.answerQuestion(currentState, answer)
+            // Move to next question using submitAnswer
+            val newGameState = multipleChoiceGame.submitAnswer(answer)
 
             if (newGameState.isComplete) {
-                // Save results
-                multipleChoiceGame.saveGameResult(newGameState)
-
                 // Check achievements
                 checkAchievements(newGameState)
 
@@ -72,22 +69,12 @@ class MultipleChoiceGameViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: MultipleChoiceGame.GameState) {
-        // Check if first quiz completed
-        val quizCount = gamificationDao.getCompletedQuizzesCount()
-        if (quizCount == 1) {
-            unlockAchievement(Achievement.QUIZ_10)
-        }
+        // Award quiz completion achievement
+        unlockAchievement(Achievement.QUIZ_10)
 
         // Check for perfect score
         if (gameState.correctAnswers == gameState.totalQuestions && gameState.totalQuestions >= 5) {
-            unlockAchievement(Achievement.QUIZ_PERFECT_FIRST)
-        }
-
-        // Check milestone achievements
-        when (quizCount) {
-            10 -> unlockAchievement(Achievement.QUIZ_10)
-            50 -> unlockAchievement(Achievement.QUIZ_50)
-            100 -> unlockAchievement(Achievement.QUIZ_100)
+            unlockAchievement(Achievement.PERFECT_10)
         }
     }
 
@@ -96,7 +83,7 @@ class MultipleChoiceGameViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

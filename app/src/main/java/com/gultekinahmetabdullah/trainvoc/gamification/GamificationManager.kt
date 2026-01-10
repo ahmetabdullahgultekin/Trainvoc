@@ -311,11 +311,12 @@ class GamificationManager @Inject constructor(
 
         if (userAchievement == null) {
             // Create new achievement tracking
+            val isNowUnlocked = currentValue >= achievement.requirement
             val newAchievement = UserAchievement(
                 achievementId = achievement.id,
                 progress = currentValue,
-                isUnlocked = currentValue >= achievement.requirement,
-                unlockedAt = if (currentValue >= achievement.requirement) System.currentTimeMillis() else null
+                isUnlocked = isNowUnlocked,
+                unlockedAt = if (isNowUnlocked) System.currentTimeMillis() else 0L
             )
             dao.insertAchievement(newAchievement)
         } else if (!userAchievement.isUnlocked && currentValue >= achievement.requirement) {

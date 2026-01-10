@@ -90,7 +90,7 @@ fun WordImageCard(
                                 .weight(1f)
                                 .clip(RoundedCornerShape(12.dp)),
                             contentScale = ContentScale.Crop,
-                            imageLoader = imageService.getImageLoader()
+                            imageLoader = imageService.provideImageLoader()
                         )
 
                         if (showAttribution && wordImage!!.photographer != null) {
@@ -145,7 +145,7 @@ fun CompactWordImage(
                 .size(64.dp)
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Crop,
-            imageLoader = imageService.getImageLoader()
+            imageLoader = imageService.provideImageLoader()
         )
     }
 }

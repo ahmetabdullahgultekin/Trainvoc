@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -132,19 +132,19 @@ class TranslationRaceGame @Inject constructor(
         val (questionText, correctAnswer, distractorPool) = when (actualDirection) {
             TranslationDirection.ENGLISH_TO_TURKISH -> {
                 Triple(
-                    word.english,
-                    word.turkish,
-                    allWords.filter { it.id != word.id }.map { it.turkish }
+                    word.word,
+                    word.meaning,
+                    allWords.filter { it.word != word.word }.map { it.meaning }
                 )
             }
             TranslationDirection.TURKISH_TO_ENGLISH -> {
                 Triple(
-                    word.turkish,
-                    word.english,
-                    allWords.filter { it.id != word.id }.map { it.english }
+                    word.meaning,
+                    word.word,
+                    allWords.filter { it.word != word.word }.map { it.word }
                 )
             }
-            else -> Triple(word.english, word.turkish, emptyList())
+            else -> Triple(word.word, word.meaning, emptyList())
         }
 
         // Generate distractors
@@ -229,12 +229,11 @@ class TranslationRaceGame @Inject constructor(
 
         val session = GameSession(
             gameType = "translation_race",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = totalAnswered,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = timeElapsed.toInt(),
-            completed = gameState.currentQuestionIndex >= gameState.totalQuestions,
-            completedAt = System.currentTimeMillis()
+            timeSpentSeconds = timeElapsed.toInt(),
+            completedAt = if (gameState.currentQuestionIndex >= gameState.totalQuestions) System.currentTimeMillis() else null
         )
 
         gamesDao.insertGameSession(session)

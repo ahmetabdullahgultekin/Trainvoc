@@ -67,6 +67,10 @@ class FillInTheBlankViewModel @Inject constructor(
         _showHint.value = !_showHint.value
     }
 
+    fun getHint(question: FillInTheBlankGame.FillInTheBlankQuestion): String {
+        return fillInTheBlankGame.getHint(question)
+    }
+
     fun playAgain(difficulty: String = "medium") {
         _showHint.value = false
         startGame(difficulty)

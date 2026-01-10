@@ -185,13 +185,4 @@ class DriveBackupWorker @AssistedInject constructor(
         return true
     }
 
-    /**
-     * Called when worker is stopped unexpectedly
-     *
-     * Perform cleanup if needed
-     */
-    override suspend fun onStopped() {
-        super.onStopped()
-        Log.d(TAG, "Auto backup worker stopped")
-    }
 }

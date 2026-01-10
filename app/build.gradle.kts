@@ -23,10 +23,12 @@ android {
             useSupportLibrary = true
         }
 
-        // Optimize resources: keep only required densities and languages
-        // This significantly reduces APK size by excluding unused resources
-        resConfigs += listOf("en", "tr") // Only English and Turkish
-        resConfigs += listOf("xxhdpi", "xxxhdpi") // Modern device densities
+    }
+
+    androidResources {
+        // Optimize resources: keep only required languages
+        // Density filtering is handled by bundle.density.enableSplit = true
+        localeFilters += listOf("en", "tr")
     }
 
     buildTypes {
@@ -78,6 +80,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/DEPENDENCIES"
         }
     }
 }
@@ -113,6 +117,8 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.androidx.compiler)
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
@@ -122,17 +128,24 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.gson)
 
+    // Coil for image loading
+    implementation(libs.coil.compose)
+
     // Security
     implementation(libs.androidx.security.crypto)
 
     // Google Play Games Services
     implementation(libs.google.play.games)
 
+    // Google Play Billing
+    implementation(libs.google.billing)
+
     // Google Drive & Auth
     implementation(libs.google.auth)
     implementation(libs.google.drive)
     implementation(libs.google.api.client.android)
     implementation(libs.google.http.client.gson)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     // Test dependencies
     testImplementation(libs.junit)

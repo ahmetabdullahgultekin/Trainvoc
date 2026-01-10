@@ -9,7 +9,7 @@ import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
  *
  * Setup Instructions:
  * 1. Go to Play Console > Your App > Grow > Play Games Services > Setup and management > Achievements
- * 2. Create 44 achievements matching our Achievement enum
+ * 2. Create 38 achievements matching our Achievement enum
  * 3. Copy the achievement IDs here
  *
  * For now, using placeholder IDs. Replace with real IDs from Play Console.
@@ -55,10 +55,10 @@ object PlayGamesAchievementMapper {
             Achievement.GOALS_365 -> "CgkI_trainvoc_achievement_goals_365"
 
             // Review Achievements (4)
-            Achievement.REVIEW_100 -> "CgkI_trainvoc_achievement_review_100"
-            Achievement.REVIEW_500 -> "CgkI_trainvoc_achievement_review_500"
-            Achievement.REVIEW_1000 -> "CgkI_trainvoc_achievement_review_1000"
-            Achievement.REVIEW_5000 -> "CgkI_trainvoc_achievement_review_5000"
+            Achievement.REVIEWS_100 -> "CgkI_trainvoc_achievement_review_100"
+            Achievement.REVIEWS_500 -> "CgkI_trainvoc_achievement_review_500"
+            Achievement.REVIEWS_1000 -> "CgkI_trainvoc_achievement_review_1000"
+            Achievement.REVIEWS_5000 -> "CgkI_trainvoc_achievement_review_5000"
 
             // Time Spent Achievements (4)
             Achievement.TIME_5 -> "CgkI_trainvoc_achievement_time_5h"
@@ -70,24 +70,8 @@ object PlayGamesAchievementMapper {
             Achievement.EARLY_BIRD -> "CgkI_trainvoc_achievement_early_bird"
             Achievement.NIGHT_OWL -> "CgkI_trainvoc_achievement_night_owl"
             Achievement.WEEKEND_WARRIOR -> "CgkI_trainvoc_achievement_weekend"
-            Achievement.POLYGLOT -> "CgkI_trainvoc_achievement_polyglot"
-            Achievement.PERFECTIONIST -> "CgkI_trainvoc_achievement_perfectionist"
-
-            // Level Achievements (14)
-            Achievement.LEVEL_A1 -> "CgkI_trainvoc_achievement_level_a1"
-            Achievement.LEVEL_A2 -> "CgkI_trainvoc_achievement_level_a2"
-            Achievement.LEVEL_B1 -> "CgkI_trainvoc_achievement_level_b1"
-            Achievement.LEVEL_B2 -> "CgkI_trainvoc_achievement_level_b2"
-            Achievement.LEVEL_C1 -> "CgkI_trainvoc_achievement_level_c1"
-            Achievement.LEVEL_C2 -> "CgkI_trainvoc_achievement_level_c2"
-            Achievement.LEVEL_YDS -> "CgkI_trainvoc_achievement_level_yds"
-            Achievement.EXAM_TOEFL -> "CgkI_trainvoc_achievement_exam_toefl"
-            Achievement.EXAM_IELTS -> "CgkI_trainvoc_achievement_exam_ielts"
-            Achievement.EXAM_YOKDIL -> "CgkI_trainvoc_achievement_exam_yokdil"
-            Achievement.EXAM_KPDS -> "CgkI_trainvoc_achievement_exam_kpds"
-            Achievement.ALL_LEVELS -> "CgkI_trainvoc_achievement_all_levels"
-            Achievement.MASTER -> "CgkI_trainvoc_achievement_master"
-            Achievement.GRANDMASTER -> "CgkI_trainvoc_achievement_grandmaster"
+            Achievement.SPEED_DEMON -> "CgkI_trainvoc_achievement_speed_demon"
+            Achievement.COMEBACK -> "CgkI_trainvoc_achievement_comeback"
         }
     }
 

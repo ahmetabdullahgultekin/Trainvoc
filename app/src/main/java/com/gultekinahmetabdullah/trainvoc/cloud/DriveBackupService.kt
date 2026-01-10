@@ -310,6 +310,10 @@ class DriveBackupService @Inject constructor(
                             statisticsRestored = 0
                         )
                     }
+                    is RestoreResult.Conflict -> {
+                        Log.w(TAG, "Restore conflict: ${importResult.conflicts.size} conflicts detected")
+                        DriveRestoreResult.Failure("Data conflicts detected. Please resolve manually.")
+                    }
                 }
 
             } catch (e: Exception) {

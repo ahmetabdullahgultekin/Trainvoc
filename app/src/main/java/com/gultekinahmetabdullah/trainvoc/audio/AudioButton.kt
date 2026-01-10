@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
@@ -28,7 +29,7 @@ fun AudioButton(
     featureFlags: FeatureFlagManager,
     ttsService: TextToSpeechService,
     showLabel: Boolean = false,
-    iconSize: IconButtonDefaults.IconSize = IconButtonDefaults.MediumSize
+    iconSize: Dp = 24.dp
 ) {
     val scope = rememberCoroutineScope()
     var isPlaying by remember { mutableStateOf(false) }

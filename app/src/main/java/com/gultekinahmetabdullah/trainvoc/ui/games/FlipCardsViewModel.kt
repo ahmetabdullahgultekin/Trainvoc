@@ -77,12 +77,12 @@ class FlipCardsViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: FlipCardsGame.GameState) {
-        // First flip cards game
-        unlockAchievement(Achievement.FLIP_CARDS_FIRST)
+        // Award quiz achievement for completing a game
+        unlockAchievement(Achievement.QUIZ_10)
 
-        // Perfect game (minimum moves)
+        // Perfect game (minimum moves) - award perfect achievement
         if (flipCardsGame.isNewBest(gameState) && gameState.moves == gameState.totalPairs) {
-            unlockAchievement(Achievement.FLIP_CARDS_PERFECT)
+            unlockAchievement(Achievement.PERFECT_10)
         }
     }
 
@@ -91,7 +91,7 @@ class FlipCardsViewModel @Inject constructor(
             gamificationDao.insertAchievement(
                 com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
                     achievementId = achievement.id,
-                    progress = achievement.maxProgress,
+                    progress = achievement.requirement,
                     isUnlocked = true,
                     unlockedAt = System.currentTimeMillis()
                 )

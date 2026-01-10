@@ -4,6 +4,77 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.database.WordDao
+import javax.inject.Inject
+import javax.inject.Singleton
+
+/**
+ * Multiple Choice Game - main game class for dependency injection
+ */
+@Singleton
+class MultipleChoiceGame @Inject constructor(
+    private val wordDao: WordDao
+) {
+    private val gameManager = MultipleChoiceGameManager()
+    private var currentState: GameState? = null
+
+    suspend fun startGame(difficulty: String = "medium"): GameState {
+        gameManager.reset()
+        val words = wordDao.getAllWordsList()
+        val questions = mutableListOf<MultipleChoiceQuestion>()
+
+        // Generate 10 questions
+        val shuffledWords = words.shuffled().take(10)
+        shuffledWords.forEach { word ->
+            questions.add(gameManager.generateQuestion(word, words))
+        }
+
+        currentState = GameState(
+            questions = questions,
+            currentQuestionIndex = 0,
+            currentQuestion = questions.firstOrNull(),
+            score = 0,
+            correctAnswers = 0,
+            incorrectAnswers = 0,
+            totalQuestions = questions.size,
+            isComplete = false
+        )
+        return currentState!!
+    }
+
+    suspend fun submitAnswer(answer: String): GameState {
+        val state = currentState ?: throw IllegalStateException("Game not started")
+        val question = state.currentQuestion ?: return state
+
+        val isCorrect = question.isCorrect(answer)
+        gameManager.recordAnswer(isCorrect)
+        val score = if (isCorrect) gameManager.calculateScore(true, 5) else 0
+
+        val nextIndex = state.currentQuestionIndex + 1
+        val isComplete = nextIndex >= state.questions.size
+
+        currentState = state.copy(
+            score = state.score + score,
+            correctAnswers = state.correctAnswers + if (isCorrect) 1 else 0,
+            incorrectAnswers = state.incorrectAnswers + if (!isCorrect) 1 else 0,
+            currentQuestionIndex = nextIndex,
+            currentQuestion = if (isComplete) null else state.questions[nextIndex],
+            isComplete = isComplete
+        )
+        return currentState!!
+    }
+
+    data class GameState(
+        val questions: List<MultipleChoiceQuestion> = emptyList(),
+        val currentQuestionIndex: Int = 0,
+        val currentQuestion: MultipleChoiceQuestion? = null,
+        val score: Int = 0,
+        val correctAnswers: Int = 0,
+        val incorrectAnswers: Int = 0,
+        val totalQuestions: Int = 0,
+        val isComplete: Boolean = false
+    )
+}
 
 /**
  * Multiple Choice Quiz Question

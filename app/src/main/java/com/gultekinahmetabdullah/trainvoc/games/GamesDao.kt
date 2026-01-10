@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
 import androidx.room.*
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -8,6 +9,23 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface GamesDao {
+
+    // ========== Words for Games ==========
+
+    /**
+     * Get random words for games, filtered by level range
+     */
+    @Query("""
+        SELECT * FROM words
+        WHERE level >= :minLevel AND level <= :maxLevel
+        ORDER BY RANDOM()
+        LIMIT :limit
+    """)
+    suspend fun getWordsForGames(
+        minLevel: String,
+        maxLevel: String,
+        limit: Int
+    ): List<Word>
 
     // ========== Game Sessions ==========
 
@@ -39,8 +57,17 @@ interface GamesDao {
     @Query("SELECT COUNT(*) FROM game_sessions WHERE user_id = :userId AND game_type = :gameType AND completed_at IS NOT NULL")
     suspend fun getCompletedGamesCount(userId: String = "local_user", gameType: String): Int
 
+    @Query("SELECT COUNT(*) FROM game_sessions WHERE user_id = :userId AND completed_at IS NOT NULL")
+    suspend fun getCompletedGamesCount(userId: String = "local_user"): Int
+
     @Query("SELECT * FROM game_sessions WHERE user_id = :userId ORDER BY score DESC LIMIT 1")
     suspend fun getHighestScoreSession(userId: String = "local_user"): GameSession?
+
+    @Query("SELECT * FROM game_sessions WHERE user_id = :userId AND game_type = :gameType ORDER BY started_at DESC LIMIT :limit")
+    suspend fun getGameSessions(userId: String = "local_user", gameType: String, limit: Int = 100): List<GameSession>
+
+    @Query("SELECT * FROM game_sessions WHERE user_id = :userId ORDER BY started_at DESC LIMIT :limit")
+    suspend fun getAllGameSessions(userId: String = "local_user", limit: Int = 1000): List<GameSession>
 
     // ========== Flip Cards Game Stats ==========
 

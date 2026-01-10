@@ -29,17 +29,24 @@ fun ListeningQuizScreen(
     val context = LocalContext.current
 
     // Initialize TTS
+    var ttsInstance: TextToSpeech? by remember { mutableStateOf(null) }
+
     DisposableEffect(Unit) {
-        val tts = TextToSpeech(context) { status ->
+        var localTts: TextToSpeech? = null
+        localTts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                viewModel.setTextToSpeech(tts)
+                localTts?.let { tts ->
+                    ttsInstance = tts
+                    viewModel.setTextToSpeech(tts)
+                }
             }
         }
-        viewModel.setTextToSpeech(tts)
+        ttsInstance = localTts
+        localTts?.let { viewModel.setTextToSpeech(it) }
 
         onDispose {
-            tts.stop()
-            tts.shutdown()
+            ttsInstance?.stop()
+            ttsInstance?.shutdown()
         }
     }
 

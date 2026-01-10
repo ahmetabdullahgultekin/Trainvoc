@@ -108,7 +108,7 @@ class PlayGamesManager @Inject constructor(
         return try {
             val playGamesId = PlayGamesAchievementMapper.getPlayGamesId(achievement)
             val client = PlayGames.getAchievementsClient(context as Activity)
-            client.unlock(playGamesId).await()
+            client.unlock(playGamesId)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -127,7 +127,7 @@ class PlayGamesManager @Inject constructor(
         return try {
             val playGamesId = PlayGamesAchievementMapper.getPlayGamesId(achievement)
             val client = PlayGames.getAchievementsClient(context as Activity)
-            client.increment(playGamesId, steps).await()
+            client.increment(playGamesId, steps)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -165,7 +165,7 @@ class PlayGamesManager @Inject constructor(
         return try {
             val leaderboardId = getLeaderboardId(leaderboardType)
             val client = PlayGames.getLeaderboardsClient(context as Activity)
-            client.submitScore(leaderboardId, score).await()
+            client.submitScore(leaderboardId, score)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

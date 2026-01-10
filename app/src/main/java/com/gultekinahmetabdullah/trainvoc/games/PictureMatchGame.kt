@@ -1,6 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.games
 
-import com.gultekinahmetabdullah.trainvoc.data.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,12 +79,8 @@ class PictureMatchGame @Inject constructor(
             )
         }
 
-        // Filter words that have image URLs
-        // In production, ensure words have associated images
-        val wordsWithImages = words.filter { !it.imageUrl.isNullOrBlank() }
-            .ifEmpty { words } // Fallback: use all words with placeholder images
-
-        val selectedWords = wordsWithImages.shuffled().take(questionCount)
+        // Select random words for the game (all words use placeholder images)
+        val selectedWords = words.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
             createQuestion(word, words, showWord)
@@ -101,25 +97,25 @@ class PictureMatchGame @Inject constructor(
         allWords: List<Word>,
         showWord: Boolean
     ): PictureQuestion {
-        // Get image URL (from database or generate placeholder)
-        val imageUrl = word.imageUrl ?: generatePlaceholderImageUrl(word.english)
+        // Get image URL (generate placeholder)
+        val imageUrl = generatePlaceholderImageUrl(word.word)
 
         // Generate distractor options
         val distractors = allWords
-            .filter { it.id != word.id }
+            .filter { it.word != word.word }
             .filter { it.level == word.level } // Same level for fair difficulty
-            .map { it.english }
+            .map { it.word }
             .distinct()
             .shuffled()
             .take(3)
 
-        val options = (listOf(word.english) + distractors).shuffled()
+        val options = (listOf(word.word) + distractors).shuffled()
 
         return PictureQuestion(
             word = word,
             imageUrl = imageUrl,
             options = options,
-            correctAnswer = word.english,
+            correctAnswer = word.word,
             showWord = showWord
         )
     }
@@ -167,11 +163,10 @@ class PictureMatchGame @Inject constructor(
 
         val session = GameSession(
             gameType = "picture_match",
-            difficulty = "medium",
+            difficultyLevel = "medium",
             totalQuestions = gameState.totalQuestions,
             correctAnswers = gameState.correctAnswers,
-            timeSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
-            completed = true,
+            timeSpentSeconds = ((System.currentTimeMillis() - gameState.startTime) / 1000).toInt(),
             completedAt = System.currentTimeMillis()
         )
 
@@ -183,9 +178,8 @@ class PictureMatchGame @Inject constructor(
      */
     fun getHint(question: PictureQuestion): String {
         return buildString {
-            append("Translation: ${question.word.turkish}\n")
-            append("Part of speech: ${question.word.partOfSpeech}\n")
-            append("Level: ${question.word.level}")
+            append("Meaning: ${question.word.meaning}\n")
+            append("Level: ${question.word.level?.name ?: "Unknown"}")
         }
     }
 

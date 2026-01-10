@@ -40,11 +40,13 @@ fun FillInTheBlankScreen(
         }
 
         is FillInTheBlankUiState.Playing -> {
+            val hintText = state.gameState.currentQuestion?.let { viewModel.getHint(it) } ?: ""
             FillInTheBlankContent(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
                 showHint = showHint,
+                hintText = hintText,
                 onAnswerSelected = { viewModel.selectAnswer(it) },
                 onHintToggle = { viewModel.toggleHint() },
                 onNavigateBack = onNavigateBack
@@ -52,11 +54,13 @@ fun FillInTheBlankScreen(
         }
 
         is FillInTheBlankUiState.ShowingFeedback -> {
+            val hintText = state.gameState.currentQuestion?.let { viewModel.getHint(it) } ?: ""
             FillInTheBlankContent(
                 gameState = state.gameState,
                 selectedAnswer = state.selectedAnswer,
                 isCorrect = state.isCorrect,
                 showHint = showHint,
+                hintText = hintText,
                 onAnswerSelected = { },
                 onHintToggle = { },
                 onNavigateBack = onNavigateBack
@@ -69,6 +73,7 @@ fun FillInTheBlankScreen(
                 selectedAnswer = null,
                 isCorrect = null,
                 showHint = false,
+                hintText = "",
                 onAnswerSelected = { },
                 onHintToggle = { },
                 onNavigateBack = onNavigateBack
@@ -112,6 +117,7 @@ private fun FillInTheBlankContent(
     selectedAnswer: String?,
     isCorrect: Boolean?,
     showHint: Boolean,
+    hintText: String,
     onAnswerSelected: (String) -> Unit,
     onHintToggle: () -> Unit,
     onNavigateBack: () -> Unit
@@ -215,7 +221,7 @@ private fun FillInTheBlankContent(
                             )
                         ) {
                             Text(
-                                text = com.gultekinahmetabdullah.trainvoc.games.FillInTheBlankGame().getHint(question),
+                                text = hintText,
                                 modifier = Modifier.padding(16.dp),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer

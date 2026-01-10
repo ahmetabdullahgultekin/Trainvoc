@@ -3,6 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.algorithm
 import android.util.Log
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import kotlinx.coroutines.flow.first
 import kotlin.math.exp
 
 /**
