@@ -33,9 +33,9 @@ class ContextCluesViewModel @Inject constructor(
         }
     }
 
-    fun showClue() {
+    fun revealHint() {
         val currentState = (_uiState.value as? ContextCluesUiState.Playing)?.gameState ?: return
-        val newState = contextCluesGame.showClue(currentState)
+        val newState = contextCluesGame.revealNextHint(currentState)
         _uiState.value = ContextCluesUiState.Playing(newState)
     }
 

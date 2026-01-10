@@ -40,6 +40,7 @@ fun TranslationRaceScreen(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
+                correctAnswer = null,
                 onAnswerSelected = { viewModel.selectAnswer(it) },
                 onNavigateBack = onNavigateBack
             )
@@ -56,6 +57,7 @@ fun TranslationRaceScreen(
                 gameState = state.gameState,
                 selectedAnswer = state.selectedAnswer,
                 isCorrect = state.isCorrect,
+                correctAnswer = state.correctAnswer,
                 onAnswerSelected = { },
                 onNavigateBack = onNavigateBack
             )
@@ -66,6 +68,7 @@ fun TranslationRaceScreen(
                 gameState = state.gameState,
                 selectedAnswer = null,
                 isCorrect = null,
+                correctAnswer = null,
                 onAnswerSelected = { },
                 onNavigateBack = onNavigateBack
             )
@@ -109,6 +112,7 @@ private fun TranslationRaceGameContent(
     gameState: com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame.GameState,
     selectedAnswer: String?,
     isCorrect: Boolean?,
+    correctAnswer: String?,
     onAnswerSelected: (String) -> Unit,
     onNavigateBack: () -> Unit
 ) {
@@ -219,11 +223,13 @@ private fun TranslationRaceGameContent(
                 // Options
                 items(question.options, key = { it }) { option ->
                     val isSelected = option == selectedAnswer
+                    val isTheCorrectAnswer = isCorrect == false && option == correctAnswer
 
                     OptionButton(
                         text = option,
                         isSelected = isSelected,
                         isCorrect = if (isSelected) isCorrect else null,
+                        isTheCorrectAnswer = isTheCorrectAnswer,
                         onClick = { onAnswerSelected(option) }
                     )
                 }

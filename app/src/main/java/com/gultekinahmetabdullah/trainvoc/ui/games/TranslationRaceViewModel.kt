@@ -44,11 +44,12 @@ class TranslationRaceViewModel @Inject constructor(
             val question = currentState.currentQuestion ?: return@launch
             val isCorrect = translationRaceGame.checkAnswer(question, answer)
 
-            // Show feedback
+            // Show feedback with correct answer
             _uiState.value = TranslationRaceUiState.ShowingFeedback(
                 gameState = currentState,
                 selectedAnswer = answer,
-                isCorrect = isCorrect
+                isCorrect = isCorrect,
+                correctAnswer = question.correctAnswer
             )
 
             // Wait for feedback animation
@@ -73,16 +74,42 @@ class TranslationRaceViewModel @Inject constructor(
         timerJob = viewModelScope.launch {
             while (true) {
                 delay(1000)
-                val currentState = (_uiState.value as? TranslationRaceUiState.Playing)?.gameState ?: break
+
+                // Get game state from either Playing or ShowingFeedback state
+                val currentState = when (val state = _uiState.value) {
+                    is TranslationRaceUiState.Playing -> state.gameState
+                    is TranslationRaceUiState.ShowingFeedback -> state.gameState
+                    is TranslationRaceUiState.Complete -> break
+                    else -> continue // Skip for Loading/Error states
+                }
 
                 if (currentState.isPaused) continue
 
                 val newState = translationRaceGame.updateTime(currentState)
-                _uiState.value = TranslationRaceUiState.Playing(newState)
+
+                // Update the state while preserving the current UI state type
+                when (val state = _uiState.value) {
+                    is TranslationRaceUiState.Playing -> {
+                        _uiState.value = TranslationRaceUiState.Playing(newState)
+                    }
+                    is TranslationRaceUiState.ShowingFeedback -> {
+                        _uiState.value = TranslationRaceUiState.ShowingFeedback(
+                            gameState = newState,
+                            selectedAnswer = state.selectedAnswer,
+                            isCorrect = state.isCorrect,
+                            correctAnswer = state.correctAnswer
+                        )
+                    }
+                    else -> { /* Do nothing */ }
+                }
 
                 if (newState.isComplete) {
-                    translationRaceGame.saveGameResult(newState)
-                    checkAchievements(newState)
+                    try {
+                        translationRaceGame.saveGameResult(newState)
+                        checkAchievements(newState)
+                    } catch (e: Exception) {
+                        // Ignore save errors
+                    }
                     _uiState.value = TranslationRaceUiState.Complete(newState)
                     break
                 }
@@ -144,7 +171,8 @@ sealed class TranslationRaceUiState {
     data class ShowingFeedback(
         val gameState: TranslationRaceGame.GameState,
         val selectedAnswer: String,
-        val isCorrect: Boolean
+        val isCorrect: Boolean,
+        val correctAnswer: String
     ) : TranslationRaceUiState()
     data class Complete(val gameState: TranslationRaceGame.GameState) : TranslationRaceUiState()
     data class Error(val message: String) : TranslationRaceUiState()
