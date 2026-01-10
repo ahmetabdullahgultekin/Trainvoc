@@ -3,7 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.audio
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,7 +12,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import kotlinx.coroutines.launch
@@ -87,7 +86,7 @@ fun AudioButton(
                 )
             } else {
                 Icon(
-                    Icons.Default.VolumeUp,
+                    Icons.AutoMirrored.Filled.VolumeUp,
                     contentDescription = "Play pronunciation",
                     modifier = if (isPlaying) Modifier.scale(scale) else Modifier
                 )
@@ -120,7 +119,7 @@ fun AudioButton(
                     )
                 } else {
                     Icon(
-                        Icons.Default.VolumeUp,
+                        Icons.AutoMirrored.Filled.VolumeUp,
                         contentDescription = "Play pronunciation",
                         modifier = if (isPlaying) Modifier.scale(scale) else Modifier,
                         tint = if (error != null) {
@@ -156,11 +155,11 @@ fun AudioButton(
 fun CompactAudioIcon(
     wordId: String,
     wordText: String,
+    featureFlags: FeatureFlagManager,
+    ttsService: TextToSpeechService,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
-    val featureFlags: FeatureFlagManager = hiltViewModel()
-    val ttsService: TextToSpeechService = hiltViewModel()
     val scope = rememberCoroutineScope()
 
     val audioEnabled by featureFlags.rememberFeatureEnabled(FeatureFlag.AUDIO_PRONUNCIATION)
@@ -176,7 +175,7 @@ fun CompactAudioIcon(
         modifier = modifier.size(32.dp)
     ) {
         Icon(
-            Icons.Default.VolumeUp,
+            Icons.AutoMirrored.Filled.VolumeUp,
             contentDescription = "Play",
             modifier = Modifier.size(18.dp),
             tint = tint

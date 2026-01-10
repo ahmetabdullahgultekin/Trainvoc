@@ -252,20 +252,22 @@ class TranslationRaceGame @Inject constructor(
         }
     }
 
-    /**
-     * Get performance rating
-     */
-    fun getPerformanceRating(gameState: GameState): PerformanceRating {
-        val accuracy = gameState.accuracy
-        val apm = gameState.answersPerMinute
+    companion object {
+        /**
+         * Get performance rating
+         */
+        fun getPerformanceRating(gameState: GameState): PerformanceRating {
+            val accuracy = gameState.accuracy
+            val apm = gameState.answersPerMinute
 
-        return when {
-            accuracy >= 95 && apm >= 40 -> PerformanceRating.LEGENDARY
-            accuracy >= 90 && apm >= 30 -> PerformanceRating.EXCELLENT
-            accuracy >= 80 && apm >= 20 -> PerformanceRating.GREAT
-            accuracy >= 70 && apm >= 15 -> PerformanceRating.GOOD
-            accuracy >= 60 -> PerformanceRating.AVERAGE
-            else -> PerformanceRating.NEEDS_PRACTICE
+            return when {
+                accuracy >= 95 && apm >= 40 -> PerformanceRating.LEGENDARY
+                accuracy >= 90 && apm >= 30 -> PerformanceRating.EXCELLENT
+                accuracy >= 80 && apm >= 20 -> PerformanceRating.GREAT
+                accuracy >= 70 && apm >= 15 -> PerformanceRating.GOOD
+                accuracy >= 60 -> PerformanceRating.AVERAGE
+                else -> PerformanceRating.NEEDS_PRACTICE
+            }
         }
     }
 

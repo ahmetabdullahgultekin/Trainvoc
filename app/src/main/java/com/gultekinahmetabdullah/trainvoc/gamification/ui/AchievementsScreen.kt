@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -65,7 +66,7 @@ fun AchievementsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -173,7 +174,7 @@ fun AchievementOverviewCard(
             }
 
             LinearProgressIndicator(
-                progress = percentage / 100f,
+                progress = { percentage / 100f },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -364,7 +365,7 @@ fun AchievementCard(
                     // Progress bar
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         LinearProgressIndicator(
-                            progress = achievement.progressPercentage / 100f,
+                            progress = { achievement.progressPercentage / 100f },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(4.dp)

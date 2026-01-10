@@ -235,20 +235,22 @@ class ContextCluesGame @Inject constructor(
         gamesDao.insertGameSession(session)
     }
 
-    /**
-     * Get comprehension level based on performance
-     */
-    fun getComprehensionLevel(gameState: GameState): ComprehensionLevel {
-        val accuracy = gameState.accuracy
-        val clueUsageRate = if (gameState.currentQuestionIndex == 0) 0f
-                           else (gameState.cluesUsed.toFloat() / gameState.currentQuestionIndex) * 100f
+    companion object {
+        /**
+         * Get comprehension level based on performance
+         */
+        fun getComprehensionLevel(gameState: GameState): ComprehensionLevel {
+            val accuracy = gameState.accuracy
+            val clueUsageRate = if (gameState.currentQuestionIndex == 0) 0f
+                               else (gameState.cluesUsed.toFloat() / gameState.currentQuestionIndex) * 100f
 
-        return when {
-            accuracy >= 90 && clueUsageRate < 20 -> ComprehensionLevel.EXCELLENT
-            accuracy >= 80 && clueUsageRate < 40 -> ComprehensionLevel.GOOD
-            accuracy >= 70 && clueUsageRate < 60 -> ComprehensionLevel.FAIR
-            accuracy >= 60 -> ComprehensionLevel.DEVELOPING
-            else -> ComprehensionLevel.NEEDS_IMPROVEMENT
+            return when {
+                accuracy >= 90 && clueUsageRate < 20 -> ComprehensionLevel.EXCELLENT
+                accuracy >= 80 && clueUsageRate < 40 -> ComprehensionLevel.GOOD
+                accuracy >= 70 && clueUsageRate < 60 -> ComprehensionLevel.FAIR
+                accuracy >= 60 -> ComprehensionLevel.DEVELOPING
+                else -> ComprehensionLevel.NEEDS_IMPROVEMENT
+            }
         }
     }
 

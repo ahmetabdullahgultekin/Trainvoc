@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -193,7 +194,7 @@ private fun SignedOutContent(
             onClick = onSignIn,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(Icons.Default.Login, contentDescription = "Sign in")
+            Icon(Icons.AutoMirrored.Filled.Login, contentDescription = "Sign in")
             Spacer(modifier = Modifier.width(8.dp))
             Text("Sign in with Google")
         }

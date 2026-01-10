@@ -76,7 +76,7 @@ fun DailyGoalsCard(
                 }
             }
 
-            Divider()
+            HorizontalDivider()
 
             // Individual goal progress bars
             GoalProgressRow(
@@ -121,7 +121,7 @@ fun DailyGoalsCard(
                 Spacer(Modifier.height(8.dp))
 
                 LinearProgressIndicator(
-                    progress = overallProgress / 100f,
+                    progress = { overallProgress / 100f },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
@@ -213,7 +213,7 @@ fun GoalProgressRow(
             Spacer(Modifier.height(4.dp))
 
             LinearProgressIndicator(
-                progress = progress,
+                progress = { progress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(6.dp)
@@ -301,7 +301,7 @@ fun GoalCustomizationDialog(
                     }
                 }
 
-                Divider()
+                HorizontalDivider()
 
                 // Custom sliders
                 GoalSlider(

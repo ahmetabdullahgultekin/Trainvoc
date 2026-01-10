@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -172,7 +172,7 @@ private fun TranslationRaceGameContent(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Icon(
-                            Icons.Default.ArrowForward,
+                            Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "Translation direction",
                             modifier = Modifier.padding(horizontal = 8.dp),
                             tint = MaterialTheme.colorScheme.primary
@@ -251,9 +251,7 @@ private fun TranslationRaceResultDialog(
     onPlayAgain: () -> Unit,
     onMainMenu: () -> Unit
 ) {
-    val rating = com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame(
-        com.gultekinahmetabdullah.trainvoc.games.GamesDao::class.java.newInstance()
-    ).getPerformanceRating(gameState)
+    val rating = com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame.getPerformanceRating(gameState)
 
     AlertDialog(
         onDismissRequest = { },
@@ -275,7 +273,7 @@ private fun TranslationRaceResultDialog(
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 StatRow(label = "Correct Answers", value = "${gameState.correctAnswers}")
                 StatRow(label = "Total Answered", value = "${gameState.correctAnswers + gameState.incorrectAnswers}")

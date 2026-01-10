@@ -125,7 +125,7 @@ private fun SpeedMatchGameContent(
                 StatCard(label = "Best", value = "${gameState.maxCombo}x")
             }
 
-            Divider()
+            HorizontalDivider()
 
             // Two columns for matching
             Row(
