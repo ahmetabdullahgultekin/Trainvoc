@@ -99,6 +99,10 @@ class QuizViewModel @Inject constructor(
     private val _isUserReady = MutableStateFlow(true)
     val isUserReady: StateFlow<Boolean> = _isUserReady
 
+    // Current question number (1-indexed for display)
+    private val _currentQuestionNumber = MutableStateFlow(1)
+    val currentQuestionNumber: StateFlow<Int> = _currentQuestionNumber
+
     // Total and learned word counts for Story and Custom modes
     private val _totalWords = MutableStateFlow<Int?>(null)
     val totalWords: StateFlow<Int?> = _totalWords
@@ -260,6 +264,7 @@ class QuizViewModel @Inject constructor(
         if (currentIndex < _quizQuestions.value.size) {
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
+            _currentQuestionNumber.value = currentIndex
             viewModelScope.launch(Dispatchers.IO) {
                 _currentQuestion.value?.correctWord?.let { correctWord ->
                     _currentWordStats.value = repository.getWordStats(correctWord)
@@ -350,6 +355,7 @@ class QuizViewModel @Inject constructor(
         _learnedWords.value = null
         _progressPercent.value = null
         _isTimeOver.value = false
+        _currentQuestionNumber.value = 1
         // Cancel the quiz job if it is running
         quizJob?.cancel()
     }

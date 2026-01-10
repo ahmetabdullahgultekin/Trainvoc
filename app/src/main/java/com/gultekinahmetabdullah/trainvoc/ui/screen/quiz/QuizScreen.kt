@@ -7,12 +7,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -69,6 +71,8 @@ fun QuizScreen(
     val score by quizViewModel.score.collectAsState()
     val currentStats by quizViewModel.currentWordStats.collectAsState()
     val quizParameter by quizViewModel.quizParameter.collectAsState()
+    val timeLeft by quizViewModel.timeLeft.collectAsState()
+    val currentQuestionNumber by quizViewModel.currentQuestionNumber.collectAsState()
     var selectedAnswer by remember { mutableStateOf<Word?>(null) }
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
     var showExitDialog by remember { mutableStateOf(false) }
@@ -156,6 +160,47 @@ fun QuizScreen(
             ) {
                 item {
                     QuizScoreCard(score = score)
+                }
+                item {
+                    Spacer(modifier = Modifier.height(Spacing.small))
+                }
+                item {
+                    // Question Counter and Timer Row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Spacing.small),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Question counter
+                        Text(
+                            text = stringResource(id = R.string.question_number, currentQuestionNumber),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+
+                        // Timer display
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val timerColor = when {
+                                timeLeft <= 10 -> MaterialTheme.colorScheme.error
+                                timeLeft <= 20 -> MaterialTheme.colorScheme.tertiary
+                                else -> MaterialTheme.colorScheme.primary
+                            }
+                            Text(
+                                text = "\u23F1",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${timeLeft}s",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = timerColor
+                            )
+                        }
+                    }
                 }
                 item {
                     Spacer(modifier = Modifier.height(Spacing.small))

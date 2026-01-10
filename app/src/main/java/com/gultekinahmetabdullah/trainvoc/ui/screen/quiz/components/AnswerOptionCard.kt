@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -83,14 +85,26 @@ fun AnswerOptionCard(
         label = "scaleAnimation"
     )
 
+    val answerState = when {
+        selectedAnswer == choice && isCorrect == true -> "Correct answer"
+        selectedAnswer == choice && isCorrect == false -> "Wrong answer"
+        choice == correctWord && isCorrect == false -> "This was the correct answer"
+        else -> ""
+    }
+    val semanticDescription = "${choice.meaning}. $answerState".trim()
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(Spacing.small)
             .scale(scaleAnim)
             .clip(cardShape)
+            .semantics(mergeDescendants = true) {
+                contentDescription = semanticDescription
+            }
             .clickable(
-                enabled = selectedAnswer == null && isCorrect == null && !isTimeUp
+                enabled = selectedAnswer == null && isCorrect == null && !isTimeUp,
+                onClickLabel = "Select ${choice.meaning}"
             ) {
                 onChoiceClick(choice)
             },
@@ -100,7 +114,7 @@ fun AnswerOptionCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(14.dp)
+                .padding(vertical = 16.dp, horizontal = 14.dp) // Minimum 48dp touch target
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {

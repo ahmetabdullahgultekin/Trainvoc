@@ -1,8 +1,5 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -31,15 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
@@ -49,12 +40,9 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.components.ChartData
-import com.gultekinahmetabdullah.trainvoc.ui.components.ChartLegend
-import com.gultekinahmetabdullah.trainvoc.ui.components.DonutChart
 import com.gultekinahmetabdullah.trainvoc.ui.components.ProgressRing
 import com.gultekinahmetabdullah.trainvoc.ui.components.VerticalBarChart
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
-import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
@@ -122,10 +110,11 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Header with Animation
             item {
                 LottieAnimation(
                     composition = composition,
-                    modifier = Modifier.size(220.dp),
+                    modifier = Modifier.size(150.dp),
                     progress = { progress }
                 )
             }
@@ -136,126 +125,9 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            item { Spacer(modifier = Modifier.height(Spacing.mediumLarge)) }
-            // Animasyonlu StatCard'lar
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.Star,
-                    title = stringResource(id = R.string.total_score),
-                    value = "${correctAnswers * 10}",
-                    color = MaterialTheme.colorScheme.statsGold,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = painterResource(id = R.drawable.baseline_leaderboard_24),
-                    title = stringResource(id = R.string.total_quizzes),
-                    value = "$totalQuizCount",
-                    color = MaterialTheme.colorScheme.statsTime,
-                    isPainter = true,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = painterResource(id = R.drawable.outline_timer_24),
-                    title = stringResource(id = R.string.total_time_spent),
-                    value = "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
-                    color = MaterialTheme.colorScheme.statsAchievement,
-                    isPainter = true,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = painterResource(id = R.drawable.baseline_bar_chart_24),
-                    title = stringResource(id = R.string.avg_time_per_question),
-                    // Show just two decimal places
-                    value = "${
-                        (totalTimeSpent.toDouble() / totalQuestions.toDouble()).let {
-                            "%.2f".format(it)
-                        }
-                    }s",
-                    color = MaterialTheme.colorScheme.statsAverage,
-                    isPainter = true,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.CheckCircle,
-                    title = stringResource(id = R.string.correct_answers),
-                    value = "$correctAnswers",
-                    color = MaterialTheme.colorScheme.statsCorrect,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.Close,
-                    title = stringResource(id = R.string.incorrect_answers),
-                    value = "$incorrectAnswers",
-                    color = MaterialTheme.colorScheme.statsIncorrect,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = painterResource(id = R.drawable.baseline_skip_next_24),
-                    title = stringResource(id = R.string.skipped_questions),
-                    value = "$skippedQuestions",
-                    color = MaterialTheme.colorScheme.statsSkipped,
-                    isPainter = true,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.Star,
-                    title = stringResource(id = R.string.best_category),
-                    value = bestCategory,
-                    color = MaterialTheme.colorScheme.statsCategory,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.Close,
-                    title = stringResource(id = R.string.most_wrong_word),
-                    value = mostWrongWord,
-                    color = MaterialTheme.colorScheme.statsIncorrect,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.CheckCircle,
-                    title = "Daily Correct",
-                    value = "$dailyCorrect",
-                    color = MaterialTheme.colorScheme.statsQuiz,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item {
-                AnimatedStatCard(
-                    icon = Icons.Default.CheckCircle,
-                    title = "Weekly Correct",
-                    value = "$weeklyCorrect",
-                    color = MaterialTheme.colorScheme.statsAverage,
-                    isPainter = false,
-                    iconContentDescription = stringResource(id = R.string.statistics_icon)
-                )
-            }
-            item { Spacer(modifier = Modifier.height(Spacing.mediumLarge)) }
+            item { Spacer(modifier = Modifier.height(Spacing.medium)) }
 
-            // Progress Ring - Success Rate
+            // SECTION 1: Key Metrics (Score, Quizzes, Time) - Condensed into one card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -268,21 +140,106 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(Spacing.large),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .padding(Spacing.medium)
                     ) {
-                        ProgressRing(
-                            progress = successRate,
-                            color = MaterialTheme.colorScheme.statsCorrect,
-                            size = 160.dp
-                        )
+                        // Score Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.statsGold,
+                                    modifier = Modifier.size(IconSize.medium)
+                                )
+                                Spacer(modifier = Modifier.width(Spacing.small))
+                                Text(
+                                    text = stringResource(id = R.string.total_score),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                            Text(
+                                text = "${correctAnswers * 10}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.statsGold
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(Spacing.small))
+
+                        // Quizzes and Time Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = stringResource(id = R.string.total_quizzes),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "$totalQuizCount",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.statsTime
+                                )
+                            }
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = stringResource(id = R.string.total_time_spent),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "${totalTimeSpent / 60}m ${totalTimeSpent % 60}s",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.statsAchievement
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(Spacing.small))
+
+                        // Best Category & Most Wrong Word
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = stringResource(id = R.string.best_category),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = bestCategory,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.statsCategory
+                                )
+                            }
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = stringResource(id = R.string.most_wrong_word),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = mostWrongWord,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.statsIncorrect
+                                )
+                            }
+                        }
                     }
                 }
             }
 
-            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+            item { Spacer(modifier = Modifier.height(Spacing.medium)) }
 
-            // Donut Chart - Answer Distribution
+            // SECTION 2: Success Rate with Progress Ring + Answer Counts
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -292,72 +249,65 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                         containerColor = MaterialTheme.colorScheme.surface.copy(alpha = Alpha.high)
                     )
                 ) {
-                    Column(
-                        modifier = Modifier.padding(Spacing.large),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Spacing.medium),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.answer_distribution),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary
+                        // Progress Ring
+                        ProgressRing(
+                            progress = successRate,
+                            color = MaterialTheme.colorScheme.statsCorrect,
+                            size = 100.dp
                         )
-                        Spacer(modifier = Modifier.height(Spacing.medium))
 
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            DonutChart(
-                                data = listOf(
-                                    ChartData(
-                                        label = stringResource(id = R.string.correct_answers),
-                                        value = correctAnswers.toFloat(),
-                                        color = MaterialTheme.colorScheme.statsCorrect
-                                    ),
-                                    ChartData(
-                                        label = stringResource(id = R.string.incorrect_answers),
-                                        value = incorrectAnswers.toFloat(),
-                                        color = MaterialTheme.colorScheme.statsIncorrect
-                                    ),
-                                    ChartData(
-                                        label = stringResource(id = R.string.skipped_questions),
-                                        value = skippedQuestions.toFloat(),
-                                        color = MaterialTheme.colorScheme.statsSkipped
-                                    )
-                                ),
-                                size = 180.dp,
-                                strokeWidth = 32.dp
-                            )
-
-                            Spacer(modifier = Modifier.height(Spacing.medium))
-
-                            ChartLegend(
-                                data = listOf(
-                                    ChartData(
-                                        label = stringResource(id = R.string.correct_answers),
-                                        value = correctAnswers.toFloat(),
-                                        color = MaterialTheme.colorScheme.statsCorrect
-                                    ),
-                                    ChartData(
-                                        label = stringResource(id = R.string.incorrect_answers),
-                                        value = incorrectAnswers.toFloat(),
-                                        color = MaterialTheme.colorScheme.statsIncorrect
-                                    ),
-                                    ChartData(
-                                        label = stringResource(id = R.string.skipped_questions),
-                                        value = skippedQuestions.toFloat(),
-                                        color = MaterialTheme.colorScheme.statsSkipped
-                                    )
+                        // Answer Breakdown
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.statsCorrect,
+                                    modifier = Modifier.size(IconSize.small)
                                 )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "$correctAnswers ${stringResource(id = R.string.correct_label)}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.statsCorrect
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.statsIncorrect,
+                                    modifier = Modifier.size(IconSize.small)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "$incorrectAnswers ${stringResource(id = R.string.incorrect_label)}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.statsIncorrect
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "$skippedQuestions ${stringResource(id = R.string.skipped_label)}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.statsSkipped
                             )
                         }
                     }
                 }
             }
 
-            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+            item { Spacer(modifier = Modifier.height(Spacing.medium)) }
 
-            // Vertical Bar Chart - Time-based Performance
+            // SECTION 3: Performance Trends - Condensed Bar Chart
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -368,185 +318,51 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                     )
                 ) {
                     Column(
-                        modifier = Modifier.padding(Spacing.large)
+                        modifier = Modifier.padding(Spacing.medium)
                     ) {
                         Text(
-                            text = "Performance Trends",
-                            style = MaterialTheme.typography.titleLarge,
+                            text = stringResource(id = R.string.performance_trends),
+                            style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
-                        Spacer(modifier = Modifier.height(Spacing.medium))
+                        Spacer(modifier = Modifier.height(Spacing.small))
 
                         VerticalBarChart(
                             data = listOf(
                                 ChartData(
-                                    label = "Daily",
+                                    label = stringResource(id = R.string.daily_label),
                                     value = dailyCorrect.toFloat(),
                                     color = MaterialTheme.colorScheme.statsQuiz
                                 ),
                                 ChartData(
-                                    label = "Weekly",
+                                    label = stringResource(id = R.string.weekly_label),
                                     value = weeklyCorrect.toFloat(),
                                     color = MaterialTheme.colorScheme.statsAverage
                                 ),
                                 ChartData(
-                                    label = "Total",
+                                    label = stringResource(id = R.string.total_label),
                                     value = correctAnswers.toFloat(),
                                     color = MaterialTheme.colorScheme.statsCorrect
                                 )
                             ),
-                            maxHeight = 140.dp
+                            maxHeight = 100.dp
                         )
                     }
                 }
             }
 
-            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+            item { Spacer(modifier = Modifier.height(Spacing.medium)) }
 
-            // Original Horizontal Bar Chart
-            item {
-                StatsBarChart(
-                    correctAnswers, incorrectAnswers, skippedQuestions,
-                    successRate, failureRate, skippedRate
-                )
-            }
-            item { Spacer(modifier = Modifier.height(Spacing.large)) }
+            // Refresh Button
             item {
                 Button(onClick = {
                     scope.launch { statsViewModel.fillStats() }
                 }) {
-                    Text(text = "Refresh Stats")
+                    Text(text = stringResource(id = R.string.refresh_stats))
                 }
             }
+
+            item { Spacer(modifier = Modifier.height(Spacing.large)) }
         }
     }
-}
-
-@Composable
-fun AnimatedStatCard(
-    icon: Any, // ImageVector veya Painter olabilir
-    title: String,
-    value: String,
-    color: Color,
-    isPainter: Boolean = false,
-    iconContentDescription: String? = null
-) {
-    val cardShape = remember { RoundedCornerShape(CornerRadius.large) }
-
-    val anim = animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(durationMillis = AnimationDuration.statCard), label = "cardAnim"
-    )
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-            .height(70.dp)
-            .scale(anim.value),
-        shape = cardShape,
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = Alpha.surfaceMedium))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 18.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                modifier = Modifier.weight(1f, fill = false),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (isPainter) {
-                    Image(
-                        painter = icon as Painter,
-                        contentDescription = iconContentDescription,
-                        modifier = Modifier.size(IconSize.large)
-                    )
-                } else {
-                    Icon(
-                        icon as ImageVector,
-                        contentDescription = iconContentDescription,
-                        tint = color,
-                        modifier = Modifier.size(IconSize.large)
-                    )
-                }
-                Spacer(modifier = Modifier.width(Spacing.small))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = color,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f, fill = false)
-                )
-            }
-            Spacer(modifier = Modifier.width(Spacing.small))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineSmall,
-                color = color,
-                maxLines = 1
-            )
-        }
-    }
-}
-
-@Composable
-fun StatsBarChart(
-    correct: Int,
-    incorrect: Int,
-    skipped: Int,
-    successRate: Float,
-    failureRate: Float,
-    skippedRate: Float
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(id = R.string.answer_distribution),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(Spacing.mediumLarge))
-        // StatsBarChart içindeki Row'da:
-        Row(modifier = Modifier.fillMaxWidth()) {
-            AnimatedBar(
-                modifier = Modifier.weight(if (successRate <= 0f) 0.01f else successRate),
-                color = MaterialTheme.colorScheme.statsCorrect,
-            )
-            AnimatedBar(
-                modifier = Modifier.weight(if (skippedRate <= 0f) 0.01f else skippedRate),
-                color = MaterialTheme.colorScheme.statsSkipped,
-            )
-            AnimatedBar(
-                modifier = Modifier.weight(if (failureRate <= 0f) 0.01f else failureRate),
-                color = MaterialTheme.colorScheme.statsIncorrect,
-            )
-        }
-        Spacer(modifier = Modifier.height(Spacing.small))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(
-                text = stringResource(id = R.string.correct_colon, correct),
-                color = MaterialTheme.colorScheme.statsCorrect
-            )
-            Text(
-                text = stringResource(id = R.string.skipped_colon, skipped),
-                color = MaterialTheme.colorScheme.statsSkipped
-            )
-            Text(
-                text = stringResource(id = R.string.incorrect_colon, incorrect),
-                color = MaterialTheme.colorScheme.statsIncorrect
-            )
-        }
-    }
-}
-
-// AnimatedBar fonksiyonunu şu şekilde değiştirin:
-@Composable
-fun AnimatedBar(modifier: Modifier, color: Color) {
-    val barShape = remember { RoundedCornerShape(CornerRadius.small) }
-    Box(
-        modifier = modifier
-            .height(30.dp)
-            .background(color, barShape)
-    )
 }

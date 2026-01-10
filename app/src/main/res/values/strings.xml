@@ -33,6 +33,7 @@
     <string name="loading_questions">Loading Questions…</string>
     <string name="which_one_is_the_correct_meaning">Which one is the correct meaning of:</string>
     <string name="next_question">Next Question</string>
+    <string name="question_number">Question %1$d</string>
     <string name="score">Score</string>
     <string name="quiz_statistics">Quiz Statistics</string>
     <string name="total_questions">Total Questions</string>
@@ -46,6 +47,14 @@
     <string name="total_time_spent">Total Time Spent</string>
     <string name="last_answered">Last Answered</string>
     <string name="answer_distribution">Answer Distribution</string>
+    <string name="correct_label">correct</string>
+    <string name="incorrect_label">incorrect</string>
+    <string name="skipped_label">skipped</string>
+    <string name="performance_trends">Performance Trends</string>
+    <string name="daily_label">Daily</string>
+    <string name="weekly_label">Weekly</string>
+    <string name="total_label">Total</string>
+    <string name="refresh_stats">Refresh Stats</string>
     <string name="correct_colon">Correct: %1$d</string>
     <string name="skipped_colon">Skipped: %1$d</string>
     <string name="incorrect_colon">Incorrect: %1$d</string>
@@ -224,6 +233,7 @@
     <string name="achievement_first_place">First place achievement - Gold medal</string>
     <string name="achievement_streak">Daily streak achievement - Fire icon</string>
     <string name="achievement_books">Books achievement - Learning milestone</string>
+    <string name="achievement_locked">Locked achievement - Complete tasks to unlock</string>
     <string name="category_brain_training">Brain training category</string>
     <string name="category_target_practice">Target practice category</string>
     <string name="category_quick_quiz">Quick quiz category</string>
