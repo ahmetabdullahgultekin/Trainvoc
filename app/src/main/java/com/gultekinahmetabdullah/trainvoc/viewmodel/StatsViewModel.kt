@@ -3,7 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import android.icu.text.DateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatsViewModel @Inject constructor(
-    private val repository: IWordRepository
+    private val analyticsService: IAnalyticsService
 ) : ViewModel() {
 
     private val _correctAnswers = MutableStateFlow(0)
@@ -64,22 +64,22 @@ class StatsViewModel @Inject constructor(
 
     fun fillStats() {
         viewModelScope.launch(Dispatchers.IO) {
-            _correctAnswers.value = repository.getCorrectAnswers()
-            _incorrectAnswers.value = repository.getWrongAnswers()
-            _skippedQuestions.value = repository.getSkippedAnswers()
+            _correctAnswers.value = analyticsService.getCorrectAnswers()
+            _incorrectAnswers.value = analyticsService.getWrongAnswers()
+            _skippedQuestions.value = analyticsService.getSkippedAnswers()
             _totalQuestions.value =
                 _correctAnswers.value + _incorrectAnswers.value + _skippedQuestions.value
             calculateRatios()
-            _totalTimeSpent.value = repository.getTotalTimeSpent()
+            _totalTimeSpent.value = analyticsService.getTotalTimeSpent()
             // Convert the last answered time to a readable format
-            _lastAnswered.value = if (repository.getLastAnswered() == 0L) "N/A"
-            else DateFormat.getDateTimeInstance().format(repository.getLastAnswered())
+            _lastAnswered.value = if (analyticsService.getLastAnswered() == 0L) "N/A"
+            else DateFormat.getDateTimeInstance().format(analyticsService.getLastAnswered())
             // Yeni istatistikler
-            _totalQuizCount.value = repository.getTotalQuizCount()
-            _dailyCorrect.value = repository.getDailyCorrectAnswers()
-            _weeklyCorrect.value = repository.getWeeklyCorrectAnswers()
-            _mostWrongWord.value = repository.getMostWrongWord() ?: "-"
-            _bestCategory.value = repository.getBestCategory() ?: "-"
+            _totalQuizCount.value = analyticsService.getTotalQuizCount()
+            _dailyCorrect.value = analyticsService.getDailyCorrectAnswers()
+            _weeklyCorrect.value = analyticsService.getWeeklyCorrectAnswers()
+            _mostWrongWord.value = analyticsService.getMostWrongWord() ?: "-"
+            _bestCategory.value = analyticsService.getBestCategory() ?: "-"
         }
     }
 

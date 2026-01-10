@@ -16,12 +16,17 @@ import com.gultekinahmetabdullah.trainvoc.database.WordExamCrossRefDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
+/**
+ * Word Repository implementation.
+ * Implements all segregated interfaces for complete functionality.
+ * This allows clients to depend only on the interfaces they need.
+ */
 class WordRepository(
     private val wordDao: WordDao,
     private val statisticDao: StatisticDao,
     private val wordExamCrossRefDao: WordExamCrossRefDao,
     private val examDao: ExamDao
-) : IWordRepository {
+) : IWordRepository, IQuizService, IWordStatisticsService, IProgressService, IAnalyticsService {
 
     override suspend fun resetProgress() {
         statisticDao.resetProgress()

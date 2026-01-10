@@ -1,16 +1,16 @@
 package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import javax.inject.Inject
 
 /**
  * Use Case for checking if a word level is unlocked.
  * Implements the business rule: level unlocks when previous level is mastered.
- * Follows Dependency Inversion Principle by depending on IWordRepository interface.
+ * Follows Dependency Inversion Principle by depending on IProgressService interface.
  */
 class CheckLevelUnlockedUseCase @Inject constructor(
-    private val repository: IWordRepository
+    private val progressService: IProgressService
 ) {
     /**
      * Checks if a given level is unlocked for the user.
@@ -30,7 +30,7 @@ class CheckLevelUnlockedUseCase @Inject constructor(
             val previousLevel = WordLevel.entries.getOrNull(level.ordinal - 1)
                 ?: return Result.success(false)
 
-            val isUnlocked = repository.isLevelUnlocked(previousLevel)
+            val isUnlocked = progressService.isLevelUnlocked(previousLevel)
             Result.success(isUnlocked)
         } catch (e: Exception) {
             Result.failure(e)

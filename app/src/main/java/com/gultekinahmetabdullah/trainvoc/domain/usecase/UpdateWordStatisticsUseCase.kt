@@ -2,26 +2,26 @@ package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import javax.inject.Inject
 
 /**
  * Use Case for updating word statistics after quiz answers.
  * Encapsulates business logic for correct/wrong/skipped answer handling.
- * Follows Dependency Inversion Principle by depending on IWordRepository interface.
+ * Follows Dependency Inversion Principle by depending on IWordStatisticsService interface.
  */
 class UpdateWordStatisticsUseCase @Inject constructor(
-    private val repository: IWordRepository
+    private val wordStatisticsService: IWordStatisticsService
 ) {
     /**
      * Updates statistics when a word is answered correctly.
      */
     suspend fun onCorrectAnswer(word: Word): Result<Unit> {
         return try {
-            val stats = repository.getWordStats(word)
+            val stats = wordStatisticsService.getWordStats(word)
             val updatedStats = stats.copy(correctCount = stats.correctCount + 1)
-            repository.updateWordStats(updatedStats, word)
-            repository.updateLastAnswered(word.word)
+            wordStatisticsService.updateWordStats(updatedStats, word)
+            wordStatisticsService.updateLastAnswered(word.word)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -33,10 +33,10 @@ class UpdateWordStatisticsUseCase @Inject constructor(
      */
     suspend fun onWrongAnswer(word: Word): Result<Unit> {
         return try {
-            val stats = repository.getWordStats(word)
+            val stats = wordStatisticsService.getWordStats(word)
             val updatedStats = stats.copy(wrongCount = stats.wrongCount + 1)
-            repository.updateWordStats(updatedStats, word)
-            repository.updateLastAnswered(word.word)
+            wordStatisticsService.updateWordStats(updatedStats, word)
+            wordStatisticsService.updateLastAnswered(word.word)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -48,10 +48,10 @@ class UpdateWordStatisticsUseCase @Inject constructor(
      */
     suspend fun onSkippedAnswer(word: Word): Result<Unit> {
         return try {
-            val stats = repository.getWordStats(word)
+            val stats = wordStatisticsService.getWordStats(word)
             val updatedStats = stats.copy(skippedCount = stats.skippedCount + 1)
-            repository.updateWordStats(updatedStats, word)
-            repository.updateLastAnswered(word.word)
+            wordStatisticsService.updateWordStats(updatedStats, word)
+            wordStatisticsService.updateLastAnswered(word.word)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -63,7 +63,7 @@ class UpdateWordStatisticsUseCase @Inject constructor(
      */
     suspend fun getWordStatistics(word: Word): Result<Statistic> {
         return try {
-            val stats = repository.getWordStats(word)
+            val stats = wordStatisticsService.getWordStats(word)
             Result.success(stats)
         } catch (e: Exception) {
             Result.failure(e)

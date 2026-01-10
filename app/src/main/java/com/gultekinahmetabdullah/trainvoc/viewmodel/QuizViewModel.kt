@@ -9,7 +9,9 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
+import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
+import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,7 +31,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: IWordRepository,
+    private val quizService: IQuizService,
+    private val wordStatisticsService: IWordStatisticsService,
+    private val progressService: IProgressService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -254,7 +258,7 @@ class QuizViewModel @Inject constructor(
         val quizType = _quiz.value?.type ?: return
         val parameter = _quizParameter.value ?: return
         _quizQuestions.value.addAll(
-            repository.generateTenQuestions(quizType, parameter)
+            quizService.generateTenQuestions(quizType, parameter)
         )
     }
 
@@ -267,7 +271,7 @@ class QuizViewModel @Inject constructor(
             _currentQuestionNumber.value = currentIndex
             viewModelScope.launch(Dispatchers.IO) {
                 _currentQuestion.value?.correctWord?.let { correctWord ->
-                    _currentWordStats.value = repository.getWordStats(correctWord)
+                    _currentWordStats.value = wordStatisticsService.getWordStats(correctWord)
                 }
                 addNewQuestions()
             }
@@ -283,12 +287,12 @@ class QuizViewModel @Inject constructor(
         pauseQuiz()
         val secondsSpent = durationConst - _timeLeft.value
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateLastAnswered(currentQuestion.correctWord.word)
-            repository.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
+            wordStatisticsService.updateLastAnswered(currentQuestion.correctWord.word)
+            wordStatisticsService.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
         }
         if (choice == null) {
             viewModelScope.launch(Dispatchers.IO) {
-                repository.updateWordStats(
+                wordStatisticsService.updateWordStats(
                     currentStats.copy(
                         skippedCount = currentStats.skippedCount + 1
                     ),
@@ -302,7 +306,7 @@ class QuizViewModel @Inject constructor(
             _score.value++
             // Update the entity stats in the database
             viewModelScope.launch(Dispatchers.IO) {
-                repository.updateWordStats(
+                wordStatisticsService.updateWordStats(
                     currentStats.copy(
                         correctCount = currentStats.correctCount + 1
                     ),
@@ -313,7 +317,7 @@ class QuizViewModel @Inject constructor(
         } else {
             // Wrong answer
             viewModelScope.launch(Dispatchers.IO) {
-                repository.updateWordStats(
+                wordStatisticsService.updateWordStats(
                     currentStats.copy(
                         wrongCount = currentStats.wrongCount + 1
                     ),
@@ -371,16 +375,16 @@ class QuizViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             when (parameter) {
                 is QuizParameter.Level -> {
-                    val total = repository.getWordCountByLevel(parameter.wordLevel.name)
-                    val learned = repository.getLearnedWordCount(parameter.wordLevel.name)
+                    val total = progressService.getWordCountByLevel(parameter.wordLevel.name)
+                    val learned = progressService.getLearnedWordCount(parameter.wordLevel.name)
                     _totalWords.value = total
                     _learnedWords.value = learned
                     _progressPercent.value = if (total > 0) (learned * 100 / total) else 0
                 }
 
                 is QuizParameter.ExamType -> {
-                    val total = repository.getWordCountByExam(parameter.exam.exam)
-                    val learned = repository.getLearnedWordCountByExam(parameter.exam.exam)
+                    val total = progressService.getWordCountByExam(parameter.exam.exam)
+                    val learned = progressService.getLearnedWordCountByExam(parameter.exam.exam)
                     _totalWords.value = total
                     _learnedWords.value = learned
                     _progressPercent.value = if (total > 0) (learned * 100 / total) else 0

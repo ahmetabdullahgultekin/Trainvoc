@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class WordViewModel @Inject constructor(
-    private val repository: IWordRepository
+    private val repository: IWordRepository,
+    private val wordStatisticsService: IWordStatisticsService
 ) : ViewModel() {
 
     private val _words = MutableStateFlow<List<WordAskedInExams>>(emptyList())
@@ -98,7 +100,7 @@ class WordViewModel @Inject constructor(
 
     suspend fun getWordFullDetail(wordId: String): WordFullDetail? {
         val word = repository.getWordById(wordId)
-        val statistic = repository.getWordStats(word)
+        val statistic = wordStatisticsService.getWordStats(word)
         val exams = repository.getExamsForWord(wordId)
         return WordFullDetail(word, statistic, exams)
     }
