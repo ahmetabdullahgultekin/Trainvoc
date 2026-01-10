@@ -3,6 +3,8 @@ package com.gultekinahmetabdullah.trainvoc.repository
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
@@ -11,8 +13,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Repository implementation for managing user preferences using SharedPreferences.
- * Centralizes all preference access and provides type-safe methods.
+ * Repository implementation for managing user preferences using EncryptedSharedPreferences.
+ * Centralizes all preference access and provides type-safe methods with AES-256-GCM encryption.
+ *
+ * Security:
+ * - All preferences encrypted at rest using Android Keystore
+ * - AES-256-GCM for values, AES-256-SIV for keys
+ * - Keys stored securely in hardware-backed Keystore when available
  */
 @Singleton
 class PreferencesRepository @Inject constructor(
@@ -20,7 +27,7 @@ class PreferencesRepository @Inject constructor(
 ) : IPreferencesRepository {
 
     companion object {
-        private const val PREFS_NAME = "user_prefs"
+        private const val PREFS_NAME = "secure_user_prefs"
         private const val KEY_USERNAME = "username"
         private const val KEY_THEME = "theme"
         private const val KEY_COLOR_PALETTE = "color_palette"
@@ -28,8 +35,21 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_LANGUAGE = "language"
     }
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences by lazy {
+        // Create or retrieve MasterKey for encryption
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+        // Create EncryptedSharedPreferences
+        EncryptedSharedPreferences.create(
+            context,
+            PREFS_NAME,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+    }
 
     override fun getUsername(): String? =
         prefs.getString(KEY_USERNAME, null)

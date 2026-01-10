@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.security.EncryptionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -75,13 +76,38 @@ class DataImporter(
         try {
             onProgress?.invoke(0.1f)
 
-            // Read and parse JSON file
+            // Check if file exists
             val file = File(filePath)
             if (!file.exists()) {
                 return@withContext RestoreResult.Failure("Backup file not found")
             }
 
-            val json = file.readText()
+            // Decrypt file if encrypted (check .enc extension)
+            val jsonFile = if (file.extension == "enc") {
+                val encryptionHelper = EncryptionHelper(context)
+                val decryptedFile = File(file.parent, "${file.nameWithoutExtension}_decrypted.json")
+
+                val decryptionSuccess = encryptionHelper.decryptFile(file, decryptedFile)
+
+                if (!decryptionSuccess) {
+                    return@withContext RestoreResult.Failure(
+                        "Failed to decrypt backup file. File may be corrupted or tampered with."
+                    )
+                }
+
+                decryptedFile
+            } else {
+                file
+            }
+
+            // Read and parse JSON file
+            val json = jsonFile.readText()
+
+            // Clean up decrypted temp file if it was created
+            if (jsonFile != file) {
+                jsonFile.delete()
+            }
+
             val backupData = try {
                 gson.fromJson(json, BackupData::class.java)
             } catch (e: JsonSyntaxException) {
@@ -600,13 +626,14 @@ class DataImporter(
 
     /**
      * Calculate checksum for data integrity verification
+     * Uses SHA-256 for cryptographically secure hashing
      */
     private fun calculateChecksum(
         words: List<WordBackup>,
         statistics: List<StatisticBackup>
     ): String {
         val data = words.joinToString { it.word } + statistics.joinToString { it.statId.toString() }
-        val digest = MessageDigest.getInstance("MD5")
+        val digest = MessageDigest.getInstance("SHA-256")
         val hashBytes = digest.digest(data.toByteArray())
         return hashBytes.joinToString("") { "%02x".format(it) }
     }

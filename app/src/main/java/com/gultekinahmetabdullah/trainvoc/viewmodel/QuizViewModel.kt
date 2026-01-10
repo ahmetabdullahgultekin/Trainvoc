@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
@@ -18,10 +19,33 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * QuizViewModel with SavedStateHandle support for process death recovery
+ *
+ * State Persistence:
+ * - Saves quiz state to SavedStateHandle on changes
+ * - Restores state automatically after process death
+ * - Handles complex state serialization
+ */
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: IWordRepository
+    private val repository: IWordRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "QuizViewModel"
+
+        // SavedState keys
+        private const val KEY_CURRENT_INDEX = "current_index"
+        private const val KEY_SCORE = "score"
+        private const val KEY_TIME_LEFT = "time_left"
+        private const val KEY_IS_QUIZ_FINISHED = "is_quiz_finished"
+        private const val KEY_IS_TIME_RUNNING = "is_time_running"
+        private const val KEY_IS_ANSWERED = "is_answered"
+        private const val KEY_QUIZ_TYPE = "quiz_type"
+        private const val KEY_QUIZ_PARAMETER_TYPE = "quiz_parameter_type"
+    }
 
     private val durationConst = 60
     private val progressConst = 1f
@@ -37,6 +61,10 @@ class QuizViewModel @Inject constructor(
     val quizQuestions: StateFlow<List<Question>> = _quizQuestions
 
     private var currentIndex = 0
+        set(value) {
+            field = value
+            savedStateHandle[KEY_CURRENT_INDEX] = value
+        }
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
     val currentQuestion: StateFlow<Question?> = _currentQuestion
@@ -81,15 +109,82 @@ class QuizViewModel @Inject constructor(
     private val _progressPercent = MutableStateFlow<Int?>(null)
     val progressPercent: StateFlow<Int?> = _progressPercent
 
-    /*
+    private var quizJob: Job? = null
+
     init {
+        // Restore state from SavedStateHandle after process death
+        restoreState()
+
+        // Observe state changes and save to SavedStateHandle
         viewModelScope.launch {
-            loadQuizQuestions()
+            _score.collect { score ->
+                savedStateHandle[KEY_SCORE] = score
+            }
+        }
+
+        viewModelScope.launch {
+            _timeLeft.collect { timeLeft ->
+                savedStateHandle[KEY_TIME_LEFT] = timeLeft
+            }
+        }
+
+        viewModelScope.launch {
+            _isQuizFinished.collect { isFinished ->
+                savedStateHandle[KEY_IS_QUIZ_FINISHED] = isFinished
+            }
+        }
+
+        viewModelScope.launch {
+            _isTimeRunning.collect { isRunning ->
+                savedStateHandle[KEY_IS_TIME_RUNNING] = isRunning
+            }
+        }
+
+        viewModelScope.launch {
+            _isAnswered.collect { isAnswered ->
+                savedStateHandle[KEY_IS_ANSWERED] = isAnswered
+            }
         }
     }
-     */
 
-    private var quizJob: Job? = null
+    /**
+     * Restores quiz state from SavedStateHandle after process death
+     */
+    private fun restoreState() {
+        try {
+            currentIndex = savedStateHandle[KEY_CURRENT_INDEX] ?: 0
+            _score.value = savedStateHandle[KEY_SCORE] ?: scoreConst
+            _timeLeft.value = savedStateHandle[KEY_TIME_LEFT] ?: durationConst
+            _isQuizFinished.value = savedStateHandle[KEY_IS_QUIZ_FINISHED] ?: false
+            _isTimeRunning.value = savedStateHandle[KEY_IS_TIME_RUNNING] ?: false
+            _isAnswered.value = savedStateHandle[KEY_IS_ANSWERED] ?: false
+
+            // Update progress based on restored timeLeft
+            _progress.value = _timeLeft.value / durationConst.toFloat()
+
+            Log.d(TAG, "State restored: index=$currentIndex, score=${_score.value}, timeLeft=${_timeLeft.value}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error restoring state: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Saves current quiz state to SavedStateHandle
+     */
+    private fun saveState() {
+        try {
+            savedStateHandle[KEY_CURRENT_INDEX] = currentIndex
+            savedStateHandle[KEY_SCORE] = _score.value
+            savedStateHandle[KEY_TIME_LEFT] = _timeLeft.value
+            savedStateHandle[KEY_IS_QUIZ_FINISHED] = _isQuizFinished.value
+            savedStateHandle[KEY_IS_TIME_RUNNING] = _isTimeRunning.value
+            savedStateHandle[KEY_IS_ANSWERED] = _isAnswered.value
+
+            Log.d(TAG, "State saved")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving state: ${e.message}", e)
+        }
+    }
 
     fun startQuiz(newQuizParameter: QuizParameter, quiz: Quiz) {
 
