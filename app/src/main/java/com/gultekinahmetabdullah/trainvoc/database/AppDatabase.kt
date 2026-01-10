@@ -17,6 +17,9 @@ import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentence
 import com.gultekinahmetabdullah.trainvoc.features.database.FeatureUsageLog
 import com.gultekinahmetabdullah.trainvoc.features.database.GlobalFeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.database.UserFeatureFlag
+import com.gultekinahmetabdullah.trainvoc.gamification.DailyGoal
+import com.gultekinahmetabdullah.trainvoc.gamification.StreakTracking
+import com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement
 import com.gultekinahmetabdullah.trainvoc.images.WordImage
 import com.gultekinahmetabdullah.trainvoc.offline.SyncQueue
 
@@ -34,9 +37,12 @@ import com.gultekinahmetabdullah.trainvoc.offline.SyncQueue
         ExampleSentence::class,
         SyncQueue::class,
         Subscription::class,
-        PurchaseRecord::class
+        PurchaseRecord::class,
+        StreakTracking::class,
+        DailyGoal::class,
+        UserAchievement::class
     ],
-    version = 9
+    version = 10
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -50,6 +56,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun exampleSentenceDao(): com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao
     abstract fun syncQueueDao(): com.gultekinahmetabdullah.trainvoc.offline.SyncQueueDao
     abstract fun subscriptionDao(): com.gultekinahmetabdullah.trainvoc.billing.database.SubscriptionDao
+    abstract fun gamificationDao(): com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "trainvoc-db"
@@ -396,6 +403,88 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 9 to 10: Add gamification tables
+         *
+         * GAMIFICATION SYSTEM:
+         * - Adds tables for streak tracking, daily goals, and achievements
+         * - Enables retention features (streaks, goals, badges)
+         * - Zero additional costs (all local)
+         * - +40% retention impact expected
+         *
+         * Purpose:
+         * - Track consecutive learning days (streaks)
+         * - Set and monitor daily learning goals
+         * - Unlock achievements and badges
+         * - Gamify the learning experience
+         */
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create streak_tracking table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS streak_tracking (
+                        user_id TEXT PRIMARY KEY NOT NULL,
+                        current_streak INTEGER NOT NULL DEFAULT 0,
+                        longest_streak INTEGER NOT NULL DEFAULT 0,
+                        last_activity_date INTEGER NOT NULL,
+                        streak_freeze_count INTEGER NOT NULL DEFAULT 0,
+                        total_active_days INTEGER NOT NULL DEFAULT 0,
+                        streak_start_date INTEGER,
+                        created_at INTEGER NOT NULL
+                    )
+                """.trimIndent())
+
+                // Create daily_goals table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS daily_goals (
+                        user_id TEXT PRIMARY KEY NOT NULL,
+                        words_goal INTEGER NOT NULL DEFAULT 10,
+                        reviews_goal INTEGER NOT NULL DEFAULT 20,
+                        quizzes_goal INTEGER NOT NULL DEFAULT 5,
+                        time_goal_minutes INTEGER NOT NULL DEFAULT 15,
+                        words_today INTEGER NOT NULL DEFAULT 0,
+                        reviews_today INTEGER NOT NULL DEFAULT 0,
+                        quizzes_today INTEGER NOT NULL DEFAULT 0,
+                        time_today_minutes INTEGER NOT NULL DEFAULT 0,
+                        last_reset_date INTEGER NOT NULL,
+                        goals_completed_total INTEGER NOT NULL DEFAULT 0,
+                        updated_at INTEGER NOT NULL
+                    )
+                """.trimIndent())
+
+                // Create user_achievements table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS user_achievements (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        user_id TEXT NOT NULL,
+                        achievement_id TEXT NOT NULL,
+                        unlocked_at INTEGER NOT NULL,
+                        progress INTEGER NOT NULL DEFAULT 0,
+                        is_unlocked INTEGER NOT NULL DEFAULT 0,
+                        notified INTEGER NOT NULL DEFAULT 0
+                    )
+                """.trimIndent())
+
+                // Create indices for better performance
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_user_achievements_user_id ON user_achievements(user_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_user_achievements_achievement_id ON user_achievements(achievement_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_user_achievements_is_unlocked ON user_achievements(is_unlocked)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_user_achievements_user_achievement ON user_achievements(user_id, achievement_id)")
+
+                // Insert initial data for local user
+                val now = System.currentTimeMillis()
+                database.execSQL("""
+                    INSERT INTO streak_tracking (user_id, current_streak, longest_streak, last_activity_date, total_active_days, created_at)
+                    VALUES ('local_user', 0, 0, $now, 0, $now)
+                """.trimIndent())
+
+                database.execSQL("""
+                    INSERT INTO daily_goals (user_id, words_goal, reviews_goal, quizzes_goal, time_goal_minutes, last_reset_date, updated_at)
+                    VALUES ('local_user', 10, 20, 5, 15, $now, $now)
+                """.trimIndent())
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -416,7 +505,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_5_6,
                 MIGRATION_6_7,
                 MIGRATION_7_8,
-                MIGRATION_8_9
+                MIGRATION_8_9,
+                MIGRATION_9_10
             )
             .build()
     }

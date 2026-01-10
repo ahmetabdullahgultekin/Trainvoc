@@ -76,4 +76,9 @@ object DatabaseModule {
     fun provideSubscriptionDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.billing.database.SubscriptionDao {
         return database.subscriptionDao()
     }
+
+    @Provides
+    fun provideGamificationDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao {
+        return database.gamificationDao()
+    }
 }
