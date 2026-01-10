@@ -47,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -77,6 +78,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
@@ -91,10 +93,12 @@ fun HomeScreen(
     onNavigateToHelp: () -> Unit,
     onNavigateToStats: () -> Unit,
     onNavigateToGames: () -> Unit,
-    preloadLottie: LottieComposition? = null, // Type corrected
-    preloadBg: Painter? = null
+    preloadLottie: LottieComposition? = null,
+    preloadBg: Painter? = null,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
 
     // Use Lottie animation and image with preload
     val composition = preloadLottie
@@ -251,7 +255,7 @@ fun HomeScreen(
                      * Estimated Completion: Next major release
                      */
 
-                    // XP Bar & Avatar Card (Gamification)
+                    // XP Bar & Avatar Card (Real Data from ViewModel)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -259,7 +263,7 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Avatar Card
+                        // Avatar Card with Level
                         Box(
                             modifier = Modifier
                                 .background(
@@ -277,21 +281,21 @@ fun HomeScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text(
-                                        text = stringResource(id = R.string.username_placeholder), // Placeholder: awaiting user profile implementation
+                                        text = stringResource(id = R.string.username_placeholder),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
                                         text = stringResource(
                                             id = R.string.level_colon,
-                                            "2"
-                                        ), // Placeholder: awaiting XP system implementation
+                                            uiState.level.toString()
+                                        ),
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
                             }
                         }
-                        // XP Bar
+                        // XP Bar with Real Progress
                         Column(
                             modifier = Modifier
                                 .weight(1f)
@@ -312,7 +316,7 @@ fun HomeScreen(
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth(0.4f) // Placeholder: 40% progress (1200/3000 XP)
+                                        .fillMaxWidth(uiState.xpProgress.coerceIn(0.01f, 1f))
                                         .height(16.dp)
                                         .background(
                                             color = MaterialTheme.colorScheme.primary,
@@ -323,12 +327,51 @@ fun HomeScreen(
                             Text(
                                 text = stringResource(
                                     id = R.string.xp_progress,
-                                    1200,
-                                    3000
-                                ), // Placeholder: awaiting XP tracking system
+                                    uiState.xpCurrent,
+                                    uiState.xpForNextLevel
+                                ),
                                 style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.align(Alignment.End)
                             )
+                        }
+                    }
+
+                    // Streak and Word Progress Row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        // Streak Display
+                        if (uiState.currentStreak > 0) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "\uD83D\uDD25 ${uiState.currentStreak}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "day streak",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                        // Words Progress
+                        if (uiState.totalWords > 0) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "\uD83D\uDCDA ${uiState.learnedWords}/${uiState.totalWords}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                                Text(
+                                    text = "words learned",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -468,7 +511,7 @@ fun HomeScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            // Task 1
+                            // Task 1 - Quizzes (Real Data)
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     stringResource(id = R.string.task_solve_quizzes),
@@ -476,11 +519,14 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    stringResource(id = R.string.task_progress, 0, 3),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    stringResource(id = R.string.task_progress, uiState.quizzesCompleted, uiState.quizzesGoal),
+                                    color = if (uiState.quizzesCompleted >= uiState.quizzesGoal)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.secondary
                                 )
                             }
-                            // Task 2
+                            // Task 2 - Words Learned (Real Data)
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     stringResource(id = R.string.task_learn_words),
@@ -488,11 +534,14 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    stringResource(id = R.string.task_progress, 2, 10),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    stringResource(id = R.string.task_progress, uiState.wordsLearnedToday, uiState.wordsGoalToday),
+                                    color = if (uiState.wordsLearnedToday >= uiState.wordsGoalToday)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.secondary
                                 )
                             }
-                            // Task 3
+                            // Task 3 - Achievements (Real Data)
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
                                     stringResource(id = R.string.task_earn_achievement),
@@ -500,8 +549,11 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    stringResource(id = R.string.task_progress, 0, 1),
-                                    color = MaterialTheme.colorScheme.secondary
+                                    stringResource(id = R.string.task_progress, uiState.achievementsUnlocked.coerceAtMost(1), 1),
+                                    color = if (uiState.achievementsUnlocked >= 1)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }
@@ -513,63 +565,91 @@ fun HomeScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            // Badge 1
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.semantics(mergeDescendants = true) {}
+
+                        // Dynamic Achievements Display
+                        if (uiState.unlockedAchievements.isNotEmpty()) {
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                Text(
-                                    "🥇",
-                                    fontSize = 32.sp,
-                                    modifier = Modifier.semantics {
-                                        contentDescription =
-                                            context.getString(R.string.achievement_first_place)
+                                items(uiState.unlockedAchievements.take(5)) { userAchievement ->
+                                    val achievement = userAchievement.getAchievement()
+                                    if (achievement != null) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.semantics(mergeDescendants = true) {}
+                                        ) {
+                                            Text(
+                                                achievement.icon,
+                                                fontSize = 32.sp,
+                                                modifier = Modifier.semantics {
+                                                    contentDescription = achievement.title
+                                                }
+                                            )
+                                            Text(
+                                                achievement.title,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                textAlign = TextAlign.Center,
+                                                maxLines = 1
+                                            )
+                                        }
                                     }
-                                )
-                                Text(
-                                    stringResource(id = R.string.achievement_first_quiz),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                }
                             }
-                            // Badge 2
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.semantics(mergeDescendants = true) {}
+                        } else {
+                            // No achievements unlocked yet - show placeholder
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                Text(
-                                    "🔥",
-                                    fontSize = 32.sp,
-                                    modifier = Modifier.semantics {
-                                        contentDescription =
-                                            context.getString(R.string.achievement_streak)
-                                    }
-                                )
-                                Text(
-                                    stringResource(id = R.string.achievement_streak_day),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-                            // Badge 3
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.semantics(mergeDescendants = true) {}
-                            ) {
-                                Text(
-                                    "📚",
-                                    fontSize = 32.sp,
-                                    modifier = Modifier.semantics {
-                                        contentDescription =
-                                            context.getString(R.string.achievement_books)
-                                    }
-                                )
-                                Text(
-                                    stringResource(id = R.string.achievement_100_words),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.semantics(mergeDescendants = true) {}
+                                ) {
+                                    Text(
+                                        "🔒",
+                                        fontSize = 32.sp,
+                                        modifier = Modifier.semantics {
+                                            contentDescription = context.getString(R.string.achievement_locked)
+                                        }
+                                    )
+                                    Text(
+                                        stringResource(id = R.string.achievement_first_quiz),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.semantics(mergeDescendants = true) {}
+                                ) {
+                                    Text(
+                                        "🔒",
+                                        fontSize = 32.sp,
+                                        modifier = Modifier.semantics {
+                                            contentDescription = context.getString(R.string.achievement_locked)
+                                        }
+                                    )
+                                    Text(
+                                        stringResource(id = R.string.achievement_streak_day),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.semantics(mergeDescendants = true) {}
+                                ) {
+                                    Text(
+                                        "🔒",
+                                        fontSize = 32.sp,
+                                        modifier = Modifier.semantics {
+                                            contentDescription = context.getString(R.string.achievement_locked)
+                                        }
+                                    )
+                                    Text(
+                                        stringResource(id = R.string.achievement_100_words),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
                             }
                         }
                     }

@@ -108,35 +108,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun createDefaultStreak(): StreakTracking {
-        val streak = StreakTracking(
-            id = 0,
-            userId = "local_user",
-            currentStreak = 0,
-            longestStreak = 0,
-            lastActivityDate = null,
-            streakStartDate = null,
-            totalActiveDays = 0,
-            streakFreezeCount = 0
-        )
+        val streak = StreakTracking.initial()
         gamificationDao.insertStreakTracking(streak)
         return streak
     }
 
     private suspend fun createDefaultDailyGoal(): DailyGoal {
-        val goal = DailyGoal(
-            id = 0,
-            userId = "local_user",
-            wordsGoal = 10,
-            reviewsGoal = 20,
-            quizzesGoal = 3,
-            timeGoalMinutes = 15,
-            wordsToday = 0,
-            reviewsToday = 0,
-            quizzesToday = 0,
-            timeTodayMinutes = 0,
-            lastResetDate = System.currentTimeMillis(),
-            goalsCompletedTotal = 0
-        )
+        val goal = DailyGoal.default()
         gamificationDao.insertDailyGoal(goal)
         return goal
     }

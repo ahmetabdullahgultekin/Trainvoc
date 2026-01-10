@@ -1,7 +1,9 @@
 package com.gultekinahmetabdullah.trainvoc.ui.components
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.SentimentDissatisfied
@@ -9,7 +11,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
@@ -180,4 +186,131 @@ fun InlineLoadingIndicator(
         strokeWidth = 2.dp,
         color = MaterialTheme.colorScheme.primary
     )
+}
+
+/**
+ * Shimmer Effect Modifier
+ *
+ * Creates a shimmer loading effect for placeholder content.
+ * Use this while data is loading to show where content will appear.
+ */
+@Composable
+fun shimmerBrush(): Brush {
+    val shimmerColors = listOf(
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+    )
+
+    val transition = rememberInfiniteTransition(label = "shimmer")
+    val translateAnimation by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1200,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer_translate"
+    )
+
+    return Brush.linearGradient(
+        colors = shimmerColors,
+        start = Offset(translateAnimation - 200f, 0f),
+        end = Offset(translateAnimation + 200f, 0f)
+    )
+}
+
+/**
+ * Shimmer Placeholder Box
+ *
+ * A box with shimmer animation for loading placeholders
+ */
+@Composable
+fun ShimmerBox(
+    modifier: Modifier = Modifier,
+    height: Dp = 48.dp,
+    cornerRadius: Dp = 8.dp
+) {
+    Box(
+        modifier = modifier
+            .height(height)
+            .clip(RoundedCornerShape(cornerRadius))
+            .background(shimmerBrush())
+    )
+}
+
+/**
+ * Shimmer Card Placeholder
+ *
+ * A card-shaped shimmer placeholder for list items
+ */
+@Composable
+fun ShimmerCard(
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Avatar placeholder
+            ShimmerBox(
+                modifier = Modifier.size(48.dp),
+                height = 48.dp,
+                cornerRadius = 24.dp
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Title placeholder
+                ShimmerBox(
+                    modifier = Modifier.fillMaxWidth(0.7f),
+                    height = 16.dp
+                )
+
+                // Subtitle placeholder
+                ShimmerBox(
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                    height = 12.dp
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Shimmer List Placeholder
+ *
+ * Shows multiple shimmer cards for list loading states
+ */
+@Composable
+fun ShimmerList(
+    itemCount: Int = 5,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        repeat(itemCount) {
+            ShimmerCard()
+        }
+    }
 }
