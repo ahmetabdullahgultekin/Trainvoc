@@ -97,31 +97,22 @@ class SettingsViewModel @Inject constructor(
     /**
      * Update the app locale and layout direction based on language preference.
      * Supports RTL languages like Arabic.
+     *
+     * Note: The actual locale application happens in MainActivity.attachBaseContext()
+     * using Context.createConfigurationContext() which is the modern approach.
+     * This method sets the default locale for the app and triggers activity recreation.
      */
     fun updateLocale(languageCode: String, activity: android.app.Activity? = null) {
         val locale = java.util.Locale(languageCode)
         java.util.Locale.setDefault(locale)
 
-        // Apply RTL layout direction for RTL languages (e.g., Arabic)
-        val languagePreference = LanguagePreference.fromCode(languageCode)
-        val layoutDirection = if (languagePreference.isRTL) {
-            android.view.View.LAYOUT_DIRECTION_RTL
-        } else {
-            android.view.View.LAYOUT_DIRECTION_LTR
-        }
-
-        // Apply layout direction to the app context
-        val configuration = appContext.resources.configuration
-        configuration.setLocale(locale)
-        configuration.setLayoutDirection(locale)
-
-        // For API 17+ (Jelly Bean MR1), update resources with new configuration
-        @Suppress("DEPRECATION")
-        appContext.resources.updateConfiguration(configuration, appContext.resources.displayMetrics)
-
-        // Note: Activity recreation (via activity.recreate()) will automatically
-        // apply the new locale configuration and layout direction.
-        // The locale change will take effect when the activity is recreated.
+        // Note: Locale changes are applied via:
+        // 1. MainActivity.attachBaseContext() using createConfigurationContext()
+        // 2. Activity.recreate() to apply the new configuration
+        //
+        // The deprecated updateConfiguration is no longer used.
+        // The caller should trigger activity recreation after calling this method.
+        activity?.recreate()
     }
 
     fun resetProgress() {

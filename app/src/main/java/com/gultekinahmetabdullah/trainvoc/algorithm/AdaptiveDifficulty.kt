@@ -4,6 +4,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.analytics.LearningStats
+import com.gultekinahmetabdullah.trainvoc.config.AdaptiveDifficultyConfig
 import kotlin.math.roundToInt
 
 /**
@@ -45,23 +46,22 @@ import kotlin.math.roundToInt
 class AdaptiveDifficultyEngine {
 
     companion object {
-        // Accuracy thresholds
-        private const val ACCURACY_TOO_HIGH = 0.90f  // 90%+: Increase difficulty
-        private const val ACCURACY_OPTIMAL_HIGH = 0.70f  // 70-90%: Optimal
-        private const val ACCURACY_OPTIMAL_LOW = 0.50f   // 50-70%: Challenging
-        // Below 50%: Too hard, decrease difficulty
+        // Accuracy thresholds - from centralized config
+        private val ACCURACY_TOO_HIGH = AdaptiveDifficultyConfig.ACCURACY_TOO_HIGH
+        private val ACCURACY_OPTIMAL_HIGH = AdaptiveDifficultyConfig.ACCURACY_OPTIMAL_HIGH
+        private val ACCURACY_OPTIMAL_LOW = AdaptiveDifficultyConfig.ACCURACY_OPTIMAL_LOW
 
         // Speed thresholds (seconds per question)
-        private const val SPEED_FAST = 5  // Very quick answers
-        private const val SPEED_NORMAL = 10  // Normal thinking time
-        private const val SPEED_SLOW = 20  // Taking time to think
+        private val SPEED_FAST = AdaptiveDifficultyConfig.SPEED_FAST_SECONDS
+        private val SPEED_NORMAL = AdaptiveDifficultyConfig.SPEED_NORMAL_SECONDS
+        private val SPEED_SLOW = AdaptiveDifficultyConfig.SPEED_SLOW_SECONDS
 
         // Consistency threshold (standard deviation)
-        private const val CONSISTENCY_HIGH = 0.15f  // Very consistent
-        private const val CONSISTENCY_MEDIUM = 0.30f  // Somewhat consistent
+        private val CONSISTENCY_HIGH = AdaptiveDifficultyConfig.CONSISTENCY_HIGH
+        private val CONSISTENCY_MEDIUM = AdaptiveDifficultyConfig.CONSISTENCY_MEDIUM
 
         // Performance tracking window
-        private const val RECENT_QUIZ_WINDOW = 10  // Last 10 quizzes
+        private val RECENT_QUIZ_WINDOW = AdaptiveDifficultyConfig.RECENT_QUIZ_WINDOW
     }
 
     /**
@@ -169,15 +169,15 @@ class AdaptiveDifficultyEngine {
     ): QuizSuggestion {
         // Determine quiz type based on learning state
         val suggestedType = when {
-            stats.wordsDueToday > 20 -> {
+            stats.wordsDueToday > AdaptiveDifficultyConfig.WORDS_DUE_HIGH -> {
                 // Many due words: prioritize review
                 Quiz.Random to "You have ${stats.wordsDueToday} words due for review"
             }
-            stats.learnedWords < 50 -> {
+            stats.learnedWords < AdaptiveDifficultyConfig.LEARNED_WORDS_BEGINNER -> {
                 // Still learning basics: focus on fundamentals
                 Quiz.Random to "Building your foundation with varied practice"
             }
-            stats.averageAccuracy > 0.80f -> {
+            stats.averageAccuracy > AdaptiveDifficultyConfig.ACCURACY_GOOD -> {
                 // High accuracy: mix it up
                 Quiz.Random to "High accuracy! Try mixing different question types"
             }
@@ -192,8 +192,8 @@ class AdaptiveDifficultyEngine {
 
         // Determine question count
         val questionCount = when {
-            stats.averageTimePerWord > 15 -> 5  // Taking time: fewer questions
-            stats.currentStreak > 7 -> 15  // On a streak: more questions
+            stats.averageTimePerWord > AdaptiveDifficultyConfig.AVG_TIME_SLOW_SECONDS -> 5  // Taking time: fewer questions
+            stats.currentStreak > AdaptiveDifficultyConfig.STREAK_MILESTONE -> 15  // On a streak: more questions
             else -> 10  // Default
         }
 
@@ -219,16 +219,16 @@ class AdaptiveDifficultyEngine {
         currentLevel: WordLevel
     ): Pair<WordLevel, String> {
         return when {
-            stats.learnedWords < 100 -> {
+            stats.learnedWords < AdaptiveDifficultyConfig.LEARNED_WORDS_INTERMEDIATE -> {
                 // Still building basics
                 WordLevel.A1 to "Focus on fundamentals (A1)"
             }
-            stats.averageAccuracy > 0.85f && stats.learnedWords > 200 -> {
+            stats.averageAccuracy > 0.85f && stats.learnedWords > AdaptiveDifficultyConfig.LEARNED_WORDS_ADVANCED -> {
                 // Ready for higher level
                 val nextLevel = currentLevel.next()
                 nextLevel to "Strong performance! Ready for $nextLevel"
             }
-            stats.averageAccuracy < 0.60f -> {
+            stats.averageAccuracy < AdaptiveDifficultyConfig.ACCURACY_POOR -> {
                 // Struggling: go back to previous level
                 val prevLevel = currentLevel.previous()
                 prevLevel to "Building confidence with $prevLevel words"
@@ -246,15 +246,15 @@ class AdaptiveDifficultyEngine {
     private fun determineFocusAreas(stats: LearningStats): List<String> {
         val areas = mutableListOf<String>()
 
-        if (stats.wordsDueToday > 10) {
+        if (stats.wordsDueToday > AdaptiveDifficultyConfig.WORDS_DUE_MEDIUM) {
             areas.add("Review due words (${stats.wordsDueToday} waiting)")
         }
 
-        if (stats.averageAccuracy < 0.70f) {
+        if (stats.averageAccuracy < AdaptiveDifficultyConfig.ACCURACY_LOW) {
             areas.add("Accuracy improvement (current: ${"%.1f".format(stats.averageAccuracy * 100)}%)")
         }
 
-        if (stats.averageTimePerWord > 15) {
+        if (stats.averageTimePerWord > AdaptiveDifficultyConfig.AVG_TIME_SLOW_SECONDS) {
             areas.add("Speed practice (avg: ${stats.averageTimePerWord}s per word)")
         }
 
@@ -295,7 +295,8 @@ class AdaptiveDifficultyEngine {
             else -> 0.4f
         }
 
-        return (sizeComponent * 0.6f + consistencyComponent * 0.4f)
+        return (sizeComponent * AdaptiveDifficultyConfig.CONFIDENCE_SIZE_WEIGHT +
+                consistencyComponent * AdaptiveDifficultyConfig.CONFIDENCE_CONSISTENCY_WEIGHT)
     }
 
     /**
