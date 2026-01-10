@@ -75,9 +75,17 @@ class WordScrambleGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(questions = emptyList())
+        }
+
         // Filter words that are good for scrambling (4-12 letters)
         val suitableWords = words.filter { it.word.length in 4..12 }
-        val selectedWords = suitableWords.shuffled().take(questionCount)
+
+        // If no suitable words, use all words
+        val wordsToUse = if (suitableWords.isEmpty()) words else suitableWords
+        val selectedWords = wordsToUse.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
             createQuestion(word)
@@ -154,7 +162,7 @@ class WordScrambleGame @Inject constructor(
             return Pair(gameState, currentInput)
         }
 
-        val nextLetter = correctWord[revealedLetters]
+        val nextLetter = correctWord.getOrNull(revealedLetters) ?: return Pair(gameState, currentInput)
         val newInput = currentInput + nextLetter
 
         return Pair(
@@ -167,8 +175,9 @@ class WordScrambleGame @Inject constructor(
      * Get letter hint without revealing
      */
     fun getLetterHint(question: ScrambleQuestion, position: Int): String {
-        return if (position < question.word.word.length) {
-            "Letter ${position + 1}: ${question.word.word[position].uppercase()}"
+        val letter = question.word.word.getOrNull(position)
+        return if (letter != null) {
+            "Letter ${position + 1}: ${letter.uppercase()}"
         } else {
             "No more letters"
         }

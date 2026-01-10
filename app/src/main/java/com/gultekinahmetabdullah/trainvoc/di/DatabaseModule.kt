@@ -1,7 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.di
 
 import android.content.Context
-import androidx.room.Room
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
 import com.gultekinahmetabdullah.trainvoc.database.ExamDao
 import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
@@ -18,19 +17,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    private const val DATABASE_NAME = "trainvoc-db"
-
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            DATABASE_NAME
-        )
-            .createFromAsset("database/trainvoc-db.db")
-            .fallbackToDestructiveMigration(true)
-            .build()
+        // Use the centralized DatabaseBuilder which has all migrations properly configured
+        return AppDatabase.DatabaseBuilder.getInstance(context)
     }
 
     @Provides

@@ -79,9 +79,16 @@ class SpellingChallengeGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(questions = emptyList())
+        }
+
         // Filter words suitable for spelling (4-15 letters)
         val suitableWords = words.filter { it.word.length in 4..15 }
-        val selectedWords = suitableWords.shuffled().take(questionCount)
+        // If no suitable words, use all words
+        val wordsToUse = if (suitableWords.isEmpty()) words else suitableWords
+        val selectedWords = wordsToUse.shuffled().take(questionCount)
 
         val questions = selectedWords.map { word ->
             createQuestion(word)

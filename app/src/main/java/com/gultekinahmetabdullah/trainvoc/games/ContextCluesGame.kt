@@ -79,6 +79,11 @@ class ContextCluesGame @Inject constructor(
             )
         }
 
+        // Handle empty database
+        if (words.isEmpty()) {
+            return GameState(questions = emptyList())
+        }
+
         // Select random words for the game
         val selectedWords = words.shuffled().take(questionCount)
 
