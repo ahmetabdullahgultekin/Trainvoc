@@ -3,8 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.ui.games
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.games.ContextCluesGame
-import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
-import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContextCluesViewModel @Inject constructor(
     private val contextCluesGame: ContextCluesGame,
-    private val gamificationDao: GamificationDao
+    private val gamificationManager: GamificationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ContextCluesUiState>(ContextCluesUiState.Loading)
@@ -87,32 +86,10 @@ class ContextCluesViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: ContextCluesGame.GameState) {
-        val comprehensionLevel = ContextCluesGame.getComprehensionLevel(gameState)
-
-        // Check for excellent comprehension - award quiz achievement
-        if (comprehensionLevel == ContextCluesGame.ComprehensionLevel.EXCELLENT) {
-            unlockAchievement(Achievement.QUIZ_10)
-        }
-
-        // Check for perfect score with high accuracy
-        if (gameState.accuracy >= 90 && gameState.totalQuestions >= 10) {
-            unlockAchievement(Achievement.PERFECT_10)
-        }
-    }
-
-    private suspend fun unlockAchievement(achievement: Achievement) {
-        try {
-            gamificationDao.insertAchievement(
-                com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
-                    achievementId = achievement.id,
-                    progress = achievement.requirement,
-                    isUnlocked = true,
-                    unlockedAt = System.currentTimeMillis()
-                )
-            )
-        } catch (e: Exception) {
-            // Achievement already unlocked or error - ignore
-        }
+        // Perfect = 90%+ accuracy with at least 10 questions
+        val isPerfect = gameState.accuracy >= 90 && gameState.totalQuestions >= 10
+        gamificationManager.recordQuizCompleted(isPerfect)
+        gamificationManager.recordActivity()
     }
 }
 

@@ -3,8 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.ui.games
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.games.SpeedMatchGame
-import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
-import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SpeedMatchViewModel @Inject constructor(
     private val speedMatchGame: SpeedMatchGame,
-    private val gamificationDao: GamificationDao
+    private val gamificationManager: GamificationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SpeedMatchUiState>(SpeedMatchUiState.Loading)
@@ -93,33 +92,11 @@ class SpeedMatchViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: SpeedMatchGame.GameState) {
-        // Check for perfect match (all pairs matched)
-        if (gameState.matchedPairs == gameState.totalPairs && gameState.incorrectAttempts == 0) {
-            unlockAchievement(Achievement.PERFECT_10)
-        }
-
-        // Check speed achievement (completed in under 30 seconds)
-        if (gameState.matchedPairs == gameState.totalPairs && gameState.timeRemaining >= 30) {
-            unlockAchievement(Achievement.SPEED_DEMON)
-        }
-
-        // Award quiz completion achievement
-        unlockAchievement(Achievement.QUIZ_10)
-    }
-
-    private suspend fun unlockAchievement(achievement: Achievement) {
-        try {
-            gamificationDao.insertAchievement(
-                com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
-                    achievementId = achievement.id,
-                    progress = achievement.requirement,
-                    isUnlocked = true,
-                    unlockedAt = System.currentTimeMillis()
-                )
-            )
-        } catch (e: Exception) {
-            // Achievement already unlocked or error - ignore
-        }
+        // Perfect = all pairs matched with no incorrect attempts
+        val isPerfect = gameState.matchedPairs == gameState.totalPairs &&
+                gameState.incorrectAttempts == 0
+        gamificationManager.recordQuizCompleted(isPerfect)
+        gamificationManager.recordActivity()
     }
 
     override fun onCleared() {
