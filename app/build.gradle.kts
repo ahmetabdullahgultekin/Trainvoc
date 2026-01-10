@@ -124,6 +124,12 @@ dependencies {
     // Security
     implementation(libs.androidx.security.crypto)
 
+    // Google Drive & Auth
+    implementation(libs.google.auth)
+    implementation(libs.google.drive)
+    implementation(libs.google.api.client.android)
+    implementation(libs.google.http.client.gson)
+
     // Test dependencies
     testImplementation(libs.junit)
     testImplementation(libs.androidx.room.testing)
