@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_streak_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- Fire emoji -->
+    <TextView
+        android:id="@+id/widget_fire_emoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔥"
+        android:textSize="48sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Streak count -->
+    <TextView
+        android:id="@+id/widget_streak_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="#1C1B1F" />
+
+    <!-- "Day Streak" label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Day Streak"
+        android:textSize="14sp"
+        android:textColor="#49454F"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Status message -->
+    <TextView
+        android:id="@+id/widget_streak_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Keep going!"
+        android:textSize="12sp"
+        android:textColor="#6750A4"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:gravity="center" />
+
+    <!-- Stats row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Longest streak -->
+        <TextView
+            android:id="@+id/widget_longest_streak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Longest: 0"
+            android:textSize="10sp"
+            android:textColor="#49454F"
+            android:gravity="center" />
+
+        <!-- Active days -->
+        <TextView
+            android:id="@+id/widget_active_days"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Active: 0"
+            android:textSize="10sp"
+            android:textColor="#49454F"
+            android:gravity="center" />
+    </LinearLayout>
+
+</LinearLayout>
