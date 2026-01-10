@@ -38,7 +38,7 @@ interface SyncQueueDao {
     @Query("SELECT * FROM sync_queue WHERE entityType = :entityType AND synced = 0 ORDER BY timestamp ASC")
     suspend fun getPendingSyncsByType(entityType: EntityType): List<SyncQueue>
 
-    @Query("SELECT * FROM sync_queue WHERE entityId = :entityId AND synced = 0")
+    @Query("SELECT * FROM sync_queue WHERE entity_id = :entityId AND synced = 0")
     suspend fun getPendingSyncsForEntity(entityId: String): List<SyncQueue>
 
     @Query("SELECT * FROM sync_queue WHERE id = :id")
@@ -58,9 +58,9 @@ interface SyncQueueDao {
 
     @Query("""
         UPDATE sync_queue
-        SET attemptCount = attemptCount + 1,
-            lastAttempt = :timestamp,
-            lastError = :error
+        SET attempt_count = attempt_count + 1,
+            last_attempt = :timestamp,
+            last_error = :error
         WHERE id = :id
     """)
     suspend fun recordFailedAttempt(id: Long, timestamp: Long, error: String)
@@ -84,7 +84,7 @@ interface SyncQueueDao {
     @Query("""
         SELECT * FROM sync_queue
         WHERE synced = 0
-        AND attemptCount < :maxAttempts
+        AND attempt_count < :maxAttempts
         ORDER BY priority DESC, timestamp ASC
     """)
     suspend fun getRetryableSyncs(maxAttempts: Int = 5): List<SyncQueue>
@@ -92,7 +92,7 @@ interface SyncQueueDao {
     @Query("""
         SELECT * FROM sync_queue
         WHERE synced = 0
-        AND attemptCount >= :maxAttempts
+        AND attempt_count >= :maxAttempts
     """)
     suspend fun getFailedSyncs(maxAttempts: Int = 5): List<SyncQueue>
 
@@ -104,6 +104,6 @@ interface SyncQueueDao {
     @Query("SELECT COUNT(*) FROM sync_queue WHERE synced = 1")
     suspend fun getSyncedCount(): Int
 
-    @Query("SELECT COUNT(*) FROM sync_queue WHERE synced = 0 AND attemptCount >= 5")
+    @Query("SELECT COUNT(*) FROM sync_queue WHERE synced = 0 AND attempt_count >= 5")
     suspend fun getFailedCount(): Int
 }
