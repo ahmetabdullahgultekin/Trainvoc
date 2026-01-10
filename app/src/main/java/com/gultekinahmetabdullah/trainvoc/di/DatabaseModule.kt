@@ -29,6 +29,7 @@ object DatabaseModule {
             DATABASE_NAME
         )
             .createFromAsset("database/trainvoc-db.db")
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 
