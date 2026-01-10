@@ -66,4 +66,9 @@ object DatabaseModule {
     fun provideExampleSentenceDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao {
         return database.exampleSentenceDao()
     }
+
+    @Provides
+    fun provideSyncQueueDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.offline.SyncQueueDao {
+        return database.syncQueueDao()
+    }
 }
