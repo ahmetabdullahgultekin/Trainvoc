@@ -121,6 +121,14 @@ interface WordDao {
     @Query("SELECT COUNT(*) FROM words")
     suspend fun getWordCount(): Int
 
+    // Get the number of learned words
+    @Query("""
+        SELECT COUNT(*) FROM words w
+        JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE s.learned = 1
+    """)
+    suspend fun getLearnedWordCount(): Int
+
     // Get the statistics of a word
     @Query("SELECT * FROM statistics WHERE stat_id = :statId")
     suspend fun getStatById(statId: Int): Statistic
