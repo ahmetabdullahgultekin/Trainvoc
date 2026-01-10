@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -87,6 +88,7 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToHelp: () -> Unit,
     onNavigateToStats: () -> Unit,
+    onNavigateToGames: () -> Unit,
     preloadLottie: LottieComposition? = null, // Type corrected
     preloadBg: Painter? = null
 ) {
@@ -388,8 +390,14 @@ fun HomeScreen(
                     // Navigation Buttons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        HomeNavButton(
+                            stringResource(id = R.string.games),
+                            Icons.Default.SportsEsports,
+                            onNavigateToGames,
+                            "GamesButton"
+                        )
                         HomeNavButton(
                             stringResource(id = R.string.settings),
                             Icons.Default.Settings,
