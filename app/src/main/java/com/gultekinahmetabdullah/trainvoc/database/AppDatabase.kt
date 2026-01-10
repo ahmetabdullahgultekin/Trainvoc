@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.gultekinahmetabdullah.trainvoc.audio.AudioCache
+import com.gultekinahmetabdullah.trainvoc.billing.database.PurchaseRecord
+import com.gultekinahmetabdullah.trainvoc.billing.database.Subscription
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -30,9 +32,11 @@ import com.gultekinahmetabdullah.trainvoc.offline.SyncQueue
         AudioCache::class,
         WordImage::class,
         ExampleSentence::class,
-        SyncQueue::class
+        SyncQueue::class,
+        Subscription::class,
+        PurchaseRecord::class
     ],
-    version = 8
+    version = 9
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -45,6 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun wordImageDao(): com.gultekinahmetabdullah.trainvoc.images.WordImageDao
     abstract fun exampleSentenceDao(): com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao
     abstract fun syncQueueDao(): com.gultekinahmetabdullah.trainvoc.offline.SyncQueueDao
+    abstract fun subscriptionDao(): com.gultekinahmetabdullah.trainvoc.billing.database.SubscriptionDao
 
     object DatabaseBuilder {
         private const val DATABASE_NAME = "trainvoc-db"
@@ -318,6 +323,79 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 8 to 9: Add billing/subscription tables
+         *
+         * MONETIZATION & PREMIUM FEATURES:
+         * - Adds tables for subscription management
+         * - Enables Premium tier features
+         * - Tracks purchase history
+         * - Supports multiple subscription tiers (Free, Premium, Premium+)
+         *
+         * Purpose:
+         * - Store user subscription status
+         * - Track purchases for revenue analytics
+         * - Enable Premium feature gating
+         * - Support restore purchases functionality
+         */
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create subscriptions table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS subscriptions (
+                        user_id TEXT PRIMARY KEY NOT NULL,
+                        tier TEXT NOT NULL DEFAULT 'free',
+                        period TEXT,
+                        product_id TEXT,
+                        purchase_token TEXT,
+                        order_id TEXT,
+                        purchase_time INTEGER,
+                        expiry_time INTEGER,
+                        auto_renewing INTEGER NOT NULL DEFAULT 0,
+                        is_active INTEGER NOT NULL DEFAULT 0,
+                        last_verified INTEGER NOT NULL,
+                        payment_state TEXT NOT NULL DEFAULT 'none',
+                        acknowledgement_state TEXT NOT NULL DEFAULT 'acknowledged',
+                        price_paid REAL,
+                        currency_code TEXT
+                    )
+                """.trimIndent())
+
+                // Create purchase history table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS purchase_history (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        product_id TEXT NOT NULL,
+                        purchase_token TEXT NOT NULL,
+                        order_id TEXT NOT NULL,
+                        purchase_time INTEGER NOT NULL,
+                        acknowledged INTEGER NOT NULL,
+                        price_paid REAL NOT NULL,
+                        currency_code TEXT NOT NULL,
+                        subscription_tier TEXT NOT NULL,
+                        subscription_period TEXT NOT NULL,
+                        created_at INTEGER NOT NULL
+                    )
+                """.trimIndent())
+
+                // Create indices for subscriptions
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_subscriptions_tier ON subscriptions(tier)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_subscriptions_is_active ON subscriptions(is_active)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_subscriptions_expiry_time ON subscriptions(expiry_time)")
+
+                // Create indices for purchase history
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_purchase_history_order_id ON purchase_history(order_id)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_purchase_history_purchase_token ON purchase_history(purchase_token)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_purchase_history_purchase_time ON purchase_history(purchase_time)")
+
+                // Insert default free subscription for local user
+                database.execSQL("""
+                    INSERT INTO subscriptions (user_id, tier, is_active, last_verified, payment_state)
+                    VALUES ('local_user', 'free', 1, ${System.currentTimeMillis()}, 'none')
+                """.trimIndent())
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -337,7 +415,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_4_5,
                 MIGRATION_5_6,
                 MIGRATION_6_7,
-                MIGRATION_7_8
+                MIGRATION_7_8,
+                MIGRATION_8_9
             )
             .build()
     }

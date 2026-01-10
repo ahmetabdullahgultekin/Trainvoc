@@ -71,4 +71,9 @@ object DatabaseModule {
     fun provideSyncQueueDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.offline.SyncQueueDao {
         return database.syncQueueDao()
     }
+
+    @Provides
+    fun provideSubscriptionDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.billing.database.SubscriptionDao {
+        return database.subscriptionDao()
+    }
 }
