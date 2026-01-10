@@ -3,8 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.ui.games
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame
-import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
-import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -17,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TranslationRaceViewModel @Inject constructor(
     private val translationRaceGame: TranslationRaceGame,
-    private val gamificationDao: GamificationDao
+    private val gamificationManager: GamificationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TranslationRaceUiState>(TranslationRaceUiState.Loading)
@@ -128,34 +127,11 @@ class TranslationRaceViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: TranslationRaceGame.GameState) {
-        // Check for speed demon (high answers per minute)
-        if (gameState.answersPerMinute >= 40 && gameState.correctAnswers >= 20) {
-            unlockAchievement(Achievement.SPEED_DEMON)
-        }
-
-        // Check for perfect score
+        // Perfect = 95%+ accuracy with at least 10 answers
         val totalAnswers = gameState.correctAnswers + gameState.incorrectAnswers
-        if (gameState.accuracy >= 95 && totalAnswers >= 10) {
-            unlockAchievement(Achievement.PERFECT_10)
-        }
-
-        // Award quiz completion achievement
-        unlockAchievement(Achievement.QUIZ_10)
-    }
-
-    private suspend fun unlockAchievement(achievement: Achievement) {
-        try {
-            gamificationDao.insertAchievement(
-                com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
-                    achievementId = achievement.id,
-                    progress = achievement.requirement,
-                    isUnlocked = true,
-                    unlockedAt = System.currentTimeMillis()
-                )
-            )
-        } catch (e: Exception) {
-            // Achievement already unlocked or error - ignore
-        }
+        val isPerfect = gameState.accuracy >= 95 && totalAnswers >= 10
+        gamificationManager.recordQuizCompleted(isPerfect)
+        gamificationManager.recordActivity()
     }
 
     override fun onCleared() {

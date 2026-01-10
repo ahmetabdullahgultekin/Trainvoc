@@ -3,8 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.ui.games
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.games.FlipCardsGame
-import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
-import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FlipCardsViewModel @Inject constructor(
     private val flipCardsGame: FlipCardsGame,
-    private val gamificationDao: GamificationDao
+    private val gamificationManager: GamificationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<FlipCardsUiState>(FlipCardsUiState.Loading)
@@ -85,28 +84,10 @@ class FlipCardsViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: FlipCardsGame.GameState) {
-        // Award quiz achievement for completing a game
-        unlockAchievement(Achievement.QUIZ_10)
-
-        // Perfect game (minimum moves) - award perfect achievement
-        if (flipCardsGame.isNewBest(gameState) && gameState.moves == gameState.totalPairs) {
-            unlockAchievement(Achievement.PERFECT_10)
-        }
-    }
-
-    private suspend fun unlockAchievement(achievement: Achievement) {
-        try {
-            gamificationDao.insertAchievement(
-                com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
-                    achievementId = achievement.id,
-                    progress = achievement.requirement,
-                    isUnlocked = true,
-                    unlockedAt = System.currentTimeMillis()
-                )
-            )
-        } catch (e: Exception) {
-            // Achievement already unlocked or error
-        }
+        // Perfect game = minimum moves (one move per pair)
+        val isPerfect = flipCardsGame.isNewBest(gameState) && gameState.moves == gameState.totalPairs
+        gamificationManager.recordQuizCompleted(isPerfect)
+        gamificationManager.recordActivity()
     }
 
     fun playAgain(gridSize: String = "4x4", difficulty: String = "medium") {

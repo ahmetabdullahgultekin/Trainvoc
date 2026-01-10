@@ -4,8 +4,7 @@ import android.speech.tts.TextToSpeech
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame
-import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
-import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ListeningQuizViewModel @Inject constructor(
     private val listeningQuizGame: ListeningQuizGame,
-    private val gamificationDao: GamificationDao
+    private val gamificationManager: GamificationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ListeningQuizUiState>(ListeningQuizUiState.Loading)
@@ -121,28 +120,10 @@ class ListeningQuizViewModel @Inject constructor(
     }
 
     private suspend fun checkAchievements(gameState: ListeningQuizGame.GameState) {
-        // Check for perfect score - award perfect achievement
-        if (gameState.correctAnswers == gameState.totalQuestions && gameState.totalQuestions >= 5) {
-            unlockAchievement(Achievement.PERFECT_10)
-        }
-
-        // Award quiz completion achievement
-        unlockAchievement(Achievement.QUIZ_10)
-    }
-
-    private suspend fun unlockAchievement(achievement: Achievement) {
-        try {
-            gamificationDao.insertAchievement(
-                com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement(
-                    achievementId = achievement.id,
-                    progress = achievement.requirement,
-                    isUnlocked = true,
-                    unlockedAt = System.currentTimeMillis()
-                )
-            )
-        } catch (e: Exception) {
-            // Achievement already unlocked or error - ignore
-        }
+        val isPerfect = gameState.correctAnswers == gameState.totalQuestions &&
+                gameState.totalQuestions >= 5
+        gamificationManager.recordQuizCompleted(isPerfect)
+        gamificationManager.recordActivity()
     }
 
     override fun onCleared() {
