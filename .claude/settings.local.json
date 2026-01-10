@@ -14,7 +14,8 @@
       "Bash(.\\\\gradlew.bat :app:compileDebugKotlin:*)",
       "Bash(gradlew.bat:*)",
       "Bash(C:/Users/ahabg/StudioProjects/Trainvoc/gradlew.bat :app:compileDebugKotlin --no-daemon)",
-      "Bash(./gradlew :app:compileDebugKotlin:*)"
+      "Bash(./gradlew :app:compileDebugKotlin:*)",
+      "Bash(./gradlew compileDebugUnitTestKotlin:*)"
     ],
     "deny": [],
     "ask": []

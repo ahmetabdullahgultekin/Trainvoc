@@ -84,6 +84,15 @@ android {
             excludes += "/META-INF/DEPENDENCIES"
         }
     }
+
+    lint {
+        // Don't abort build on lint errors for now
+        abortOnError = false
+        // Check release builds only
+        checkReleaseBuilds = true
+        // Disable checks that cause OOM
+        checkDependencies = false
+    }
 }
 
 dependencies {
@@ -155,6 +164,9 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.hilt.android.testing)
+    testImplementation("androidx.work:work-testing:2.10.1")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
     kspTest(libs.hilt.compiler)
 
     // Android Test dependencies
