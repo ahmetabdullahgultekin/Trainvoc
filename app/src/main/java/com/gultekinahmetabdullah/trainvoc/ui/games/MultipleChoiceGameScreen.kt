@@ -11,15 +11,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun MultipleChoiceGameScreen(
     onNavigateBack: () -> Unit,
     difficulty: String = "medium",
-    viewModel: MultipleChoiceGameViewModel = hiltViewModel()
+    viewModel: MultipleChoiceGameViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     var showDifficultyDialog by remember { mutableStateOf(true) }
+
+    // Check for first play and show tutorial
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.MULTIPLE_CHOICE)) {
+            tutorialViewModel.startTutorial(GameType.MULTIPLE_CHOICE)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!showDifficultyDialog) {
@@ -38,7 +49,8 @@ fun MultipleChoiceGameScreen(
                 selectedAnswer = null,
                 isCorrect = null,
                 onAnswerSelected = { viewModel.selectAnswer(it) },
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                onHelpClick = { tutorialViewModel.startTutorial(GameType.MULTIPLE_CHOICE) }
             )
         }
 
@@ -49,7 +61,8 @@ fun MultipleChoiceGameScreen(
                 isCorrect = state.isCorrect,
                 correctAnswer = state.correctAnswer,
                 onAnswerSelected = { }, // Disabled during feedback
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                onHelpClick = { tutorialViewModel.startTutorial(GameType.MULTIPLE_CHOICE) }
             )
         }
 
@@ -59,7 +72,8 @@ fun MultipleChoiceGameScreen(
                 selectedAnswer = null,
                 isCorrect = null,
                 onAnswerSelected = { },
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
+                onHelpClick = { tutorialViewModel.startTutorial(GameType.MULTIPLE_CHOICE) }
             )
             GameResultDialog(
                 isComplete = true,
@@ -93,6 +107,16 @@ fun MultipleChoiceGameScreen(
             }
         )
     }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.MULTIPLE_CHOICE) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
+        )
+    }
 }
 
 @Composable
@@ -102,7 +126,8 @@ private fun MultipleChoiceGameContent(
     isCorrect: Boolean?,
     correctAnswer: String? = null,
     onAnswerSelected: (String) -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onHelpClick: () -> Unit = {}
 ) {
     val question = gameState.currentQuestion
 
@@ -110,7 +135,8 @@ private fun MultipleChoiceGameContent(
         title = "Multiple Choice",
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
-        score = gameState.score
+        score = gameState.score,
+        onHelpClick = onHelpClick
     ) {
         if (question != null) {
             LazyColumn(

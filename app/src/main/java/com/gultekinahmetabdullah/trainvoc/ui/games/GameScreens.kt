@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialHelpButton
 
 /**
  * Common Game Screen Template
@@ -48,6 +49,8 @@ fun GameScreenTemplate(
     score: Int,
     timeRemaining: Int? = null,
     onPause: (() -> Unit)? = null,
+    onHelpClick: (() -> Unit)? = null,
+    showHelpPulse: Boolean = false,
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -60,6 +63,13 @@ fun GameScreenTemplate(
                     }
                 },
                 actions = {
+                    // Help button - always available
+                    if (onHelpClick != null) {
+                        TutorialHelpButton(
+                            onClick = onHelpClick,
+                            showPulse = showHelpPulse
+                        )
+                    }
                     if (onPause != null) {
                         IconButton(onClick = onPause) {
                             Icon(Icons.Default.Pause, "Pause")

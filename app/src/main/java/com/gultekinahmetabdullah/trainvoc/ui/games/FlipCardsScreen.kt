@@ -12,17 +12,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun FlipCardsScreen(
     onNavigateBack: () -> Unit,
     gridSize: String = "4x4",
     difficulty: String = "medium",
-    viewModel: FlipCardsViewModel = hiltViewModel()
+    viewModel: FlipCardsViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     var showGridDialog by remember { mutableStateOf(true) }
     var selectedGridSize by remember { mutableStateOf(gridSize) }
+
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.FLIP_CARDS)) {
+            tutorialViewModel.startTutorial(GameType.FLIP_CARDS)
+        }
+    }
 
     LaunchedEffect(selectedGridSize) {
         if (!showGridDialog) {
@@ -79,6 +89,16 @@ fun FlipCardsScreen(
                 showGridDialog = false
                 viewModel.startGame(selectedGridSize, difficulty)
             }
+        )
+    }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.FLIP_CARDS) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
         )
     }
 }

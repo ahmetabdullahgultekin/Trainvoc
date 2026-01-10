@@ -18,15 +18,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun PictureMatchScreen(
     onNavigateBack: () -> Unit,
     difficulty: String = "medium",
-    viewModel: PictureMatchViewModel = hiltViewModel()
+    viewModel: PictureMatchViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     var showDifficultyDialog by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.PICTURE_MATCH)) {
+            tutorialViewModel.startTutorial(GameType.PICTURE_MATCH)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!showDifficultyDialog) {
@@ -99,6 +109,16 @@ fun PictureMatchScreen(
                 showDifficultyDialog = false
                 viewModel.startGame(difficulty)
             }
+        )
+    }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.PICTURE_MATCH) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
         )
     }
 }

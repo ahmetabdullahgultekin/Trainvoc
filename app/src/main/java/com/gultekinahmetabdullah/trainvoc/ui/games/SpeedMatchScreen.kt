@@ -11,15 +11,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
+import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
 
 @Composable
 fun SpeedMatchScreen(
     onNavigateBack: () -> Unit,
     difficulty: String = "medium",
-    viewModel: SpeedMatchViewModel = hiltViewModel()
+    viewModel: SpeedMatchViewModel = hiltViewModel(),
+    tutorialViewModel: TutorialViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val tutorialState by tutorialViewModel.tutorialState.collectAsState()
     var showDifficultyDialog by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        if (tutorialViewModel.isFirstPlay(GameType.SPEED_MATCH)) {
+            tutorialViewModel.startTutorial(GameType.SPEED_MATCH)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (!showDifficultyDialog) {
@@ -83,6 +93,16 @@ fun SpeedMatchScreen(
                 showDifficultyDialog = false
                 viewModel.startGame(difficulty)
             }
+        )
+    }
+
+    // Tutorial overlay
+    if (tutorialState.isActive && tutorialState.gameType == GameType.SPEED_MATCH) {
+        TutorialOverlay(
+            state = tutorialState,
+            onNextStep = { tutorialViewModel.nextStep() },
+            onSkip = { tutorialViewModel.skipTutorial() },
+            onComplete = { tutorialViewModel.completeTutorial() }
         )
     }
 }
