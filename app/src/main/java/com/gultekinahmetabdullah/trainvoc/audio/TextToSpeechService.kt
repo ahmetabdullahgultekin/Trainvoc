@@ -17,6 +17,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import com.gultekinahmetabdullah.trainvoc.config.CacheConfig
+import com.gultekinahmetabdullah.trainvoc.config.TtsConfig
 
 /**
  * Text-to-Speech service with feature flag integration and cost tracking
@@ -95,11 +97,11 @@ class TextToSpeechService @Inject constructor(
             // Speak
             tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, text)
 
-            // Track usage
+            // Track usage (for analytics only - Android TTS is FREE)
             featureFlagManager.trackUsage(
                 feature = FeatureFlag.AUDIO_PRONUNCIATION,
                 apiCalls = 1,
-                estimatedCost = 0.001  // $0.001 per TTS call
+                estimatedCost = TtsConfig.ANALYTICS_COST_PER_CALL
             )
 
             // Update cache access if wordId provided
@@ -114,7 +116,7 @@ class TextToSpeechService @Inject constructor(
                 feature = FeatureFlag.AUDIO_PRONUNCIATION,
                 errorMessage = e.message,
                 apiCalls = 1,
-                estimatedCost = 0.001
+                estimatedCost = TtsConfig.ANALYTICS_COST_PER_CALL
             )
             Result.failure(e)
         }
@@ -187,11 +189,11 @@ class TextToSpeechService @Inject constructor(
                 )
                 audioCacheDao.insertAudioCache(audioCache)
 
-                // Track usage
+                // Track usage (for analytics only - Android TTS is FREE)
                 featureFlagManager.trackUsage(
                     feature = FeatureFlag.AUDIO_PRONUNCIATION,
                     apiCalls = 1,
-                    estimatedCost = 0.001
+                    estimatedCost = TtsConfig.ANALYTICS_COST_PER_CALL
                 )
 
                 // Check cache size and cleanup if needed
@@ -228,11 +230,19 @@ class TextToSpeechService @Inject constructor(
             // Stop any current playback
             stopPlayback()
 
-            // Play audio
-            mediaPlayer = MediaPlayer().apply {
+            // Play audio - use local variable first to ensure proper cleanup on exception
+            val player = MediaPlayer().apply {
                 setDataSource(cached.cachedFilePath)
                 prepare()
-                start()
+            }
+
+            try {
+                player.start()
+                mediaPlayer = player
+            } catch (e: Exception) {
+                // Release player on start failure to prevent memory leak
+                player.release()
+                throw e
             }
 
             audioCacheDao.recordAccess(wordId)
@@ -295,15 +305,15 @@ class TextToSpeechService @Inject constructor(
      * Manage cache size - delete old entries if cache is too large
      */
     private suspend fun manageCacheSize() {
-        val maxCacheSize = 100 * 1024 * 1024  // 100 MB
-        val maxCacheCount = 1000
+        val maxCacheSize = CacheConfig.AUDIO_CACHE_MAX_SIZE_BYTES
+        val maxCacheCount = CacheConfig.AUDIO_CACHE_MAX_COUNT
 
         val currentSize = audioCacheDao.getTotalCacheSize() ?: 0
         val currentCount = audioCacheDao.getCacheCount()
 
         // Delete if cache is too large
         if (currentSize > maxCacheSize || currentCount > maxCacheCount) {
-            val deleteCount = (currentCount * 0.2).toInt()  // Delete 20% oldest
+            val deleteCount = (currentCount * CacheConfig.CACHE_CLEANUP_PERCENTAGE).toInt()
             audioCacheDao.deleteLeastRecentlyUsed(deleteCount)
         }
     }

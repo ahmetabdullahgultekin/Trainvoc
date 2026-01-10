@@ -5,6 +5,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import kotlinx.coroutines.flow.first
 import kotlin.math.exp
+import com.gultekinahmetabdullah.trainvoc.config.SpacedRepetitionConfig
 
 /**
  * SM-2 (SuperMemo 2) Spaced Repetition Algorithm
@@ -35,9 +36,9 @@ class SpacedRepetitionEngine {
         private const val INITIAL_INTERVAL = 1
         private const val SECOND_INTERVAL = 6
 
-        // Easiness factor bounds
-        private const val MIN_EASINESS = 1.3f
-        private const val DEFAULT_EASINESS = 2.5f
+        // Easiness factor bounds - from centralized config
+        private val MIN_EASINESS = SpacedRepetitionConfig.MIN_EASINESS_FACTOR.toFloat()
+        private val DEFAULT_EASINESS = SpacedRepetitionConfig.INITIAL_EASINESS_FACTOR.toFloat()
         private const val MAX_EASINESS = 3.5f
 
         // Quality thresholds

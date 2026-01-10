@@ -26,6 +26,7 @@ import com.gultekinahmetabdullah.trainvoc.games.SRSCard
 import com.gultekinahmetabdullah.trainvoc.games.SpeedMatchStats
 import com.gultekinahmetabdullah.trainvoc.images.WordImage
 import com.gultekinahmetabdullah.trainvoc.offline.SyncQueue
+import com.gultekinahmetabdullah.trainvoc.config.DatabaseConfig
 
 @Database(
     entities = [
@@ -68,7 +69,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun gamesDao(): com.gultekinahmetabdullah.trainvoc.games.GamesDao
 
     object DatabaseBuilder {
-        private const val DATABASE_NAME = "trainvoc-db"
+        private val DATABASE_NAME = DatabaseConfig.NAME
 
         private var instance: AppDatabase? = null
 

@@ -429,59 +429,43 @@ class CloudBackupManager(
     }
 
     /**
-     * Upload to cloud provider (placeholder)
-     * TODO: Implement with Google Drive API or other cloud provider
+     * Upload to cloud provider (NOT IMPLEMENTED)
+     *
+     * IMPORTANT: Cloud backup is not yet implemented. This function always returns
+     * a failure to prevent users from thinking their data is backed up when it isn't.
+     *
+     * TODO: Implement with Google Drive API when ready for production
      */
     private suspend fun uploadToCloudProvider(
         filePath: String,
         onProgress: ((Float) -> Unit)? = null
     ): Result<String> = withContext(Dispatchers.IO) {
-        try {
-            // Placeholder implementation
-            // In a real implementation, this would:
-            // 1. Authenticate with cloud provider (Google Drive, Dropbox, etc.)
-            // 2. Upload the file
-            // 3. Return the cloud file ID
-
-            // Simulate upload with progress
-            for (i in 0..10) {
-                kotlinx.coroutines.delay(100)
-                onProgress?.invoke(i / 10f)
-            }
-
-            // For now, return success with dummy file ID
-            Result.success("cloud_backup_${System.currentTimeMillis()}")
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        // CRITICAL: Do NOT return success - cloud backup is not implemented!
+        // Users must not be misled into thinking their data is backed up.
+        Result.failure(CloudBackupNotImplementedException(
+            "Cloud backup is not yet available. Please use local backup instead. " +
+            "Your data is safely stored on this device."
+        ))
     }
 
     /**
-     * Download from cloud provider (placeholder)
-     * TODO: Implement with Google Drive API or other cloud provider
+     * Exception indicating cloud backup feature is not implemented
+     */
+    class CloudBackupNotImplementedException(message: String) : Exception(message)
+
+    /**
+     * Download from cloud provider (NOT IMPLEMENTED)
+     *
+     * IMPORTANT: Cloud restore is not yet implemented.
+     *
+     * TODO: Implement with Google Drive API when ready for production
      */
     private suspend fun downloadFromCloudProvider(
         onProgress: ((Float) -> Unit)? = null
     ): Result<String> = withContext(Dispatchers.IO) {
-        try {
-            // Placeholder implementation
-            // In a real implementation, this would:
-            // 1. Authenticate with cloud provider
-            // 2. Get latest backup file
-            // 3. Download to local storage
-            // 4. Return local file path
-
-            // Simulate download with progress
-            for (i in 0..10) {
-                kotlinx.coroutines.delay(100)
-                onProgress?.invoke(i / 10f)
-            }
-
-            // For now, return failure (no implementation)
-            Result.failure(Exception("Cloud download not implemented"))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        Result.failure(CloudBackupNotImplementedException(
+            "Cloud restore is not yet available. Please use local backup restore instead."
+        ))
     }
 
     /**

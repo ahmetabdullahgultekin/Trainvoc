@@ -13,6 +13,7 @@ import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import com.gultekinahmetabdullah.trainvoc.config.NotificationConfig
 
 /**
  * Centralized notification management system
@@ -33,10 +34,10 @@ object NotificationHelper {
     const val CHANNEL_WORD_QUIZ = "word_quiz_channel"
     const val CHANNEL_GENERAL = "general_channel"
 
-    // Notification IDs
-    const val NOTIFICATION_ID_DAILY_REMINDER = 1001
-    const val NOTIFICATION_ID_STREAK_ALERT = 1002
-    const val NOTIFICATION_ID_WORD_OF_DAY = 1003
+    // Notification IDs - from centralized config
+    val NOTIFICATION_ID_DAILY_REMINDER = NotificationConfig.ID_DAILY_REMINDER
+    val NOTIFICATION_ID_STREAK_ALERT = NotificationConfig.ID_STREAK_ALERT
+    val NOTIFICATION_ID_WORD_OF_DAY = NotificationConfig.ID_WORD_OF_DAY
 
     private const val FLAGS = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
