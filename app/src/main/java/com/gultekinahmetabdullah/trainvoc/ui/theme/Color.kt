@@ -7,28 +7,70 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
 // ============================================================
-// Default Theme Colors (Original)
+// Material 3 Design System Colors (Primary Theme)
+// Following the UI/UX Improvement Plan
 // ============================================================
 
-// Yeni ana palet renkleri
-val Primary = Color(0xFFAAD7D9) // Ana vurgu
-val Secondary = Color(0xFF92C7CF) // İkincil vurgu
-val Background = Color(0xFFFBF9F1) // Arka plan
-val Surface = Color(0xFFE5E1DA) // Kartlar, kutular
-val OnPrimary = Color(0xFF212121) // Ana metin (koyu)
-val OnSurface = Color(0xFF212121) // Yüzey üzeri metin (koyu)
-val Error = Color(0xFFE53935) // Hata
-val LockedLeaf = Color(0xFFB0BEC5) // Kilitli yaprak rengi
-val UnlockedLeaf = Color(0xFF66BB6A) // Kilitsiz yaprak rengi
+// Primary Colors (Brand Identity - Learning & Growth)
+val Primary = Color(0xFF6750A4)          // Deep purple - intelligence, learning
+val OnPrimary = Color(0xFFFFFFFF)        // White text on primary
+val PrimaryContainer = Color(0xFFEADDFF) // Light purple - highlights
+val OnPrimaryContainer = Color(0xFF21005D)
 
-// Koyu tema renkleri
-val DarkPrimary = Color(0xFF3B6E85) // Ana vurgu (koyu)
-val DarkSecondary = Color(0xFF2A9D8F) // İkincil vurgu (koyu)
-val DarkBackground = Color(0xFF121212) // Arka plan (koyu)
-val DarkSurface = Color(0xFF1E1E1E) // Kartlar, kutular (koyu)
-val DarkOnPrimary = Color(0xFFFFFFFF) // Ana metin (açık)
-val DarkOnSurface = Color(0xFFFFFFFF) // Yüzey üzeri metin (açık)
-val DarkError = Color(0xFFCF6679) // Hata (koyu tema için)
+// Secondary Colors (Engagement & Energy)
+val Secondary = Color(0xFF625B71)        // Muted purple-grey
+val OnSecondary = Color(0xFFFFFFFF)
+val SecondaryContainer = Color(0xFFE8DEF8)
+val OnSecondaryContainer = Color(0xFF1D192B)
+
+// Tertiary Colors (Success & Achievement)
+val Tertiary = Color(0xFF7D5260)         // Warm accent
+val OnTertiary = Color(0xFFFFFFFF)
+val TertiaryContainer = Color(0xFFFFD8E4)
+val OnTertiaryContainer = Color(0xFF31111D)
+
+// Semantic Colors
+val Success = Color(0xFF4CAF50)          // Green - correct answers, achievements
+val OnSuccess = Color(0xFFFFFFFF)
+val Error = Color(0xFFB3261E)            // Red - incorrect answers, warnings
+val OnError = Color(0xFFFFFFFF)
+val Warning = Color(0xFFF9A825)          // Amber - caution, time warnings
+val Info = Color(0xFF2196F3)             // Blue - informational
+
+// Surface Colors (Backgrounds & Cards)
+val Surface = Color(0xFFFFFBFE)          // Main background (light mode)
+val SurfaceVariant = Color(0xFFE7E0EC)   // Secondary surfaces
+val Background = Color(0xFFFFFBFE)       // Background same as surface
+val OnSurface = Color(0xFF1C1B1F)        // Main text color
+val OnSurfaceVariant = Color(0xFF49454F) // Secondary text
+
+// Additional semantic colors from old system
+val LockedLeaf = Color(0xFFB0BEC5)       // Locked elements
+val UnlockedLeaf = Color(0xFF66BB6A)     // Unlocked/available elements
+
+// Dark Mode Colors
+val DarkPrimary = Color(0xFFD0BCFF)      // Light purple for dark mode
+val DarkOnPrimary = Color(0xFF381E72)
+val DarkPrimaryContainer = Color(0xFF4F378B)
+val DarkOnPrimaryContainer = Color(0xFFEADDFF)
+
+val DarkSecondary = Color(0xFFCCC2DC)
+val DarkOnSecondary = Color(0xFF332D41)
+val DarkSecondaryContainer = Color(0xFF4A4458)
+val DarkOnSecondaryContainer = Color(0xFFE8DEF8)
+
+val DarkTertiary = Color(0xFFEFB8C8)
+val DarkOnTertiary = Color(0xFF492532)
+val DarkTertiaryContainer = Color(0xFF633B48)
+val DarkOnTertiaryContainer = Color(0xFFFFD8E4)
+
+val DarkSurface = Color(0xFF1C1B1F)
+val DarkOnSurface = Color(0xFFE6E1E5)
+val DarkSurfaceVariant = Color(0xFF49454F)
+val DarkOnSurfaceVariant = Color(0xFFCAC4D0)
+val DarkBackground = Color(0xFF1C1B1F)
+val DarkError = Color(0xFFF2B8B5)
+val DarkOnError = Color(0xFF601410)
 
 // ============================================================
 // OCEAN Theme - Blues and Teals (Calm, Professional)
@@ -211,6 +253,23 @@ object MintColors {
 }
 
 // ============================================================
+// CEFR Level Colors (from UI/UX Plan)
+// ============================================================
+
+/**
+ * CEFR (Common European Framework of Reference for Languages) Level Colors
+ * Consistent color coding across the app for language proficiency levels
+ */
+object CEFRColors {
+    val A1 = Color(0xFF81C784)      // Light Green - Beginner
+    val A2 = Color(0xFF66BB6A)      // Green - Elementary
+    val B1 = Color(0xFF42A5F5)      // Blue - Intermediate
+    val B2 = Color(0xFF1E88E5)      // Deep Blue - Upper Intermediate
+    val C1 = Color(0xFFFFA726)      // Orange - Advanced
+    val C2 = Color(0xFFFF7043)      // Deep Orange - Proficient
+}
+
+// ============================================================
 // Semantic Colors for Statistics & Features
 // ============================================================
 
@@ -220,8 +279,8 @@ object MintColors {
  * Each color has both light and dark theme variants for proper contrast.
  */
 object StatsColors {
-    // Correct answers - Green (already have UnlockedLeaf)
-    val correctLight = Color(0xFF66BB6A)      // Green - same as UnlockedLeaf
+    // Correct answers - Green
+    val correctLight = Color(0xFF4CAF50)      // Material green
     val correctDark = Color(0xFF81C784)       // Lighter green for dark theme
 
     // Incorrect answers - Red
@@ -229,7 +288,7 @@ object StatsColors {
     val incorrectDark = Color(0xFFEF5350)     // Slightly lighter red for contrast
 
     // Skipped questions - Gray
-    val skippedLight = Color(0xFFB0BEC5)      // Blue gray - same as LockedLeaf
+    val skippedLight = Color(0xFFB0BEC5)      // Blue gray
     val skippedDark = Color(0xFF78909C)       // Darker gray for dark theme
 
     // Achievement/Gold - Yellow/Gold
@@ -255,6 +314,10 @@ object StatsColors {
     // Category/Level - Orange
     val categoryLight = Color(0xFFFFB74D)     // Light orange
     val categoryDark = Color(0xFFFF9800)      // Standard orange for dark theme
+
+    // XP/Progress - Purple gradient
+    val xpLight = Color(0xFF9C27B0)           // Purple
+    val xpDark = Color(0xFFBA68C8)            // Light purple
 }
 
 /**
