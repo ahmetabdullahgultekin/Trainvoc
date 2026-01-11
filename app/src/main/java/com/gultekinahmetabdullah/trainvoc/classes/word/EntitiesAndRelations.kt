@@ -32,7 +32,8 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
         Index(value = ["level"]),
         Index(value = ["stat_id"]),
         Index(value = ["last_reviewed"]),
-        Index(value = ["next_review_date"]) // For efficient due date queries
+        Index(value = ["next_review_date"]), // For efficient due date queries
+        Index(value = ["isFavorite"]) // For efficient favorites queries
     ]
 )
 @Immutable
@@ -49,7 +50,11 @@ data class Word(
     @ColumnInfo(name = "next_review_date") val nextReviewDate: Long? = null, // Next review timestamp
     @ColumnInfo(name = "easiness_factor") val easinessFactor: Float = 2.5f, // Learning difficulty (1.3-3.5)
     @ColumnInfo(name = "interval_days") val intervalDays: Int = 0, // Days between reviews
-    @ColumnInfo(name = "repetitions") val repetitions: Int = 0 // Consecutive successful reviews
+    @ColumnInfo(name = "repetitions") val repetitions: Int = 0, // Consecutive successful reviews
+
+    // Favorites fields (Migration 11→12)
+    @ColumnInfo(name = "isFavorite") val isFavorite: Boolean = false, // Whether word is favorited
+    @ColumnInfo(name = "favoritedAt") val favoritedAt: Long? = null // Timestamp when favorited
 )
 
 /**
