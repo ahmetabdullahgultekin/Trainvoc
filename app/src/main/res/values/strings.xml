@@ -198,6 +198,23 @@
     <string name="exam_type_with_value">Exam Type: %1$s</string>
     <string name="locked_level_warning">Locked - Learn all words in the previous level first!</string>
 
+    <!-- Quiz Exam Menu Screen -->
+    <string name="select_level_and_exam">Select Level &amp; Exam</string>
+    <string name="words_mastered">%1$d words mastered</string>
+    <string name="words_available">%1$d words available</string>
+    <string name="difficulty_beginner">★☆☆</string>
+    <string name="difficulty_elementary">★★☆</string>
+    <string name="difficulty_intermediate">★★★</string>
+    <string name="difficulty_upper_intermediate">★★★★</string>
+    <string name="difficulty_advanced">★★★★★</string>
+    <string name="difficulty_proficient">★★★★★★</string>
+    <string name="toefl_description">Test of English as a Foreign Language</string>
+    <string name="ielts_description">International English Language Testing System</string>
+    <string name="general_vocab_title">General Vocabulary</string>
+    <string name="general_vocab_description">All-purpose word practice</string>
+    <string name="complete_level_first">Complete %1$s first</string>
+    <string name="your_current_level">Your Level</string>
+
     <!-- Home Screen Gamification -->
     <string name="username_placeholder">User</string>
     <string name="daily_tasks">Daily Tasks</string>
