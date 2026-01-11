@@ -31,5 +31,8 @@ object Route {
     const val DAILY_GOALS = "daily_goals"
     const val ACHIEVEMENTS = "achievements"
 
+    // Phase 2 - Additional Routes
+    const val STREAK_DETAIL = "streak_detail"
+
     fun wordDetail(wordId: String) = "word_detail/$wordId"
 }

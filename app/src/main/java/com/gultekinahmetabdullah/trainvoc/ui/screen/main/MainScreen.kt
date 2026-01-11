@@ -219,6 +219,25 @@ fun MainScreen(
                     )
                 }
 
+                // Phase 2 - Additional Screens
+                composable(Route.DAILY_GOALS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.DailyGoalsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.ACHIEVEMENTS) {
+                    // TODO: Integrate with AchievementViewModel to load actual achievements
+                    com.gultekinahmetabdullah.trainvoc.gamification.ui.AchievementsScreen(
+                        achievements = emptyList(), // TODO: Load from ViewModel
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.STREAK_DETAIL) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.StreakDetailScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+
                 // Memory Games Navigation
                 gamesNavGraph(navController)
             }
