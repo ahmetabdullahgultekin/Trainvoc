@@ -82,8 +82,8 @@ fun ProfileScreen(
             ProfileHeader(
                 username = username,
                 level = uiState.level,
-                xp = uiState.xp,
-                xpToNextLevel = uiState.xpToNextLevel
+                xp = uiState.xpCurrent,
+                xpToNextLevel = uiState.xpForNextLevel
             )
 
             Spacer(modifier = Modifier.height(24.dp))

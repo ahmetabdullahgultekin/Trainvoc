@@ -413,7 +413,7 @@ private fun LevelProgressCard(progress: LevelProgress) {
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = progress.level.shortName,
+                            text = progress.level.name,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
