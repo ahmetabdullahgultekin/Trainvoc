@@ -19,8 +19,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 /**
  * Leaderboard Screen
@@ -145,19 +143,9 @@ fun LeaderboardScreen(
                 }
             }
 
-            // Leaderboard list with pull to refresh
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(isRefreshing),
-                onRefresh = {
-                    isRefreshing = true
-                    // TODO: Refresh from server
-                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-                        kotlinx.coroutines.delay(1500)
-                        isRefreshing = false
-                    }
-                }
-            ) {
-                LazyColumn(
+            // Leaderboard list
+            // TODO: Add pull-to-refresh when implementing backend
+            LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
                         horizontal = Spacing.medium,
@@ -187,7 +175,6 @@ fun LeaderboardScreen(
                         )
                     }
                 }
-            }
         }
     }
 }
