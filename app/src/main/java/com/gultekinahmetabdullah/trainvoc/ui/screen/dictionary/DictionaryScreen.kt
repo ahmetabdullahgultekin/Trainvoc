@@ -1,277 +1,724 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
-import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
+import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.components.CEFRLevelChip
+import com.gultekinahmetabdullah.trainvoc.ui.components.InfoCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDelay
+import com.gultekinahmetabdullah.trainvoc.ui.theme.AppAnimationDuration
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
-import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
- * Enhanced Dictionary Screen with animations and visual polish
+ * Enhanced Dictionary Screen following UI/UX Improvement Plan
  *
  * Features:
- * - Animated card entrance with fade + scale
- * - Enhanced search field with clear button
- * - Empty state when no results
- * - Loading indicator during search
- * - Visual level indicators with color coding
- * - Elevated cards with proper spacing
- * - Smooth content size animations
+ * - Material 3 SearchBar with debounce and suggestions
+ * - Filter chips for CEFR levels (A1-C2) and Favorites
+ * - Word cards with pronunciation, favorite, and quick actions
+ * - Pull to refresh
+ * - Alphabet fast scroll with haptic feedback
+ * - Staggered card entrance animations
+ * - Empty states for no results and no favorites
+ * - Shimmer loading effect
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel) {
-    var search by remember { mutableStateOf("") }
+    var searchQuery by remember { mutableStateOf("") }
+    var isSearchBarActive by remember { mutableStateOf(false) }
+    val allWords by wordViewModel.words.collectAsState()
     val filteredWords by wordViewModel.filteredWords.collectAsState()
     var isSearching by remember { mutableStateOf(false) }
 
-    // Debounced search: Wait 300ms after user stops typing before filtering
-    // This improves UX by reducing unnecessary database queries
-    LaunchedEffect(search) {
-        if (search.isNotEmpty()) {
+    // Filter state
+    val selectedFilters = remember { mutableStateListOf<String>() }
+    var showFavoritesOnly by remember { mutableStateOf(false) }
+
+    // Search history
+    val searchHistory = remember { mutableStateListOf<String>() }
+
+    // Pull to refresh
+    val pullToRefreshState = rememberPullToRefreshState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Alphabet fast scroll state
+    var showAlphabetScroll by remember { mutableStateOf(false) }
+    var currentScrollLetter by remember { mutableStateOf("") }
+    val view = LocalView.current
+
+    // Debounced search
+    LaunchedEffect(searchQuery) {
+        if (searchQuery.isNotEmpty()) {
             isSearching = true
         }
-        kotlinx.coroutines.delay(300)  // 300ms debounce delay
-        wordViewModel.filterWords(search)
+        delay(300)  // 300ms debounce delay
+        wordViewModel.filterWords(searchQuery)
         isSearching = false
     }
 
-    Column(
+    // Handle pull to refresh
+    if (pullToRefreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            delay(1000)
+            pullToRefreshState.endRefresh()
+        }
+    }
+
+    // Apply filters to displayed words
+    val displayedWords by remember {
+        derivedStateOf {
+            val baseList = if (searchQuery.isEmpty()) {
+                allWords.map { it.word }
+            } else {
+                filteredWords
+            }
+
+            var result = baseList
+
+            // Filter by CEFR levels
+            if (selectedFilters.isNotEmpty()) {
+                result = result.filter { word ->
+                    word.level?.name in selectedFilters
+                }
+            }
+
+            // Filter by favorites
+            if (showFavoritesOnly) {
+                result = result.filter { it.isFavorite }
+            }
+
+            result.sortedBy { it.word }
+        }
+    }
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(Spacing.mediumLarge)
+            .nestedScroll(pullToRefreshState.nestedScrollConnection)
     ) {
-        // Enhanced Search Field
-        OutlinedTextField(
-            value = search,
-            onValueChange = { search = it },
-            label = { Text(stringResource(id = R.string.search_word)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = stringResource(id = R.string.search_word),
-                    tint = MaterialTheme.colorScheme.primary
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = Spacing.md)
+        ) {
+            Spacer(modifier = Modifier.height(Spacing.sm))
+
+            // Material 3 SearchBar
+            SearchBar(
+                query = searchQuery,
+                onQueryChange = { searchQuery = it },
+                onSearch = { query ->
+                    if (query.isNotEmpty() && !searchHistory.contains(query)) {
+                        searchHistory.add(0, query)
+                        if (searchHistory.size > 5) searchHistory.removeLast()
+                    }
+                    isSearchBarActive = false
+                },
+                active = isSearchBarActive,
+                onActiveChange = { isSearchBarActive = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(id = R.string.search_word)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(id = R.string.search_word)
+                    )
+                },
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = searchQuery.isNotEmpty(),
+                        enter = fadeIn() + scaleIn(),
+                        exit = fadeOut() + scaleOut()
+                    ) {
+                        IconButton(onClick = { searchQuery = "" }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear search"
+                            )
+                        }
+                    }
+                },
+                colors = SearchBarDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
-            },
-            trailingIcon = {
-                AnimatedVisibility(
-                    visible = search.isNotEmpty(),
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut()
-                ) {
-                    IconButton(onClick = { search = "" }) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear search",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            ) {
+                // Search history/suggestions
+                if (searchHistory.isNotEmpty()) {
+                    Text(
+                        text = "Recent Searches",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(Spacing.md)
+                    )
+                    searchHistory.forEach { historyItem ->
+                        DropdownMenuItem(
+                            text = { Text(historyItem) },
+                            onClick = {
+                                searchQuery = historyItem
+                                isSearchBarActive = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         )
                     }
                 }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = Spacing.medium),
-            singleLine = true,
-            shape = MaterialTheme.shapes.large
-        )
-
-        // Loading Indicator
-        AnimatedVisibility(
-            visible = isSearching,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = Spacing.small),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(IconSize.medium),
-                    strokeWidth = 2.dp
-                )
-                Spacer(modifier = Modifier.width(Spacing.small))
-                Text(
-                    text = stringResource(id = R.string.loading),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
-        }
 
-        // Word List or Empty State
-        Box(modifier = Modifier.weight(1f)) {
-            val listState = rememberLazyListState()
+            Spacer(modifier = Modifier.height(Spacing.md))
 
-            if (!isSearching && filteredWords.isEmpty() && search.isNotEmpty()) {
-                // Empty State
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(Spacing.large),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+            // Filter Chips
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(Spacing.xs)
+            ) {
+                // Favorites filter chip
+                FilterChip(
+                    selected = showFavoritesOnly,
+                    onClick = { showFavoritesOnly = !showFavoritesOnly },
+                    label = { Text(stringResource(id = R.string.favorites)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = if (showFavoritesOnly) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize)
+                        )
+                    },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                )
+
+                // CEFR level filter chips
+                WordLevel.entries.forEach { level ->
+                    CEFRFilterChip(
+                        level = level,
+                        selected = level.name in selectedFilters,
+                        onClick = {
+                            if (level.name in selectedFilters) {
+                                selectedFilters.remove(level.name)
+                            } else {
+                                selectedFilters.add(level.name)
+                            }
+                        }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.md))
+
+            // Loading indicator
+            AnimatedVisibility(
+                visible = isSearching,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "🔍",
-                        style = MaterialTheme.typography.displayMedium
-                    )
-                    Spacer(modifier = Modifier.height(Spacing.medium))
-                    Text(
-                        text = stringResource(id = R.string.no_words_found),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(Spacing.small))
-                    Text(
-                        text = stringResource(id = R.string.try_different_search),
+                        text = stringResource(id = R.string.loading),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(
-                        items = filteredWords,
-                        key = { it.word }
-                    ) { word ->
-                        WordCard(
-                            word = word.word,
-                            meaning = word.meaning,
-                            level = word.level?.ordinal ?: 0,
-                            onClick = { navController.navigate(Route.wordDetail(word.word)) }
+            }
+
+            // Word List, Empty State, or Shimmer Loading
+            Box(modifier = Modifier.weight(1f)) {
+                when {
+                    isSearching -> {
+                        // Shimmer loading state
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(vertical = Spacing.sm)
+                        ) {
+                            items(10) {
+                                ShimmerWordCard()
+                            }
+                        }
+                    }
+                    displayedWords.isEmpty() && (searchQuery.isNotEmpty() || selectedFilters.isNotEmpty() || showFavoritesOnly) -> {
+                        // Empty State
+                        EmptyState(
+                            showFavoritesOnly = showFavoritesOnly,
+                            onBrowseClick = { showFavoritesOnly = false }
                         )
+                    }
+                    else -> {
+                        // Word List with alphabet fast scroll
+                        val listState = rememberLazyListState()
+
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(
+                                state = listState,
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(bottom = Spacing.md)
+                            ) {
+                                itemsIndexed(
+                                    items = displayedWords,
+                                    key = { _, word -> word.word }
+                                ) { index, word ->
+                                    // Staggered entrance animation
+                                    val scale by animateFloatAsState(
+                                        targetValue = 1f,
+                                        animationSpec = tween(
+                                            durationMillis = AppAnimationDuration.medium,
+                                            delayMillis = (index * AnimationDelay.wordCardStagger).coerceAtMost(500)
+                                        ),
+                                        label = "cardScale"
+                                    )
+
+                                    val alpha by animateFloatAsState(
+                                        targetValue = 1f,
+                                        animationSpec = tween(
+                                            durationMillis = AppAnimationDuration.medium,
+                                            delayMillis = (index * AnimationDelay.wordCardStagger).coerceAtMost(500)
+                                        ),
+                                        label = "cardAlpha"
+                                    )
+
+                                    DictionaryWordCard(
+                                        word = word,
+                                        onCardClick = { navController.navigate(Route.wordDetail(word.word)) },
+                                        onFavoriteClick = {
+                                            wordViewModel.toggleFavorite(word.word, !word.isFavorite)
+                                        },
+                                        onAudioClick = { /* TODO: Implement audio */ },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = Spacing.xs)
+                                            .scale(scale)
+                                            .alpha(alpha)
+                                            .animateItemPlacement()
+                                    )
+                                }
+                            }
+
+                            // Alphabet Fast Scroll
+                            if (displayedWords.isNotEmpty() && !isSearching) {
+                                AlphabetFastScroll(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(end = Spacing.xs),
+                                    onLetterSelected = { letter ->
+                                        // Haptic feedback
+                                        view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                                        currentScrollLetter = letter
+
+                                        // Scroll to first word starting with letter
+                                        val targetIndex = displayedWords.indexOfFirst {
+                                            it.word.firstOrNull()?.uppercaseChar() == letter.firstOrNull()
+                                        }
+                                        if (targetIndex != -1) {
+                                            coroutineScope.launch {
+                                                listState.animateScrollToItem(targetIndex)
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+
+                            // Large letter preview when scrolling
+                            AnimatedVisibility(
+                                visible = currentScrollLetter.isNotEmpty(),
+                                enter = fadeIn() + scaleIn(),
+                                exit = fadeOut() + scaleOut(),
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(80.dp),
+                                    shape = RoundedCornerShape(CornerRadius.large),
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shadowElevation = Elevation.level3
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = currentScrollLetter,
+                                            style = MaterialTheme.typography.displayLarge,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
+                                }
+
+                                LaunchedEffect(currentScrollLetter) {
+                                    delay(500)
+                                    currentScrollLetter = ""
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+
+        // Pull to refresh indicator
+        PullToRefreshContainer(
+            state = pullToRefreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .zIndex(1f)
+        )
     }
 }
 
 /**
- * Enhanced Word Card with visual polish
- *
- * Features:
- * - Elevated card design
- * - Level indicator with color coding
- * - Animated content size changes
- * - Improved typography hierarchy
+ * CEFR Level Filter Chip with color coding
  */
 @Composable
-fun WordCard(
-    word: String,
-    meaning: String,
-    level: Int,
-    onClick: () -> Unit
+fun CEFRFilterChip(
+    level: WordLevel,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val levelColor = when (level) {
+        WordLevel.A1 -> CEFRColors.A1
+        WordLevel.A2 -> CEFRColors.A2
+        WordLevel.B1 -> CEFRColors.B1
+        WordLevel.B2 -> CEFRColors.B2
+        WordLevel.C1 -> CEFRColors.C1
+        WordLevel.C2 -> CEFRColors.C2
+    }
+
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.05f else 1f,
+        animationSpec = tween(durationMillis = AppAnimationDuration.quick),
+        label = "chipScale"
+    )
+
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(level.name) },
+        modifier = modifier.scale(scale),
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = levelColor,
+            selectedLabelColor = Color.White
+        )
+    )
+}
+
+/**
+ * Dictionary Word Card with all features from UI/UX plan
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DictionaryWordCard(
+    word: Word,
+    onCardClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    onAudioClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showQuickActions by remember { mutableStateOf(false) }
+
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = Spacing.extraSmall)
-            .animateContentSize()
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = Elevation.low,
-            pressedElevation = Elevation.medium
-        ),
-        shape = MaterialTheme.shapes.medium,
+        modifier = modifier
+            .combinedClickable(
+                onClick = onCardClick,
+                onLongClick = { showQuickActions = true }
+            ),
+        shape = RoundedCornerShape(CornerRadius.medium),
+        elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Spacing.medium),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(Spacing.md),
+            verticalAlignment = Alignment.Top
         ) {
-            // Level Indicator Circle
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(getLevelColor(level)),
-                contentAlignment = Alignment.Center
+            // Word information
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
+                // Word with pronunciation button
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
+                ) {
+                    Text(
+                        text = word.word,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    IconButton(
+                        onClick = onAudioClick,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.VolumeUp,
+                            contentDescription = "Pronunciation",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(Spacing.xs))
+
+                // Part of speech and level chip
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+                ) {
+                    Text(
+                        text = "noun", // TODO: Add part of speech to Word model
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    if (word.level != null) {
+                        CEFRLevelChip(level = word.level.name)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(Spacing.sm))
+
+                // Definition (short)
                 Text(
-                    text = level.toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    text = word.meaning,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
-            Spacer(modifier = Modifier.width(Spacing.medium))
-
-            // Word and Meaning Column
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = word,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+            // Favorite toggle
+            IconButton(
+                onClick = onFavoriteClick,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = if (word.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = if (word.isFavorite) "Remove from favorites" else "Add to favorites",
+                    tint = if (word.isFavorite) Color(0xFFE91E63) else MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.height(Spacing.extraSmall))
-                Text(
-                    text = meaning,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2
+            }
+        }
+
+        // Quick actions menu
+        DropdownMenu(
+            expanded = showQuickActions,
+            onDismissRequest = { showQuickActions = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(if (word.isFavorite) "Remove from favorites" else "Add to favorites") },
+                onClick = {
+                    onFavoriteClick()
+                    showQuickActions = false
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = if (word.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = null
+                    )
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Practice") },
+                onClick = {
+                    // TODO: Navigate to practice
+                    showQuickActions = false
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null
+                    )
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Share") },
+                onClick = {
+                    // TODO: Implement share
+                    showQuickActions = false
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+    }
+}
+
+/**
+ * Shimmer loading card for skeleton state
+ */
+@Composable
+fun ShimmerWordCard(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "shimmerAlpha"
+    )
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = Spacing.xs),
+        shape = RoundedCornerShape(CornerRadius.medium),
+        elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Spacing.md)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                // Title shimmer
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .height(24.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                )
+
+                Spacer(modifier = Modifier.height(Spacing.sm))
+
+                // Subtitle shimmer
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(16.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha * 0.7f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                )
+
+                Spacer(modifier = Modifier.height(Spacing.sm))
+
+                // Body shimmer
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha * 0.5f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
                 )
             }
         }
@@ -279,15 +726,112 @@ fun WordCard(
 }
 
 /**
- * Returns color based on word difficulty level
- * A1-A2: Green (Easy)
- * B1-B2: Blue (Intermediate)
- * C1-C2: Purple (Advanced)
+ * Empty state for no results or no favorites
  */
 @Composable
-fun getLevelColor(level: Int) = when (level) {
-    in 0..2 -> MaterialTheme.colorScheme.primary.copy(alpha = Alpha.high)      // A1-A2
-    in 3..4 -> MaterialTheme.colorScheme.tertiary.copy(alpha = Alpha.high)     // B1-B2
-    in 5..6 -> MaterialTheme.colorScheme.secondary.copy(alpha = Alpha.high)    // C1-C2
-    else -> MaterialTheme.colorScheme.surfaceVariant
+fun EmptyState(
+    showFavoritesOnly: Boolean,
+    onBrowseClick: () -> Unit
+) {
+    if (showFavoritesOnly) {
+        // No favorites empty state
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Spacing.lg),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            InfoCard(
+                icon = Icons.Outlined.FavoriteBorder,
+                title = "No Favorites Yet",
+                message = "Your favorite words will appear here. Start adding words to your favorites to see them here!",
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    } else {
+        // No search results empty state
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Spacing.lg),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            InfoCard(
+                icon = Icons.Default.Search,
+                title = stringResource(id = R.string.no_words_found),
+                message = stringResource(id = R.string.try_different_search),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+/**
+ * Alphabet fast scroll component
+ */
+@Composable
+fun AlphabetFastScroll(
+    modifier: Modifier = Modifier,
+    onLetterSelected: (String) -> Unit
+) {
+    val alphabet = ('A'..'Z').map { it.toString() }
+    var dragOffset by remember { mutableStateOf(Offset.Zero) }
+    var isDragging by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(32.dp)
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        isDragging = true
+                        dragOffset = offset
+                        // Find letter at position
+                        val letterHeight = size.height / alphabet.size
+                        val index = (offset.y / letterHeight).toInt().coerceIn(0, alphabet.size - 1)
+                        onLetterSelected(alphabet[index])
+                    },
+                    onDrag = { change, _ ->
+                        dragOffset = change.position
+                        // Find letter at position
+                        val letterHeight = size.height / alphabet.size
+                        val index = (dragOffset.y / letterHeight).toInt().coerceIn(0, alphabet.size - 1)
+                        onLetterSelected(alphabet[index])
+                    },
+                    onDragEnd = {
+                        isDragging = false
+                    }
+                )
+            },
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        alphabet.forEach { letter ->
+            Text(
+                text = letter,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 1.dp)
+            )
+        }
+    }
+}
+
+/**
+ * Returns color based on CEFR level
+ */
+@Composable
+fun getCEFRColor(level: WordLevel?): Color = when (level) {
+    WordLevel.A1 -> CEFRColors.A1
+    WordLevel.A2 -> CEFRColors.A2
+    WordLevel.B1 -> CEFRColors.B1
+    WordLevel.B2 -> CEFRColors.B2
+    WordLevel.C1 -> CEFRColors.C1
+    WordLevel.C2 -> CEFRColors.C2
+    null -> MaterialTheme.colorScheme.surfaceVariant
 }

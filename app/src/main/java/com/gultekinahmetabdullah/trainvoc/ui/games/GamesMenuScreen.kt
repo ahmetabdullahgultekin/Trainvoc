@@ -1,11 +1,23 @@
 package com.gultekinahmetabdullah.trainvoc.ui.games
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,8 +28,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -25,7 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.gultekinahmetabdullah.trainvoc.ui.utils.getAdaptiveColumnCount
+import kotlinx.coroutines.delay
 
 /**
  * Games Menu Screen
@@ -41,6 +55,24 @@ fun GamesMenuScreen(
     viewModel: GamesMenuViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var selectedCategory by remember { mutableStateOf(GameCategory.ALL) }
+    var animationKey by remember { mutableStateOf(0) }
+
+    // Filter games by category
+    val filteredGames = remember(selectedCategory) {
+        if (selectedCategory == GameCategory.ALL) {
+            GameType.values().toList()
+        } else {
+            GameType.values().filter { it.category == selectedCategory }
+        }
+    }
+
+    // Trigger shuffle animation when category changes
+    LaunchedEffect(selectedCategory) {
+        if (selectedCategory != GameCategory.ALL) {
+            animationKey++
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -71,26 +103,38 @@ fun GamesMenuScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Games grid - adaptive columns based on screen size
-            val columnCount = getAdaptiveColumnCount(
-                compact = 2,  // Phone portrait
-                medium = 3,   // Tablet or phone landscape
-                expanded = 4  // Large tablet
+            // Category filter chips
+            CategoryFilterChips(
+                selectedCategory = selectedCategory,
+                onCategorySelected = { selectedCategory = it }
             )
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(columnCount),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(GameType.values(), key = { it.route }) { gameType ->
-                    GameCard(
-                        gameType = gameType,
-                        gamesPlayed = uiState.getGamesPlayed(gameType),
-                        bestScore = uiState.getBestScore(gameType),
-                        onClick = { onGameSelected(gameType) }
-                    )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Games grid - Fixed 2 columns as per requirement
+            if (filteredGames.isEmpty()) {
+                EmptyState()
+            } else {
+                LazyVerticalGrid(
+                    key = animationKey,
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.animateContentSize()
+                ) {
+                    itemsIndexed(
+                        items = filteredGames,
+                        key = { _, gameType -> gameType.route }
+                    ) { index, gameType ->
+                        AnimatedGameCard(
+                            index = index,
+                            gameType = gameType,
+                            gamesPlayed = uiState.getGamesPlayed(gameType),
+                            bestScore = uiState.getBestScore(gameType),
+                            onClick = { onGameSelected(gameType) }
+                        )
+                    }
                 }
             }
         }
