@@ -167,29 +167,6 @@ class MainActivity : ComponentActivity() {
                 colorPalette = colorPalettePref
             ) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Sağ üst köşede her zaman "alpha close test" ve versiyon yazısı
-                    val context = LocalContext.current
-                    val versionName = try {
-                        val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-                        pInfo.versionName ?: ""
-                    } catch (_: Exception) {
-                        ""
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp, end = 12.dp)
-                            .background(color = Color.Transparent)
-                            .zIndex(1f) // Z-index to ensure it stays on top
-                    ) {
-                        Text(
-                            text = "alpha close test  v$versionName",
-                            color = Color.Gray,
-                            fontSize = 12.sp,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                        )
-                    }
                     NavHost(navController = navController, startDestination = Route.SPLASH) {
                         composable(Route.SPLASH) {
                             SplashScreen(navController = navController)
