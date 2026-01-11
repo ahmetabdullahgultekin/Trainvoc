@@ -31,10 +31,14 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Leaderboard
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -98,6 +102,13 @@ fun HomeScreen(
     onNavigateToWordOfDay: () -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
     onNavigateToLastQuiz: () -> Unit = {},
+    // Phase 2 & 3 - Gamification & Engagement Navigation
+    onNavigateToDailyGoals: () -> Unit = {},
+    onNavigateToAchievements: () -> Unit = {},
+    onNavigateToStreakDetail: () -> Unit = {},
+    onNavigateToLeaderboard: () -> Unit = {},
+    onNavigateToWordProgress: () -> Unit = {},
+    onNavigateToDictionary: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
     viewModel: HomeViewModel = hiltViewModel()
@@ -328,16 +339,25 @@ fun HomeScreen(
                         }
                     }
 
-                    // Streak and Word Progress Row
+                    // Streak and Word Progress Row - CLICKABLE
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        // Streak Display
+                        // Streak Display - Clickable to StreakDetail
                         if (uiState.currentStreak > 0) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { onNavigateToStreakDetail() }
+                                    .background(
+                                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(12.dp)
+                            ) {
                                 Text(
                                     text = "\uD83D\uDD25 ${uiState.currentStreak}",
                                     style = MaterialTheme.typography.titleMedium,
@@ -350,9 +370,18 @@ fun HomeScreen(
                                 )
                             }
                         }
-                        // Words Progress
+                        // Words Progress - Clickable to WordProgress
                         if (uiState.totalWords > 0) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clickable { onNavigateToWordProgress() }
+                                    .background(
+                                        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(12.dp)
+                            ) {
                                 Text(
                                     text = "\uD83D\uDCDA ${uiState.learnedWords}/${uiState.totalWords}",
                                     style = MaterialTheme.typography.titleMedium,
@@ -482,7 +511,7 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Daily Tasks and Achievements (Gamification)
+                    // Daily Tasks and Achievements (Gamification) - CLICKABLE SECTIONS
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -492,12 +521,26 @@ fun HomeScreen(
                             )
                             .padding(16.dp)
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.daily_tasks),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        // Daily Tasks Header - Clickable
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onNavigateToDailyGoals() },
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.daily_tasks),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "View All →",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -550,12 +593,26 @@ fun HomeScreen(
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(id = R.string.achievements),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        // Achievements Header - Clickable
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onNavigateToAchievements() },
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.achievements),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "View All →",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
 
                         // Dynamic Achievements Display
@@ -723,6 +780,30 @@ fun HomeScreen(
                                 title = stringResource(id = R.string.last_quiz),
                                 emojiContentDescription = stringResource(id = R.string.quick_access_last_quiz),
                                 onClick = onNavigateToLastQuiz
+                            )
+                        }
+                        item {
+                            QuickAccessCard(
+                                emoji = "🏆",
+                                title = "Leaderboard",
+                                emojiContentDescription = "View leaderboard rankings",
+                                onClick = onNavigateToLeaderboard
+                            )
+                        }
+                        item {
+                            QuickAccessCard(
+                                emoji = "📖",
+                                title = "Dictionary",
+                                emojiContentDescription = "Browse dictionary",
+                                onClick = onNavigateToDictionary
+                            )
+                        }
+                        item {
+                            QuickAccessCard(
+                                emoji = "📊",
+                                title = "Progress",
+                                emojiContentDescription = "View word progress",
+                                onClick = onNavigateToWordProgress
                             )
                         }
                     }
