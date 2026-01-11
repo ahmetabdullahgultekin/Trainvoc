@@ -80,6 +80,16 @@ object DatabaseModule {
     }
 
     @Provides
+    fun provideWordOfDayDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.features.WordOfDayDao {
+        return database.wordOfDayDao()
+    }
+
+    @Provides
+    fun provideQuizHistoryDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao {
+        return database.quizHistoryDao()
+    }
+
+    @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): androidx.work.WorkManager {
         return androidx.work.WorkManager.getInstance(context)

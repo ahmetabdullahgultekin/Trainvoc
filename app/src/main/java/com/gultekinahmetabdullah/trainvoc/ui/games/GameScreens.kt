@@ -117,7 +117,7 @@ private fun GameProgressBar(
     ) {
         // Progress bar
         LinearProgressIndicator(
-            progress = { progress },
+            progress = { if (progress.isNaN()) 0f else progress.coerceIn(0f, 1f) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp)

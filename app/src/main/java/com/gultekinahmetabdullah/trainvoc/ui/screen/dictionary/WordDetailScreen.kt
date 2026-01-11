@@ -22,11 +22,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -79,6 +82,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
     }
     var exams by remember { mutableStateOf<List<String>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var isFavorite by remember { mutableStateOf(false) }
 
     LaunchedEffect(wordId) {
         coroutineScope.launch {
@@ -86,6 +90,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
             word = detail?.word
             statistic = detail?.statistic
             exams = detail?.exams ?: emptyList()
+            isFavorite = detail?.word?.isFavorite ?: false
             isLoading = false
         }
     }
@@ -168,12 +173,31 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = currentWord.word,
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = currentWord.word,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.width(Spacing.small))
+                                // Favorite Toggle Button
+                                IconButton(
+                                    onClick = {
+                                        isFavorite = !isFavorite
+                                        wordViewModel.toggleFavorite(currentWord.word, isFavorite)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                        tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
                             // Level Badge
                             Box(
                                 modifier = Modifier

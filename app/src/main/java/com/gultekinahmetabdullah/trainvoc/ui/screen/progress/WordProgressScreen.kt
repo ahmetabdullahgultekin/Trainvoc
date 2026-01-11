@@ -110,7 +110,7 @@ fun WordProgressScreen(
                     Spacer(Modifier.height(12.dp))
 
                     LinearProgressIndicator(
-                        progress = { (uiState.learnedWords.toFloat() / uiState.totalWords).coerceIn(0f, 1f) },
+                        progress = { if (uiState.totalWords > 0) (uiState.learnedWords.toFloat() / uiState.totalWords).coerceIn(0f, 1f) else 0f },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(12.dp)
@@ -120,7 +120,7 @@ fun WordProgressScreen(
                     Spacer(Modifier.height(8.dp))
 
                     Text(
-                        text = "${((uiState.learnedWords.toFloat() / uiState.totalWords) * 100).toInt()}% Complete",
+                        text = "${if (uiState.totalWords > 0) ((uiState.learnedWords.toFloat() / uiState.totalWords) * 100).toInt() else 0}% Complete",
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -413,7 +413,7 @@ private fun LevelProgressCard(progress: LevelProgress) {
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = progress.level.shortName,
+                            text = progress.level.name,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
@@ -440,7 +440,7 @@ private fun LevelProgressCard(progress: LevelProgress) {
             Spacer(Modifier.height(12.dp))
 
             LinearProgressIndicator(
-                progress = { (progress.learned.toFloat() / progress.total).coerceIn(0f, 1f) },
+                progress = { if (progress.total > 0) (progress.learned.toFloat() / progress.total).coerceIn(0f, 1f) else 0f },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)
@@ -451,7 +451,7 @@ private fun LevelProgressCard(progress: LevelProgress) {
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "${((progress.learned.toFloat() / progress.total) * 100).toInt()}% complete",
+                text = "${if (progress.total > 0) ((progress.learned.toFloat() / progress.total) * 100).toInt() else 0}% complete",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

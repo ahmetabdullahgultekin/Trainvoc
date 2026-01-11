@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -89,7 +90,7 @@ fun DailyGoalsScreen(
                         onSave(DailyGoalSettings(wordsGoal, reviewsGoal, quizzesGoal, studyTimeGoal))
 
                         // Show confirmation
-                        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                        scope.launch {
                             snackbarHostState.showSnackbar(
                                 message = "Goals saved successfully!",
                                 duration = SnackbarDuration.Short

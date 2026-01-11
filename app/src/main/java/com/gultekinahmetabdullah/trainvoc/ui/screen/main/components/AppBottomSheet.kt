@@ -117,7 +117,7 @@ fun AppBottomSheet(
                 ) {
                     item {
                         Text(
-                            text = stringResource(id = R.string.test_mode_warning),
+                            text = "Test Mode - For development use only",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier

@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.gultekinahmetabdullah.trainvoc.ui.animations.AnimationSpecs
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
@@ -63,7 +64,7 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val isTopAppBarVisible = remember { mutableStateOf(true) }
-    val isBottomBarVisible = remember { mutableStateOf(false) }
+    val isBottomBarVisible = remember { mutableStateOf(true) } // Always show bottom bar
 
     val parameter = remember { mutableStateOf<QuizParameter?>(null) }
 
@@ -90,7 +91,11 @@ fun MainScreen(
             NavHost(
                 navController = navController,
                 startDestination = Route.HOME,
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
+                enterTransition = { AnimationSpecs.slideInFromRight() },
+                exitTransition = { AnimationSpecs.slideOutToLeft() },
+                popEnterTransition = { AnimationSpecs.slideInFromLeft() },
+                popExitTransition = { AnimationSpecs.slideOutToRight() }
             ) {
                 composable(Route.HOME) {
                     HomeScreen(
@@ -105,6 +110,13 @@ fun MainScreen(
                         onNavigateToWordOfDay = { navController.navigate(Route.WORD_OF_DAY) },
                         onNavigateToFavorites = { navController.navigate(Route.FAVORITES) },
                         onNavigateToLastQuiz = { navController.navigate(Route.LAST_QUIZ_RESULTS) },
+                        // Phase 2 & 3 - Gamification & Engagement
+                        onNavigateToDailyGoals = { navController.navigate(Route.DAILY_GOALS) },
+                        onNavigateToAchievements = { navController.navigate(Route.ACHIEVEMENTS) },
+                        onNavigateToStreakDetail = { navController.navigate(Route.STREAK_DETAIL) },
+                        onNavigateToLeaderboard = { navController.navigate(Route.LEADERBOARD) },
+                        onNavigateToWordProgress = { navController.navigate(Route.WORD_PROGRESS) },
+                        onNavigateToDictionary = { navController.navigate(Route.DICTIONARY) },
                     )
                 }
                 composable(Route.STORY) {
@@ -166,6 +178,11 @@ fun MainScreen(
                 }
                 composable(Route.NOTIFICATION_SETTINGS) {
                     NotificationSettingsScreen(navController = navController)
+                }
+                composable(Route.ACCESSIBILITY_SETTINGS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.other.AccessibilitySettingsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
                 }
                 composable(Route.HELP) {
                     HelpScreen()
