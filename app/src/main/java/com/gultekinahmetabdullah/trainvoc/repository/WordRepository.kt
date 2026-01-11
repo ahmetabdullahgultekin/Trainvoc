@@ -241,4 +241,18 @@ class WordRepository(
     override suspend fun getWordCountByExam(exam: String): Int = wordDao.getWordCountByExam(exam)
     override suspend fun getLearnedWordCountByExam(exam: String): Int =
         wordDao.getLearnedWordCountByExam(exam)
+
+    // Favorites Operations (Migration 11→12)
+    override fun getFavoriteWords(): Flow<List<Word>> = wordDao.getFavoriteWords()
+
+    override fun searchFavoriteWords(query: String): Flow<List<Word>> =
+        wordDao.searchFavoriteWords(query)
+
+    override suspend fun setFavorite(wordId: String, isFavorite: Boolean, timestamp: Long?) {
+        wordDao.setFavorite(wordId, isFavorite, timestamp)
+    }
+
+    override suspend fun getFavoriteCount(): Int = wordDao.getFavoriteCount()
+
+    override suspend fun clearAllFavorites() = wordDao.clearAllFavorites()
 }

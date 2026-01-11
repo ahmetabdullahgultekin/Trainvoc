@@ -42,4 +42,11 @@ interface IWordRepository {
 
     // Progress Management
     suspend fun resetProgress()
+
+    // Favorites Operations (Migration 11→12)
+    fun getFavoriteWords(): Flow<List<Word>>
+    fun searchFavoriteWords(query: String): Flow<List<Word>>
+    suspend fun setFavorite(wordId: String, isFavorite: Boolean, timestamp: Long?)
+    suspend fun getFavoriteCount(): Int
+    suspend fun clearAllFavorites()
 }

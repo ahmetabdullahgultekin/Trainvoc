@@ -104,4 +104,16 @@ class WordViewModel @Inject constructor(
         val exams = repository.getExamsForWord(wordId)
         return WordFullDetail(word, statistic, exams)
     }
+
+    /**
+     * Toggle favorite status for a word.
+     * @param wordId The word ID to toggle
+     * @param isFavorite The new favorite status
+     */
+    fun toggleFavorite(wordId: String, isFavorite: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val timestamp = if (isFavorite) System.currentTimeMillis() else null
+            repository.setFavorite(wordId, isFavorite, timestamp)
+        }
+    }
 }

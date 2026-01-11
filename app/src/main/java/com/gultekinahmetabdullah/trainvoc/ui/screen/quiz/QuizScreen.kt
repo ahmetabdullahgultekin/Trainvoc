@@ -54,6 +54,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDial
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
+import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -77,6 +78,9 @@ fun QuizScreen(
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
     var showExitDialog by remember { mutableStateOf(false) }
     var showStats by rememberSaveable { mutableStateOf(false) }
+
+    // Haptic feedback for answer responses
+    val haptic = rememberHapticPerformer()
 
     // Consolidated effect: lifecycle observation + exit handler + cleanup
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -253,6 +257,12 @@ fun QuizScreen(
                                     onChoiceClick = { selectedChoice ->
                                         selectedAnswer = selectedChoice
                                         isCorrect = quizViewModel.checkAnswer(selectedChoice)
+                                        // Haptic feedback based on answer
+                                        if (isCorrect == true) {
+                                            haptic.success()
+                                        } else {
+                                            haptic.error()
+                                        }
                                     }
                                 )
                             }
@@ -263,6 +273,7 @@ fun QuizScreen(
                         // Next Button
                         Button(
                             onClick = {
+                                haptic.click()
                                 selectedAnswer = null
                                 isCorrect = null
                                 quizViewModel.loadNextQuestion()

@@ -363,6 +363,28 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
             Spacer(modifier = Modifier.height(Spacing.small))
 
+            // Accessibility Section
+            Text(
+                text = "Accessibility",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.ACCESSIBILITY_SETTINGS)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text("Accessibility Settings")
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
             // Language Selection - All 6 supported languages
             val languageOptions = listOf(
                 LanguagePreference.ENGLISH,

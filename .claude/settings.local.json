@@ -34,7 +34,8 @@
       "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" uninstall com.gultekinahmetabdullah.trainvoc)",
       "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat -c)",
       "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" kill-server)",
-      "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" start-server)"
+      "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" start-server)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
