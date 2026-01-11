@@ -1,8 +1,14 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.gamification
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -11,28 +17,37 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
+import com.gultekinahmetabdullah.trainvoc.ui.components.ChartData
+import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressRing
+import com.gultekinahmetabdullah.trainvoc.ui.components.VerticalBarChart
+import com.gultekinahmetabdullah.trainvoc.ui.theme.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
- * Daily Goals Screen
+ * Daily Goals Screen - Enhanced Version
  *
- * Allows users to customize their daily learning targets:
- * - Words to learn
- * - Reviews to complete
- * - Quizzes to finish
- * - Study time in minutes
+ * Comprehensive daily goal management with:
+ * - Goal cards with sliders (Words, Quizzes, Study Time)
+ * - Current progress tracking with circular progress rings
+ * - 7-day completion history chart
+ * - Quick presets (Casual, Regular, Intense)
+ * - Haptic feedback and animations
+ * - Motivational messages
  *
- * Features:
- * - Sliders for each goal type
- * - Visual progress indicators
- * - Goal suggestions based on level
- * - Save/reset functionality
+ * UI/UX Improvements:
+ * - Material 3 design system
+ * - Elevated cards with 12dp corner radius
+ * - Slide-in animations with stagger
+ * - Color-coded progress indicators
+ * - Haptic feedback on slider changes
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,13 +60,26 @@ fun DailyGoalsScreen(
 
     // Load current goals from SharedPreferences
     var wordsGoal by remember { mutableIntStateOf(prefs.getInt("daily_words_goal", 10)) }
-    var reviewsGoal by remember { mutableIntStateOf(prefs.getInt("daily_reviews_goal", 20)) }
     var quizzesGoal by remember { mutableIntStateOf(prefs.getInt("daily_quizzes_goal", 5)) }
-    var studyTimeGoal by remember { mutableIntStateOf(prefs.getInt("daily_study_time_goal", 15)) }
+    var studyTimeGoal by remember { mutableIntStateOf(prefs.getInt("daily_study_time_goal", 30)) }
+
+    // Mock current progress (in real app, this would come from ViewModel/Repository)
+    var currentWords by remember { mutableIntStateOf(prefs.getInt("today_words_learned", 0)) }
+    var currentQuizzes by remember { mutableIntStateOf(prefs.getInt("today_quizzes_completed", 0)) }
+    var currentStudyTime by remember { mutableIntStateOf(prefs.getInt("today_study_minutes", 0)) }
+
+    // Animation visibility states
+    var showContent by remember { mutableStateOf(false) }
 
     val showResetDialog = remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    // Trigger animations on load
+    LaunchedEffect(Unit) {
+        delay(100)
+        showContent = true
+    }
 
     Scaffold(
         topBar = {
@@ -62,32 +90,33 @@ fun DailyGoalsScreen(
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
-                actions = {
-                    // Reset button
-                    IconButton(onClick = { showResetDialog.value = true }) {
-                        Icon(Icons.Default.RestartAlt, "Reset to Defaults")
-                    }
-                }
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             // Save button at bottom
             Surface(
-                tonalElevation = 3.dp,
-                shadowElevation = 3.dp
+                tonalElevation = Elevation.level2,
+                shadowElevation = Elevation.level2
             ) {
                 Button(
                     onClick = {
                         // Save to SharedPreferences
                         prefs.edit()
                             .putInt("daily_words_goal", wordsGoal)
-                            .putInt("daily_reviews_goal", reviewsGoal)
                             .putInt("daily_quizzes_goal", quizzesGoal)
                             .putInt("daily_study_time_goal", studyTimeGoal)
+                            // Save current progress (for demo purposes)
+                            .putInt("today_words_learned", currentWords)
+                            .putInt("today_quizzes_completed", currentQuizzes)
+                            .putInt("today_study_minutes", currentStudyTime)
                             .apply()
 
-                        onSave(DailyGoalSettings(wordsGoal, reviewsGoal, quizzesGoal, studyTimeGoal))
+                        onSave(DailyGoalSettings(wordsGoal, quizzesGoal, studyTimeGoal))
 
                         // Show confirmation
                         scope.launch {
@@ -99,11 +128,15 @@ fun DailyGoalsScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(Spacing.md)
+                        .height(ComponentSize.buttonHeight),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Icon(Icons.Default.Save, "Save")
-                    Spacer(Modifier.width(8.dp))
-                    Text("Save Goals")
+                    Spacer(Modifier.width(Spacing.sm))
+                    Text("Save Goals", style = MaterialTheme.typography.titleMedium)
                 }
             }
         }
@@ -113,162 +146,184 @@ fun DailyGoalsScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(Spacing.medium),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(Spacing.md),
+            verticalArrangement = Arrangement.spacedBy(Spacing.lg)
         ) {
-            // Header with description
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+            // === MOTIVATION MESSAGE ===
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(animationSpec = tween(AppAnimationDuration.medium)) +
+                        slideInVertically(animationSpec = tween(AppAnimationDuration.medium))
+            ) {
+                MotivationCard(
+                    wordsProgress = if (wordsGoal > 0) currentWords.toFloat() / wordsGoal else 0f,
+                    quizzesProgress = if (quizzesGoal > 0) currentQuizzes.toFloat() / quizzesGoal else 0f,
+                    timeProgress = if (studyTimeGoal > 0) currentStudyTime.toFloat() / studyTimeGoal else 0f
+                )
+            }
+
+            // === CURRENT PROGRESS SECTION ===
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short
+                    )
+                ) + slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short
+                    )
                 )
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
+                CurrentProgressSection(
+                    currentWords = currentWords,
+                    wordsGoal = wordsGoal,
+                    currentQuizzes = currentQuizzes,
+                    quizzesGoal = quizzesGoal,
+                    currentStudyTime = currentStudyTime,
+                    studyTimeGoal = studyTimeGoal
+                )
+            }
+
+            // === GOAL SLIDERS SECTION ===
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short * 2
+                    )
+                ) + slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short * 2
+                    )
+                )
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+                    Text(
+                        text = "Set Your Goals",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    // Words Goal
+                    GoalSliderCard(
+                        icon = Icons.Default.Book,
+                        title = "Words to Learn",
+                        currentValue = currentWords,
+                        goalValue = wordsGoal,
+                        onValueChange = { wordsGoal = it.roundToInt() },
+                        valueRange = 1f..50f,
+                        steps = 48
+                    )
+
+                    // Quizzes Goal
+                    GoalSliderCard(
+                        icon = Icons.Default.Quiz,
+                        title = "Quizzes to Complete",
+                        currentValue = currentQuizzes,
+                        goalValue = quizzesGoal,
+                        onValueChange = { quizzesGoal = it.roundToInt() },
+                        valueRange = 1f..20f,
+                        steps = 18
+                    )
+
+                    // Study Time Goal
+                    GoalSliderCard(
+                        icon = Icons.Default.Timer,
+                        title = "Study Time",
+                        currentValue = currentStudyTime,
+                        goalValue = studyTimeGoal,
+                        onValueChange = { studyTimeGoal = it.roundToInt() },
+                        valueRange = 5f..120f,
+                        steps = 22,
+                        unit = "min"
+                    )
+                }
+            }
+
+            // === QUICK PRESETS SECTION ===
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short * 3
+                    )
+                ) + slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short * 3
+                    )
+                )
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
+                    Text(
+                        text = "Quick Presets",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                     ) {
-                        Icon(
-                            Icons.Default.Flag,
-                            "Goals",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(32.dp)
+                        PresetChip(
+                            title = "Casual",
+                            subtitle = "5 words, 2 quizzes\n15 min",
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                wordsGoal = 5
+                                quizzesGoal = 2
+                                studyTimeGoal = 15
+                            }
                         )
-                        Spacer(Modifier.width(12.dp))
-                        Text(
-                            text = "Set Your Daily Targets",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+
+                        PresetChip(
+                            title = "Regular",
+                            subtitle = "10 words, 5 quizzes\n30 min",
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                wordsGoal = 10
+                                quizzesGoal = 5
+                                studyTimeGoal = 30
+                            }
+                        )
+
+                        PresetChip(
+                            title = "Intense",
+                            subtitle = "20 words, 10 quizzes\n60 min",
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                wordsGoal = 20
+                                quizzesGoal = 10
+                                studyTimeGoal = 60
+                            }
                         )
                     }
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = "Customize your daily learning goals. We'll help you track your progress and stay motivated!",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
                 }
             }
 
-            // Words Goal
-            GoalSliderCard(
-                icon = Icons.Default.Book,
-                title = "Words to Learn",
-                subtitle = "New words to study each day",
-                value = wordsGoal,
-                onValueChange = { wordsGoal = it.roundToInt() },
-                valueRange = 5f..100f,
-                steps = 18 // 5, 10, 15, 20, ..., 100
-            )
-
-            // Reviews Goal
-            GoalSliderCard(
-                icon = Icons.Default.Replay,
-                title = "Reviews to Complete",
-                subtitle = "Practice words with spaced repetition",
-                value = reviewsGoal,
-                onValueChange = { reviewsGoal = it.roundToInt() },
-                valueRange = 10f..500f,
-                steps = 48 // 10, 20, 30, ..., 500
-            )
-
-            // Quizzes Goal
-            GoalSliderCard(
-                icon = Icons.Default.Quiz,
-                title = "Quizzes to Finish",
-                subtitle = "Complete quiz sessions",
-                value = quizzesGoal,
-                onValueChange = { quizzesGoal = it.roundToInt() },
-                valueRange = 1f..20f,
-                steps = 18 // 1, 2, 3, ..., 20
-            )
-
-            // Study Time Goal
-            GoalSliderCard(
-                icon = Icons.Default.Timer,
-                title = "Study Time (minutes)",
-                subtitle = "Total daily learning time",
-                value = studyTimeGoal,
-                onValueChange = { studyTimeGoal = it.roundToInt() },
-                valueRange = 5f..120f,
-                steps = 22 // 5, 10, 15, ..., 120
-            )
-
-            // Suggested Presets
-            Text(
-                text = "Suggested Presets",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                PresetCard(
-                    title = "Beginner",
-                    subtitle = "5 words, 10 reviews",
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        wordsGoal = 5
-                        reviewsGoal = 10
-                        quizzesGoal = 2
-                        studyTimeGoal = 10
-                    }
-                )
-
-                PresetCard(
-                    title = "Intermediate",
-                    subtitle = "10 words, 20 reviews",
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        wordsGoal = 10
-                        reviewsGoal = 20
-                        quizzesGoal = 5
-                        studyTimeGoal = 15
-                    }
-                )
-
-                PresetCard(
-                    title = "Advanced",
-                    subtitle = "15 words, 30 reviews",
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        wordsGoal = 15
-                        reviewsGoal = 30
-                        quizzesGoal = 7
-                        studyTimeGoal = 20
-                    }
-                )
-            }
-
-            // Info card
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+            // === HISTORY CHART SECTION ===
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short * 4
+                    )
+                ) + slideInVertically(
+                    animationSpec = tween(
+                        durationMillis = AppAnimationDuration.medium,
+                        delayMillis = StaggerDelay.short * 4
+                    )
                 )
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.Info,
-                        "Info",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = "Tip: Start with smaller goals and gradually increase as you build your learning habit!",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                HistoryChartSection()
             }
         }
     }

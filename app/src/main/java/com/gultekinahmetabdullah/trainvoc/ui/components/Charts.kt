@@ -309,6 +309,354 @@ fun ChartLegend(
 }
 
 /**
+ * Line Chart Component
+ *
+ * Displays data as a line chart with gradient fill and animated drawing.
+ * Perfect for time-series data like words learned over time.
+ *
+ * @param data List of ChartData items to display
+ * @param modifier Modifier for the chart
+ * @param height Height of the chart
+ * @param lineColor Color of the line
+ * @param fillGradient Whether to fill area under the line with gradient
+ */
+@Composable
+fun LineChart(
+    data: List<ChartData>,
+    modifier: Modifier = Modifier,
+    height: Dp = 200.dp,
+    lineColor: Color = MaterialTheme.colorScheme.primary,
+    fillGradient: Boolean = true
+) {
+    val animatedProgress = remember { Animatable(0f) }
+
+    LaunchedEffect(data) {
+        animatedProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = AnimationDuration.slow)
+        )
+    }
+
+    if (data.isEmpty()) return
+
+    val maxValue = data.maxOfOrNull { it.value } ?: 1f
+    if (maxValue == 0f) return
+
+    Canvas(modifier = modifier.fillMaxWidth().height(height)) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        val stepX = canvasWidth / (data.size - 1).coerceAtLeast(1)
+
+        val points = data.mapIndexed { index, chartData ->
+            val x = index * stepX
+            val y = canvasHeight - (chartData.value / maxValue * canvasHeight * 0.9f)
+            Offset(x, y)
+        }
+
+        // Draw gradient fill under the line
+        if (fillGradient && points.size > 1) {
+            val path = androidx.compose.ui.graphics.Path().apply {
+                moveTo(0f, canvasHeight)
+                points.forEachIndexed { index, point ->
+                    if (index == 0) {
+                        lineTo(point.x, point.y)
+                    } else {
+                        val prevPoint = points[index - 1]
+                        val controlX1 = prevPoint.x + (point.x - prevPoint.x) / 2
+                        val controlY1 = prevPoint.y
+                        val controlX2 = prevPoint.x + (point.x - prevPoint.x) / 2
+                        val controlY2 = point.y
+                        cubicTo(controlX1, controlY1, controlX2, controlY2, point.x, point.y)
+                    }
+                }
+                lineTo(canvasWidth, canvasHeight)
+                close()
+            }
+
+            drawPath(
+                path = path,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        lineColor.copy(alpha = 0.3f),
+                        lineColor.copy(alpha = 0.05f)
+                    )
+                )
+            )
+        }
+
+        // Draw the line with animation
+        if (points.size > 1) {
+            val animatedPoints = points.take((points.size * animatedProgress.value).toInt().coerceAtLeast(1))
+
+            for (i in 0 until animatedPoints.size - 1) {
+                val start = animatedPoints[i]
+                val end = animatedPoints[i + 1]
+
+                val controlX1 = start.x + (end.x - start.x) / 2
+                val controlY1 = start.y
+                val controlX2 = start.x + (end.x - start.x) / 2
+                val controlY2 = end.y
+
+                val path = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(start.x, start.y)
+                    cubicTo(controlX1, controlY1, controlX2, controlY2, end.x, end.y)
+                }
+
+                drawPath(
+                    path = path,
+                    color = lineColor,
+                    style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+                )
+            }
+        }
+
+        // Draw data points
+        animatedPoints.forEach { point ->
+            drawCircle(
+                color = lineColor,
+                radius = 6.dp.toPx(),
+                center = point
+            )
+            drawCircle(
+                color = Color.White,
+                radius = 3.dp.toPx(),
+                center = point
+            )
+        }
+    }
+}
+
+/**
+ * Pie Chart Component
+ *
+ * Displays data as a pie chart with percentage labels and smooth animations.
+ * Each segment rotates in with a spring effect.
+ *
+ * @param data List of ChartData items to display
+ * @param modifier Modifier for the chart
+ * @param size Size of the chart in Dp
+ * @param showPercentages Whether to show percentage labels
+ */
+@Composable
+fun PieChart(
+    data: List<ChartData>,
+    modifier: Modifier = Modifier,
+    size: Dp = 200.dp,
+    showPercentages: Boolean = true
+) {
+    val animatedProgress = remember { Animatable(0f) }
+
+    LaunchedEffect(data) {
+        animatedProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+        )
+    }
+
+    val total = data.sumOf { it.value.toDouble() }.toFloat()
+    if (total == 0f) return
+
+    var startAngle = -90f
+
+    Canvas(modifier = modifier.size(size)) {
+        val chartSize = size.toPx()
+        val center = Offset(chartSize / 2, chartSize / 2)
+        val radius = chartSize / 2
+
+        data.forEach { chartData ->
+            val sweepAngle = (chartData.value / total) * 360f * animatedProgress.value
+            val percentage = (chartData.value / total * 100).toInt()
+
+            // Draw pie slice
+            drawArc(
+                color = chartData.color,
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+                useCenter = true,
+                topLeft = Offset.Zero,
+                size = Size(chartSize, chartSize)
+            )
+
+            // Draw percentage label
+            if (showPercentages && percentage >= 5) {
+                val angle = Math.toRadians((startAngle + sweepAngle / 2).toDouble())
+                val labelRadius = radius * 0.7f
+                val labelX = center.x + (labelRadius * kotlin.math.cos(angle)).toFloat()
+                val labelY = center.y + (labelRadius * kotlin.math.sin(angle)).toFloat()
+
+                drawContext.canvas.nativeCanvas.apply {
+                    val paint = android.graphics.Paint().apply {
+                        color = android.graphics.Color.WHITE
+                        textAlign = android.graphics.Paint.Align.CENTER
+                        textSize = 32f
+                        isFakeBoldText = true
+                        setShadowLayer(4f, 0f, 0f, android.graphics.Color.BLACK)
+                    }
+                    drawText("$percentage%", labelX, labelY, paint)
+                }
+            }
+
+            startAngle += sweepAngle
+        }
+    }
+}
+
+/**
+ * Horizontal Bar Chart Component
+ *
+ * Displays data as horizontal bars, useful for comparing categories.
+ *
+ * @param data List of ChartData items to display
+ * @param modifier Modifier for the chart
+ * @param maxBarHeight Maximum height of each bar
+ */
+@Composable
+fun HorizontalBarChart(
+    data: List<ChartData>,
+    modifier: Modifier = Modifier,
+    maxBarHeight: Dp = 32.dp
+) {
+    val animatedProgress = remember { Animatable(0f) }
+
+    LaunchedEffect(data) {
+        animatedProgress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = AnimationDuration.progress)
+        )
+    }
+
+    val maxValue = data.maxOfOrNull { it.value } ?: 1f
+    if (maxValue == 0f) return
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.small)
+    ) {
+        data.forEach { chartData ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Spacing.small)
+            ) {
+                Text(
+                    text = chartData.label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.width(60.dp),
+                    fontWeight = FontWeight.Medium
+                )
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(maxBarHeight)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    val barWidth = (chartData.value / maxValue) * animatedProgress.value
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(barWidth)
+                            .height(maxBarHeight)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(chartData.color)
+                    )
+                }
+
+                Text(
+                    text = chartData.value.toInt().toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = chartData.color,
+                    modifier = Modifier.width(40.dp)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Milestone Timeline Component
+ *
+ * Displays a vertical timeline of achievements/milestones.
+ *
+ * @param milestones List of milestone items
+ * @param modifier Modifier for the timeline
+ */
+@Composable
+fun MilestoneTimeline(
+    milestones: List<MilestoneData>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.medium)
+    ) {
+        milestones.forEachIndexed { index, milestone ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.small)
+            ) {
+                // Timeline indicator
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.width(40.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(milestone.color, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = milestone.icon,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    if (index < milestones.size - 1) {
+                        Box(
+                            modifier = Modifier
+                                .width(2.dp)
+                                .height(40.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant)
+                        )
+                    }
+                }
+
+                // Milestone content
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = milestone.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = milestone.date,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (milestone.description.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = milestone.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
  * Data class for chart items
  *
  * @param label Display label for the data
@@ -318,5 +666,22 @@ fun ChartLegend(
 data class ChartData(
     val label: String,
     val value: Float,
+    val color: Color
+)
+
+/**
+ * Data class for milestone timeline items
+ *
+ * @param title Milestone title
+ * @param date Date string
+ * @param description Optional description
+ * @param icon Icon to display
+ * @param color Color for the timeline indicator
+ */
+data class MilestoneData(
+    val title: String,
+    val date: String,
+    val description: String = "",
+    val icon: ImageVector,
     val color: Color
 )
