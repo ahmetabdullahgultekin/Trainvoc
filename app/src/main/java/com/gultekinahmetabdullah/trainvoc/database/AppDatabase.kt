@@ -27,6 +27,11 @@ import com.gultekinahmetabdullah.trainvoc.games.SpeedMatchStats
 import com.gultekinahmetabdullah.trainvoc.images.WordImage
 import com.gultekinahmetabdullah.trainvoc.offline.SyncQueue
 import com.gultekinahmetabdullah.trainvoc.config.DatabaseConfig
+import com.gultekinahmetabdullah.trainvoc.features.WordOfDay
+import com.gultekinahmetabdullah.trainvoc.features.WordOfDayDao
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
 
 @Database(
     entities = [
@@ -49,9 +54,12 @@ import com.gultekinahmetabdullah.trainvoc.config.DatabaseConfig
         GameSession::class,
         FlipCardGameStats::class,
         SRSCard::class,
-        SpeedMatchStats::class
+        SpeedMatchStats::class,
+        WordOfDay::class,
+        QuizHistory::class,
+        QuizQuestionResult::class
     ],
-    version = 11
+    version = 14
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -67,6 +75,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun subscriptionDao(): com.gultekinahmetabdullah.trainvoc.billing.database.SubscriptionDao
     abstract fun gamificationDao(): com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
     abstract fun gamesDao(): com.gultekinahmetabdullah.trainvoc.games.GamesDao
+    abstract fun wordOfDayDao(): WordOfDayDao
+    abstract fun quizHistoryDao(): QuizHistoryDao
 
     object DatabaseBuilder {
         private val DATABASE_NAME = DatabaseConfig.NAME
@@ -594,6 +604,117 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 11 to 12: Add favorites support
+         *
+         * FAVORITES SYSTEM:
+         * - Adds columns to words table for marking favorites
+         * - Enables users to save favorite words for quick access
+         * - Zero additional costs (all local)
+         *
+         * Purpose:
+         * - Allow users to mark words as favorites
+         * - Track when words were favorited
+         * - Enable favorites-only quiz and study sessions
+         * - Support FavoritesScreen functionality
+         */
+        private val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add isFavorite column to words table
+                database.execSQL("ALTER TABLE words ADD COLUMN isFavorite INTEGER NOT NULL DEFAULT 0")
+
+                // Add favoritedAt column to track when word was favorited
+                database.execSQL("ALTER TABLE words ADD COLUMN favoritedAt INTEGER")
+
+                // Create index for performance when querying favorites
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_words_isFavorite ON words(isFavorite)")
+            }
+        }
+
+        /**
+         * Migration from version 12 to 13: Add Word of the Day
+         *
+         * WORD OF THE DAY SYSTEM:
+         * - Adds table for daily featured words
+         * - Rotates daily at midnight
+         * - Tracks whether user viewed the word
+         *
+         * Purpose:
+         * - Display a different featured word each day
+         * - Encourage daily app engagement
+         * - Support WordOfTheDayScreen functionality
+         */
+        private val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create word_of_day table
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS word_of_day (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        wordId TEXT NOT NULL,
+                        date TEXT NOT NULL,
+                        wasViewed INTEGER NOT NULL DEFAULT 0,
+                        FOREIGN KEY(wordId) REFERENCES words(word) ON DELETE CASCADE
+                    )
+                """.trimIndent())
+
+                // Create unique index on date to ensure one word per day
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_word_of_day_date ON word_of_day(date)")
+
+                // Create index on wordId for foreign key lookup
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_word_of_day_wordId ON word_of_day(wordId)")
+            }
+        }
+
+        /**
+         * Migration from version 13 to 14: Add quiz history
+         *
+         * QUIZ HISTORY SYSTEM:
+         * - Adds tables for quiz result tracking
+         * - Stores both overall quiz results and individual question results
+         * - Enables "Review Missed Words" functionality
+         *
+         * Purpose:
+         * - Track quiz performance over time
+         * - Show detailed quiz results
+         * - Allow review of incorrectly answered questions
+         * - Support LastQuizResultsScreen functionality
+         */
+        private val MIGRATION_13_14 = object : Migration(13, 14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create quiz_history table for overall quiz results
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS quiz_history (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        timestamp INTEGER NOT NULL,
+                        totalQuestions INTEGER NOT NULL,
+                        correctAnswers INTEGER NOT NULL,
+                        wrongAnswers INTEGER NOT NULL,
+                        skippedQuestions INTEGER NOT NULL DEFAULT 0,
+                        timeTaken TEXT NOT NULL,
+                        quizType TEXT NOT NULL,
+                        accuracy REAL NOT NULL
+                    )
+                """.trimIndent())
+
+                // Create quiz_question_results table for individual question tracking
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS quiz_question_results (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        quizId INTEGER NOT NULL,
+                        wordId TEXT NOT NULL,
+                        isCorrect INTEGER NOT NULL,
+                        FOREIGN KEY(quizId) REFERENCES quiz_history(id) ON DELETE CASCADE,
+                        FOREIGN KEY(wordId) REFERENCES words(word) ON DELETE CASCADE
+                    )
+                """.trimIndent())
+
+                // Create indices for better performance
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_quiz_history_timestamp ON quiz_history(timestamp)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_quiz_question_results_quizId ON quiz_question_results(quizId)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_quiz_question_results_wordId ON quiz_question_results(wordId)")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -616,7 +737,10 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_7_8,
                 MIGRATION_8_9,
                 MIGRATION_9_10,
-                MIGRATION_10_11
+                MIGRATION_10_11,
+                MIGRATION_11_12,
+                MIGRATION_12_13,
+                MIGRATION_13_14
             )
             .build()
     }
