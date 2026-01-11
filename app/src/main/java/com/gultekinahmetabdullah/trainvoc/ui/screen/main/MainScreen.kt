@@ -238,6 +238,21 @@ fun MainScreen(
                     )
                 }
 
+                // Phase 3 - Engagement Features
+                composable(Route.LEADERBOARD) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.social.LeaderboardScreen(
+                        onBackClick = { navController.popBackStack() },
+                        onChallengeClick = { userId ->
+                            // TODO: Implement challenge functionality
+                        }
+                    )
+                }
+                composable(Route.WORD_PROGRESS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordProgressScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+
                 // Memory Games Navigation
                 gamesNavGraph(navController)
             }

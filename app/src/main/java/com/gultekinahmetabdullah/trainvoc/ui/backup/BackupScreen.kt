@@ -433,200 +433,12 @@ fun CloudBackupTab(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Sync Status Card
-        item {
-            SyncStatusCard(
-                syncState = syncState,
-                autoBackupEnabled = autoBackupEnabled,
-                isWiFiAvailable = isWiFiAvailable
-            )
-        }
-
-        // Auto Backup Settings
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "Automatic Backup",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                "Backup daily at 3 AM (WiFi only)",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Switch(
-                            checked = autoBackupEnabled,
-                            onCheckedChange = { enabled ->
-                                if (enabled) {
-                                    viewModel.enableAutoBackup(
-                                        intervalHours = 24,
-                                        wifiOnly = true
-                                    )
-                                } else {
-                                    viewModel.disableAutoBackup()
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        // Cloud Actions
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        "Manual Actions",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    // Sync button
-                    Button(
-                        onClick = { viewModel.syncWithCloud() },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = uiState !is BackupUiState.Syncing && isWiFiAvailable
-                    ) {
-                        Icon(Icons.Default.Sync, null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Sync Now")
-                    }
-
-                    // Backup to cloud
-                    OutlinedButton(
-                        onClick = { viewModel.backupToCloud() },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = uiState !is BackupUiState.UploadingToCloud && isWiFiAvailable
-                    ) {
-                        Icon(Icons.Default.CloudUpload, null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Upload to Cloud")
-                    }
-
-                    // Restore from cloud
-                    OutlinedButton(
-                        onClick = { viewModel.restoreFromCloud() },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = uiState !is BackupUiState.DownloadingFromCloud && isWiFiAvailable
-                    ) {
-                        Icon(Icons.Default.CloudDownload, null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Download from Cloud")
-                    }
-
-                    // WiFi warning
-                    if (!isWiFiAvailable) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.WifiOff,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Text(
-                                "WiFi not available. Cloud operations disabled.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Progress indicator
-        if (uiState is BackupUiState.Syncing ||
-            uiState is BackupUiState.UploadingToCloud ||
-            uiState is BackupUiState.DownloadingFromCloud
-        ) {
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        LinearProgressIndicator(
-                            progress = { progress },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Text(
-                            when (uiState) {
-                                is BackupUiState.Syncing -> "Syncing... ${(progress * 100).toInt()}%"
-                                is BackupUiState.UploadingToCloud -> "Uploading... ${(progress * 100).toInt()}%"
-                                is BackupUiState.DownloadingFromCloud -> "Downloading... ${(progress * 100).toInt()}%"
-                                else -> ""
-                            },
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-        }
-
-        // Success messages
-        if (uiState is BackupUiState.SyncSuccess) {
-            item {
-                ResultMessage(
-                    message = "Sync completed successfully!\n" +
-                            "Uploaded: ${if (uiState.uploaded) "Yes" else "No"}\n" +
-                            "Downloaded: ${if (uiState.downloaded) "Yes" else "No"}",
-                    isError = false
-                )
-            }
-        }
-
-        if (uiState is BackupUiState.CloudBackupSuccess) {
-            item {
-                ResultMessage(
-                    message = "Backup uploaded to cloud successfully!",
-                    isError = false
-                )
-            }
-        }
-
-        // Error message
-        if (uiState is BackupUiState.Error) {
-            item {
-                ResultMessage(
-                    message = uiState.message,
-                    isError = true
-                )
-            }
-        }
-
-        // Info card
+        // HONEST DISCLAIMER - At the top, prominent
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.errorContainer
                 )
             ) {
                 Row(
@@ -636,22 +448,158 @@ fun CloudBackupTab(
                     Icon(
                         Icons.Default.Info,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.size(32.dp)
                     )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            "Cloud Backup Note",
-                            style = MaterialTheme.typography.titleSmall,
+                            "Cloud Sync Not Available",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Text(
+                            "Full cloud backup is not yet implemented. Currently, only achievements sync via Google Play Games.\n\n" +
+                                    "Use the Local tab to create manual backups (JSON/CSV) of your vocabulary data.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                }
+            }
+        }
+
+        // What Actually Works
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            "What Works Now",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    }
+
+                    Text(
+                        "✓ Achievements sync via Google Play Games\n" +
+                                "✓ Local backups (JSON/CSV export)\n" +
+                                "✓ Manual data import/export\n" +
+                                "✓ Local backup file management",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+            }
+        }
+
+        // Coming Soon
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Schedule,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            "Coming in Future Updates",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Text(
+                        "• Full vocabulary cloud backup\n" +
+                                "• Automatic sync across devices\n" +
+                                "• Google Drive integration\n" +
+                                "• Dropbox integration\n" +
+                                "• Custom backend support",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Redirect to Local Backups
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Folder,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            "Use Local Backups Instead",
+                            style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                        Text(
-                            "Cloud backup integration is currently a placeholder. " +
-                                    "Future versions will integrate with Google Drive, Dropbox, or custom backend.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
                     }
+
+                    Text(
+                        "For now, please use the Local tab to:\n" +
+                                "• Create backup files (JSON or CSV format)\n" +
+                                "• Export to your device storage\n" +
+                                "• Share via email, cloud services, etc.\n" +
+                                "• Import from previous backups",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f)
+                    )
+
+                    Text(
+                        "💡 Tip: Regularly export your data to keep it safe!",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 }
             }
         }
