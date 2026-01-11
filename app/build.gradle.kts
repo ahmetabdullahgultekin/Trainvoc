@@ -67,11 +67,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -86,12 +86,25 @@ android {
     }
 
     lint {
-        // Don't abort build on lint errors for now
-        abortOnError = false
-        // Check release builds only
+        // Enable strict lint checking for code quality
+        abortOnError = true
+        // Generate reports for CI/CD
+        htmlReport = true
+        xmlReport = true
+        // Check all builds
         checkReleaseBuilds = true
         // Disable checks that cause OOM
         checkDependencies = false
+
+        // Disable specific checks that are not critical
+        disable += setOf(
+            "ObsoleteLintCustomCheck",
+            "GradleDependency",
+            "NewerVersionAvailable"
+        )
+
+        // Treat warnings as errors for stricter quality control
+        warningsAsErrors = false  // Will enable after fixing all warnings
     }
 }
 
