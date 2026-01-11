@@ -9,6 +9,9 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
 import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
@@ -34,6 +37,7 @@ class QuizViewModel @Inject constructor(
     private val quizService: IQuizService,
     private val wordStatisticsService: IWordStatisticsService,
     private val progressService: IProgressService,
+    private val quizHistoryDao: QuizHistoryDao,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -119,6 +123,13 @@ class QuizViewModel @Inject constructor(
 
     private var quizJob: Job? = null
 
+    // Quiz history tracking
+    private var quizStartTime: Long = 0L
+    private val questionResults = mutableListOf<Pair<String, Boolean>>() // wordId, isCorrect
+    private var correctCount = 0
+    private var wrongCount = 0
+    private var skippedCount = 0
+
     init {
         // Restore state from SavedStateHandle after process death
         restoreState()
@@ -199,6 +210,8 @@ class QuizViewModel @Inject constructor(
         try {
             // If quiz has already started, then do not allow new start
             resetQuiz()
+            // Record quiz start time for history
+            quizStartTime = System.currentTimeMillis()
             // Fetch 10 questions from the database until user reaches the end of the list
             // Start the timer for each question
             // Timer will decrease the timeLeft variable every second
@@ -291,6 +304,8 @@ class QuizViewModel @Inject constructor(
             wordStatisticsService.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
         }
         if (choice == null) {
+            // Skipped - track for history
+            skippedCount++
             viewModelScope.launch(Dispatchers.IO) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
@@ -304,6 +319,9 @@ class QuizViewModel @Inject constructor(
         if (currentQuestion.correctWord == choice) {
             // Correct answer
             _score.value++
+            correctCount++
+            // Track for history
+            questionResults.add(Pair(currentQuestion.correctWord.word, true))
             // Update the entity stats in the database
             viewModelScope.launch(Dispatchers.IO) {
                 wordStatisticsService.updateWordStats(
@@ -316,6 +334,9 @@ class QuizViewModel @Inject constructor(
             return true
         } else {
             // Wrong answer
+            wrongCount++
+            // Track for history
+            questionResults.add(Pair(currentQuestion.correctWord.word, false))
             viewModelScope.launch(Dispatchers.IO) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
@@ -360,6 +381,12 @@ class QuizViewModel @Inject constructor(
         _progressPercent.value = null
         _isTimeOver.value = false
         _currentQuestionNumber.value = 1
+        // Reset history tracking
+        quizStartTime = 0L
+        questionResults.clear()
+        correctCount = 0
+        wrongCount = 0
+        skippedCount = 0
         // Cancel the quiz job if it is running
         quizJob?.cancel()
     }
@@ -367,8 +394,67 @@ class QuizViewModel @Inject constructor(
     fun finalizeQuiz() {
         // Check answer and send it as null if the user didn't answer
         checkAnswer(null)
+        // Save quiz history before resetting
+        saveQuizHistory()
         // Reset the quiz variables
         resetQuiz()
+    }
+
+    /**
+     * Save quiz results to history database.
+     */
+    private fun saveQuizHistory() {
+        if (quizStartTime == 0L || (correctCount + wrongCount + skippedCount) == 0) {
+            return // No quiz to save
+        }
+
+        val totalQuestions = correctCount + wrongCount + skippedCount
+        val elapsedMs = System.currentTimeMillis() - quizStartTime
+        val minutes = (elapsedMs / 60000).toInt()
+        val seconds = ((elapsedMs % 60000) / 1000).toInt()
+        val timeTaken = String.format("%02d:%02d", minutes, seconds)
+
+        val accuracy = if (totalQuestions > 0) {
+            (correctCount.toFloat() / totalQuestions) * 100
+        } else 0f
+
+        val quizType = _quizParameter.value?.let { param ->
+            when (param) {
+                is QuizParameter.Level -> "LEVEL_${param.wordLevel.name}"
+                is QuizParameter.ExamType -> "EXAM_${param.exam.exam}"
+            }
+        } ?: "UNKNOWN"
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val quizHistory = QuizHistory(
+                    timestamp = System.currentTimeMillis(),
+                    totalQuestions = totalQuestions,
+                    correctAnswers = correctCount,
+                    wrongAnswers = wrongCount,
+                    skippedQuestions = skippedCount,
+                    timeTaken = timeTaken,
+                    quizType = quizType,
+                    accuracy = accuracy
+                )
+
+                val quizId = quizHistoryDao.insertQuizHistory(quizHistory)
+
+                // Save individual question results
+                val results = questionResults.map { (wordId, isCorrect) ->
+                    QuizQuestionResult(
+                        quizId = quizId.toInt(),
+                        wordId = wordId,
+                        isCorrect = isCorrect
+                    )
+                }
+                quizHistoryDao.insertQuestionResults(results)
+
+                Log.d(TAG, "Quiz history saved: $totalQuestions questions, $correctCount correct")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error saving quiz history: ${e.message}", e)
+            }
+        }
     }
 
     fun collectQuizStats(parameter: QuizParameter) {
