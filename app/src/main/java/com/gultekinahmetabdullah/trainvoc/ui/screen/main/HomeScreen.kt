@@ -93,6 +93,11 @@ fun HomeScreen(
     onNavigateToHelp: () -> Unit,
     onNavigateToStats: () -> Unit,
     onNavigateToGames: () -> Unit,
+    // Phase 1 - New Navigation Callbacks
+    onNavigateToProfile: () -> Unit = {},
+    onNavigateToWordOfDay: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {},
+    onNavigateToLastQuiz: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
     viewModel: HomeViewModel = hiltViewModel()
@@ -176,19 +181,6 @@ fun HomeScreen(
             state = rememberLazyListState(),
             content = {
                 item {
-                    // Warning Text for Test Mode
-                    Text(
-                        text = stringResource(id = R.string.test_mode_warning),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .padding(Spacing.small)
-                            .background(
-                                color = MaterialTheme.colorScheme.error.copy(alpha = Alpha.surfaceVariant),
-                                shape = MaterialTheme.shapes.medium
-                            )
-                            .padding(Spacing.medium)
-                    )
                     // App Logo
                     Image(
                         painter = painterResource(id = R.drawable.ic_launcher_foreground),
@@ -714,7 +706,7 @@ fun HomeScreen(
                                 emoji = "🌟",
                                 title = stringResource(id = R.string.word_of_the_day),
                                 emojiContentDescription = stringResource(id = R.string.quick_access_word_of_day),
-                                onClick = onNavigateToQuiz
+                                onClick = onNavigateToWordOfDay
                             )
                         }
                         item {
@@ -722,7 +714,7 @@ fun HomeScreen(
                                 emoji = "❤️",
                                 title = stringResource(id = R.string.favorites),
                                 emojiContentDescription = stringResource(id = R.string.quick_access_favorites),
-                                onClick = onNavigateToStats
+                                onClick = onNavigateToFavorites
                             )
                         }
                         item {
@@ -730,7 +722,7 @@ fun HomeScreen(
                                 emoji = "⏱️",
                                 title = stringResource(id = R.string.last_quiz),
                                 emojiContentDescription = stringResource(id = R.string.quick_access_last_quiz),
-                                onClick = onNavigateToGames
+                                onClick = onNavigateToLastQuiz
                             )
                         }
                     }
