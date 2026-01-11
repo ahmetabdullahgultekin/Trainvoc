@@ -100,6 +100,11 @@ fun MainScreen(
                         onNavigateToStats = { navController.navigate(Route.STATS) },
                         onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
                         onNavigateToGames = { navController.navigate(Route.GAMES_MENU) },
+                        // Phase 1 - New navigation callbacks
+                        onNavigateToProfile = { navController.navigate(Route.PROFILE) },
+                        onNavigateToWordOfDay = { navController.navigate(Route.WORD_OF_DAY) },
+                        onNavigateToFavorites = { navController.navigate(Route.FAVORITES) },
+                        onNavigateToLastQuiz = { navController.navigate(Route.LAST_QUIZ_RESULTS) },
                     )
                 }
                 composable(Route.STORY) {
@@ -185,6 +190,32 @@ fun MainScreen(
                     com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordDetailScreen(
                         wordId = wordId,
                         wordViewModel = wordViewModel
+                    )
+                }
+
+                // Phase 1 - New Screens
+                composable(Route.PROFILE) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.profile.ProfileScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.WORD_OF_DAY) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.features.WordOfTheDayScreen(
+                        onBackClick = { navController.popBackStack() },
+                        onPractice = { navController.navigate(Route.QUIZ) }
+                    )
+                }
+                composable(Route.FAVORITES) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.features.FavoritesScreen(
+                        onBackClick = { navController.popBackStack() },
+                        onPracticeFavorites = { navController.navigate(Route.QUIZ) }
+                    )
+                }
+                composable(Route.LAST_QUIZ_RESULTS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.LastQuizResultsScreen(
+                        onBackClick = { navController.popBackStack() },
+                        onRetryQuiz = { navController.navigate(Route.QUIZ) },
+                        onReviewMissed = { /* TODO: Navigate to review mode */ }
                     )
                 }
 
