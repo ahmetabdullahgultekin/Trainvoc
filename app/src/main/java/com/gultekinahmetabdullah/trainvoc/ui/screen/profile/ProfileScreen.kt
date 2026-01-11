@@ -200,7 +200,7 @@ fun ProfileHeader(
             Spacer(modifier = Modifier.height(8.dp))
 
             LinearProgressIndicator(
-                progress = { (xp.toFloat() / xpToNextLevel.toFloat()).coerceIn(0f, 1f) },
+                progress = { if (xpToNextLevel > 0) (xp.toFloat() / xpToNextLevel.toFloat()).coerceIn(0f, 1f) else 0f },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp)

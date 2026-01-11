@@ -19,12 +19,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.MenuBook
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.SportsEsports
@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
@@ -56,7 +57,8 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
  */
 @Composable
 fun AppBottomBar(navController: NavController) {
-    val currentRoute = navController.currentDestination?.route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Surface(
         modifier = Modifier
@@ -113,8 +115,8 @@ fun AppBottomBar(navController: NavController) {
 
             BottomNavItem(
                 label = "Dictionary",
-                selectedIcon = Icons.Filled.MenuBook,
-                unselectedIcon = Icons.Outlined.MenuBook,
+                selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
+                unselectedIcon = Icons.AutoMirrored.Outlined.MenuBook,
                 isSelected = currentRoute == Route.DICTIONARY,
                 onClick = {
                     navController.navigate(Route.DICTIONARY)
