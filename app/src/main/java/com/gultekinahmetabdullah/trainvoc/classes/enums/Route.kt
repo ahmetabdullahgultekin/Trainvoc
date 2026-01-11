@@ -34,5 +34,9 @@ object Route {
     // Phase 2 - Additional Routes
     const val STREAK_DETAIL = "streak_detail"
 
+    // Phase 3 - Engagement Features
+    const val LEADERBOARD = "leaderboard"
+    const val WORD_PROGRESS = "word_progress"
+
     fun wordDetail(wordId: String) = "word_detail/$wordId"
 }
