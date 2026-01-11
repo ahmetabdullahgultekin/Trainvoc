@@ -38,5 +38,8 @@ object Route {
     const val LEADERBOARD = "leaderboard"
     const val WORD_PROGRESS = "word_progress"
 
+    // Phase 4 - Accessibility
+    const val ACCESSIBILITY_SETTINGS = "accessibility_settings"
+
     fun wordDetail(wordId: String) = "word_detail/$wordId"
 }

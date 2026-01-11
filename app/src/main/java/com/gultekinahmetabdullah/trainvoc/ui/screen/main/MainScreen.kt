@@ -179,6 +179,11 @@ fun MainScreen(
                 composable(Route.NOTIFICATION_SETTINGS) {
                     NotificationSettingsScreen(navController = navController)
                 }
+                composable(Route.ACCESSIBILITY_SETTINGS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.other.AccessibilitySettingsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
                 composable(Route.HELP) {
                     HelpScreen()
                 }

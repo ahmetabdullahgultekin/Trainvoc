@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.components.SwipeToDeleteCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.FavoritesViewModel
 
@@ -112,7 +113,7 @@ fun FavoritesScreen(
                     )
                 }
                 else -> {
-                    // Favorites list
+                    // Favorites list with swipe-to-delete
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 88.dp) // Space for FAB
@@ -121,11 +122,16 @@ fun FavoritesScreen(
                             items = favoriteWords,
                             key = { it.word }
                         ) { word ->
-                            FavoriteWordCard(
-                                word = word,
-                                onClick = { onWordClick(word.word) },
-                                onRemove = { viewModel.removeFromFavorites(word.word) }
-                            )
+                            SwipeToDeleteCard(
+                                onDelete = { viewModel.removeFromFavorites(word.word) },
+                                modifier = Modifier.animateItem()
+                            ) {
+                                FavoriteWordCard(
+                                    word = word,
+                                    onClick = { onWordClick(word.word) },
+                                    onRemove = { viewModel.removeFromFavorites(word.word) }
+                                )
+                            }
                         }
                     }
                 }
