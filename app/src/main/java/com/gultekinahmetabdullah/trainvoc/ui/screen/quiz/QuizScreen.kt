@@ -1,7 +1,11 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.quiz
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +33,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.animations.ConfettiAnimation
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.AnswerOptionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDialog
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
@@ -56,10 +63,13 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCar
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
+import com.gultekinahmetabdullah.trainvoc.ui.theme.ComponentSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import com.gultekinahmetabdullah.trainvoc.ui.theme.UnlockedLeaf
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Success
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun QuizScreen(
@@ -78,9 +88,28 @@ fun QuizScreen(
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
     var showExitDialog by remember { mutableStateOf(false) }
     var showStats by rememberSaveable { mutableStateOf(false) }
+    var currentStreak by remember { mutableStateOf(0) }
+    var triggerConfetti by remember { mutableStateOf(false) }
+
+    // Coroutine scope for confetti animation
+    val coroutineScope = rememberCoroutineScope()
 
     // Haptic feedback for answer responses
     val haptic = rememberHapticPerformer()
+
+    // Auto-advance to next question after answer is checked
+    LaunchedEffect(isCorrect) {
+        if (isCorrect != null) {
+            // Delay based on answer correctness
+            val delayTime = if (isCorrect == true) 1000L else 2000L
+            delay(delayTime)
+
+            // Reset state and load next question
+            selectedAnswer = null
+            isCorrect = null
+            quizViewModel.loadNextQuestion()
+        }
+    }
 
     // Consolidated effect: lifecycle observation + exit handler + cleanup
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -105,13 +134,25 @@ fun QuizScreen(
         }
     }
 
+    // Animated progress bar color with spring animation
     val progressColor by animateColorAsState(
         targetValue = if (selectedAnswer != null && isCorrect != null) {
-            if (isCorrect == true) UnlockedLeaf else MaterialTheme.colorScheme.error
+            if (isCorrect == true) Success else MaterialTheme.colorScheme.error
         } else {
             if (isTimeUp) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
         },
-        animationSpec = tween(durationMillis = AnimationDuration.progress)
+        animationSpec = tween(durationMillis = AnimationDuration.quick),
+        label = "progressColor"
+    )
+
+    // Animated progress value with spring animation
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "progressAnimation"
     )
 
     Box(
@@ -133,6 +174,14 @@ fun QuizScreen(
             )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Confetti overlay for streak correct answers
+            AnimatedVisibility(visible = triggerConfetti) {
+                ConfettiAnimation(
+                    trigger = triggerConfetti,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
             // Info icon to toggle stats display
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -163,7 +212,10 @@ fun QuizScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    QuizScoreCard(score = score)
+                    QuizScoreCard(
+                        score = score,
+                        streak = currentStreak
+                    )
                 }
                 item {
                     Spacer(modifier = Modifier.height(Spacing.small))
@@ -210,16 +262,16 @@ fun QuizScreen(
                     Spacer(modifier = Modifier.height(Spacing.small))
                 }
                 item {
-                    // Animated Progress Bar
+                    // Animated Progress Bar - 4dp height with spring animation
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(Spacing.mediumLarge)
+                            .height(ComponentSize.progressBarHeight)
                             .clip(RoundedCornerShape(CornerRadius.small))
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         LinearProgressIndicator(
-                            progress = { progress },
+                            progress = { animatedProgress },
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth()
@@ -257,10 +309,24 @@ fun QuizScreen(
                                     onChoiceClick = { selectedChoice ->
                                         selectedAnswer = selectedChoice
                                         isCorrect = quizViewModel.checkAnswer(selectedChoice)
-                                        // Haptic feedback based on answer
+
+                                        // Update streak and trigger confetti
                                         if (isCorrect == true) {
+                                            currentStreak++
                                             haptic.success()
+
+                                            // Trigger confetti if streak >= 3
+                                            if (currentStreak >= 3) {
+                                                triggerConfetti = true
+                                                // Reset confetti trigger after animation
+                                                coroutineScope.launch {
+                                                    delay(3000)
+                                                    triggerConfetti = false
+                                                }
+                                            }
                                         } else {
+                                            currentStreak = 0
+                                            triggerConfetti = false
                                             haptic.error()
                                         }
                                     }
@@ -268,34 +334,6 @@ fun QuizScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(Spacing.large))
-
-                        // Next Button
-                        Button(
-                            onClick = {
-                                haptic.click()
-                                selectedAnswer = null
-                                isCorrect = null
-                                quizViewModel.loadNextQuestion()
-                            },
-                            enabled = selectedAnswer != null || isTimeUp,
-                            shape = RoundedCornerShape(CornerRadius.medium),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = 0.3f
-                                )
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(Spacing.small)
-                                .height(48.dp)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.next_question),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                        }
                     }
                 }
             }

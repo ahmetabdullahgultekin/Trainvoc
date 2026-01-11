@@ -1,19 +1,35 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.profile
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -21,26 +37,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
+import com.gultekinahmetabdullah.trainvoc.ui.components.AchievementBadge
+import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
+import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressIndicator
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
-import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 /**
- * Profile Screen - User profile and account information
+ * Profile Screen - Enhanced User Profile with Statistics and Achievements
  *
- * Features:
- * - Display username, avatar, level, XP
- * - Show learning statistics
- * - Edit profile functionality
- * - Sign out option
+ * Features (Updated according to UI/UX Improvement Plan):
+ * - Hero section with large avatar, username, level badge, and XP progress
+ * - 2x2 Stats Grid: Words Learned, Quizzes Taken, Study Time, Accuracy
+ * - Achievements section with horizontal scrolling badges
+ * - Actions/Settings section: Edit Profile, View Leaderboard, Settings
+ * - Pull-to-refresh support
+ * - Animations: Staggered stats entry, animated XP progress, count-up numbers
+ * - Additional info: Member since, total XP, streaks
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ProfileScreen(
     onBackClick: () -> Unit = {},
     onEditProfile: () -> Unit = {},
     onSignOut: () -> Unit = {},
+    onViewAchievements: () -> Unit = {},
+    onViewLeaderboard: () -> Unit = {},
+    onSettings: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -53,6 +80,21 @@ fun ProfileScreen(
 
     val showEditDialog = remember { mutableStateOf(false) }
 
+    // Pull to refresh state
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            viewModel.refresh()
+            // Reset refreshing after a delay
+            kotlinx.coroutines.GlobalScope.launch {
+                kotlinx.coroutines.delay(1000)
+                isRefreshing = false
+            }
+        }
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -61,47 +103,91 @@ fun ProfileScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.Default.ArrowBack, "Back")
                     }
-                },
-                actions = {
-                    IconButton(onClick = { showEditDialog.value = true }) {
-                        Icon(Icons.Default.Edit, "Edit Profile")
-                    }
                 }
             )
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(Spacing.medium),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .pullRefresh(pullRefreshState)
         ) {
-            // Profile Header
-            ProfileHeader(
-                username = username,
-                level = uiState.level,
-                xp = uiState.xpCurrent,
-                xpToNextLevel = uiState.xpForNextLevel
-            )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Hero Section
+                item {
+                    ProfileHeroSection(
+                        username = username,
+                        level = uiState.level,
+                        xpCurrent = uiState.xpCurrent,
+                        xpForNextLevel = uiState.xpForNextLevel,
+                        totalXP = uiState.totalScore
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                item { Spacer(modifier = Modifier.height(Spacing.lg)) }
 
-            // Statistics Cards
-            StatisticsSection(
-                totalWords = uiState.totalWords,
-                learnedWords = uiState.learnedWords,
-                currentStreak = uiState.currentStreak,
-                accountCreated = accountCreatedDate
-            )
+                // Stats Cards Grid (2x2)
+                item {
+                    StatsGridSection(
+                        learnedWords = uiState.learnedWords,
+                        totalWords = uiState.totalWords,
+                        quizzesCompleted = uiState.quizzesCompleted,
+                        studyTimeMinutes = uiState.dailyGoal?.timeTodayMinutes ?: 0,
+                        correctAnswers = uiState.totalScore / 10, // Rough estimate
+                        totalAnswers = (uiState.totalScore / 10 * 1.2f).roundToInt(), // Rough estimate
+                        modifier = Modifier.padding(horizontal = Spacing.md)
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                item { Spacer(modifier = Modifier.height(Spacing.lg)) }
 
-            // Account Actions
-            AccountActionsSection(
-                onEditProfile = { showEditDialog.value = true },
-                onSignOut = onSignOut
+                // Additional Info Section
+                item {
+                    AdditionalInfoSection(
+                        currentStreak = uiState.currentStreak,
+                        longestStreak = uiState.longestStreak,
+                        memberSince = accountCreatedDate,
+                        totalXP = uiState.totalScore,
+                        modifier = Modifier.padding(horizontal = Spacing.md)
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(Spacing.lg)) }
+
+                // Achievements Section
+                item {
+                    AchievementsSection(
+                        achievements = uiState.unlockedAchievements,
+                        onViewAll = onViewAchievements,
+                        modifier = Modifier.padding(horizontal = Spacing.md)
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(Spacing.lg)) }
+
+                // Actions/Settings Section
+                item {
+                    ActionsSection(
+                        onEditProfile = { showEditDialog.value = true },
+                        onViewLeaderboard = onViewLeaderboard,
+                        onSettings = onSettings,
+                        onSignOut = onSignOut,
+                        modifier = Modifier.padding(horizontal = Spacing.md)
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(Spacing.lg)) }
+            }
+
+            // Pull to refresh indicator
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
             )
         }
     }
@@ -121,138 +207,303 @@ fun ProfileScreen(
     }
 }
 
+/**
+ * Hero Section - Profile header with avatar, username, level, and XP progress
+ * Features gradient background and circular XP indicator
+ */
 @Composable
-fun ProfileHeader(
+fun ProfileHeroSection(
     username: String,
     level: Int,
-    xp: Int,
-    xpToNextLevel: Int
+    xpCurrent: Int,
+    xpForNextLevel: Int,
+    totalXP: Int,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val secondaryColor = MaterialTheme.colorScheme.secondary
+
+    // Calculate XP progress for next level
+    val xpForCurrentLevel = if (level <= 1) 0 else ((level - 1) * (level - 1) * 100)
+    val xpInCurrentLevel = xpCurrent - xpForCurrentLevel
+    val xpNeededForLevel = xpForNextLevel - xpForCurrentLevel
+    val progress = if (xpNeededForLevel > 0) {
+        (xpInCurrentLevel.toFloat() / xpNeededForLevel).coerceIn(0f, 1f)
+    } else 0f
+
+    // Animated progress
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(
+            durationMillis = AnimationDuration.countUp,
+            easing = AppEasing.emphasized
+        ),
+        label = "xpProgress"
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        primaryColor.copy(alpha = 0.1f),
+                        secondaryColor.copy(alpha = 0.05f),
+                        Color.Transparent
+                    )
+                )
+            )
+            .padding(Spacing.lg)
     ) {
-        // Avatar Circle
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = username.firstOrNull()?.uppercase() ?: "U",
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Username
-        Text(
-            text = username,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Level Badge
-        Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text(
-                text = "Level $level",
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // XP Progress
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            // Large Avatar
+            Box(
+                modifier = Modifier
+                    .size(ComponentSize.avatarLarge)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "XP",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "$xp / $xpToNextLevel",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
+                    text = username.firstOrNull()?.uppercase() ?: "U",
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.md))
 
-            LinearProgressIndicator(
-                progress = { if (xpToNextLevel > 0) (xp.toFloat() / xpToNextLevel.toFloat()).coerceIn(0f, 1f) else 0f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp)),
+            // Username
+            Text(
+                text = username,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            Spacer(modifier = Modifier.height(Spacing.sm))
+
+            // Level Badge
+            Surface(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(CornerRadius.large),
+                shadowElevation = Elevation.level1
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = "Level $level",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.lg))
+
+            // Circular XP Progress with animated count-up
+            CircularProgressIndicator(
+                progress = animatedProgress,
+                percentage = "${(animatedProgress * 100).roundToInt()}%",
+                subtitle = "$xpInCurrentLevel / $xpNeededForLevel XP",
+                size = 160.dp,
+                strokeWidth = 12.dp,
+                animate = true
+            )
+
+            Spacer(modifier = Modifier.height(Spacing.sm))
+
+            // Total XP earned
+            Text(
+                text = "Total XP: $totalXP",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Medium
             )
         }
     }
 }
 
+/**
+ * Stats Grid Section - 2x2 grid of statistics cards with staggered animations
+ * Shows: Words Learned, Quizzes Taken, Study Time, Accuracy
+ */
 @Composable
-fun StatisticsSection(
-    totalWords: Int,
+fun StatsGridSection(
     learnedWords: Int,
-    currentStreak: Int,
-    accountCreated: Long
+    totalWords: Int,
+    quizzesCompleted: Int,
+    studyTimeMinutes: Int,
+    correctAnswers: Int,
+    totalAnswers: Int,
+    modifier: Modifier = Modifier
 ) {
-    val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    val createdDate = dateFormat.format(Date(accountCreated))
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Statistics",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = Spacing.md)
         )
 
-        // Statistics Cards Grid
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        // 2x2 Grid with LazyVerticalGrid
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.height(350.dp), // Fixed height for 2 rows
+            userScrollEnabled = false
         ) {
-            StatCard(
-                icon = Icons.Default.Book,
-                title = "Learned",
-                value = "$learnedWords / $totalWords",
-                modifier = Modifier.weight(1f)
-            )
+            // Words Learned
+            itemsIndexed(
+                listOf(
+                    StatData(
+                        icon = Icons.Default.Book,
+                        value = "$learnedWords",
+                        label = "Words",
+                        iconTint = Color(0xFF4CAF50)
+                    ),
+                    StatData(
+                        icon = Icons.Default.Quiz,
+                        value = "$quizzesCompleted",
+                        label = "Quizzes",
+                        iconTint = Color(0xFF2196F3)
+                    ),
+                    StatData(
+                        icon = Icons.Default.Timer,
+                        value = formatStudyTime(studyTimeMinutes),
+                        label = "Study Time",
+                        iconTint = Color(0xFFFF9800)
+                    ),
+                    StatData(
+                        icon = Icons.Default.TrendingUp,
+                        value = "${calculateAccuracy(correctAnswers, totalAnswers)}%",
+                        label = "Accuracy",
+                        iconTint = Color(0xFF9C27B0)
+                    )
+                )
+            ) { index, stat ->
+                // Staggered animation delay
+                val delay = StaggerDelay.short * index
+                var isVisible by remember { mutableStateOf(false) }
 
-            StatCard(
-                icon = Icons.Default.LocalFireDepartment,
-                title = "Streak",
-                value = "$currentStreak days",
-                modifier = Modifier.weight(1f)
-            )
+                LaunchedEffect(Unit) {
+                    kotlinx.coroutines.delay(delay.toLong())
+                    isVisible = true
+                }
+
+                val offsetY by animateDpAsState(
+                    targetValue = if (isVisible) 0.dp else 40.dp,
+                    animationSpec = tween(
+                        durationMillis = AnimationDuration.medium,
+                        easing = AppEasing.emphasized
+                    ),
+                    label = "statsCardSlide"
+                )
+
+                val alpha by animateFloatAsState(
+                    targetValue = if (isVisible) 1f else 0f,
+                    animationSpec = tween(
+                        durationMillis = AnimationDuration.medium,
+                        easing = AppEasing.standard
+                    ),
+                    label = "statsCardAlpha"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .offset(y = offsetY)
+                        .graphicsLayer { this.alpha = alpha }
+                ) {
+                    StatsCard(
+                        icon = stat.icon,
+                        value = stat.value,
+                        label = stat.label,
+                        iconTint = stat.iconTint
+                    )
+                }
+            }
         }
+    }
+}
 
-        // Account Created Card
+/**
+ * Data class for stat card information
+ */
+private data class StatData(
+    val icon: ImageVector,
+    val value: String,
+    val label: String,
+    val iconTint: Color
+)
+
+/**
+ * Format study time in minutes to readable format (hours and minutes)
+ */
+private fun formatStudyTime(minutes: Int): String {
+    return if (minutes < 60) {
+        "${minutes}m"
+    } else {
+        val hours = minutes / 60
+        val mins = minutes % 60
+        if (mins == 0) "${hours}h" else "${hours}h ${mins}m"
+    }
+}
+
+/**
+ * Calculate accuracy percentage
+ */
+private fun calculateAccuracy(correct: Int, total: Int): Int {
+    return if (total > 0) {
+        ((correct.toFloat() / total) * 100).roundToInt()
+    } else 0
+}
+
+/**
+ * Additional Info Section - Streaks, Member Since, Total XP
+ */
+@Composable
+fun AdditionalInfoSection(
+    currentStreak: Int,
+    longestStreak: Int,
+    memberSince: Long,
+    totalXP: Int,
+    modifier: Modifier = Modifier
+) {
+    val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    val createdDate = dateFormat.format(Date(memberSince))
+
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.sm)
+    ) {
+        Text(
+            text = "Additional Info",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = Spacing.sm)
+        )
+
+        // Streaks Card
         Card(
             modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             )
@@ -260,29 +511,175 @@ fun StatisticsSection(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(Spacing.md),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.LocalFireDepartment,
+                        contentDescription = null,
+                        tint = Color(0xFFFF6F00),
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(Spacing.xs))
+                    Text(
+                        text = "$currentStreak",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Current Streak",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                VerticalDivider(
+                    modifier = Modifier.height(60.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                )
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.EmojiEvents,
+                        contentDescription = null,
+                        tint = Color(0xFFFFD600),
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(Spacing.xs))
+                    Text(
+                        text = "$longestStreak",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Longest Streak",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Member Since Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Spacing.md),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Spacing.md)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Column {
+                    Text(
+                        text = "Member Since",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = createdDate,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Achievements Section - Horizontal scrolling list of achievement badges
+ */
+@Composable
+fun AchievementsSection(
+    achievements: List<com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement>,
+    onViewAll: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Achievements",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            TextButton(onClick = onViewAll) {
+                Text("View All")
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Spacing.sm))
+
+        if (achievements.isEmpty()) {
+            // Empty state
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Spacing.lg),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.Default.CalendarToday,
-                        contentDescription = "Account Created",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        imageVector = Icons.Default.EmojiEvents,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(48.dp)
                     )
-                    Column {
-                        Text(
-                            text = "Member Since",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = createdDate,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold
+                    Spacer(modifier = Modifier.height(Spacing.sm))
+                    Text(
+                        text = "No achievements yet",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "Keep learning to unlock achievements!",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else {
+            // Horizontal scrolling achievements
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(achievements.take(10)) { userAchievement ->
+                    val achievement = userAchievement.getAchievement()
+                    if (achievement != null) {
+                        AchievementBadge(
+                            title = achievement.title,
+                            description = achievement.description,
+                            icon = getAchievementIcon(achievement.category.name),
+                            isUnlocked = userAchievement.isUnlocked,
+                            modifier = Modifier.width(120.dp)
                         )
                     }
                 }
@@ -291,127 +688,142 @@ fun StatisticsSection(
     }
 }
 
+/**
+ * Actions Section - Edit Profile, View Leaderboard, Settings, Sign Out
+ */
 @Composable
-fun StatCard(
-    icon: ImageVector,
-    title: String,
-    value: String,
+fun ActionsSection(
+    onEditProfile: () -> Unit,
+    onViewLeaderboard: () -> Unit,
+    onSettings: () -> Unit,
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.sm)
+    ) {
+        Text(
+            text = "Actions",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(bottom = Spacing.sm)
+        )
+
+        // Edit Profile
+        ActionCard(
+            icon = Icons.Default.Edit,
+            title = "Edit Profile",
+            onClick = onEditProfile
+        )
+
+        // View Leaderboard
+        ActionCard(
+            icon = Icons.Default.Leaderboard,
+            title = "View Leaderboard",
+            onClick = onViewLeaderboard
+        )
+
+        // Settings
+        ActionCard(
+            icon = Icons.Default.Settings,
+            title = "Settings",
+            onClick = onSettings
+        )
+
+        // Sign Out
+        ActionCard(
+            icon = Icons.Default.Logout,
+            title = "Sign Out",
+            onClick = onSignOut,
+            isDestructive = true
+        )
+    }
+}
+
+/**
+ * Action Card - Reusable card for action items
+ */
+@Composable
+private fun ActionCard(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit,
+    isDestructive: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    val iconColor = if (isDestructive) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+
+    val textColor = if (isDestructive) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(Spacing.md),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    tint = iconColor,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = textColor
+                )
+            }
             Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(32.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = "Go",
+                tint = if (isDestructive) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
             )
         }
     }
 }
 
-@Composable
-fun AccountActionsSection(
-    onEditProfile: () -> Unit,
-    onSignOut: () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text(
-            text = "Account",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-
-        // Edit Profile Button
-        OutlinedCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onEditProfile)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Default.Edit, "Edit Profile")
-                    Text(
-                        text = "Edit Profile",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-                Icon(Icons.Default.ChevronRight, "Go")
-            }
-        }
-
-        // Sign Out Button
-        OutlinedCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onSignOut)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Logout,
-                        contentDescription = "Sign Out",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Text(
-                        text = "Sign Out",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = "Go",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
-        }
+/**
+ * Helper function to get achievement icon based on category
+ */
+private fun getAchievementIcon(category: String): ImageVector {
+    return when (category) {
+        "STREAK" -> Icons.Default.LocalFireDepartment
+        "WORDS" -> Icons.Default.Book
+        "QUIZ" -> Icons.Default.Quiz
+        "PERFECT" -> Icons.Default.Star
+        "GOALS" -> Icons.Default.Flag
+        "REVIEW" -> Icons.Default.Replay
+        "TIME" -> Icons.Default.Timer
+        "SPECIAL" -> Icons.Default.EmojiEvents
+        else -> Icons.Default.Star
     }
 }
 

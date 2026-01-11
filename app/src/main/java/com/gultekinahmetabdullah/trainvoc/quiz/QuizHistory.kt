@@ -125,6 +125,12 @@ interface QuizHistoryDao {
     fun getQuizHistory(limit: Int = 10): Flow<List<QuizHistory>>
 
     /**
+     * Get quiz history by quiz type
+     */
+    @Query("SELECT * FROM quiz_history WHERE quizType = :quizType ORDER BY timestamp DESC")
+    suspend fun getQuizHistoryByType(quizType: String): List<QuizHistory>
+
+    /**
      * Get question results for a specific quiz
      */
     @Query("SELECT * FROM quiz_question_results WHERE quizId = :quizId")
