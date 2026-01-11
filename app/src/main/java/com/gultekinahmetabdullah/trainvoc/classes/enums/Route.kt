@@ -23,5 +23,20 @@ object Route {
     const val FEATURE_FLAGS_USER = "feature_flags_user"
     const val GAMES_MENU = "games_menu"
 
+    // Phase 1 - New Routes
+    const val PROFILE = "profile"
+    const val WORD_OF_DAY = "word_of_day"
+    const val FAVORITES = "favorites"
+    const val LAST_QUIZ_RESULTS = "last_quiz_results"
+    const val DAILY_GOALS = "daily_goals"
+    const val ACHIEVEMENTS = "achievements"
+
+    // Phase 2 - Additional Routes
+    const val STREAK_DETAIL = "streak_detail"
+
+    // Phase 3 - Engagement Features
+    const val LEADERBOARD = "leaderboard"
+    const val WORD_PROGRESS = "word_progress"
+
     fun wordDetail(wordId: String) = "word_detail/$wordId"
 }

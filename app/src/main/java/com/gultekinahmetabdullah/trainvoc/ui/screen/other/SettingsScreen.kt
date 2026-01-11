@@ -239,6 +239,107 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 }
             }
 
+            // Account Section (Phase 1)
+            Text(
+                text = "Account",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.PROFILE)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text("Profile")
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
+            // Learning Section (Phase 1 & 2)
+            Text(
+                text = "Learning",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.DAILY_GOALS)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text("Daily Goals")
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
+            // Social & Achievements Section (Phase 1 & 2)
+            Text(
+                text = "Social & Achievements",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.ACHIEVEMENTS)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text("Achievements")
+            }
+
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.LEADERBOARD)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text("Leaderboard")
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
+            // Progress Section (Phase 3)
+            Text(
+                text = "Progress",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Button(
+                onClick = {
+                    haptic.click()
+                    navController.navigate(Route.WORD_PROGRESS)
+                },
+                shape = RoundedCornerShape(CornerRadius.medium),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pressClickable { }
+            ) {
+                Text("Word Progress")
+            }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
             // Backup & Sync Section
             Text(
                 text = "Backup & Sync",

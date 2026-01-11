@@ -189,7 +189,6 @@
         You can test your knowledge with quizzes, track your progress, and manage your vocabulary
         effectively.
     </string>
-    <string name="test_mode_warning">⚠️ The app is still in the testing phase. Some features and buttons may not be active yet.</string>
     <string name="level_with_value">Level: %1$s</string>
     <string name="total_words_with_value">Total Words: %1$s</string>
     <string name="learned_words_with_value">Learned Words: %1$s</string>
