@@ -273,4 +273,45 @@ interface WordDao {
         levels: List<String>,
         includeLearned: Boolean = false
     ): Word?
+
+    /**
+     * FAVORITES QUERIES (Added in Migration 11→12)
+     */
+
+    /**
+     * Get all favorite words
+     */
+    @Query("SELECT * FROM words WHERE isFavorite = 1 ORDER BY favoritedAt DESC")
+    fun getFavoriteWords(): Flow<List<Word>>
+
+    /**
+     * Search favorite words by query
+     */
+    @Query(
+        """
+        SELECT * FROM words
+        WHERE isFavorite = 1
+        AND (word LIKE '%' || :query || '%' OR meaning LIKE '%' || :query || '%')
+        ORDER BY favoritedAt DESC
+        """
+    )
+    fun searchFavoriteWords(query: String): Flow<List<Word>>
+
+    /**
+     * Toggle favorite status for a word
+     */
+    @Query("UPDATE words SET isFavorite = :isFavorite, favoritedAt = :timestamp WHERE word = :wordId")
+    suspend fun setFavorite(wordId: String, isFavorite: Boolean, timestamp: Long?)
+
+    /**
+     * Get favorite count
+     */
+    @Query("SELECT COUNT(*) FROM words WHERE isFavorite = 1")
+    suspend fun getFavoriteCount(): Int
+
+    /**
+     * Remove all favorites
+     */
+    @Query("UPDATE words SET isFavorite = 0, favoritedAt = NULL")
+    suspend fun clearAllFavorites()
 }
