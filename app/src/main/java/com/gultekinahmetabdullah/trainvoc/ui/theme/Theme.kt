@@ -17,31 +17,53 @@ import com.gultekinahmetabdullah.trainvoc.accessibility.HighContrastLightColorSc
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 
 // ============================================================
-// Default Color Schemes (Original)
+// Default Color Schemes (Material 3 Purple Theme from Plan)
 // ============================================================
-
-private val DefaultDarkColorScheme = darkColorScheme(
-    primary = DarkPrimary,
-    secondary = DarkSecondary,
-    background = DarkBackground,
-    surface = DarkSurface,
-    onPrimary = DarkOnPrimary,
-    onSecondary = DarkOnPrimary,
-    onBackground = DarkOnPrimary,
-    onSurface = DarkOnSurface,
-    error = DarkError,
-)
 
 private val DefaultLightColorScheme = lightColorScheme(
     primary = Primary,
-    secondary = Secondary,
-    background = Background,
-    surface = Surface,
     onPrimary = OnPrimary,
-    onSecondary = OnPrimary,
-    onBackground = OnPrimary,
-    onSurface = OnSurface,
+    primaryContainer = PrimaryContainer,
+    onPrimaryContainer = OnPrimaryContainer,
+    secondary = Secondary,
+    onSecondary = OnSecondary,
+    secondaryContainer = SecondaryContainer,
+    onSecondaryContainer = OnSecondaryContainer,
+    tertiary = Tertiary,
+    onTertiary = OnTertiary,
+    tertiaryContainer = TertiaryContainer,
+    onTertiaryContainer = OnTertiaryContainer,
     error = Error,
+    onError = OnError,
+    background = Background,
+    onBackground = OnSurface,
+    surface = Surface,
+    onSurface = OnSurface,
+    surfaceVariant = SurfaceVariant,
+    onSurfaceVariant = OnSurfaceVariant,
+)
+
+private val DefaultDarkColorScheme = darkColorScheme(
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    primaryContainer = DarkPrimaryContainer,
+    onPrimaryContainer = DarkOnPrimaryContainer,
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+    secondaryContainer = DarkSecondaryContainer,
+    onSecondaryContainer = DarkOnSecondaryContainer,
+    tertiary = DarkTertiary,
+    onTertiary = DarkOnTertiary,
+    tertiaryContainer = DarkTertiaryContainer,
+    onTertiaryContainer = DarkOnTertiaryContainer,
+    error = DarkError,
+    onError = DarkOnError,
+    background = DarkBackground,
+    onBackground = DarkOnSurface,
+    surface = DarkSurface,
+    onSurface = DarkOnSurface,
+    surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = DarkOnSurfaceVariant,
 )
 
 // ============================================================
