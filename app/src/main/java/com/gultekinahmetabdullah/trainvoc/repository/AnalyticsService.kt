@@ -53,26 +53,34 @@ class AnalyticsService @Inject constructor(
     /**
      * Get correct answers count for today
      *
-     * TODO: Implement time-based filtering in WordDao
-     * Currently returns total correct answers as placeholder
+     * NOTE: Current schema limitation - statistics are cumulative without
+     * per-answer timestamps. Returns total correct answers.
      *
-     * @return Number of correct answers today
+     * To implement true daily tracking:
+     * - Add QuizHistory table with (word_id, timestamp, is_correct)
+     * - Query: SELECT COUNT(*) WHERE is_correct AND timestamp >= today_start
+     *
+     * @return Number of correct answers (total, not filtered by date)
      */
     override suspend fun getDailyCorrectAnswers(): Int {
-        // Placeholder: requires getCorrectAnswersSince() in WordDao
+        // Returns total as placeholder until QuizHistory table is implemented
         return getCorrectAnswers()
     }
 
     /**
      * Get correct answers count for this week
      *
-     * TODO: Implement time-based filtering in WordDao
-     * Currently returns total correct answers as placeholder
+     * NOTE: Current schema limitation - statistics are cumulative without
+     * per-answer timestamps. Returns total correct answers.
      *
-     * @return Number of correct answers this week
+     * To implement true weekly tracking:
+     * - Add QuizHistory table with (word_id, timestamp, is_correct)
+     * - Query: SELECT COUNT(*) WHERE is_correct AND timestamp >= week_start
+     *
+     * @return Number of correct answers (total, not filtered by date)
      */
     override suspend fun getWeeklyCorrectAnswers(): Int {
-        // Placeholder: requires getCorrectAnswersSince() in WordDao
+        // Returns total as placeholder until QuizHistory table is implemented
         return getCorrectAnswers()
     }
 
@@ -89,14 +97,11 @@ class AnalyticsService @Inject constructor(
      * Get the best performing category
      *
      * Categories are word levels (A1, A2, etc.)
+     * Returns the level with the highest total correct answers.
      *
-     * TODO: Implement category analytics in WordDao
-     * Currently returns null as placeholder
-     *
-     * @return Category name, or null if no data
+     * @return Category name (e.g., "A1", "B2"), or null if no data
      */
     override suspend fun getBestCategory(): String? {
-        // Placeholder: requires getBestPerformingLevel() in WordDao
-        return null
+        return wordDao.getBestCategory()
     }
 }
