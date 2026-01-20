@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,14 +43,18 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizMenuScreen
 
+/**
+ * Main screen with bottom navigation
+ *
+ * This is the primary navigation container for the app. Each destination
+ * manages its own ViewModel instance using hiltViewModel() for proper
+ * scoping and lifecycle management.
+ *
+ * @param startWordId Optional word ID to navigate to on startup (from notifications)
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    quizViewModel: QuizViewModel,
-    wordViewModel: WordViewModel,
-    statsViewModel: StatsViewModel,
-    settingsViewModel: SettingsViewModel,
-    storyViewModel: StoryViewModel,
     startWordId: String? = null
 ) {
     val navController = rememberNavController()
@@ -66,6 +71,14 @@ fun MainScreen(
 
     val parameter = remember { mutableStateOf<QuizParameter?>(null) }
 
+    // Get ViewModels scoped to navigation graph for proper lifecycle management
+    // These are scoped to the NavBackStackEntry, not to MainScreen
+    // This ensures they survive configuration changes and are shared across quiz flow
+    val quizViewModel: QuizViewModel = hiltViewModel()
+    val wordViewModel: WordViewModel = hiltViewModel()
+    val statsViewModel: StatsViewModel = hiltViewModel()
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    val storyViewModel: StoryViewModel = hiltViewModel()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
