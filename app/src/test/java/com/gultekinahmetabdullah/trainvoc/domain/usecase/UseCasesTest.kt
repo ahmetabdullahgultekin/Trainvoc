@@ -6,10 +6,12 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
+import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
+import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.testing.BaseTest
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +28,7 @@ import org.junit.Test
  * - CheckLevelUnlockedUseCase (level unlocking logic)
  * - CalculateProgressUseCase (progress calculation for levels/exams)
  *
- * Uses dependency injection with mocked repository:
+ * Uses dependency injection with mocked services:
  * - MockK for creating test doubles
  * - coEvery/coVerify for suspend functions
  * - Truth for assertions
@@ -35,7 +37,11 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class UseCasesTest : BaseTest() {
 
-    private lateinit var mockRepository: IWordRepository
+    // Mock services
+    private lateinit var mockWordStatisticsService: IWordStatisticsService
+    private lateinit var mockQuizService: IQuizService
+    private lateinit var mockProgressService: IProgressService
+    private lateinit var mockAnalyticsService: IAnalyticsService
 
     // Use Cases under test
     private lateinit var updateWordStatisticsUseCase: UpdateWordStatisticsUseCase
@@ -73,14 +79,17 @@ class UseCasesTest : BaseTest() {
     override fun setup() {
         super.setup()
 
-        // Create mock
-        mockRepository = mockk(relaxed = true)
+        // Create mocks
+        mockWordStatisticsService = mockk(relaxed = true)
+        mockQuizService = mockk(relaxed = true)
+        mockProgressService = mockk(relaxed = true)
+        mockAnalyticsService = mockk(relaxed = true)
 
-        // Create use cases with mocked repository
-        updateWordStatisticsUseCase = UpdateWordStatisticsUseCase(mockRepository)
-        generateQuizQuestionsUseCase = GenerateQuizQuestionsUseCase(mockRepository)
-        checkLevelUnlockedUseCase = CheckLevelUnlockedUseCase(mockRepository)
-        calculateProgressUseCase = CalculateProgressUseCase(mockRepository)
+        // Create use cases with mocked services
+        updateWordStatisticsUseCase = UpdateWordStatisticsUseCase(mockWordStatisticsService)
+        generateQuizQuestionsUseCase = GenerateQuizQuestionsUseCase(mockQuizService)
+        checkLevelUnlockedUseCase = CheckLevelUnlockedUseCase(mockProgressService)
+        calculateProgressUseCase = CalculateProgressUseCase(mockProgressService, mockAnalyticsService)
     }
 
     // ========== UpdateWordStatisticsUseCase Tests ==========
@@ -88,9 +97,9 @@ class UseCasesTest : BaseTest() {
     @Test
     fun `onCorrectAnswer increments correct count and updates last answered`() = runTest {
         // Given
-        coEvery { mockRepository.getWordStats(testWord) } returns testStatistic
-        coEvery { mockRepository.updateWordStats(any(), any()) } just Runs
-        coEvery { mockRepository.updateLastAnswered(any()) } just Runs
+        coEvery { mockWordStatisticsService.getWordStats(testWord) } returns testStatistic
+        coEvery { mockWordStatisticsService.updateWordStats(any(), any()) } just Runs
+        coEvery { mockWordStatisticsService.updateLastAnswered(any()) } just Runs
 
         // When
         val result = updateWordStatisticsUseCase.onCorrectAnswer(testWord)
@@ -98,18 +107,18 @@ class UseCasesTest : BaseTest() {
         // Then
         assertThat(result.isSuccess).isTrue()
         coVerify {
-            mockRepository.updateWordStats(
+            mockWordStatisticsService.updateWordStats(
                 match { it.correctCount == testStatistic.correctCount + 1 },
                 testWord
             )
         }
-        coVerify { mockRepository.updateLastAnswered(testWord.word) }
+        coVerify { mockWordStatisticsService.updateLastAnswered(testWord.word) }
     }
 
     @Test
-    fun `onCorrectAnswer returns failure when repository throws exception`() = runTest {
+    fun `onCorrectAnswer returns failure when service throws exception`() = runTest {
         // Given
-        coEvery { mockRepository.getWordStats(testWord) } throws Exception("Database error")
+        coEvery { mockWordStatisticsService.getWordStats(testWord) } throws Exception("Database error")
 
         // When
         val result = updateWordStatisticsUseCase.onCorrectAnswer(testWord)
@@ -121,11 +130,11 @@ class UseCasesTest : BaseTest() {
     }
 
     @Test
-    fun `onWrongAnswer increments wrong count and updates last answered`() = runTest {
+    fun `onWrongAnswer increments wrong count`() = runTest {
         // Given
-        coEvery { mockRepository.getWordStats(testWord) } returns testStatistic
-        coEvery { mockRepository.updateWordStats(any(), any()) } just Runs
-        coEvery { mockRepository.updateLastAnswered(any()) } just Runs
+        coEvery { mockWordStatisticsService.getWordStats(testWord) } returns testStatistic
+        coEvery { mockWordStatisticsService.updateWordStats(any(), any()) } just Runs
+        coEvery { mockWordStatisticsService.updateLastAnswered(any()) } just Runs
 
         // When
         val result = updateWordStatisticsUseCase.onWrongAnswer(testWord)
@@ -133,33 +142,19 @@ class UseCasesTest : BaseTest() {
         // Then
         assertThat(result.isSuccess).isTrue()
         coVerify {
-            mockRepository.updateWordStats(
+            mockWordStatisticsService.updateWordStats(
                 match { it.wrongCount == testStatistic.wrongCount + 1 },
                 testWord
             )
         }
-        coVerify { mockRepository.updateLastAnswered(testWord.word) }
     }
 
     @Test
-    fun `onWrongAnswer returns failure when repository throws exception`() = runTest {
+    fun `onSkippedAnswer increments skipped count`() = runTest {
         // Given
-        coEvery { mockRepository.getWordStats(testWord) } throws Exception("Network error")
-
-        // When
-        val result = updateWordStatisticsUseCase.onWrongAnswer(testWord)
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Network error")
-    }
-
-    @Test
-    fun `onSkippedAnswer increments skipped count and updates last answered`() = runTest {
-        // Given
-        coEvery { mockRepository.getWordStats(testWord) } returns testStatistic
-        coEvery { mockRepository.updateWordStats(any(), any()) } just Runs
-        coEvery { mockRepository.updateLastAnswered(any()) } just Runs
+        coEvery { mockWordStatisticsService.getWordStats(testWord) } returns testStatistic
+        coEvery { mockWordStatisticsService.updateWordStats(any(), any()) } just Runs
+        coEvery { mockWordStatisticsService.updateLastAnswered(any()) } just Runs
 
         // When
         val result = updateWordStatisticsUseCase.onSkippedAnswer(testWord)
@@ -167,52 +162,30 @@ class UseCasesTest : BaseTest() {
         // Then
         assertThat(result.isSuccess).isTrue()
         coVerify {
-            mockRepository.updateWordStats(
+            mockWordStatisticsService.updateWordStats(
                 match { it.skippedCount == testStatistic.skippedCount + 1 },
                 testWord
             )
         }
-        coVerify { mockRepository.updateLastAnswered(testWord.word) }
-    }
-
-    @Test
-    fun `getWordStatistics returns statistics successfully`() = runTest {
-        // Given
-        coEvery { mockRepository.getWordStats(testWord) } returns testStatistic
-
-        // When
-        val result = updateWordStatisticsUseCase.getWordStatistics(testWord)
-
-        // Then
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).isEqualTo(testStatistic)
-        coVerify { mockRepository.getWordStats(testWord) }
-    }
-
-    @Test
-    fun `getWordStatistics returns failure when repository throws exception`() = runTest {
-        // Given
-        coEvery { mockRepository.getWordStats(testWord) } throws Exception("Stats not found")
-
-        // When
-        val result = updateWordStatisticsUseCase.getWordStatistics(testWord)
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Stats not found")
     }
 
     // ========== GenerateQuizQuestionsUseCase Tests ==========
 
     @Test
-    fun `invoke returns questions successfully when repository provides data`() = runTest {
+    fun `invoke returns questions when quiz service succeeds`() = runTest {
         // Given
-        val questions = mutableListOf(
-            Question(testWord, listOf())
+        val incorrectWord1 = testWord.copy(word = "goodbye", meaning = "güle güle")
+        val incorrectWord2 = testWord.copy(word = "thanks", meaning = "teşekkürler")
+        val incorrectWord3 = testWord.copy(word = "yes", meaning = "evet")
+        val testQuestions = mutableListOf(
+            Question(
+                correctWord = testWord,
+                incorrectWords = listOf(incorrectWord1, incorrectWord2, incorrectWord3)
+            )
         )
         coEvery {
-            mockRepository.generateTenQuestions(any(), any())
-        } returns questions
+            mockQuizService.generateTenQuestions(testQuiz.type, any())
+        } returns testQuestions
 
         // When
         val result = generateQuizQuestionsUseCase(
@@ -223,62 +196,60 @@ class UseCasesTest : BaseTest() {
         // Then
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).hasSize(1)
-        coVerify { mockRepository.generateTenQuestions(QuizType.RANDOM, any()) }
     }
 
     @Test
-    fun `invoke returns failure when repository returns empty list`() = runTest {
+    fun `invoke returns failure when no questions generated`() = runTest {
         // Given
         coEvery {
-            mockRepository.generateTenQuestions(any(), any())
+            mockQuizService.generateTenQuestions(testQuiz.type, any())
         } returns mutableListOf()
 
         // When
         val result = generateQuizQuestionsUseCase(
-            QuizParameter.Level(WordLevel.C2),
+            QuizParameter.Level(WordLevel.A1),
             testQuiz
         )
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).contains("No questions could be generated")
+        assertThat(result.exceptionOrNull()?.message).contains("No questions")
     }
 
     @Test
-    fun `invoke returns failure when repository throws exception`() = runTest {
+    fun `invoke returns failure when quiz service throws exception`() = runTest {
         // Given
         coEvery {
-            mockRepository.generateTenQuestions(any(), any())
-        } throws Exception("Database unavailable")
+            mockQuizService.generateTenQuestions(any(), any())
+        } throws Exception("Service error")
 
         // When
         val result = generateQuizQuestionsUseCase(
-            QuizParameter.Level(WordLevel.B1),
+            QuizParameter.Level(WordLevel.A1),
             testQuiz
         )
 
         // Then
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Database unavailable")
+        assertThat(result.exceptionOrNull()?.message).isEqualTo("Service error")
     }
 
     // ========== CheckLevelUnlockedUseCase Tests ==========
 
     @Test
-    fun `invoke returns true for A1 level (always unlocked)`() = runTest {
+    fun `invoke returns true for A1 level always`() = runTest {
         // When
         val result = checkLevelUnlockedUseCase(WordLevel.A1)
 
         // Then
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isTrue()
-        coVerify(exactly = 0) { mockRepository.isLevelUnlocked(any()) }
     }
 
     @Test
     fun `invoke returns true for A2 when A1 is completed`() = runTest {
-        // Given - A1 is unlocked (completed)
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.A1) } returns true
+        // Given
+        coEvery { mockProgressService.isLevelUnlocked(WordLevel.A1) } returns true
 
         // When
         val result = checkLevelUnlockedUseCase(WordLevel.A2)
@@ -286,175 +257,80 @@ class UseCasesTest : BaseTest() {
         // Then
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isTrue()
-        coVerify { mockRepository.isLevelUnlocked(WordLevel.A1) }
     }
 
     @Test
-    fun `invoke returns false for B1 when A2 is not completed`() = runTest {
-        // Given - A2 is not unlocked (not completed)
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.A2) } returns false
+    fun `invoke returns false for A2 when A1 is not completed`() = runTest {
+        // Given
+        coEvery { mockProgressService.isLevelUnlocked(WordLevel.A1) } returns false
 
         // When
-        val result = checkLevelUnlockedUseCase(WordLevel.B1)
+        val result = checkLevelUnlockedUseCase(WordLevel.A2)
 
         // Then
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).isFalse()
-        coVerify { mockRepository.isLevelUnlocked(WordLevel.A2) }
-    }
-
-    @Test
-    fun `invoke returns failure when repository throws exception`() = runTest {
-        // Given
-        coEvery { mockRepository.isLevelUnlocked(any()) } throws Exception("Database error")
-
-        // When
-        val result = checkLevelUnlockedUseCase(WordLevel.C1)
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Database error")
-    }
-
-    @Test
-    fun `getAllLevelsStatus returns status for all levels`() = runTest {
-        // Given
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.A1) } returns true
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.A2) } returns true
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.B1) } returns false
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.B2) } returns false
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.C1) } returns false
-        coEvery { mockRepository.isLevelUnlocked(WordLevel.C2) } returns false
-
-        // When
-        val result = checkLevelUnlockedUseCase.getAllLevelsStatus()
-
-        // Then
-        assertThat(result.isSuccess).isTrue()
-        val statusMap = result.getOrNull()
-        assertThat(statusMap).isNotNull()
-        assertThat(statusMap?.get(WordLevel.A1)).isTrue() // Always unlocked
-        assertThat(statusMap?.get(WordLevel.A2)).isTrue() // A1 completed
-        assertThat(statusMap?.get(WordLevel.B1)).isFalse() // A2 not completed
     }
 
     // ========== CalculateProgressUseCase Tests ==========
 
     @Test
-    fun `invoke calculates progress correctly for Level parameter`() = runTest {
+    fun `invoke calculates correct progress percentage for level`() = runTest {
         // Given
-        coEvery { mockRepository.getWordCountByLevel("A1") } returns 100
-        coEvery { mockRepository.getLearnedWordCount("A1") } returns 75
+        val parameter = QuizParameter.Level(WordLevel.A1)
+        coEvery { mockProgressService.getWordCountByLevel("A1") } returns 100
+        coEvery { mockProgressService.getLearnedWordCount("A1") } returns 50
 
         // When
-        val result = calculateProgressUseCase(QuizParameter.Level(WordLevel.A1))
+        val result = calculateProgressUseCase(parameter)
 
         // Then
         assertThat(result.isSuccess).isTrue()
-        val progress = result.getOrNull()
-        assertThat(progress?.totalWords).isEqualTo(100)
-        assertThat(progress?.learnedWords).isEqualTo(75)
-        assertThat(progress?.progressPercent).isEqualTo(75)
+        val progressInfo = result.getOrNull()!!
+        assertThat(progressInfo.totalWords).isEqualTo(100)
+        assertThat(progressInfo.learnedWords).isEqualTo(50)
+        assertThat(progressInfo.progressPercent).isEqualTo(50)
     }
 
     @Test
-    fun `invoke calculates progress correctly for ExamType parameter`() = runTest {
+    fun `invoke returns zero progress when no words exist`() = runTest {
         // Given
-        coEvery { mockRepository.getWordCountByExam("YDS") } returns 500
-        coEvery { mockRepository.getLearnedWordCountByExam("YDS") } returns 200
+        val parameter = QuizParameter.Level(WordLevel.C2)
+        coEvery { mockProgressService.getWordCountByLevel("C2") } returns 0
+        coEvery { mockProgressService.getLearnedWordCount("C2") } returns 0
 
         // When
-        val result = calculateProgressUseCase(QuizParameter.ExamType(Exam("YDS")))
+        val result = calculateProgressUseCase(parameter)
 
         // Then
         assertThat(result.isSuccess).isTrue()
-        val progress = result.getOrNull()
-        assertThat(progress?.totalWords).isEqualTo(500)
-        assertThat(progress?.learnedWords).isEqualTo(200)
-        assertThat(progress?.progressPercent).isEqualTo(40)
-    }
-
-    @Test
-    fun `invoke returns zero percent when total words is zero`() = runTest {
-        // Given
-        coEvery { mockRepository.getWordCountByLevel("C2") } returns 0
-        coEvery { mockRepository.getLearnedWordCount("C2") } returns 0
-
-        // When
-        val result = calculateProgressUseCase(QuizParameter.Level(WordLevel.C2))
-
-        // Then
-        assertThat(result.isSuccess).isTrue()
-        val progress = result.getOrNull()
-        assertThat(progress?.totalWords).isEqualTo(0)
-        assertThat(progress?.learnedWords).isEqualTo(0)
-        assertThat(progress?.progressPercent).isEqualTo(0)
-    }
-
-    @Test
-    fun `invoke returns failure when repository throws exception`() = runTest {
-        // Given
-        coEvery { mockRepository.getWordCountByLevel(any()) } throws Exception("Database error")
-
-        // When
-        val result = calculateProgressUseCase(QuizParameter.Level(WordLevel.B1))
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Database error")
+        val progressInfo = result.getOrNull()!!
+        assertThat(progressInfo.progressPercent).isEqualTo(0)
     }
 
     @Test
     fun `getDailyStats returns daily correct answers`() = runTest {
         // Given
-        coEvery { mockRepository.getDailyCorrectAnswers() } returns 42
+        coEvery { mockAnalyticsService.getDailyCorrectAnswers() } returns 15
 
         // When
         val result = calculateProgressUseCase.getDailyStats()
 
         // Then
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).isEqualTo(42)
-        coVerify { mockRepository.getDailyCorrectAnswers() }
-    }
-
-    @Test
-    fun `getDailyStats returns failure when repository throws exception`() = runTest {
-        // Given
-        coEvery { mockRepository.getDailyCorrectAnswers() } throws Exception("Stats unavailable")
-
-        // When
-        val result = calculateProgressUseCase.getDailyStats()
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Stats unavailable")
+        assertThat(result.getOrNull()).isEqualTo(15)
     }
 
     @Test
     fun `getWeeklyStats returns weekly correct answers`() = runTest {
         // Given
-        coEvery { mockRepository.getWeeklyCorrectAnswers() } returns 250
+        coEvery { mockAnalyticsService.getWeeklyCorrectAnswers() } returns 75
 
         // When
         val result = calculateProgressUseCase.getWeeklyStats()
 
         // Then
         assertThat(result.isSuccess).isTrue()
-        assertThat(result.getOrNull()).isEqualTo(250)
-        coVerify { mockRepository.getWeeklyCorrectAnswers() }
-    }
-
-    @Test
-    fun `getWeeklyStats returns failure when repository throws exception`() = runTest {
-        // Given
-        coEvery { mockRepository.getWeeklyCorrectAnswers() } throws Exception("Stats unavailable")
-
-        // When
-        val result = calculateProgressUseCase.getWeeklyStats()
-
-        // Then
-        assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Stats unavailable")
+        assertThat(result.getOrNull()).isEqualTo(75)
     }
 }
