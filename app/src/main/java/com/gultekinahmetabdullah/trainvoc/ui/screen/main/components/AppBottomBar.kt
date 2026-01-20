@@ -103,17 +103,6 @@ fun AppBottomBar(navController: NavController) {
             )
 
             BottomNavItem(
-                label = stringResource(id = R.string.games),
-                selectedIcon = Icons.Filled.SportsEsports,
-                unselectedIcon = Icons.Outlined.SportsEsports,
-                isSelected = currentRoute == Route.GAMES_MENU,
-                onClick = {
-                    navController.navigate(Route.GAMES_MENU)
-                },
-                isCenter = true
-            )
-
-            BottomNavItem(
                 label = "Dictionary",
                 selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
                 unselectedIcon = Icons.AutoMirrored.Outlined.MenuBook,

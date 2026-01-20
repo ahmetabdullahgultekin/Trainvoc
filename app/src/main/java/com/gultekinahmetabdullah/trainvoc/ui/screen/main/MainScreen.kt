@@ -102,7 +102,6 @@ fun MainScreen(
                         onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
                         onNavigateToStats = { navController.navigate(Route.STATS) },
                         onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
-                        onNavigateToGames = { navController.navigate(Route.GAMES_MENU) },
                         // Phase 1 - New navigation callbacks
                         onNavigateToProfile = { navController.navigate(Route.PROFILE) },
                         onNavigateToWordOfDay = { navController.navigate(Route.WORD_OF_DAY) },
@@ -234,17 +233,34 @@ fun MainScreen(
                     )
                 }
 
-                // Phase 2 - Additional Screens (TODO: Implement these screens)
-                // composable(Route.DAILY_GOALS) { ... }
-                // composable(Route.ACHIEVEMENTS) { ... }
-                // composable(Route.STREAK_DETAIL) { ... }
+                // Phase 2 - Gamification Screens
+                composable(Route.DAILY_GOALS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.DailyGoalsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.ACHIEVEMENTS) {
+                    com.gultekinahmetabdullah.trainvoc.gamification.ui.AchievementsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.STREAK_DETAIL) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.StreakDetailScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
 
-                // Phase 3 - Engagement Features (TODO: Implement these screens)
-                // composable(Route.LEADERBOARD) { ... }
-                // composable(Route.WORD_PROGRESS) { ... }
-
-                // Memory Games Navigation (TODO: Implement games)
-                // gamesNavGraph(navController)
+                // Phase 3 - Engagement Features
+                composable(Route.LEADERBOARD) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.social.LeaderboardScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.WORD_PROGRESS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordProgressScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

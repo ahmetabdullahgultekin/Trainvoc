@@ -123,7 +123,6 @@ fun HomeScreen(
     onNavigateToSettings: () -> Unit = {},
     onNavigateToHelp: () -> Unit = {},
     onNavigateToStats: () -> Unit,
-    onNavigateToGames: () -> Unit,
     onNavigateToProfile: () -> Unit = {},
     onNavigateToWordOfDay: () -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
@@ -230,12 +229,12 @@ fun HomeScreen(
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer
                     )
 
-                    // Games
+                    // Favorites
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
-                        emoji = "🎮",
-                        title = "Games",
-                        onClick = onNavigateToGames,
+                        emoji = "⭐",
+                        title = "Favorites",
+                        onClick = onNavigateToFavorites,
                         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
                     )
                 }
