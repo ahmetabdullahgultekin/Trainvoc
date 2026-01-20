@@ -37,8 +37,11 @@ class TextToSpeechService @Inject constructor(
     private val featureFlagManager: FeatureFlagManager
 ) {
 
+    @Volatile
     private var tts: TextToSpeech? = null
+    @Volatile
     private var mediaPlayer: MediaPlayer? = null
+    @Volatile
     private var isInitialized = false
     private var currentSpeed = 1.0f
 
@@ -82,8 +85,11 @@ class TextToSpeechService @Inject constructor(
         }
 
         return try {
-            if (!isInitialized) {
-                initialize()
+            // Synchronized check to prevent race condition
+            synchronized(this) {
+                if (!isInitialized) {
+                    initialize()
+                }
             }
 
             // Set language
