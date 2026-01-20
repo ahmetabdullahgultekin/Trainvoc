@@ -6,8 +6,9 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
+import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
+import com.gultekinahmetabdullah.trainvoc.utils.InputValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WordViewModel @Inject constructor(
     private val repository: IWordRepository,
-    private val wordStatisticsService: IWordStatisticsService
+    private val wordStatisticsService: IWordStatisticsService,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     private val _words = MutableStateFlow<List<WordAskedInExams>>(emptyList())
@@ -42,7 +44,7 @@ class WordViewModel @Inject constructor(
      * Waits 300ms after user stops typing before filtering.
      */
     private fun setupSearchDebounce() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             _searchQuery
                 .debounce(300) // Wait 300ms after last input
                 .distinctUntilChanged() // Only process if query changed
@@ -68,13 +70,13 @@ class WordViewModel @Inject constructor(
     }
 
     private fun fetchWords() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             _words.value = repository.getAllWordsAskedInExams()
         }
     }
 
     fun insertWord(word: Word) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             repository.insertWord(word)
             fetchWords()
         }
@@ -84,7 +86,12 @@ class WordViewModel @Inject constructor(
      * Update search query. Filtering happens automatically with debounce.
      */
     fun filterWords(query: String) {
-        _searchQuery.value = query
+        // Validate search query before processing
+        val validatedQuery = InputValidation.validateSearchQuery(query).getOrElse {
+            // On validation error, set empty query (safe fallback)
+            ""
+        }
+        _searchQuery.value = validatedQuery
     }
 
     // Get a specific word by its word ID
@@ -111,7 +118,7 @@ class WordViewModel @Inject constructor(
      * @param isFavorite The new favorite status
      */
     fun toggleFavorite(wordId: String, isFavorite: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             val timestamp = if (isFavorite) System.currentTimeMillis() else null
             repository.setFavorite(wordId, isFavorite, timestamp)
         }

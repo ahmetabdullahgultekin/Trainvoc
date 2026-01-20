@@ -19,6 +19,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import com.gultekinahmetabdullah.trainvoc.config.CacheConfig
 import com.gultekinahmetabdullah.trainvoc.config.TtsConfig
+import com.gultekinahmetabdullah.trainvoc.utils.InputValidation
 
 /**
  * Text-to-Speech service with feature flag integration and cost tracking
@@ -79,6 +80,11 @@ class TextToSpeechService @Inject constructor(
         language: String = "en",
         wordId: String? = null
     ): Result<Unit> {
+        // Validate input text
+        val validatedText = InputValidation.validateTTSText(text).getOrElse {
+            return Result.failure(it)
+        }
+
         // Check feature flag
         if (!featureFlagManager.isEnabled(FeatureFlag.AUDIO_PRONUNCIATION)) {
             return Result.failure(Exception("Audio pronunciation feature is disabled"))
@@ -100,8 +106,8 @@ class TextToSpeechService @Inject constructor(
             }
             tts?.language = locale
 
-            // Speak
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, text)
+            // Speak (use validated text)
+            tts?.speak(validatedText, TextToSpeech.QUEUE_FLUSH, null, validatedText)
 
             // Track usage (for analytics only - Android TTS is FREE)
             featureFlagManager.trackUsage(
