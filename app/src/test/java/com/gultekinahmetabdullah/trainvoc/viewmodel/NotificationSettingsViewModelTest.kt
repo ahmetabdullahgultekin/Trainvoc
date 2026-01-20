@@ -29,7 +29,6 @@ class NotificationSettingsViewModelTest : BaseTest() {
 
     private lateinit var viewModel: NotificationSettingsViewModel
     private lateinit var mockContext: Context
-    private lateinit var mockNotificationHelper: NotificationHelper.Companion
 
     @Before
     override fun setup() {
