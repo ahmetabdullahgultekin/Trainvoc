@@ -1,7 +1,5 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
-import QuizMenuScreen
-import StoryScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -42,7 +40,7 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
-import com.gultekinahmetabdullah.trainvoc.navigation.gamesNavGraph
+import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizMenuScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -236,42 +234,17 @@ fun MainScreen(
                     )
                 }
 
-                // Phase 2 - Additional Screens
-                composable(Route.DAILY_GOALS) {
-                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.DailyGoalsScreen(
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
-                composable(Route.ACHIEVEMENTS) {
-                    // TODO: Integrate with AchievementViewModel to load actual achievements
-                    com.gultekinahmetabdullah.trainvoc.gamification.ui.AchievementsScreen(
-                        achievements = emptyList(), // TODO: Load from ViewModel
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
-                composable(Route.STREAK_DETAIL) {
-                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.StreakDetailScreen(
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
+                // Phase 2 - Additional Screens (TODO: Implement these screens)
+                // composable(Route.DAILY_GOALS) { ... }
+                // composable(Route.ACHIEVEMENTS) { ... }
+                // composable(Route.STREAK_DETAIL) { ... }
 
-                // Phase 3 - Engagement Features
-                composable(Route.LEADERBOARD) {
-                    com.gultekinahmetabdullah.trainvoc.ui.screen.social.LeaderboardScreen(
-                        onBackClick = { navController.popBackStack() },
-                        onChallengeClick = { userId ->
-                            // TODO: Implement challenge functionality
-                        }
-                    )
-                }
-                composable(Route.WORD_PROGRESS) {
-                    com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordProgressScreen(
-                        onBackClick = { navController.popBackStack() }
-                    )
-                }
+                // Phase 3 - Engagement Features (TODO: Implement these screens)
+                // composable(Route.LEADERBOARD) { ... }
+                // composable(Route.WORD_PROGRESS) { ... }
 
-                // Memory Games Navigation
-                gamesNavGraph(navController)
+                // Memory Games Navigation (TODO: Implement games)
+                // gamesNavGraph(navController)
             }
         }
     }
