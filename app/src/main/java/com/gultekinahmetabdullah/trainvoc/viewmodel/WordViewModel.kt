@@ -18,6 +18,22 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing vocabulary words and search operations
+ *
+ * This ViewModel provides:
+ * - Word list management with automatic updates
+ * - Debounced search functionality (300ms delay)
+ * - Word insertion and retrieval operations
+ * - Thread-safe operations using DispatcherProvider
+ *
+ * All operations use StateFlow for reactive UI updates.
+ * Search queries are automatically validated and sanitized.
+ *
+ * @property repository Repository for word data operations
+ * @property wordStatisticsService Service for word statistics
+ * @property dispatchers Dispatcher provider for coroutine execution
+ */
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class WordViewModel @Inject constructor(
@@ -27,9 +43,21 @@ class WordViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _words = MutableStateFlow<List<WordAskedInExams>>(emptyList())
+    /**
+     * StateFlow of all words with exam information
+     *
+     * Automatically updated when words are inserted or modified.
+     * Collect this flow in UI to observe word list changes.
+     */
     val words: StateFlow<List<WordAskedInExams>> = _words
 
     private val _filteredWords = MutableStateFlow<List<Word>>(emptyList())
+    /**
+     * StateFlow of filtered search results
+     *
+     * Updated automatically when search query changes (with 300ms debounce).
+     * Empty list indicates no active search or no results.
+     */
     val filteredWords: StateFlow<List<Word>> = _filteredWords
 
     private val _searchQuery = MutableStateFlow("")
@@ -75,6 +103,15 @@ class WordViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Insert a new word into the vocabulary database
+     *
+     * This operation runs on IO dispatcher and refreshes the word list
+     * after insertion completes. The UI will be updated automatically
+     * via the words StateFlow.
+     *
+     * @param word The word to insert into the database
+     */
     fun insertWord(word: Word) {
         viewModelScope.launch(dispatchers.io) {
             repository.insertWord(word)
@@ -94,7 +131,16 @@ class WordViewModel @Inject constructor(
         _searchQuery.value = validatedQuery
     }
 
-    // Get a specific word by its word ID
+    /**
+     * Retrieve a specific word by its ID
+     *
+     * Searches the current word list for a word with matching ID.
+     * This is a synchronous operation using cached data, so it's
+     * safe to call from the UI thread.
+     *
+     * @param wordId The unique identifier of the word to retrieve
+     * @return The matching Word object, or null if not found
+     */
     fun getWordById(wordId: String): Word? {
         return _words.value.map { it.word }.find { it.word == wordId }
     }
