@@ -170,11 +170,12 @@ fun CircularProgressRing(
 }
 
 /**
- * XP/Level Progress Bar
+ * XP/Level Progress Bar (Simple version)
  * Shows progress towards next level with current and target XP
+ * Note: Use XPProgressBar from ModernComponents.kt for the styled version
  */
 @Composable
-fun XPProgressBar(
+fun XPProgressBarSimple(
     currentXP: Int,
     targetXP: Int,
     level: Int,

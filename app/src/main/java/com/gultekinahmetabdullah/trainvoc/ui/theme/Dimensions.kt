@@ -36,6 +36,7 @@ object CornerRadius {
     val large: Dp = 16.dp
     val extraLarge: Dp = 24.dp
     val round: Dp = 28.dp
+    val full: Dp = 100.dp  // For fully rounded/circular shapes
 }
 
 /**

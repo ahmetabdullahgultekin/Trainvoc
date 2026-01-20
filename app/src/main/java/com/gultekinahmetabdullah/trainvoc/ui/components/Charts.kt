@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,11 +26,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -384,7 +391,7 @@ fun LineChart(
             )
         }
 
-        // Draw the line with animation
+        // Draw the line with animation and data points
         if (points.size > 1) {
             val animatedPoints = points.take((points.size * animatedProgress.value).toInt().coerceAtLeast(1))
 
@@ -408,20 +415,20 @@ fun LineChart(
                     style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
                 )
             }
-        }
 
-        // Draw data points
-        animatedPoints.forEach { point ->
-            drawCircle(
-                color = lineColor,
-                radius = 6.dp.toPx(),
-                center = point
-            )
-            drawCircle(
-                color = Color.White,
-                radius = 3.dp.toPx(),
-                center = point
-            )
+            // Draw data points
+            animatedPoints.forEach { point ->
+                drawCircle(
+                    color = lineColor,
+                    radius = 6.dp.toPx(),
+                    center = point
+                )
+                drawCircle(
+                    color = Color.White,
+                    radius = 3.dp.toPx(),
+                    center = point
+                )
+            }
         }
     }
 }
@@ -480,24 +487,8 @@ fun PieChart(
                 size = Size(chartSize, chartSize)
             )
 
-            // Draw percentage label
-            if (showPercentages && percentage >= 5) {
-                val angle = Math.toRadians((startAngle + sweepAngle / 2).toDouble())
-                val labelRadius = radius * 0.7f
-                val labelX = center.x + (labelRadius * kotlin.math.cos(angle)).toFloat()
-                val labelY = center.y + (labelRadius * kotlin.math.sin(angle)).toFloat()
-
-                drawContext.canvas.nativeCanvas.apply {
-                    val paint = android.graphics.Paint().apply {
-                        color = android.graphics.Color.WHITE
-                        textAlign = android.graphics.Paint.Align.CENTER
-                        textSize = 32f
-                        isFakeBoldText = true
-                        setShadowLayer(4f, 0f, 0f, android.graphics.Color.BLACK)
-                    }
-                    drawText("$percentage%", labelX, labelY, paint)
-                }
-            }
+            // Note: Percentage labels removed to avoid nativeCanvas dependency
+            // Use ChartLegend component to display percentages alongside the chart
 
             startAngle += sweepAngle
         }

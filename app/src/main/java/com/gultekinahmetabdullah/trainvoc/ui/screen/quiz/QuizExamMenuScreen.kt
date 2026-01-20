@@ -102,6 +102,9 @@ fun QuizExamMenuScreen(
         )
     )
 
+    // Get exam types before LazyColumn since it's a Composable function
+    val examTypes = getExamTypes()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -155,14 +158,14 @@ fun QuizExamMenuScreen(
                 )
             }
 
-            itemsIndexed(getExamTypes()) { index, examType ->
+            itemsIndexed(examTypes) { index, examType ->
                 AnimatedExamCard(
                     examType = examType,
                     index = index,
                     onClick = { onExamSelected(QuizParameter.ExamType(examType.exam)) },
                     viewModel = viewModel
                 )
-                if (index < getExamTypes().size - 1) {
+                if (index < examTypes.size - 1) {
                     Spacer(modifier = Modifier.height(Spacing.medium))
                 }
             }
@@ -312,7 +315,7 @@ fun CEFRLevelCard(
     val cardColor = getCEFRColor(level)
     val difficulty = getDifficultyStars(level)
 
-    ElevatedCard(
+    Card(
         onClick = {
             if (!isLocked) onClick()
             // TODO: Add shake animation for locked levels
@@ -322,10 +325,10 @@ fun CEFRLevelCard(
             .height(150.dp)
             .scale(scale),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.elevatedCardColors(
+        colors = CardDefaults.cardColors(
             containerColor = if (isLocked) cardColor.copy(alpha = 0.5f) else cardColor
         ),
-        elevation = CardDefaults.elevatedCardElevation(
+        elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp,
             pressedElevation = 8.dp
         ),

@@ -16,13 +16,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +57,7 @@ import kotlin.math.roundToInt
  * - Animations: Staggered stats entry, animated XP progress, count-up numbers
  * - Additional info: Member since, total XP, streaks
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onBackClick: () -> Unit = {},
@@ -79,21 +77,18 @@ fun ProfileScreen(
     val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
 
     val showEditDialog = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     // Pull to refresh state
     var isRefreshing by remember { mutableStateOf(false) }
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = {
-            isRefreshing = true
-            viewModel.refresh()
-            // Reset refreshing after a delay
-            kotlinx.coroutines.GlobalScope.launch {
-                kotlinx.coroutines.delay(1000)
-                isRefreshing = false
-            }
+    val onRefresh: () -> Unit = {
+        isRefreshing = true
+        viewModel.refresh()
+        coroutineScope.launch {
+            kotlinx.coroutines.delay(1000)
+            isRefreshing = false
         }
-    )
+    }
 
     Scaffold(
         topBar = {
@@ -107,11 +102,12 @@ fun ProfileScreen(
             )
         }
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .pullRefresh(pullRefreshState)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -182,13 +178,6 @@ fun ProfileScreen(
 
                 item { Spacer(modifier = Modifier.height(Spacing.lg)) }
             }
-
-            // Pull to refresh indicator
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 

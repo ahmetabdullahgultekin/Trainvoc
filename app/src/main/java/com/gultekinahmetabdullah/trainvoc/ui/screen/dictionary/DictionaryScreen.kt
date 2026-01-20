@@ -59,8 +59,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -135,7 +134,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
     val searchHistory = remember { mutableStateListOf<String>() }
 
     // Pull to refresh
-    val pullToRefreshState = rememberPullToRefreshState()
+    var isRefreshing by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     // Alphabet fast scroll state
@@ -154,10 +153,11 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
     }
 
     // Handle pull to refresh
-    if (pullToRefreshState.isRefreshing) {
-        LaunchedEffect(true) {
+    val onRefresh: () -> Unit = {
+        isRefreshing = true
+        coroutineScope.launch {
             delay(1000)
-            pullToRefreshState.endRefresh()
+            isRefreshing = false
         }
     }
 
@@ -188,10 +188,10 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(pullToRefreshState.nestedScrollConnection)
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
@@ -394,7 +394,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                                             .padding(vertical = Spacing.xs)
                                             .scale(scale)
                                             .alpha(alpha)
-                                            .animateItemPlacement()
+                                            .animateItem()
                                     )
                                 }
                             }
@@ -424,14 +424,11 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                             }
 
                             // Large letter preview when scrolling
-                            AnimatedVisibility(
-                                visible = currentScrollLetter.isNotEmpty(),
-                                enter = fadeIn() + scaleIn(),
-                                exit = fadeOut() + scaleOut(),
-                                modifier = Modifier.align(Alignment.Center)
-                            ) {
+                            if (currentScrollLetter.isNotEmpty()) {
                                 Surface(
-                                    modifier = Modifier.size(80.dp),
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .size(80.dp),
                                     shape = RoundedCornerShape(CornerRadius.large),
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shadowElevation = Elevation.level3
@@ -456,13 +453,6 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
             }
         }
 
-        // Pull to refresh indicator
-        PullToRefreshContainer(
-            state = pullToRefreshState,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .zIndex(1f)
-        )
     }
 }
 

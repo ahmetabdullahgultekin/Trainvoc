@@ -4,13 +4,19 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,14 +46,19 @@ import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -85,9 +96,11 @@ import com.gultekinahmetabdullah.trainvoc.ui.components.SectionHeader
 import com.gultekinahmetabdullah.trainvoc.ui.components.StatChip
 import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.StreakWidget
+import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
+import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 /**
@@ -599,4 +612,160 @@ fun AnimatedBackground(
             )
             .fillMaxSize()
     )
+}
+
+// Stub implementations for missing components
+
+@Composable
+private fun ProfileSummaryCard(
+    username: String,
+    level: Int,
+    currentXP: Int,
+    maxXP: Int,
+    onClick: () -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.padding(Spacing.md),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = username.take(1).uppercase(),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Column {
+                Text(
+                    text = username,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Level $level",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "$currentXP / $maxXP XP",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DailyGoalsCard(
+    modifier: Modifier = Modifier,
+    wordsProgress: Float,
+    wordsCount: String,
+    quizzesProgress: Float,
+    quizzesCount: String,
+    onClick: () -> Unit
+) {
+    ElevatedCard(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Column(modifier = Modifier.padding(Spacing.md)) {
+            Text(
+                text = "Daily Goals",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(Spacing.sm))
+            Text(
+                text = "Words: $wordsCount",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "Quizzes: $quizzesCount",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
+private fun QuickActionButton(
+    modifier: Modifier = Modifier,
+    emoji: String,
+    title: String,
+    onClick: () -> Unit,
+    backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer
+) {
+    ElevatedCard(
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Spacing.md),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = emoji,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(Spacing.xs))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+private fun AchievementBadgeItem(
+    emoji: String,
+    title: String,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(80.dp)
+            .clip(RoundedCornerShape(CornerRadius.small))
+            .clickable(onClick = onClick)
+            .padding(Spacing.xs),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .background(
+                    MaterialTheme.colorScheme.primaryContainer,
+                    CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = emoji,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        Spacer(modifier = Modifier.height(Spacing.xs))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            maxLines = 2
+        )
+    }
 }
