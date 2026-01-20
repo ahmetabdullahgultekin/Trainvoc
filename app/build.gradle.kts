@@ -182,6 +182,20 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
     kspTest(libs.hilt.compiler)
 
+    // MockK for mocking
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk-android:1.13.8")
+
+    // Turbine for Flow testing
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
+    // Truth for better assertions
+    testImplementation("com.google.truth:truth:1.1.5")
+
+    // Hilt testing
+    testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
+    kspTest("com.google.dagger:hilt-compiler:2.48.1")
+
     // Android Test dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
