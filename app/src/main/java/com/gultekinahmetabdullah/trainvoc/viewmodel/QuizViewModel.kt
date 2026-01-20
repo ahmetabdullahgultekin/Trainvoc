@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -181,7 +182,7 @@ class QuizViewModel @Inject constructor(
             // Update progress based on restored timeLeft
             _progress.value = _timeLeft.value / durationConst.toFloat()
 
-            Log.d(TAG, "State restored: index=$currentIndex, score=${_score.value}, timeLeft=${_timeLeft.value}")
+            Log.d(TAG, "Quiz state restored successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error restoring state: ${e.message}", e)
         }
@@ -239,10 +240,9 @@ class QuizViewModel @Inject constructor(
                 _isQuizFinished.value = false
                 // Start the timer
                 while (_timeLeft.value > 0 && !_isQuizFinished.value) {
-                    // Check if the user has paused the quiz
-                    while (!_isTimeRunning.value) {
-                        delay(100)
-                        continue
+                    // Wait for the timer to resume if paused (using Flow instead of busy-wait)
+                    if (!_isTimeRunning.value) {
+                        _isTimeRunning.first { it } // Suspend until timer is resumed
                     }
                     // Wait for 1 second
                     delay(1000)
@@ -450,7 +450,7 @@ class QuizViewModel @Inject constructor(
                 }
                 quizHistoryDao.insertQuestionResults(results)
 
-                Log.d(TAG, "Quiz history saved: $totalQuestions questions, $correctCount correct")
+                Log.d(TAG, "Quiz history saved successfully")
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving quiz history: ${e.message}", e)
             }
@@ -477,5 +477,15 @@ class QuizViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    /**
+     * Clean up resources when ViewModel is destroyed
+     * Prevents memory leaks by cancelling ongoing quiz jobs
+     */
+    override fun onCleared() {
+        super.onCleared()
+        quizJob?.cancel()
+        quizJob = null
     }
 }
