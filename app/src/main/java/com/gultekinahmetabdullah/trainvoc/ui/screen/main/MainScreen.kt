@@ -240,7 +240,8 @@ fun MainScreen(
                 composable(Route.FAVORITES) {
                     com.gultekinahmetabdullah.trainvoc.ui.screen.features.FavoritesScreen(
                         onBackClick = { navController.popBackStack() },
-                        onPracticeFavorites = { navController.navigate(Route.QUIZ) }
+                        onPracticeFavorites = { navController.navigate(Route.QUIZ) },
+                        onWordClick = { wordId -> navController.navigate(Route.wordDetail(wordId)) }
                     )
                 }
                 composable(Route.LAST_QUIZ_RESULTS) {

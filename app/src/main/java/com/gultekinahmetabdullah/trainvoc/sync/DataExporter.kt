@@ -254,20 +254,42 @@ class DataExporter(
     fun getAvailableBackups(): List<BackupFileInfo> {
         val backupDir = getBackupDirectory()
         return backupDir.listFiles()
-            ?.filter { it.extension == "json" || it.extension == "csv" }
+            ?.filter { it.extension == "json" || it.extension == "csv" || it.extension == "enc" }
             ?.map { file ->
+                // Parse metadata from JSON files
+                val (version, wordCount) = if (file.extension == "json") {
+                    parseBackupMetadata(file)
+                } else {
+                    Pair(1, 0) // CSV and encrypted files don't have embedded metadata
+                }
+
                 BackupFileInfo(
                     fileName = file.name,
                     filePath = file.absolutePath,
                     timestamp = file.lastModified(),
                     sizeBytes = file.length(),
-                    version = 1, // TODO: Parse from file
-                    wordCount = 0, // TODO: Parse from file
+                    version = version,
+                    wordCount = wordCount,
                     isCloudBackup = false
                 )
             }
             ?.sortedByDescending { it.timestamp }
             ?: emptyList()
+    }
+
+    /**
+     * Parse backup metadata from JSON file
+     * @return Pair of (version, wordCount)
+     */
+    private fun parseBackupMetadata(file: File): Pair<Int, Int> {
+        return try {
+            val json = file.readText()
+            val backupData = gson.fromJson(json, BackupData::class.java)
+            Pair(backupData.version, backupData.metadata.totalWords)
+        } catch (e: Exception) {
+            // If parsing fails, return defaults
+            Pair(1, 0)
+        }
     }
 
     /**

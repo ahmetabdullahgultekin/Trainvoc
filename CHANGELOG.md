@@ -33,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Games navigation fully integrated into MainScreen (all 11 games accessible)
   - Cloud backup auto-backup preferences now persisted to SharedPreferences
   - Shake animation for locked quiz levels (better user feedback)
+- **Phase 5 - Backup Metadata & Navigation Polish**:
+  - DataExporter now parses backup file metadata (version and word count from JSON)
+  - FavoritesScreen word click navigation to WordDetailScreen
 
 ### Changed
 - **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
@@ -62,6 +65,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Quiz Menu UX** (Phase 4):
   - Locked levels now shake when tapped (visual feedback)
   - Spring animation with 3 oscillations for clear indication
+- **Backup File Info** (Phase 5):
+  - DataExporter.getAvailableBackups() now parses metadata from JSON backups
+  - parseBackupMetadata() extracts version and totalWords from BackupData
+  - Better backup file listing with actual metadata instead of placeholders
+  - Handles encrypted (.enc) and CSV files gracefully with defaults
+- **FavoritesScreen Navigation** (Phase 5):
+  - Word click now navigates to WordDetailScreen
+  - Full word details accessible from favorites list
 
 ### Fixed
 - Improved accessibility with proper contentDescription usage
@@ -75,6 +86,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Games navigation TODO**: Games fully integrated into main navigation system (Phase 4)
 - **Cloud backup TODO**: Auto-backup preference now properly loaded and saved (Phase 4)
 - **Locked level TODO**: Shake animation implemented for better UX (Phase 4)
+- **DataExporter metadata TODOs**: Version and word count now parsed from backup files (Phase 5)
+- **FavoritesScreen navigation**: Word click callback now properly connected (Phase 5)
 
 ### Restored
 - ✅ **All 11 game UI screens recovered** (was: CRITICAL deletion)
@@ -98,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Completed comprehensive audit of 55 non-implemented/placeholder components
 - Created hooks guide with 8 recommended development hooks
 - Documented game UI deletion and recovery plan
-- Updated CHANGELOG with Phase 1, Phase 2, Phase 3 & Phase 4 implementations
+- Updated CHANGELOG with Phase 1, Phase 2, Phase 3, Phase 4 & Phase 5 implementations
 
 ## [1.2.0] - 2026-01-20
 
