@@ -133,6 +133,7 @@ fun HomeScreen(
     onNavigateToLeaderboard: () -> Unit = {},
     onNavigateToWordProgress: () -> Unit = {},
     onNavigateToDictionary: () -> Unit = {},
+    onNavigateToGames: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
     viewModel: HomeViewModel = hiltViewModel()
@@ -262,6 +263,25 @@ fun HomeScreen(
                         onClick = onNavigateToDictionary,
                         backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
+                }
+            }
+
+            // Memory Games - NEW!
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+                ) {
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "🎮",
+                        title = "Memory Games",
+                        onClick = onNavigateToGames,
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+
+                    // Placeholder for future feature
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
 
