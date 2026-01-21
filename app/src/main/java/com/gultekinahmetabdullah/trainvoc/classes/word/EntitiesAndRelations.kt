@@ -54,7 +54,10 @@ data class Word(
 
     // Favorites fields (Migration 11→12)
     @ColumnInfo(name = "isFavorite") val isFavorite: Boolean = false, // Whether word is favorited
-    @ColumnInfo(name = "favoritedAt") val favoritedAt: Long? = null // Timestamp when favorited
+    @ColumnInfo(name = "favoritedAt") val favoritedAt: Long? = null, // Timestamp when favorited
+
+    // Part of speech field (Migration 14→15)
+    @ColumnInfo(name = "part_of_speech") val partOfSpeech: String? = null // Part of speech (noun, verb, adjective, etc.)
 )
 
 /**

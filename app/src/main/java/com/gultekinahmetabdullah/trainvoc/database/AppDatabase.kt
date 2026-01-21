@@ -59,7 +59,7 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
         QuizHistory::class,
         QuizQuestionResult::class
     ],
-    version = 14
+    version = 15
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -715,6 +715,27 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 14 to 15: Add part of speech field
+         *
+         * PURPOSE:
+         * - Adds part_of_speech column to words table
+         * - Enables displaying actual part of speech instead of hardcoded "noun"
+         * - Supports dictionary enrichment features
+         * - Optional field (nullable) for backward compatibility
+         *
+         * Note: Existing words will have NULL part_of_speech
+         * - Can be populated later via dictionary API
+         * - Can be manually added for important words
+         * - UI should handle NULL gracefully (don't display if not available)
+         */
+        private val MIGRATION_14_15 = object : Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add part_of_speech column to words table
+                database.execSQL("ALTER TABLE words ADD COLUMN part_of_speech TEXT DEFAULT NULL")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -740,7 +761,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_10_11,
                 MIGRATION_11_12,
                 MIGRATION_12_13,
-                MIGRATION_13_14
+                MIGRATION_13_14,
+                MIGRATION_14_15
             )
             .build()
     }

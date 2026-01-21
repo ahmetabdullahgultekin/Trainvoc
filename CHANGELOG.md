@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Phase 5 - Backup Metadata & Navigation Polish**:
   - DataExporter now parses backup file metadata (version and word count from JSON)
   - FavoritesScreen word click navigation to WordDetailScreen
+- **Phase 6 - Analytics & Data Model Enhancements**:
+  - Longest streak calculation in LearningAnalytics (from historical word reviews)
+  - Part of speech field added to Word model (database migration 14→15)
+  - DictionaryScreen displays actual part of speech when available
 
 ### Changed
 - **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
@@ -73,6 +77,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **FavoritesScreen Navigation** (Phase 5):
   - Word click now navigates to WordDetailScreen
   - Full word details accessible from favorites list
+- **Analytics Calculations** (Phase 6):
+  - getLongestStreak() now calculates from historical word review data
+  - Finds longest consecutive day streak across all time
+  - Uses runBlocking to query repository data
+  - Handles edge cases gracefully (no reviews, single day, etc.)
+- **Word Data Model** (Phase 6):
+  - Added partOfSpeech field to Word entity (nullable String)
+  - Database schema version 14→15 migration created
+  - ALTER TABLE adds part_of_speech column with NULL default
+  - DictionaryScreen conditionally displays part of speech
 
 ### Fixed
 - Improved accessibility with proper contentDescription usage
@@ -88,6 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Locked level TODO**: Shake animation implemented for better UX (Phase 4)
 - **DataExporter metadata TODOs**: Version and word count now parsed from backup files (Phase 5)
 - **FavoritesScreen navigation**: Word click callback now properly connected (Phase 5)
+- **Analytics longest streak TODO**: Historical streak calculation implemented (Phase 6)
+- **Part of speech TODO**: Field added to Word model with database migration (Phase 6)
 
 ### Restored
 - ✅ **All 11 game UI screens recovered** (was: CRITICAL deletion)
@@ -111,7 +127,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Completed comprehensive audit of 55 non-implemented/placeholder components
 - Created hooks guide with 8 recommended development hooks
 - Documented game UI deletion and recovery plan
-- Updated CHANGELOG with Phase 1, Phase 2, Phase 3, Phase 4 & Phase 5 implementations
+- Created REMAINING_WORK_ANALYSIS.md with comprehensive future phases roadmap
+- Updated CHANGELOG with Phase 1, Phase 2, Phase 3, Phase 4, Phase 5 & Phase 6 implementations
 
 ## [1.2.0] - 2026-01-20
 
