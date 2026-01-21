@@ -4,6 +4,7 @@ import com.gultekinahmetabdullah.trainvoc.database.ExamDao
 import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.database.WordExamCrossRefDao
+import com.gultekinahmetabdullah.trainvoc.repository.AnalyticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
@@ -11,7 +12,10 @@ import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.PreferencesRepository
+import com.gultekinahmetabdullah.trainvoc.repository.ProgressService
+import com.gultekinahmetabdullah.trainvoc.repository.QuizService
 import com.gultekinahmetabdullah.trainvoc.repository.WordRepository
+import com.gultekinahmetabdullah.trainvoc.repository.WordStatisticsService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,31 +25,24 @@ import javax.inject.Singleton
 
 /**
  * Hilt module providing repository dependencies.
- * Uses Interface Segregation Principle (SOLID) - provides focused interfaces.
+ * Uses Interface Segregation and Single Responsibility Principles (SOLID).
  *
- * Clients can inject only the interface they need:
- * - IWordRepository: Core word data operations
- * - IQuizService: Quiz generation
- * - IWordStatisticsService: Word-level statistics
- * - IProgressService: Progress and level management
- * - IAnalyticsService: Aggregated analytics
+ * Each service is now a separate class handling one concern:
+ * - WordRepository → IWordRepository: Core word data operations
+ * - QuizService → IQuizService: Quiz generation
+ * - WordStatisticsService → IWordStatisticsService: Word-level statistics
+ * - ProgressService → IProgressService: Progress and level management
+ * - AnalyticsService → IAnalyticsService: Aggregated analytics
+ *
+ * This replaces the previous "God Class" pattern where WordRepository
+ * implemented all 5 interfaces.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
-    @Provides
-    @Singleton
-    fun provideWordRepository(
-        wordDao: WordDao,
-        statisticDao: StatisticDao,
-        wordExamCrossRefDao: WordExamCrossRefDao,
-        examDao: ExamDao
-    ): WordRepository {
-        return WordRepository(wordDao, statisticDao, wordExamCrossRefDao, examDao)
-    }
-
-    // Provide segregated interfaces - all bound to the same WordRepository instance
+    // Note: These services are @Singleton classes with @Inject constructors,
+    // so Hilt can provide them directly. We only need to bind interfaces.
 
     @Provides
     @Singleton
@@ -53,19 +50,21 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideQuizService(wordRepository: WordRepository): IQuizService = wordRepository
+    fun provideQuizService(quizService: QuizService): IQuizService = quizService
 
     @Provides
     @Singleton
-    fun provideWordStatisticsService(wordRepository: WordRepository): IWordStatisticsService = wordRepository
+    fun provideWordStatisticsService(
+        wordStatisticsService: WordStatisticsService
+    ): IWordStatisticsService = wordStatisticsService
 
     @Provides
     @Singleton
-    fun provideProgressService(wordRepository: WordRepository): IProgressService = wordRepository
+    fun provideProgressService(progressService: ProgressService): IProgressService = progressService
 
     @Provides
     @Singleton
-    fun provideAnalyticsService(wordRepository: WordRepository): IAnalyticsService = wordRepository
+    fun provideAnalyticsService(analyticsService: AnalyticsService): IAnalyticsService = analyticsService
 }
 
 /**

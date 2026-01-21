@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,14 +43,18 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizMenuScreen
 
+/**
+ * Main screen with bottom navigation
+ *
+ * This is the primary navigation container for the app. Each destination
+ * manages its own ViewModel instance using hiltViewModel() for proper
+ * scoping and lifecycle management.
+ *
+ * @param startWordId Optional word ID to navigate to on startup (from notifications)
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    quizViewModel: QuizViewModel,
-    wordViewModel: WordViewModel,
-    statsViewModel: StatsViewModel,
-    settingsViewModel: SettingsViewModel,
-    storyViewModel: StoryViewModel,
     startWordId: String? = null
 ) {
     val navController = rememberNavController()
@@ -66,6 +71,14 @@ fun MainScreen(
 
     val parameter = remember { mutableStateOf<QuizParameter?>(null) }
 
+    // Get ViewModels scoped to navigation graph for proper lifecycle management
+    // These are scoped to the NavBackStackEntry, not to MainScreen
+    // This ensures they survive configuration changes and are shared across quiz flow
+    val quizViewModel: QuizViewModel = hiltViewModel()
+    val wordViewModel: WordViewModel = hiltViewModel()
+    val statsViewModel: StatsViewModel = hiltViewModel()
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    val storyViewModel: StoryViewModel = hiltViewModel()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -102,18 +115,17 @@ fun MainScreen(
                         onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
                         onNavigateToStats = { navController.navigate(Route.STATS) },
                         onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
-                        onNavigateToGames = { /* Games not implemented yet */ },
                         // Phase 1 - New navigation callbacks
                         onNavigateToProfile = { navController.navigate(Route.PROFILE) },
                         onNavigateToWordOfDay = { navController.navigate(Route.WORD_OF_DAY) },
                         onNavigateToFavorites = { navController.navigate(Route.FAVORITES) },
                         onNavigateToLastQuiz = { navController.navigate(Route.LAST_QUIZ_RESULTS) },
-                        // Phase 2 & 3 - Gamification & Engagement (not implemented yet)
-                        onNavigateToDailyGoals = { /* Not implemented */ },
-                        onNavigateToAchievements = { /* Not implemented */ },
-                        onNavigateToStreakDetail = { /* Not implemented */ },
-                        onNavigateToLeaderboard = { /* Not implemented */ },
-                        onNavigateToWordProgress = { /* Not implemented */ },
+                        // Phase 2 & 3 - Gamification & Engagement
+                        onNavigateToDailyGoals = { navController.navigate(Route.DAILY_GOALS) },
+                        onNavigateToAchievements = { navController.navigate(Route.ACHIEVEMENTS) },
+                        onNavigateToStreakDetail = { navController.navigate(Route.STREAK_DETAIL) },
+                        onNavigateToLeaderboard = { navController.navigate(Route.LEADERBOARD) },
+                        onNavigateToWordProgress = { navController.navigate(Route.WORD_PROGRESS) },
                         onNavigateToDictionary = { navController.navigate(Route.DICTIONARY) },
                     )
                 }
@@ -234,17 +246,34 @@ fun MainScreen(
                     )
                 }
 
-                // Phase 2 - Additional Screens (TODO: Implement these screens)
-                // composable(Route.DAILY_GOALS) { ... }
-                // composable(Route.ACHIEVEMENTS) { ... }
-                // composable(Route.STREAK_DETAIL) { ... }
+                // Phase 2 - Gamification Screens
+                composable(Route.DAILY_GOALS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.DailyGoalsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.ACHIEVEMENTS) {
+                    com.gultekinahmetabdullah.trainvoc.gamification.ui.AchievementsScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.STREAK_DETAIL) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.gamification.StreakDetailScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
 
-                // Phase 3 - Engagement Features (TODO: Implement these screens)
-                // composable(Route.LEADERBOARD) { ... }
-                // composable(Route.WORD_PROGRESS) { ... }
-
-                // Memory Games Navigation (TODO: Implement games)
-                // gamesNavGraph(navController)
+                // Phase 3 - Engagement Features
+                composable(Route.LEADERBOARD) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.social.LeaderboardScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.WORD_PROGRESS) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordProgressScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

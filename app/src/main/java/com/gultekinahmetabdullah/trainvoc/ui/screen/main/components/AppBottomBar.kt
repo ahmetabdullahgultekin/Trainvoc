@@ -22,12 +22,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.SportsEsports
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -100,17 +100,6 @@ fun AppBottomBar(navController: NavController) {
                 onClick = {
                     navController.navigate(Route.QUIZ_EXAM_MENU)
                 }
-            )
-
-            BottomNavItem(
-                label = "Story",
-                selectedIcon = Icons.Filled.School,
-                unselectedIcon = Icons.Outlined.School,
-                isSelected = currentRoute == Route.STORY,
-                onClick = {
-                    navController.navigate(Route.STORY)
-                },
-                isCenter = true
             )
 
             BottomNavItem(

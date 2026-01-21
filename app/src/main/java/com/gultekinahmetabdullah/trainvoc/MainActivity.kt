@@ -183,11 +183,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Route.MAIN) {
                             MainScreen(
-                                quizViewModel = quizViewModel,
-                                wordViewModel = wordViewModel,
-                                statsViewModel = statsViewModel,
-                                settingsViewModel = settingsViewModel,
-                                storyViewModel = storyViewModel,
                                 startWordId = wordIdFromNotification
                             )
                         }

@@ -15,12 +15,13 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
 import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
+import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +39,8 @@ class QuizViewModel @Inject constructor(
     private val wordStatisticsService: IWordStatisticsService,
     private val progressService: IProgressService,
     private val quizHistoryDao: QuizHistoryDao,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     companion object {
@@ -181,7 +183,7 @@ class QuizViewModel @Inject constructor(
             // Update progress based on restored timeLeft
             _progress.value = _timeLeft.value / durationConst.toFloat()
 
-            Log.d(TAG, "State restored: index=$currentIndex, score=${_score.value}, timeLeft=${_timeLeft.value}")
+            Log.d(TAG, "Quiz state restored successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error restoring state: ${e.message}", e)
         }
@@ -215,7 +217,7 @@ class QuizViewModel @Inject constructor(
             // Fetch 10 questions from the database until user reaches the end of the list
             // Start the timer for each question
             // Timer will decrease the timeLeft variable every second
-            quizJob = viewModelScope.launch(Dispatchers.IO) {
+            quizJob = viewModelScope.launch(dispatchers.io) {
                 // Initialize the variables
                 // Declare the quiz type
                 _quiz.value = quiz
@@ -239,10 +241,9 @@ class QuizViewModel @Inject constructor(
                 _isQuizFinished.value = false
                 // Start the timer
                 while (_timeLeft.value > 0 && !_isQuizFinished.value) {
-                    // Check if the user has paused the quiz
-                    while (!_isTimeRunning.value) {
-                        delay(100)
-                        continue
+                    // Wait for the timer to resume if paused (using Flow instead of busy-wait)
+                    if (!_isTimeRunning.value) {
+                        _isTimeRunning.first { it } // Suspend until timer is resumed
                     }
                     // Wait for 1 second
                     delay(1000)
@@ -282,7 +283,7 @@ class QuizViewModel @Inject constructor(
             _currentQuestion.value = _quizQuestions.value[currentIndex]
             currentIndex++
             _currentQuestionNumber.value = currentIndex
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 _currentQuestion.value?.correctWord?.let { correctWord ->
                     _currentWordStats.value = wordStatisticsService.getWordStats(correctWord)
                 }
@@ -299,14 +300,14 @@ class QuizViewModel @Inject constructor(
         val currentStats = _currentWordStats.value ?: return null
         pauseQuiz()
         val secondsSpent = durationConst - _timeLeft.value
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             wordStatisticsService.updateLastAnswered(currentQuestion.correctWord.word)
             wordStatisticsService.updateSecondsSpent(secondsSpent, currentQuestion.correctWord)
         }
         if (choice == null) {
             // Skipped - track for history
             skippedCount++
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
                         skippedCount = currentStats.skippedCount + 1
@@ -323,7 +324,7 @@ class QuizViewModel @Inject constructor(
             // Track for history
             questionResults.add(Pair(currentQuestion.correctWord.word, true))
             // Update the entity stats in the database
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
                         correctCount = currentStats.correctCount + 1
@@ -337,7 +338,7 @@ class QuizViewModel @Inject constructor(
             wrongCount++
             // Track for history
             questionResults.add(Pair(currentQuestion.correctWord.word, false))
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
                         wrongCount = currentStats.wrongCount + 1
@@ -425,7 +426,7 @@ class QuizViewModel @Inject constructor(
             }
         } ?: "UNKNOWN"
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             try {
                 val quizHistory = QuizHistory(
                     timestamp = System.currentTimeMillis(),
@@ -450,7 +451,7 @@ class QuizViewModel @Inject constructor(
                 }
                 quizHistoryDao.insertQuestionResults(results)
 
-                Log.d(TAG, "Quiz history saved: $totalQuestions questions, $correctCount correct")
+                Log.d(TAG, "Quiz history saved successfully")
             } catch (e: Exception) {
                 Log.e(TAG, "Error saving quiz history: ${e.message}", e)
             }
@@ -458,7 +459,7 @@ class QuizViewModel @Inject constructor(
     }
 
     fun collectQuizStats(parameter: QuizParameter) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             when (parameter) {
                 is QuizParameter.Level -> {
                     val total = progressService.getWordCountByLevel(parameter.wordLevel.name)
@@ -477,5 +478,15 @@ class QuizViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    /**
+     * Clean up resources when ViewModel is destroyed
+     * Prevents memory leaks by cancelling ongoing quiz jobs
+     */
+    override fun onCleared() {
+        super.onCleared()
+        quizJob?.cancel()
+        quizJob = null
     }
 }
