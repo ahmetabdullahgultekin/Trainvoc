@@ -337,7 +337,7 @@ fun StreakProgressIndicator(
         AnimatedLinearProgress(
             progress = progress,
             height = 10.dp,
-            color = Color(0xFFFF6F00) // Fire orange
+            color = MaterialTheme.colorScheme.error // Fire/streak urgency color
         )
     }
 }

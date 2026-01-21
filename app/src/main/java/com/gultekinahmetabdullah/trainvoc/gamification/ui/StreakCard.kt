@@ -42,12 +42,8 @@ fun StreakCard(
         label = "fire_scale"
     )
 
-    val fireColors = when {
-        streak.currentStreak >= 100 -> listOf(Color(0xFFFF6B35), Color(0xFFFF9F1C), Color(0xFFFFE66D))
-        streak.currentStreak >= 30 -> listOf(Color(0xFFFF6B35), Color(0xFFFF9F1C))
-        streak.currentStreak >= 7 -> listOf(Color(0xFFFF6B35), Color(0xFFFFA07A))
-        else -> listOf(Color(0xFFFF6347), Color(0xFFFF7F50))
-    }
+    // Note: Fire colors determined by streak length would go here if needed for background gradient
+    // Currently using theme's primaryContainer color for consistent theming
 
     Card(
         modifier = modifier.fillMaxWidth(),

@@ -19,6 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.ui.theme.StatsColors
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCorrect
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -96,7 +98,7 @@ fun WordProgressScreen(
                             value = uiState.learnedWords.toString(),
                             label = "Words Learned",
                             icon = Icons.Default.CheckCircle,
-                            color = Color(0xFF4CAF50)
+                            color = MaterialTheme.colorScheme.statsCorrect
                         )
 
                         ProgressStat(
@@ -532,15 +534,15 @@ data class ReviewSchedule(
     val thisMonth: Int
 )
 
-// Extension for WordLevel colors
+// Extension for WordLevel colors - uses theme-aware CEFR colors
 val WordLevel.color: Color
     get() = when (this) {
-        WordLevel.A1 -> Color(0xFF4CAF50) // Green
-        WordLevel.A2 -> Color(0xFF8BC34A) // Light Green
-        WordLevel.B1 -> Color(0xFFFFC107) // Amber
-        WordLevel.B2 -> Color(0xFFFF9800) // Orange
-        WordLevel.C1 -> Color(0xFFFF5722) // Deep Orange
-        WordLevel.C2 -> Color(0xFFF44336) // Red
+        WordLevel.A1 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.A1
+        WordLevel.A2 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.A2
+        WordLevel.B1 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.B1
+        WordLevel.B2 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.B2
+        WordLevel.C1 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.C1
+        WordLevel.C2 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.C2
     }
 
 // Mock data generators
@@ -556,30 +558,31 @@ private fun generateMockLevelProgress(): List<LevelProgress> {
 }
 
 private fun generateMockWordStatus(): List<WordStatus> {
+    // Using light variants for mock data (will be styled by theme at runtime)
     return listOf(
         WordStatus(
             "Mastered",
             85,
             Icons.Default.CheckCircle,
-            Color(0xFF4CAF50)
+            StatsColors.correctLight
         ),
         WordStatus(
             "Learning",
             42,
             Icons.Default.School,
-            Color(0xFFFFC107)
+            StatsColors.goldLight
         ),
         WordStatus(
             "Struggling",
             18,
             Icons.Default.Warning,
-            Color(0xFFFF5722)
+            StatsColors.incorrectLight
         ),
         WordStatus(
             "Not Started",
             705,
             Icons.Default.Circle,
-            Color(0xFF9E9E9E)
+            StatsColors.skippedLight
         )
     )
 }
