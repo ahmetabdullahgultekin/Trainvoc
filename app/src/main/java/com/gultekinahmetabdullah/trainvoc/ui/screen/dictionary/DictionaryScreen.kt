@@ -388,7 +388,9 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                                         onFavoriteClick = {
                                             wordViewModel.toggleFavorite(word.word, !word.isFavorite)
                                         },
-                                        onAudioClick = { /* TODO: Implement audio */ },
+                                        onAudioClick = {
+                                            wordViewModel.speakWord(word.word)
+                                        },
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = Spacing.xs)
