@@ -20,6 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -57,7 +60,7 @@ import kotlin.math.roundToInt
  * - Animations: Staggered stats entry, animated XP progress, count-up numbers
  * - Additional info: Member since, total XP, streaks
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(
     onBackClick: () -> Unit = {},
@@ -70,6 +73,15 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+
+    // Responsive design: Determine grid columns based on screen width
+    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val gridColumns = when {
+        screenWidthDp >= 840 -> 4  // Large tablets/desktops
+        screenWidthDp >= 600 -> 3  // Small tablets/landscape
+        else -> 2                  // Phones
+    }
 
     // Get username from SharedPreferences
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
@@ -350,12 +362,12 @@ fun StatsGridSection(
             modifier = Modifier.padding(bottom = Spacing.md)
         )
 
-        // 2x2 Grid with LazyVerticalGrid
+        // Responsive Grid with LazyVerticalGrid (2/3/4 columns based on screen size)
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(gridColumns),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.height(350.dp), // Fixed height for 2 rows
+            modifier = Modifier.height(if (gridColumns == 4) 200.dp else 350.dp), // Adjust height for 1 or 2 rows
             userScrollEnabled = false
         ) {
             // Words Learned
