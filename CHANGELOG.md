@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Practice quiz feature from WordDetailScreen
   - Share word functionality via Android Intent
   - Text-to-Speech integration in WordViewModel
+- **Phase 3 - Dictionary & Navigation Enhancements**:
+  - DictionaryScreen practice button now navigates to quiz
+  - DictionaryScreen share button via Android Intent
+  - Synonym navigation in WordDetailScreen (tap synonym → navigate to synonym's detail page)
 
 ### Changed
 - **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
@@ -39,6 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Practice button now navigates to quiz with word parameter
   - Share button creates formatted share text with word info
   - Review missed words navigation now functional
+  - Synonym chips now clickable with navigation to synonym detail pages
+- **Enhanced DictionaryScreen**:
+  - Practice button in dropdown menu navigates to quiz
+  - Share button in dropdown menu shares word via Intent
+  - Both features match WordDetailScreen functionality
 
 ### Fixed
 - Improved accessibility with proper contentDescription usage
@@ -47,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Missing TTS functionality**: Connected audio buttons to TextToSpeechService
 - **Placeholder implementations**: Share and practice features now fully functional
 - **Review navigation**: LastQuizResultsScreen review button now routes correctly
+- **DictionaryScreen TODOs**: Practice and share buttons now fully implemented (Phase 3)
+- **Synonym navigation**: WordDetailScreen synonyms are now clickable and navigate correctly (Phase 3)
 
 ### Restored
 - ✅ **All 11 game UI screens recovered** (was: CRITICAL deletion)
@@ -70,7 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Completed comprehensive audit of 55 non-implemented/placeholder components
 - Created hooks guide with 8 recommended development hooks
 - Documented game UI deletion and recovery plan
-- Updated CHANGELOG with Phase 1 & Phase 2 implementations
+- Updated CHANGELOG with Phase 1, Phase 2 & Phase 3 implementations
 
 ## [1.2.0] - 2026-01-20
 

@@ -107,7 +107,8 @@ import kotlinx.coroutines.launch
 fun WordDetailScreen(
     wordId: String,
     wordViewModel: WordViewModel,
-    onNavigateToQuiz: (String) -> Unit = {}
+    onNavigateToQuiz: (String) -> Unit = {},
+    onNavigateToSynonym: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -273,7 +274,7 @@ fun WordDetailScreen(
                     SynonymsSection(
                         synonyms = synonyms,
                         onSynonymClick = { synonym ->
-                            // TODO: Navigate to synonym's detail page
+                            onNavigateToSynonym(synonym)
                         }
                     )
                 }
