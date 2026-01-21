@@ -273,7 +273,7 @@ private fun SettingsCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = null,
+                        contentDescription = "Accessibility icon",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp)
                     )
@@ -440,7 +440,7 @@ private fun AccessibilityPreviewCard(
                 ) {
                     Icon(
                         Icons.Default.Check,
-                        contentDescription = null,
+                        contentDescription = "Accessibility icon",
                         tint = if (highContrast) Color.Black else Color.White,
                         modifier = Modifier.size(20.dp)
                     )

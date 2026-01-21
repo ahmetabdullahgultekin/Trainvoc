@@ -194,7 +194,7 @@ private fun StreakDayItem(
             ) {
                 Icon(
                     imageVector = if (isActive) Icons.Default.Check else Icons.Default.Close,
-                    contentDescription = null,
+                    contentDescription = "Streak icon",
                     tint = if (isActive)
                         MaterialTheme.colorScheme.onPrimaryContainer
                     else

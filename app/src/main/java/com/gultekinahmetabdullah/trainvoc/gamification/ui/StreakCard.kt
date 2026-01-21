@@ -145,7 +145,7 @@ fun StreakCard(
                         onClick = onStreakFreezeClick,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.AcUnit, contentDescription = null)
+                        Icon(Icons.Default.AcUnit, contentDescription = "Streak freeze - preserve your streak")
                         Spacer(Modifier.width(8.dp))
                         Text("Use Streak Freeze (Premium)")
                     }
@@ -272,7 +272,7 @@ fun StreakMilestoneDialog(
         },
         confirmButton = {
             Button(onClick = onShare) {
-                Icon(Icons.Default.Share, contentDescription = null)
+                Icon(Icons.Default.Share, contentDescription = "Share streak achievement")
                 Spacer(Modifier.width(8.dp))
                 Text("Share Achievement")
             }

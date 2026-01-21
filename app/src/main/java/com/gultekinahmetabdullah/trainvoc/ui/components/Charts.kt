@@ -603,7 +603,7 @@ fun MilestoneTimeline(
                     ) {
                         Icon(
                             imageVector = milestone.icon,
-                            contentDescription = null,
+                            contentDescription = "Chart icon",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
