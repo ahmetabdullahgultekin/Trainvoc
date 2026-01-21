@@ -42,6 +42,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.R
@@ -58,6 +59,15 @@ fun QuizMenuScreen(
 ) {
     val quizStats by viewModel.quizStats.collectAsState()
     val hasAnyQuizHistory by viewModel.hasAnyQuizHistory.collectAsState()
+
+    // Responsive design: Determine grid columns based on screen width
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val gridColumns = when {
+        screenWidthDp >= 840 -> 3  // Large tablets/desktops - 3 columns
+        screenWidthDp >= 600 -> 3  // Small tablets/landscape - 3 columns
+        else -> 2                  // Phones - 2 columns
+    }
 
     Box(
         modifier = Modifier
@@ -95,7 +105,7 @@ fun QuizMenuScreen(
 
             // Quiz Grid
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(gridColumns),
                 verticalArrangement = Arrangement.spacedBy(Spacing.md),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.md),
                 modifier = Modifier.fillMaxSize()
