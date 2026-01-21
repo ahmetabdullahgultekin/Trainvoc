@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - DictionaryScreen practice button now navigates to quiz
   - DictionaryScreen share button via Android Intent
   - Synonym navigation in WordDetailScreen (tap synonym → navigate to synonym's detail page)
+- **Phase 4 - Polish & Integration**:
+  - Games navigation fully integrated into MainScreen (all 11 games accessible)
+  - Cloud backup auto-backup preferences now persisted to SharedPreferences
+  - Shake animation for locked quiz levels (better user feedback)
 
 ### Changed
 - **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
@@ -48,6 +52,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Practice button in dropdown menu navigates to quiz
   - Share button in dropdown menu shares word via Intent
   - Both features match WordDetailScreen functionality
+- **Games Integration** (Phase 4):
+  - gamesNavGraph extension now called in MainScreen NavHost
+  - All 11 game screens accessible via navigation system
+  - HomeScreen games button now fully functional
+- **Cloud Backup Settings** (Phase 4):
+  - Auto-backup preference persisted across app restarts
+  - Uses SharedPreferences for reliable storage
+- **Quiz Menu UX** (Phase 4):
+  - Locked levels now shake when tapped (visual feedback)
+  - Spring animation with 3 oscillations for clear indication
 
 ### Fixed
 - Improved accessibility with proper contentDescription usage
@@ -58,6 +72,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Review navigation**: LastQuizResultsScreen review button now routes correctly
 - **DictionaryScreen TODOs**: Practice and share buttons now fully implemented (Phase 3)
 - **Synonym navigation**: WordDetailScreen synonyms are now clickable and navigate correctly (Phase 3)
+- **Games navigation TODO**: Games fully integrated into main navigation system (Phase 4)
+- **Cloud backup TODO**: Auto-backup preference now properly loaded and saved (Phase 4)
+- **Locked level TODO**: Shake animation implemented for better UX (Phase 4)
 
 ### Restored
 - ✅ **All 11 game UI screens recovered** (was: CRITICAL deletion)
@@ -81,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Completed comprehensive audit of 55 non-implemented/placeholder components
 - Created hooks guide with 8 recommended development hooks
 - Documented game UI deletion and recovery plan
-- Updated CHANGELOG with Phase 1, Phase 2 & Phase 3 implementations
+- Updated CHANGELOG with Phase 1, Phase 2, Phase 3 & Phase 4 implementations
 
 ## [1.2.0] - 2026-01-20
 
