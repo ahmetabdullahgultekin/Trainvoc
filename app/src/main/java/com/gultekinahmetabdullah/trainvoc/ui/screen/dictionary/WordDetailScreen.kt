@@ -206,7 +206,9 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                         isFavorite = !isFavorite
                         wordViewModel.toggleFavorite(currentWord.word, isFavorite)
                     },
-                    onAudioClick = { /* TODO: Implement TTS */ }
+                    onAudioClick = {
+                        wordViewModel.speakWord(currentWord.word)
+                    }
                 )
             }
         }
@@ -243,7 +245,9 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                 ExamplesSection(
                     word = currentWord.word,
                     examples = getExamples(currentWord.word, currentWord.meaning),
-                    onExampleClick = { /* TODO: Implement TTS for example */ }
+                    onExampleClick = { example ->
+                        wordViewModel.speakWord(example)
+                    }
                 )
             }
         }
