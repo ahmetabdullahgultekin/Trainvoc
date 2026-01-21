@@ -144,7 +144,7 @@ fun SyncStateIcon(syncState: SyncState) {
         is SyncState.Idle -> {
             Icon(
                 Icons.Default.CloudQueue,
-                contentDescription = null,
+                contentDescription = "Sync idle - ready to sync",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(32.dp)
             )
@@ -167,7 +167,7 @@ fun SyncStateIcon(syncState: SyncState) {
 
             Icon(
                 Icons.Default.Sync,
-                contentDescription = null,
+                contentDescription = "Syncing in progress",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(32.dp)
@@ -178,7 +178,7 @@ fun SyncStateIcon(syncState: SyncState) {
         is SyncState.Synced -> {
             Icon(
                 Icons.Default.CloudDone,
-                contentDescription = null,
+                contentDescription = "Sync complete - all data synced",
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(32.dp)
             )
@@ -187,7 +187,7 @@ fun SyncStateIcon(syncState: SyncState) {
         is SyncState.Error -> {
             Icon(
                 Icons.Default.CloudOff,
-                contentDescription = null,
+                contentDescription = "Sync error - unable to sync",
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(32.dp)
             )
@@ -196,7 +196,7 @@ fun SyncStateIcon(syncState: SyncState) {
         is SyncState.ConflictDetected -> {
             Icon(
                 Icons.Default.Warning,
-                contentDescription = null,
+                contentDescription = "Sync conflict detected - manual resolution needed",
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(32.dp)
             )
@@ -225,7 +225,7 @@ fun StatusIndicatorChip(
         ) {
             Icon(
                 icon,
-                contentDescription = null,
+                contentDescription = label,
                 tint = color,
                 modifier = Modifier.size(16.dp)
             )
@@ -290,7 +290,7 @@ fun SyncStatusIndicator(
             if (onClick != null) {
                 Icon(
                     Icons.Default.ChevronRight,
-                    contentDescription = null,
+                    contentDescription = "View sync details",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -381,7 +381,7 @@ fun LastSyncTime(
     ) {
         Icon(
             Icons.Default.Schedule,
-            contentDescription = null,
+            contentDescription = "Last sync time",
             modifier = Modifier.size(16.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
