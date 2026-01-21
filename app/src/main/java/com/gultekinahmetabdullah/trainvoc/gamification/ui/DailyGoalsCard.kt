@@ -16,6 +16,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.gamification.DailyGoal
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCorrect
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsTime
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsCategory
+import com.gultekinahmetabdullah.trainvoc.ui.theme.statsAverage
 
 /**
  * Daily goals card with progress bars
@@ -85,7 +89,7 @@ fun DailyGoalsCard(
                 current = goals.wordsToday,
                 target = goals.wordsGoal,
                 progress = goals.getWordsProgress(),
-                color = Color(0xFF4CAF50)
+                color = MaterialTheme.colorScheme.statsCorrect
             )
 
             GoalProgressRow(
@@ -94,7 +98,7 @@ fun DailyGoalsCard(
                 current = goals.reviewsToday,
                 target = goals.reviewsGoal,
                 progress = goals.getReviewsProgress(),
-                color = Color(0xFF2196F3)
+                color = MaterialTheme.colorScheme.statsTime
             )
 
             GoalProgressRow(
@@ -103,7 +107,7 @@ fun DailyGoalsCard(
                 current = goals.quizzesToday,
                 target = goals.quizzesGoal,
                 progress = goals.getQuizzesProgress(),
-                color = Color(0xFFFF9800)
+                color = MaterialTheme.colorScheme.statsCategory
             )
 
             GoalProgressRow(
@@ -112,7 +116,7 @@ fun DailyGoalsCard(
                 current = goals.timeTodayMinutes,
                 target = goals.timeGoalMinutes,
                 progress = goals.getTimeProgress(),
-                color = Color(0xFF9C27B0),
+                color = MaterialTheme.colorScheme.statsAverage,
                 unit = "min"
             )
 
