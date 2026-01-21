@@ -591,11 +591,14 @@ fun DictionaryWordCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    Text(
-                        text = "noun", // TODO: Add part of speech to Word model
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    // Display part of speech if available
+                    word.partOfSpeech?.let { pos ->
+                        Text(
+                            text = pos,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
                     if (word.level != null) {
                         CEFRLevelChip(level = word.level.name)
