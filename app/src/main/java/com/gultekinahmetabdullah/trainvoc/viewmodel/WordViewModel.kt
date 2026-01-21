@@ -8,6 +8,7 @@ import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import com.gultekinahmetabdullah.trainvoc.utils.InputValidation
+import com.gultekinahmetabdullah.trainvoc.audio.TextToSpeechService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +40,8 @@ import javax.inject.Inject
 class WordViewModel @Inject constructor(
     private val repository: IWordRepository,
     private val wordStatisticsService: IWordStatisticsService,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val ttsService: TextToSpeechService
 ) : ViewModel() {
 
     private val _words = MutableStateFlow<List<WordAskedInExams>>(emptyList())
@@ -167,6 +169,30 @@ class WordViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io) {
             val timestamp = if (isFavorite) System.currentTimeMillis() else null
             repository.setFavorite(wordId, isFavorite, timestamp)
+        }
+    }
+
+    /**
+     * Speak a word using Text-to-Speech
+     *
+     * Initializes TTS if needed and speaks the given text.
+     *
+     * @param text The text to speak (word or sentence)
+     * @param language Language code (default: "en")
+     */
+    fun speakWord(text: String, language: String = "en") {
+        viewModelScope.launch(dispatchers.main) {
+            try {
+                // Initialize TTS if not already done
+                if (!ttsService.isInitialized) {
+                    ttsService.initialize()
+                }
+                // Speak the text
+                ttsService.speak(text, language)
+            } catch (e: Exception) {
+                // Silent fail - TTS is non-critical feature
+                android.util.Log.e("WordViewModel", "TTS error: ${e.message}")
+            }
         }
     }
 }

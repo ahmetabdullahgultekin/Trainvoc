@@ -8,8 +8,138 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **StateComponents.kt**: Unified loading/error/empty state components for consistent UX
+- **Comprehensive documentation**:
+  - NON_IMPLEMENTED_COMPONENTS_AUDIT.md (55 issues documented)
+  - RECOMMENDED_HOOKS_GUIDE.md (8 essential hooks)
+  - GAMES_UI_INVESTIGATION.md (critical discovery report)
 - Open source documentation (README, CONTRIBUTING, LICENSE)
 - GitHub issue and PR templates
+- **🎮 Games Restoration (Phase 1)**:
+  - Restored all 11 game UI screens from git history (~5,000+ lines)
+  - Created TutorialViewModel stub implementation
+  - Created TutorialOverlay stub implementation
+  - Restored GamesNavigation module
+- **Phase 2 - Quick Wins**:
+  - Games button on HomeScreen with proper navigation
+  - Practice quiz feature from WordDetailScreen
+  - Share word functionality via Android Intent
+  - Text-to-Speech integration in WordViewModel
+- **Phase 3 - Dictionary & Navigation Enhancements**:
+  - DictionaryScreen practice button now navigates to quiz
+  - DictionaryScreen share button via Android Intent
+  - Synonym navigation in WordDetailScreen (tap synonym → navigate to synonym's detail page)
+- **Phase 4 - Polish & Integration**:
+  - Games navigation fully integrated into MainScreen (all 11 games accessible)
+  - Cloud backup auto-backup preferences now persisted to SharedPreferences
+  - Shake animation for locked quiz levels (better user feedback)
+- **Phase 5 - Backup Metadata & Navigation Polish**:
+  - DataExporter now parses backup file metadata (version and word count from JSON)
+  - FavoritesScreen word click navigation to WordDetailScreen
+- **Phase 6 - Analytics & Data Model Enhancements**:
+  - Longest streak calculation in LearningAnalytics (from historical word reviews)
+  - Part of speech field added to Word model (database migration 14→15)
+  - DictionaryScreen displays actual part of speech when available
+
+### Changed
+- **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
+  - ProfileScreen.kt: 6 color fixes (stats icons, streak icons)
+  - LastQuizResultsScreen.kt: 4 color fixes (XP, progress, performance bars)
+- Enhanced dark mode consistency across ProfileScreen and LastQuizResultsScreen
+- **TTS Integration**: Connected TextToSpeechService to UI
+  - WordDetailScreen: Audio button for word pronunciation
+  - WordDetailScreen: Audio buttons for example sentences
+  - DictionaryScreen: Audio button for word pronunciation
+- **Enhanced WordDetailScreen**:
+  - Practice button now navigates to quiz with word parameter
+  - Share button creates formatted share text with word info
+  - Review missed words navigation now functional
+  - Synonym chips now clickable with navigation to synonym detail pages
+- **Enhanced DictionaryScreen**:
+  - Practice button in dropdown menu navigates to quiz
+  - Share button in dropdown menu shares word via Intent
+  - Both features match WordDetailScreen functionality
+- **Games Integration** (Phase 4):
+  - gamesNavGraph extension now called in MainScreen NavHost
+  - All 11 game screens accessible via navigation system
+  - HomeScreen games button now fully functional
+- **Cloud Backup Settings** (Phase 4):
+  - Auto-backup preference persisted across app restarts
+  - Uses SharedPreferences for reliable storage
+- **Quiz Menu UX** (Phase 4):
+  - Locked levels now shake when tapped (visual feedback)
+  - Spring animation with 3 oscillations for clear indication
+- **Backup File Info** (Phase 5):
+  - DataExporter.getAvailableBackups() now parses metadata from JSON backups
+  - parseBackupMetadata() extracts version and totalWords from BackupData
+  - Better backup file listing with actual metadata instead of placeholders
+  - Handles encrypted (.enc) and CSV files gracefully with defaults
+- **FavoritesScreen Navigation** (Phase 5):
+  - Word click now navigates to WordDetailScreen
+  - Full word details accessible from favorites list
+- **Analytics Calculations** (Phase 6):
+  - getLongestStreak() now calculates from historical word review data
+  - Finds longest consecutive day streak across all time
+  - Uses runBlocking to query repository data
+  - Handles edge cases gracefully (no reviews, single day, etc.)
+- **Word Data Model** (Phase 6):
+  - Added partOfSpeech field to Word entity (nullable String)
+  - Database schema version 14→15 migration created
+  - ALTER TABLE adds part_of_speech column with NULL default
+  - DictionaryScreen conditionally displays part of speech
+
+### Fixed
+- Improved accessibility with proper contentDescription usage
+- Better dark mode support with MaterialTheme.colorScheme usage
+- **Games compilation errors**: Resolved TutorialViewModel dependencies
+- **Missing TTS functionality**: Connected audio buttons to TextToSpeechService
+- **Placeholder implementations**: Share and practice features now fully functional
+- **Review navigation**: LastQuizResultsScreen review button now routes correctly
+- **DictionaryScreen TODOs**: Practice and share buttons now fully implemented (Phase 3)
+- **Synonym navigation**: WordDetailScreen synonyms are now clickable and navigate correctly (Phase 3)
+- **Games navigation TODO**: Games fully integrated into main navigation system (Phase 4)
+- **Cloud backup TODO**: Auto-backup preference now properly loaded and saved (Phase 4)
+- **Locked level TODO**: Shake animation implemented for better UX (Phase 4)
+- **DataExporter metadata TODOs**: Version and word count now parsed from backup files (Phase 5)
+- **FavoritesScreen navigation**: Word click callback now properly connected (Phase 5)
+- **Analytics longest streak TODO**: Historical streak calculation implemented (Phase 6)
+- **Part of speech TODO**: Field added to Word model with database migration (Phase 6)
+
+### Restored
+- ✅ **All 11 game UI screens recovered** (was: CRITICAL deletion)
+  - MultipleChoiceGameScreen (297 lines)
+  - WordScrambleScreen (316 lines)
+  - FillInTheBlankScreen (396 lines)
+  - FlipCardsScreen (284 lines)
+  - SpeedMatchScreen (299 lines)
+  - PictureMatchScreen (349 lines)
+  - TranslationRaceScreen (405 lines)
+  - SpellingChallengeScreen (390 lines)
+  - ListeningQuizScreen (370 lines)
+  - ContextCluesScreen (448 lines)
+  - GamesMenuScreen (443 lines)
+- ✅ All 11 game ViewModels restored
+- ✅ GamesNavigation module restored (132 lines)
+- ✅ Common game components (GameScreens.kt, 724 lines)
+- **Total restored**: ~6,240 lines of production code
+
+### Documentation
+- Completed comprehensive audit of 55 non-implemented/placeholder components
+- Created hooks guide with 8 recommended development hooks
+- Documented game UI deletion and recovery plan
+- Created REMAINING_WORK_ANALYSIS.md with comprehensive future phases roadmap
+- Updated CHANGELOG with Phase 1, Phase 2, Phase 3, Phase 4, Phase 5 & Phase 6 implementations
+
+## [1.2.0] - 2026-01-20
+
+### Removed
+- ⚠️ **Breaking**: All game UI screens removed due to compilation errors
+  - Affected: GamesMenuScreen and 11 individual game screens
+  - Reason: Missing TutorialViewModel dependencies
+  - Impact: Memory games feature no longer accessible
+  - Total deleted: ~5,000+ lines of code
+- Tutorial system and related components
+- Games navigation module
 
 ## [1.1.2] - 2024-01-10
 

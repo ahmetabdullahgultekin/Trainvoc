@@ -1,8 +1,10 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.Constraints
@@ -61,6 +63,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class CloudBackupViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val authManager: GoogleAuthManager,
     private val backupService: DriveBackupService,
     private val workManager: WorkManager
@@ -68,6 +71,8 @@ class CloudBackupViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "CloudBackupViewModel"
+        private const val PREFS_NAME = "cloud_backup_prefs"
+        private const val KEY_AUTO_BACKUP_ENABLED = "auto_backup_enabled"
     }
 
     // Authentication state
@@ -92,8 +97,9 @@ class CloudBackupViewModel @Inject constructor(
 
     init {
         checkAuthState()
-        // TODO: Load auto-backup preference from SharedPreferences
-        _autoBackupEnabled.value = false
+        // Load auto-backup preference from SharedPreferences
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        _autoBackupEnabled.value = prefs.getBoolean(KEY_AUTO_BACKUP_ENABLED, false)
     }
 
     /**
@@ -289,7 +295,9 @@ class CloudBackupViewModel @Inject constructor(
                 _message.value = "Auto-backup disabled"
             }
 
-            // TODO: Save preference to SharedPreferences
+            // Save preference to SharedPreferences
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().putBoolean(KEY_AUTO_BACKUP_ENABLED, enabled).apply()
         }
     }
 

@@ -104,7 +104,13 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
+fun WordDetailScreen(
+    wordId: String,
+    wordViewModel: WordViewModel,
+    onNavigateToQuiz: (String) -> Unit = {},
+    onNavigateToSynonym: (String) -> Unit = {}
+) {
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var word by remember {
         mutableStateOf<com.gultekinahmetabdullah.trainvoc.classes.word.Word?>(null)
@@ -206,7 +212,9 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                         isFavorite = !isFavorite
                         wordViewModel.toggleFavorite(currentWord.word, isFavorite)
                     },
-                    onAudioClick = { /* TODO: Implement TTS */ }
+                    onAudioClick = {
+                        wordViewModel.speakWord(currentWord.word)
+                    }
                 )
             }
         }
@@ -243,7 +251,9 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                 ExamplesSection(
                     word = currentWord.word,
                     examples = getExamples(currentWord.word, currentWord.meaning),
-                    onExampleClick = { /* TODO: Implement TTS for example */ }
+                    onExampleClick = { example ->
+                        wordViewModel.speakWord(example)
+                    }
                 )
             }
         }
@@ -264,7 +274,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                     SynonymsSection(
                         synonyms = synonyms,
                         onSynonymClick = { synonym ->
-                            // TODO: Navigate to synonym's detail page
+                            onNavigateToSynonym(synonym)
                         }
                     )
                 }
@@ -327,8 +337,30 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
                         isFavorite = !isFavorite
                         wordViewModel.toggleFavorite(currentWord.word, isFavorite)
                     },
-                    onPracticeClick = { /* TODO: Launch practice quiz with this word */ },
-                    onShareClick = { /* TODO: Share word definition */ }
+                    onPracticeClick = {
+                        // Launch practice quiz with this specific word
+                        onNavigateToQuiz(currentWord.word)
+                    },
+                    onShareClick = {
+                        // Share word definition using Android share intent
+                        val shareText = buildString {
+                            append("📚 ${currentWord.word}\n")
+                            append("📖 ${currentWord.meaning}\n")
+                            if (exams.isNotEmpty()) {
+                                append("🎓 Exams: ${exams.joinToString(", ")}\n")
+                            }
+                            append("\n✨ Shared from Trainvoc")
+                        }
+                        val shareIntent = android.content.Intent().apply {
+                            action = android.content.Intent.ACTION_SEND
+                            type = "text/plain"
+                            putExtra(android.content.Intent.EXTRA_TEXT, shareText)
+                            putExtra(android.content.Intent.EXTRA_SUBJECT, "Word: ${currentWord.word}")
+                        }
+                        context.startActivity(
+                            android.content.Intent.createChooser(shareIntent, "Share word")
+                        )
+                    }
                 )
             }
         }
