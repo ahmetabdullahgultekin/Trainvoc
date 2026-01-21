@@ -49,7 +49,7 @@ fun DailyGoalsCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
+                        contentDescription = "Daily goal progress indicator",
                         tint = if (isComplete) MaterialTheme.colorScheme.primary
                                else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(32.dp)
@@ -146,7 +146,7 @@ fun DailyGoalsCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Star,
-                            contentDescription = null,
+                            contentDescription = "Daily goal progress indicator",
                             tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -185,7 +185,7 @@ fun GoalProgressRow(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = null,
+            contentDescription = "Daily goal progress indicator",
             tint = if (isComplete) color else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(24.dp)
         )
@@ -413,7 +413,7 @@ fun CompactDailyGoalsIndicator(
             Icon(
                 imageVector = if (progress == 100) Icons.Default.CheckCircle
                              else Icons.Default.RadioButtonUnchecked,
-                contentDescription = null,
+                contentDescription = "Daily goal progress indicator",
                 modifier = Modifier.size(16.dp),
                 tint = if (progress == 100) MaterialTheme.colorScheme.onPrimary
                        else MaterialTheme.colorScheme.onSurfaceVariant

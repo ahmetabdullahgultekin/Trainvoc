@@ -109,7 +109,7 @@ fun OfflineDataDownloadCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Download,
-                    contentDescription = null,
+                    contentDescription = "Offline content manager",
                     tint = MaterialTheme.colorScheme.primary
                 )
 
@@ -148,7 +148,7 @@ fun OfflineDataDownloadCard(
                             onClick = onDownloadClick,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.Download, contentDescription = null)
+                            Icon(Icons.Default.Download, contentDescription = "Download all offline content")
                             Spacer(Modifier.width(8.dp))
                             Text("Download All")
                         }
@@ -200,7 +200,7 @@ fun OfflineDataDownloadCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.CloudQueue,
-                            contentDescription = null,
+                            contentDescription = "Downloading content in progress",
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Text(
@@ -260,7 +260,7 @@ fun SyncStatusIndicator(
         ) {
             Icon(
                 imageVector = if (isOnline) Icons.Default.CloudQueue else Icons.Default.CloudOff,
-                contentDescription = null,
+                contentDescription = if (isOnline) "Online - cloud sync available" else "Offline mode - no internet connection",
                 tint = if (isOnline) MaterialTheme.colorScheme.primary
                       else MaterialTheme.colorScheme.onSurfaceVariant
             )

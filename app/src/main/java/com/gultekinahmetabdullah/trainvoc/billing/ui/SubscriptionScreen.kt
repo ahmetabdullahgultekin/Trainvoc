@@ -72,7 +72,7 @@ fun SubscriptionScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = null,
+                        contentDescription = "Premium subscription unlock",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(64.dp)
                     )
@@ -325,7 +325,7 @@ fun SubscriptionCard(
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 ) {
-                    Icon(Icons.Default.Check, contentDescription = null)
+                    Icon(Icons.Default.Check, contentDescription = "Current active plan")
                     Spacer(Modifier.width(8.dp))
                     Text("Current Plan")
                 }
@@ -370,7 +370,7 @@ fun CurrentSubscriptionCard(
         ) {
             Icon(
                 imageVector = Icons.Default.Star,
-                contentDescription = null,
+                contentDescription = "Current subscription tier",
                 tint = MaterialTheme.colorScheme.primary
             )
 
@@ -441,7 +441,7 @@ fun FeatureRow(
     ) {
         Icon(
             imageVector = feature.icon,
-            contentDescription = null,
+            contentDescription = feature.name,
             modifier = Modifier.size(20.dp),
             tint = MaterialTheme.colorScheme.primary
         )
@@ -470,7 +470,7 @@ fun CheckIcon(
 ) {
     Icon(
         imageVector = if (enabled) Icons.Default.Check else Icons.Default.Close,
-        contentDescription = null,
+        contentDescription = if (enabled) "Feature included" else "Feature not included",
         modifier = modifier.size(20.dp),
         tint = if (enabled) MaterialTheme.colorScheme.primary
                else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)

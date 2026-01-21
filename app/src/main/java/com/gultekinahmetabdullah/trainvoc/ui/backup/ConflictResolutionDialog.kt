@@ -88,7 +88,7 @@ fun ConflictResolutionDialog(
                     ) {
                         Icon(
                             Icons.Default.Warning,
-                            contentDescription = null,
+                            contentDescription = "Conflict resolution option",
                             tint = MaterialTheme.colorScheme.onErrorContainer,
                             modifier = Modifier.size(32.dp)
                         )
@@ -187,7 +187,7 @@ fun ConflictResolutionDialog(
                         ) {
                             Icon(
                                 if (showDetails) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                contentDescription = null
+                                contentDescription = "Conflict resolution option"
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
@@ -269,7 +269,7 @@ fun StrategyOption(
         ) {
             Icon(
                 icon,
-                contentDescription = null,
+                contentDescription = "Conflict resolution option",
                 tint = if (selected) {
                     MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
@@ -331,7 +331,7 @@ fun ConflictDetailItem(conflict: DataConflict) {
                     ) {
                         Icon(
                             Icons.Default.ContentCopy,
-                            contentDescription = null,
+                            contentDescription = "Conflict resolution option",
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(20.dp)
                         )
@@ -370,7 +370,7 @@ fun ConflictDetailItem(conflict: DataConflict) {
                     ) {
                         Icon(
                             Icons.Default.BarChart,
-                            contentDescription = null,
+                            contentDescription = "Conflict resolution option",
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(20.dp)
                         )

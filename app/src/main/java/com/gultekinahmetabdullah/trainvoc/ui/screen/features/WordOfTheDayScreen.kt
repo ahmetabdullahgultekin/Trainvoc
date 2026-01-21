@@ -404,7 +404,7 @@ private fun StreakTrackerCard() {
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = null,
+                    contentDescription = "Word of the day icon",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )

@@ -211,7 +211,7 @@ fun LocalBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CloudUpload,
-                            contentDescription = null,
+                            contentDescription = "Export vocabulary data",
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(Modifier.width(12.dp))
@@ -293,7 +293,7 @@ fun LocalBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CloudDownload,
-                            contentDescription = null,
+                            contentDescription = "Import vocabulary data",
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(Modifier.width(12.dp))
@@ -363,7 +363,7 @@ fun LocalBackupTab(
                         ) {
                             Icon(
                                 Icons.Default.FolderOff,
-                                contentDescription = null,
+                                contentDescription = "No backup files found",
                                 modifier = Modifier.size(48.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -447,7 +447,7 @@ fun CloudBackupTab(
                 ) {
                     Icon(
                         Icons.Default.Info,
-                        contentDescription = null,
+                        contentDescription = "Backup information",
                         tint = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.size(32.dp)
                     )
@@ -487,7 +487,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CheckCircle,
-                            contentDescription = null,
+                            contentDescription = "Export successful",
                             tint = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier.size(24.dp)
                         )
@@ -526,7 +526,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.Info,
-                            contentDescription = null,
+                            contentDescription = "Coming soon features",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -568,7 +568,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.Folder,
-                            contentDescription = null,
+                            contentDescription = "File storage location",
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(24.dp)
                         )
@@ -683,7 +683,11 @@ fun InfoChip(icon: androidx.compose.ui.graphics.vector.ImageVector, label: Strin
     ) {
         Icon(
             icon,
-            contentDescription = null,
+            contentDescription = when (label) {
+                "Size" -> "Backup file size"
+                "Date" -> "Backup date"
+                else -> label
+            },
             modifier = Modifier.size(16.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -713,7 +717,7 @@ fun ResultMessage(message: String, isError: Boolean) {
         ) {
             Icon(
                 if (isError) Icons.Default.Error else Icons.Default.CheckCircle,
-                contentDescription = null,
+                contentDescription = if (isError) "Backup error" else "Backup success",
                 tint = if (isError) {
                     MaterialTheme.colorScheme.onErrorContainer
                 } else {

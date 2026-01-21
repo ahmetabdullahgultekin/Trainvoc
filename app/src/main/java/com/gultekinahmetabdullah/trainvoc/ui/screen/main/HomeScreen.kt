@@ -311,7 +311,10 @@ fun HomeScreen(
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(Spacing.md)
                     ) {
-                        items(uiState.unlockedAchievements.take(5)) { userAchievement ->
+                        items(
+                            items = uiState.unlockedAchievements.take(5),
+                            key = { it.achievementId }
+                        ) { userAchievement ->
                             val achievement = userAchievement.getAchievement()
                             if (achievement != null) {
                                 AchievementBadgeItem(
