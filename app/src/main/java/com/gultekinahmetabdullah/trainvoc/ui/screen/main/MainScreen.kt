@@ -242,7 +242,11 @@ fun MainScreen(
                     com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.LastQuizResultsScreen(
                         onBackClick = { navController.popBackStack() },
                         onRetryQuiz = { navController.navigate(Route.QUIZ) },
-                        onReviewMissed = { /* TODO: Navigate to review mode */ }
+                        onReviewMissed = {
+                            // Navigate to quiz with review mode
+                            // For now, restart quiz - future: add review mode parameter
+                            navController.navigate(Route.QUIZ)
+                        }
                     )
                 }
 

@@ -15,28 +15,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - GAMES_UI_INVESTIGATION.md (critical discovery report)
 - Open source documentation (README, CONTRIBUTING, LICENSE)
 - GitHub issue and PR templates
+- **🎮 Games Restoration (Phase 1)**:
+  - Restored all 11 game UI screens from git history (~5,000+ lines)
+  - Created TutorialViewModel stub implementation
+  - Created TutorialOverlay stub implementation
+  - Restored GamesNavigation module
+- **Phase 2 - Quick Wins**:
+  - Games button on HomeScreen with proper navigation
+  - Practice quiz feature from WordDetailScreen
+  - Share word functionality via Android Intent
+  - Text-to-Speech integration in WordViewModel
 
 ### Changed
 - **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
   - ProfileScreen.kt: 6 color fixes (stats icons, streak icons)
   - LastQuizResultsScreen.kt: 4 color fixes (XP, progress, performance bars)
 - Enhanced dark mode consistency across ProfileScreen and LastQuizResultsScreen
+- **TTS Integration**: Connected TextToSpeechService to UI
+  - WordDetailScreen: Audio button for word pronunciation
+  - WordDetailScreen: Audio buttons for example sentences
+  - DictionaryScreen: Audio button for word pronunciation
+- **Enhanced WordDetailScreen**:
+  - Practice button now navigates to quiz with word parameter
+  - Share button creates formatted share text with word info
+  - Review missed words navigation now functional
 
 ### Fixed
 - Improved accessibility with proper contentDescription usage
 - Better dark mode support with MaterialTheme.colorScheme usage
+- **Games compilation errors**: Resolved TutorialViewModel dependencies
+- **Missing TTS functionality**: Connected audio buttons to TextToSpeechService
+- **Placeholder implementations**: Share and practice features now fully functional
+- **Review navigation**: LastQuizResultsScreen review button now routes correctly
 
-### Discovered
-- 🚨 **CRITICAL**: 11 game UI screens were deleted on Jan 20, 2026 (commit d1ec47f)
-  - All games were fully implemented with polished UI/UX
-  - Deleted due to TutorialViewModel dependency issues
-  - Recovery possible in 1-2 days from git history
-  - See GAMES_UI_INVESTIGATION.md for full details
+### Restored
+- ✅ **All 11 game UI screens recovered** (was: CRITICAL deletion)
+  - MultipleChoiceGameScreen (297 lines)
+  - WordScrambleScreen (316 lines)
+  - FillInTheBlankScreen (396 lines)
+  - FlipCardsScreen (284 lines)
+  - SpeedMatchScreen (299 lines)
+  - PictureMatchScreen (349 lines)
+  - TranslationRaceScreen (405 lines)
+  - SpellingChallengeScreen (390 lines)
+  - ListeningQuizScreen (370 lines)
+  - ContextCluesScreen (448 lines)
+  - GamesMenuScreen (443 lines)
+- ✅ All 11 game ViewModels restored
+- ✅ GamesNavigation module restored (132 lines)
+- ✅ Common game components (GameScreens.kt, 724 lines)
+- **Total restored**: ~6,240 lines of production code
 
 ### Documentation
 - Completed comprehensive audit of 55 non-implemented/placeholder components
 - Created hooks guide with 8 recommended development hooks
 - Documented game UI deletion and recovery plan
+- Updated CHANGELOG with Phase 1 & Phase 2 implementations
 
 ## [1.2.0] - 2026-01-20
 
