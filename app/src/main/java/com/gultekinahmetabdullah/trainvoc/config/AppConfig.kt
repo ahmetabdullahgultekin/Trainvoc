@@ -81,7 +81,7 @@ object DailyGoalConfig {
  * Database configuration
  */
 object DatabaseConfig {
-    const val VERSION = 11
+    const val VERSION = 14
     const val NAME = "trainvoc-db"
     const val LOCAL_USER_ID = "local_user"
 }

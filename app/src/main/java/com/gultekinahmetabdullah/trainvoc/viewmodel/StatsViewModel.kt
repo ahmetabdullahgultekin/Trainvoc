@@ -3,9 +3,9 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 import android.icu.text.DateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatsViewModel @Inject constructor(
-    private val analyticsService: IAnalyticsService
+    private val analyticsService: IAnalyticsService,
+    private val dispatchers: DispatcherProvider
 ) : ViewModel() {
 
     private val _correctAnswers = MutableStateFlow(0)
@@ -63,7 +64,7 @@ class StatsViewModel @Inject constructor(
     }
 
     fun fillStats() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchers.io) {
             _correctAnswers.value = analyticsService.getCorrectAnswers()
             _incorrectAnswers.value = analyticsService.getWrongAnswers()
             _skippedQuestions.value = analyticsService.getSkippedAnswers()

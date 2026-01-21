@@ -140,7 +140,7 @@ class CloudBackupViewModel @Inject constructor(
 
             when (val result = authManager.handleSignInResult(data)) {
                 is AuthResult.Success -> {
-                    Log.i(TAG, "Sign-in successful: ${result.account.email}")
+                    Log.i(TAG, "Sign-in successful")
                     _message.value = "Signed in successfully"
                     checkAuthState()
                 }
