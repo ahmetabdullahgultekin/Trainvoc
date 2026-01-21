@@ -216,7 +216,10 @@ fun MainScreen(
                     val wordId = backStackEntry.arguments?.getString("wordId") ?: ""
                     com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordDetailScreen(
                         wordId = wordId,
-                        wordViewModel = wordViewModel
+                        wordViewModel = wordViewModel,
+                        onNavigateToSynonym = { synonymWord ->
+                            navController.navigate(Route.wordDetail(synonymWord))
+                        }
                     )
                 }
 
