@@ -281,7 +281,7 @@ private fun QuizResultsContent(
                                 value = "+${accuracy * 10}",
                                 label = "XP Earned",
                                 modifier = Modifier.weight(1f),
-                                iconTint = Color(0xFF9C27B0)
+                                iconTint = MaterialTheme.colorScheme.statsAverage
                             )
                         }
                     }
@@ -405,8 +405,8 @@ private fun CircularProgressRing(
     // Determine color based on progress
     val progressColor = when {
         progress >= 0.9f -> MaterialTheme.colorScheme.tertiary // Excellent (>90%)
-        progress >= 0.7f -> Color(0xFF4CAF50) // Good (70-89%)
-        progress >= 0.5f -> Color(0xFFF9A825) // Okay (50-69%)
+        progress >= 0.7f -> MaterialTheme.colorScheme.statsCorrect // Good (70-89%)
+        progress >= 0.5f -> MaterialTheme.colorScheme.statsGold // Okay (50-69%)
         else -> MaterialTheme.colorScheme.error // Needs work (<50%)
     }
 
@@ -522,7 +522,7 @@ private fun PerformanceBreakdown(
                 label = "Correct",
                 count = correctAnswers,
                 total = totalQuestions,
-                color = Color(0xFF4CAF50),
+                color = MaterialTheme.colorScheme.statsCorrect,
                 icon = Icons.Default.CheckCircle
             )
 
@@ -544,7 +544,7 @@ private fun PerformanceBreakdown(
                 label = "Skipped",
                 count = skippedQuestions,
                 total = totalQuestions,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.statsSkipped,
                 icon = Icons.Default.SkipNext
             )
         }
