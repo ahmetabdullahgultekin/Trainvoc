@@ -102,18 +102,18 @@ fun MainScreen(
                         onNavigateToSettings = { navController.navigate(Route.SETTINGS) },
                         onNavigateToStats = { navController.navigate(Route.STATS) },
                         onNavigateToQuiz = { navController.navigate(Route.QUIZ_EXAM_MENU) },
-                        onNavigateToGames = { navController.navigate(Route.GAMES_MENU) },
+                        onNavigateToGames = { /* Games not implemented yet */ },
                         // Phase 1 - New navigation callbacks
                         onNavigateToProfile = { navController.navigate(Route.PROFILE) },
                         onNavigateToWordOfDay = { navController.navigate(Route.WORD_OF_DAY) },
                         onNavigateToFavorites = { navController.navigate(Route.FAVORITES) },
                         onNavigateToLastQuiz = { navController.navigate(Route.LAST_QUIZ_RESULTS) },
-                        // Phase 2 & 3 - Gamification & Engagement
-                        onNavigateToDailyGoals = { navController.navigate(Route.DAILY_GOALS) },
-                        onNavigateToAchievements = { navController.navigate(Route.ACHIEVEMENTS) },
-                        onNavigateToStreakDetail = { navController.navigate(Route.STREAK_DETAIL) },
-                        onNavigateToLeaderboard = { navController.navigate(Route.LEADERBOARD) },
-                        onNavigateToWordProgress = { navController.navigate(Route.WORD_PROGRESS) },
+                        // Phase 2 & 3 - Gamification & Engagement (not implemented yet)
+                        onNavigateToDailyGoals = { /* Not implemented */ },
+                        onNavigateToAchievements = { /* Not implemented */ },
+                        onNavigateToStreakDetail = { /* Not implemented */ },
+                        onNavigateToLeaderboard = { /* Not implemented */ },
+                        onNavigateToWordProgress = { /* Not implemented */ },
                         onNavigateToDictionary = { navController.navigate(Route.DICTIONARY) },
                     )
                 }
