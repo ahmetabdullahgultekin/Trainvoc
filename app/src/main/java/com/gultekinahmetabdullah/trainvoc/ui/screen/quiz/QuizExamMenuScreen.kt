@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -312,6 +313,10 @@ fun CEFRLevelCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Shake animation for locked levels
+    val shakeOffset = remember { Animatable(0f) }
 
     // Press animation
     val scale by animateFloatAsState(
@@ -332,13 +337,32 @@ fun CEFRLevelCard(
 
     Card(
         onClick = {
-            if (!isLocked) onClick()
-            // TODO: Add shake animation for locked levels
+            if (!isLocked) {
+                onClick()
+            } else {
+                // Shake animation for locked levels
+                coroutineScope.launch {
+                    shakeOffset.animateTo(
+                        targetValue = 0f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessHigh
+                        )
+                    )
+                    // Shake left and right
+                    repeat(3) {
+                        shakeOffset.animateTo(15f, tween(50))
+                        shakeOffset.animateTo(-15f, tween(50))
+                    }
+                    shakeOffset.animateTo(0f, tween(50))
+                }
+            }
         },
         modifier = modifier
             .fillMaxWidth()
             .height(150.dp)
-            .scale(scale),
+            .scale(scale)
+            .offset(x = shakeOffset.value.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isLocked) cardColor.copy(alpha = 0.5f) else cardColor

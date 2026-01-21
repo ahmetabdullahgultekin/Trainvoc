@@ -377,25 +377,25 @@ fun StatsGridSection(
                         icon = Icons.Default.Book,
                         value = "$learnedWords",
                         label = "Words",
-                        iconTint = Color(0xFF4CAF50)
+                        iconTint = MaterialTheme.colorScheme.statsCorrect
                     ),
                     StatData(
                         icon = Icons.Default.Quiz,
                         value = "$quizzesCompleted",
                         label = "Quizzes",
-                        iconTint = Color(0xFF2196F3)
+                        iconTint = MaterialTheme.colorScheme.statsTime
                     ),
                     StatData(
                         icon = Icons.Default.Timer,
                         value = formatStudyTime(studyTimeMinutes),
                         label = "Study Time",
-                        iconTint = Color(0xFFFF9800)
+                        iconTint = MaterialTheme.colorScheme.statsCategory
                     ),
                     StatData(
                         icon = Icons.Default.TrendingUp,
                         value = "${calculateAccuracy(correctAnswers, totalAnswers)}%",
                         label = "Accuracy",
-                        iconTint = Color(0xFF9C27B0)
+                        iconTint = MaterialTheme.colorScheme.statsAverage
                     )
                 )
             ) { index, stat ->
@@ -519,7 +519,7 @@ fun AdditionalInfoSection(
                     Icon(
                         imageVector = Icons.Default.LocalFireDepartment,
                         contentDescription = "Current streak: $currentStreak days",
-                        tint = Color(0xFFFF6F00),
+                        tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(32.dp)
                     )
                     Spacer(modifier = Modifier.height(Spacing.xs))
@@ -545,7 +545,7 @@ fun AdditionalInfoSection(
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
                         contentDescription = "Longest streak: $longestStreak days",
-                        tint = Color(0xFFFFD600),
+                        tint = MaterialTheme.colorScheme.statsGold,
                         modifier = Modifier.size(32.dp)
                     )
                     Spacer(modifier = Modifier.height(Spacing.xs))

@@ -1,0 +1,90 @@
+package com.gultekinahmetabdullah.trainvoc.ui.games
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.games.MultipleChoiceGame
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class MultipleChoiceGameViewModel @Inject constructor(
+    private val multipleChoiceGame: MultipleChoiceGame,
+    private val gamificationManager: GamificationManager
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow<MultipleChoiceUiState>(MultipleChoiceUiState.Loading)
+    val uiState: StateFlow<MultipleChoiceUiState> = _uiState.asStateFlow()
+
+    fun startGame(difficulty: String = "medium") {
+        viewModelScope.launch {
+            try {
+                _uiState.value = MultipleChoiceUiState.Loading
+                val gameState = multipleChoiceGame.startGame(difficulty = difficulty)
+                _uiState.value = MultipleChoiceUiState.Playing(gameState)
+            } catch (e: Exception) {
+                _uiState.value = MultipleChoiceUiState.Error(e.message ?: "Failed to start game")
+            }
+        }
+    }
+
+    fun selectAnswer(answer: String) {
+        viewModelScope.launch {
+            val currentState = (_uiState.value as? MultipleChoiceUiState.Playing)?.gameState ?: return@launch
+
+            val question = currentState.currentQuestion ?: return@launch
+            val isCorrect = question.isCorrect(answer)
+
+            // Show feedback with correct answer
+            _uiState.value = MultipleChoiceUiState.ShowingFeedback(
+                gameState = currentState,
+                selectedAnswer = answer,
+                isCorrect = isCorrect,
+                correctAnswer = question.correctAnswer
+            )
+
+            // Wait for feedback animation
+            kotlinx.coroutines.delay(1000)
+
+            // Move to next question using submitAnswer
+            val newGameState = multipleChoiceGame.submitAnswer(answer)
+
+            if (newGameState.isComplete) {
+                // Check achievements
+                checkAchievements(newGameState)
+
+                _uiState.value = MultipleChoiceUiState.Complete(newGameState)
+            } else {
+                _uiState.value = MultipleChoiceUiState.Playing(newGameState)
+            }
+        }
+    }
+
+    fun playAgain(difficulty: String = "medium") {
+        startGame(difficulty)
+    }
+
+    private suspend fun checkAchievements(gameState: MultipleChoiceGame.GameState) {
+        val isPerfect = gameState.correctAnswers == gameState.totalQuestions &&
+                gameState.totalQuestions >= 5
+        gamificationManager.recordQuizCompleted(isPerfect)
+        gamificationManager.recordActivity()
+    }
+}
+
+sealed class MultipleChoiceUiState {
+    object Loading : MultipleChoiceUiState()
+    data class Playing(val gameState: MultipleChoiceGame.GameState) : MultipleChoiceUiState()
+    data class ShowingFeedback(
+        val gameState: MultipleChoiceGame.GameState,
+        val selectedAnswer: String,
+        val isCorrect: Boolean,
+        val correctAnswer: String
+    ) : MultipleChoiceUiState()
+    data class Complete(val gameState: MultipleChoiceGame.GameState) : MultipleChoiceUiState()
+    data class Error(val message: String) : MultipleChoiceUiState()
+}

@@ -205,8 +205,53 @@ class LearningAnalytics(
     }
 
     private fun getLongestStreak(): Int {
-        // TODO: Implement longest streak calculation from historical data
-        return 0
+        // Calculate longest streak from historical word review data
+        // This provides analytics-based longest streak calculation
+        // Note: GamificationDao also tracks longestStreak in StreakTracking table
+
+        return try {
+            // Get all word reviews as a historical activity log
+            val allWords = kotlinx.coroutines.runBlocking {
+                repository.getAllWords().first()
+            }
+
+            val reviewDates = mutableSetOf<Long>()
+
+            // Collect all unique review dates
+            allWords.forEach { word ->
+                val lastReview = word.lastReviewed ?: 0
+                if (lastReview > 0) {
+                    reviewDates.add(getDayStart(lastReview))
+                }
+            }
+
+            if (reviewDates.isEmpty()) return@try 0
+
+            // Sort dates chronologically
+            val sortedDates = reviewDates.sorted()
+
+            var longestStreak = 1
+            var currentStreak = 1
+
+            // Calculate longest consecutive streak
+            for (i in 1 until sortedDates.size) {
+                val dayDiff = (sortedDates[i] - sortedDates[i - 1]) / MILLISECONDS_PER_DAY
+
+                if (dayDiff == 1L) {
+                    // Consecutive day
+                    currentStreak++
+                    longestStreak = maxOf(longestStreak, currentStreak)
+                } else {
+                    // Streak broken, reset
+                    currentStreak = 1
+                }
+            }
+
+            longestStreak
+        } catch (e: Exception) {
+            Log.e(TAG, "Error calculating longest streak: ${e.message}")
+            0
+        }
     }
 
     private fun calculateAverageRetention(words: List<Word>): Float {

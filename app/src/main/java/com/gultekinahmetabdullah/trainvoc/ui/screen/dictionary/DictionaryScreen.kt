@@ -78,6 +78,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -120,6 +121,7 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel) {
+    val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     var isSearchBarActive by remember { mutableStateOf(false) }
     val allWords by wordViewModel.words.collectAsState()
@@ -388,7 +390,33 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                                         onFavoriteClick = {
                                             wordViewModel.toggleFavorite(word.word, !word.isFavorite)
                                         },
-                                        onAudioClick = { /* TODO: Implement audio */ },
+                                        onAudioClick = {
+                                            wordViewModel.speakWord(word.word)
+                                        },
+                                        onPracticeClick = {
+                                            // Navigate to quiz with this word
+                                            navController.navigate(Route.QUIZ)
+                                        },
+                                        onShareClick = {
+                                            // Share word via Android Intent
+                                            val shareText = buildString {
+                                                append("📚 ${word.word}\n")
+                                                append("📖 ${word.meaning}\n")
+                                                word.level?.let { level ->
+                                                    append("📊 Level: ${level.name} (${level.longName})\n")
+                                                }
+                                                append("\n✨ Shared from Trainvoc")
+                                            }
+                                            val shareIntent = android.content.Intent().apply {
+                                                action = android.content.Intent.ACTION_SEND
+                                                type = "text/plain"
+                                                putExtra(android.content.Intent.EXTRA_TEXT, shareText)
+                                                putExtra(android.content.Intent.EXTRA_SUBJECT, "Word: ${word.word}")
+                                            }
+                                            context.startActivity(
+                                                android.content.Intent.createChooser(shareIntent, "Share word")
+                                            )
+                                        },
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = Spacing.xs)
@@ -503,6 +531,8 @@ fun DictionaryWordCard(
     onCardClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     onAudioClick: () -> Unit,
+    onPracticeClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showQuickActions by remember { mutableStateOf(false) }
@@ -561,11 +591,14 @@ fun DictionaryWordCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    Text(
-                        text = "noun", // TODO: Add part of speech to Word model
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    // Display part of speech if available
+                    word.partOfSpeech?.let { pos ->
+                        Text(
+                            text = pos,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
                     if (word.level != null) {
                         CEFRLevelChip(level = word.level.name)
@@ -618,7 +651,7 @@ fun DictionaryWordCard(
             DropdownMenuItem(
                 text = { Text("Practice") },
                 onClick = {
-                    // TODO: Navigate to practice
+                    onPracticeClick()
                     showQuickActions = false
                 },
                 leadingIcon = {
@@ -631,7 +664,7 @@ fun DictionaryWordCard(
             DropdownMenuItem(
                 text = { Text("Share") },
                 onClick = {
-                    // TODO: Implement share
+                    onShareClick()
                     showQuickActions = false
                 },
                 leadingIcon = {
