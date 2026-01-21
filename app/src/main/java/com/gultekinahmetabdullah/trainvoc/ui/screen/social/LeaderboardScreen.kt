@@ -61,7 +61,7 @@ fun LeaderboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.EmojiEvents,
-                            contentDescription = null,
+                            contentDescription = "Leaderboard icon",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(64.dp)
                         )

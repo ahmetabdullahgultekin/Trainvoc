@@ -77,7 +77,7 @@ fun PrimaryButton(
             icon != null -> {
                 Icon(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = "Button icon",
                     modifier = Modifier.size(20.dp)
                 )
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(Spacing.sm))
@@ -124,7 +124,7 @@ fun SecondaryButton(
         if (icon != null) {
             Icon(
                 imageVector = icon,
-                contentDescription = null,
+                contentDescription = "Button icon",
                 modifier = Modifier.size(20.dp)
             )
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(Spacing.sm))

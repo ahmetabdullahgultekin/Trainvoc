@@ -466,7 +466,7 @@ fun AchievementUnlockDialog(
         },
         confirmButton = {
             Button(onClick = onShare) {
-                Icon(Icons.Default.Share, contentDescription = null)
+                Icon(Icons.Default.Share, contentDescription = "Achievement icon")
                 Spacer(Modifier.width(8.dp))
                 Text("Share")
             }

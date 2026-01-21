@@ -102,7 +102,7 @@ fun UserFeatureFlagScreen(
                     ) {
                         Icon(
                             Icons.Default.Info,
-                            contentDescription = null,
+                            contentDescription = "Feature icon",
                             tint = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         Text(
