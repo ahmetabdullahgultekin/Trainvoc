@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,6 +52,15 @@ fun AchievementsScreen(
 
     val unlockedCount = achievements.count { it.isUnlocked }
     val totalCount = achievements.size
+
+    // Responsive design: Determine grid columns based on screen width
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val gridColumns = when {
+        screenWidthDp >= 840 -> 3  // Large tablets/desktops
+        screenWidthDp >= 600 -> 3  // Small tablets/landscape
+        else -> 2                  // Phones
+    }
 
     Scaffold(
         topBar = {
@@ -107,7 +117,7 @@ fun AchievementsScreen(
                 )
             }
 
-            // Achievements grid
+            // Achievements grid section heading
             item {
                 Text(
                     text = "${filteredAchievements.size} Achievements",
@@ -116,8 +126,26 @@ fun AchievementsScreen(
                 )
             }
 
-            items(filteredAchievements) { progress ->
-                AchievementCard(achievement = progress)
+            // Achievements grid (responsive)
+            item {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(gridColumns),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height((filteredAchievements.size / gridColumns + if (filteredAchievements.size % gridColumns > 0) 1 else 0) * 140.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(
+                        items = filteredAchievements,
+                        key = { achievement -> achievement.achievement.id }
+                    ) { progress ->
+                        AchievementCard(
+                            achievement = progress,
+                            isCompact = true
+                        )
+                    }
+                }
             }
 
             item {
@@ -282,123 +310,196 @@ fun TierFilterChips(
 @Composable
 fun AchievementCard(
     achievement: AchievementProgress,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isCompact: Boolean = false
 ) {
     val isUnlocked = achievement.isUnlocked
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isUnlocked) MaterialTheme.colorScheme.secondaryContainer
-                            else MaterialTheme.colorScheme.surfaceVariant
-        ),
-        border = if (achievement.achievement.tier == AchievementTier.DIAMOND && isUnlocked) {
-            BorderStroke(2.dp, Color(android.graphics.Color.parseColor(AchievementTier.DIAMOND.color)))
-        } else null
-    ) {
-        Row(
-            modifier = Modifier
+    if (isCompact) {
+        // Compact grid layout
+        Card(
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .height(130.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isUnlocked) MaterialTheme.colorScheme.secondaryContainer
+                                else MaterialTheme.colorScheme.surfaceVariant
+            ),
+            border = if (achievement.achievement.tier == AchievementTier.DIAMOND && isUnlocked) {
+                BorderStroke(2.dp, Color(android.graphics.Color.parseColor(AchievementTier.DIAMOND.color)))
+            } else null
         ) {
-            // Icon/Badge
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isUnlocked) Color(android.graphics.Color.parseColor(achievement.achievement.tier.color))
-                        else MaterialTheme.colorScheme.surface
-                    )
-                    .alpha(if (isUnlocked) 1f else 0.5f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = achievement.achievement.icon,
-                    fontSize = 36.sp
-                )
-            }
-
-            // Info
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Icon/Badge
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isUnlocked) Color(android.graphics.Color.parseColor(achievement.achievement.tier.color))
+                            else MaterialTheme.colorScheme.surface
+                        )
+                        .alpha(if (isUnlocked) 1f else 0.5f),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = achievement.achievement.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isUnlocked) MaterialTheme.colorScheme.onSecondaryContainer
-                               else MaterialTheme.colorScheme.onSurfaceVariant
+                        text = achievement.achievement.icon,
+                        fontSize = 24.sp
                     )
-
-                    // Tier badge
-                    Surface(
-                        color = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Text(
-                            text = achievement.achievement.tier.displayName,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
                 }
 
+                // Title
                 Text(
-                    text = achievement.achievement.description,
+                    text = achievement.achievement.title,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    color = if (isUnlocked) MaterialTheme.colorScheme.onSecondaryContainer
+                           else MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
+                // Progress or checkmark
                 if (!isUnlocked) {
-                    Spacer(Modifier.height(4.dp))
-
-                    // Progress bar
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        LinearProgressIndicator(
-                            progress = { achievement.progressPercentage / 100f },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                        )
-
-                        Text(
-                            text = "${achievement.currentProgress} / ${achievement.achievement.requirement}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    LinearProgressIndicator(
+                        progress = { achievement.progressPercentage / 100f },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                    )
                 } else {
-                    // Unlocked date
-                    achievement.unlockedAt?.let { timestamp ->
-                        Text(
-                            text = "Unlocked ${formatDate(timestamp)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Unlocked",
+                        tint = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
             }
+        }
+    } else {
+        // Full-width card layout
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isUnlocked) MaterialTheme.colorScheme.secondaryContainer
+                                else MaterialTheme.colorScheme.surfaceVariant
+            ),
+            border = if (achievement.achievement.tier == AchievementTier.DIAMOND && isUnlocked) {
+                BorderStroke(2.dp, Color(android.graphics.Color.parseColor(AchievementTier.DIAMOND.color)))
+            } else null
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Icon/Badge
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isUnlocked) Color(android.graphics.Color.parseColor(achievement.achievement.tier.color))
+                            else MaterialTheme.colorScheme.surface
+                        )
+                        .alpha(if (isUnlocked) 1f else 0.5f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = achievement.achievement.icon,
+                        fontSize = 36.sp
+                    )
+                }
 
-            // Checkmark for unlocked
-            if (isUnlocked) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Unlocked",
-                    tint = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
-                    modifier = Modifier.size(24.dp)
-                )
+                // Info
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = achievement.achievement.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isUnlocked) MaterialTheme.colorScheme.onSecondaryContainer
+                                   else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        // Tier badge
+                        Surface(
+                            color = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = achievement.achievement.tier.displayName,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = achievement.achievement.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    if (!isUnlocked) {
+                        Spacer(Modifier.height(4.dp))
+
+                        // Progress bar
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            LinearProgressIndicator(
+                                progress = { achievement.progressPercentage / 100f },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(4.dp)
+                                    .clip(RoundedCornerShape(2.dp))
+                            )
+
+                            Text(
+                                text = "${achievement.currentProgress} / ${achievement.achievement.requirement}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        // Unlocked date
+                        achievement.unlockedAt?.let { timestamp ->
+                            Text(
+                                text = "Unlocked ${formatDate(timestamp)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+
+                // Checkmark for unlocked
+                if (isUnlocked) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Unlocked",
+                        tint = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
     }
@@ -466,7 +567,7 @@ fun AchievementUnlockDialog(
         },
         confirmButton = {
             Button(onClick = onShare) {
-                Icon(Icons.Default.Share, contentDescription = null)
+                Icon(Icons.Default.Share, contentDescription = "Achievement icon")
                 Spacer(Modifier.width(8.dp))
                 Text("Share")
             }

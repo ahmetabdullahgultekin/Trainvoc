@@ -144,7 +144,10 @@ fun AdminFeatureFlagScreen(
             }
 
             // Features list
-            items(filteredFeatures) { feature ->
+            items(
+                items = filteredFeatures,
+                key = { it.key }
+            ) { feature ->
                 val globalFlag = globalFlags.find { it.featureKey == feature.key }
                 AdminFeatureFlagCard(
                     feature = feature,

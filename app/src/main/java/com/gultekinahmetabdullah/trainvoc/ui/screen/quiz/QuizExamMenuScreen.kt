@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
@@ -93,6 +94,15 @@ fun QuizExamMenuScreen(
 ) {
     var selectedLevel by remember { mutableStateOf<WordLevel?>(null) }
     val scope = rememberCoroutineScope()
+
+    // Responsive design: Determine grid columns based on screen width
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val gridColumns = when {
+        screenWidthDp >= 840 -> 3  // Large tablets/desktops - 3 columns
+        screenWidthDp >= 600 -> 3  // Small tablets/landscape - 3 columns
+        else -> 2                  // Phones - 2 columns
+    }
 
     val gradient = Brush.verticalGradient(
         colors = listOf(
@@ -143,7 +153,8 @@ fun QuizExamMenuScreen(
                             onExamSelected(QuizParameter.Level(level))
                         }
                     },
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    gridColumns = gridColumns
                 )
                 Spacer(modifier = Modifier.height(Spacing.large))
             }
@@ -184,13 +195,14 @@ fun QuizExamMenuScreen(
 fun CEFRLevelGrid(
     selectedLevel: WordLevel?,
     onLevelSelected: (WordLevel) -> Unit,
-    viewModel: QuizViewModel
+    viewModel: QuizViewModel,
+    gridColumns: Int
 ) {
     // Get level progress data
     val levels = WordLevel.entries
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Fixed(gridColumns),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
@@ -198,7 +210,10 @@ fun CEFRLevelGrid(
             .height(480.dp), // 3 rows * ~160dp each
         userScrollEnabled = false // Disable scrolling within the grid
     ) {
-        itemsIndexed(levels) { index, level ->
+        itemsIndexed(
+            items = levels,
+            key = { _, level -> level.name }
+        ) { index, level ->
             AnimatedCEFRLevelCard(
                 level = level,
                 index = index,

@@ -165,7 +165,7 @@ fun WordDetailScreen(wordId: String, wordViewModel: WordViewModel) {
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = null,
+                contentDescription = "Word not found",
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(64.dp)
             )
@@ -466,7 +466,7 @@ fun DefinitionSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.BookmarkBorder,
-                    contentDescription = null,
+                    contentDescription = "No related words",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(IconSize.medium)
                 )

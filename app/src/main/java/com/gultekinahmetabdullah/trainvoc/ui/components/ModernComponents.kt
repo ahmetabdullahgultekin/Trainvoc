@@ -180,7 +180,7 @@ fun GradientButton(
             if (icon != null) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = "Icon",
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )

@@ -20,6 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -57,7 +60,7 @@ import kotlin.math.roundToInt
  * - Animations: Staggered stats entry, animated XP progress, count-up numbers
  * - Additional info: Member since, total XP, streaks
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun ProfileScreen(
     onBackClick: () -> Unit = {},
@@ -70,6 +73,15 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+
+    // Responsive design: Determine grid columns based on screen width
+    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val gridColumns = when {
+        screenWidthDp >= 840 -> 4  // Large tablets/desktops
+        screenWidthDp >= 600 -> 3  // Small tablets/landscape
+        else -> 2                  // Phones
+    }
 
     // Get username from SharedPreferences
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
@@ -289,7 +301,7 @@ fun ProfileHeroSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = null,
+                        contentDescription = "User level $level",
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier.size(20.dp)
                     )
@@ -350,12 +362,12 @@ fun StatsGridSection(
             modifier = Modifier.padding(bottom = Spacing.md)
         )
 
-        // 2x2 Grid with LazyVerticalGrid
+        // Responsive Grid with LazyVerticalGrid (2/3/4 columns based on screen size)
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(gridColumns),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.height(350.dp), // Fixed height for 2 rows
+            modifier = Modifier.height(if (gridColumns == 4) 200.dp else 350.dp), // Adjust height for 1 or 2 rows
             userScrollEnabled = false
         ) {
             // Words Learned
@@ -506,7 +518,7 @@ fun AdditionalInfoSection(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = null,
+                        contentDescription = "Current streak: $currentStreak days",
                         tint = Color(0xFFFF6F00),
                         modifier = Modifier.size(32.dp)
                     )
@@ -532,7 +544,7 @@ fun AdditionalInfoSection(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
-                        contentDescription = null,
+                        contentDescription = "Longest streak: $longestStreak days",
                         tint = Color(0xFFFFD600),
                         modifier = Modifier.size(32.dp)
                     )
@@ -568,7 +580,7 @@ fun AdditionalInfoSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = null,
+                    contentDescription = "Member since date",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )
@@ -615,7 +627,7 @@ fun AchievementsSection(
                 Text("View All")
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
+                    contentDescription = "View all achievements",
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -637,7 +649,7 @@ fun AchievementsSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
-                        contentDescription = null,
+                        contentDescription = "No achievements unlocked yet",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(48.dp)
                     )
@@ -660,7 +672,10 @@ fun AchievementsSection(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(achievements.take(10)) { userAchievement ->
+                items(
+                    items = achievements.take(10),
+                    key = { it.achievementId }
+                ) { userAchievement ->
                     val achievement = userAchievement.getAchievement()
                     if (achievement != null) {
                         AchievementBadge(

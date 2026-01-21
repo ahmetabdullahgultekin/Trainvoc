@@ -146,7 +146,7 @@ fun PremiumUpgradePrompt(
         ) {
             Icon(
                 imageVector = Icons.Default.Lock,
-                contentDescription = null,
+                contentDescription = "Premium feature locked - upgrade required",
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -194,7 +194,7 @@ fun PremiumBadge(
         ) {
             Icon(
                 imageVector = Icons.Default.Lock,
-                contentDescription = null,
+                contentDescription = "Premium required",
                 modifier = Modifier.size(12.dp),
                 tint = MaterialTheme.colorScheme.onPrimary
             )

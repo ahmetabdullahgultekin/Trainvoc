@@ -33,8 +33,8 @@
 
 #### Specific Violations:
 
-#### A. Missing Content Descriptions (62 instances)
-**VIOLATION:** `contentDescription = null` across 16 files
+#### A. Missing Content Descriptions (69 instances)
+**VIOLATION:** `contentDescription = null` across multiple files
 
 **Files with Critical Violations:**
 - `DictionaryScreen.kt` - Icons unusable by screen readers
@@ -80,7 +80,7 @@ Icon(
 
 #### Performance Violations:
 
-#### A. Missing LazyList Keys (50+ instances)
+#### A. Missing LazyList Keys (60+ instances)
 **Problem:** LazyColumn/LazyVerticalGrid items lack stable keys
 
 **Impact:**
@@ -89,7 +89,7 @@ Icon(
 - Animations glitch when data updates
 - Significantly increased CPU usage
 
-**Files Affected:** 22 files use LazyColumn/LazyVerticalGrid/LazyRow (56 total usages)
+**Files Affected:** Multiple files use LazyColumn/LazyVerticalGrid/LazyRow (67 total usages)
 
 **Critical Examples:**
 - `DictionaryScreen.kt` (3 LazyColumn) - Vocabulary list rebuilds entirely on scroll
