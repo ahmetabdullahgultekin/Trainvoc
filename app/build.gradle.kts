@@ -15,14 +15,44 @@ android {
         applicationId = "com.gultekinahmetabdullah.trainvoc"
         minSdk = 24
         targetSdk = 35
-        versionCode = 12
-        versionName = "1.1.2"
+        versionCode = 13
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
 
+    }
+
+    // Signing configuration for release builds
+    // Store credentials in environment variables or local.properties (not committed to git)
+    signingConfigs {
+        create("release") {
+            // Option 1: Use environment variables (recommended for CI/CD)
+            val keystorePath = System.getenv("TRAINVOC_KEYSTORE_PATH")
+                ?: project.findProperty("TRAINVOC_KEYSTORE_PATH") as? String
+            val keystorePassword = System.getenv("TRAINVOC_KEYSTORE_PASSWORD")
+                ?: project.findProperty("TRAINVOC_KEYSTORE_PASSWORD") as? String
+            val keyAlias = System.getenv("TRAINVOC_KEY_ALIAS")
+                ?: project.findProperty("TRAINVOC_KEY_ALIAS") as? String
+                ?: "trainvoc-upload"
+            val keyPassword = System.getenv("TRAINVOC_KEY_PASSWORD")
+                ?: project.findProperty("TRAINVOC_KEY_PASSWORD") as? String
+
+            // Only configure signing if keystore is available
+            if (keystorePath != null && keystorePassword != null && keyPassword != null) {
+                storeFile = file(keystorePath)
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            } else {
+                // Print warning if signing is not configured
+                println("⚠️ WARNING: Release signing not configured. Set environment variables:")
+                println("   TRAINVOC_KEYSTORE_PATH, TRAINVOC_KEYSTORE_PASSWORD,")
+                println("   TRAINVOC_KEY_ALIAS, TRAINVOC_KEY_PASSWORD")
+            }
+        }
     }
 
     androidResources {
@@ -33,6 +63,9 @@ android {
 
     buildTypes {
         release {
+            // Apply signing configuration if available
+            signingConfig = signingConfigs.getByName("release")
+
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
