@@ -153,7 +153,8 @@ fun QuizExamMenuScreen(
                             onExamSelected(QuizParameter.Level(level))
                         }
                     },
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    gridColumns = gridColumns
                 )
                 Spacer(modifier = Modifier.height(Spacing.large))
             }
@@ -194,7 +195,8 @@ fun QuizExamMenuScreen(
 fun CEFRLevelGrid(
     selectedLevel: WordLevel?,
     onLevelSelected: (WordLevel) -> Unit,
-    viewModel: QuizViewModel
+    viewModel: QuizViewModel,
+    gridColumns: Int
 ) {
     // Get level progress data
     val levels = WordLevel.entries
