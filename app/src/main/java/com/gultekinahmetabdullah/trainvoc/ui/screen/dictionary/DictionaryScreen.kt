@@ -257,7 +257,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Search,
-                                    contentDescription = null,
+                                    contentDescription = "Search history",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -282,7 +282,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                     leadingIcon = {
                         Icon(
                             imageVector = if (showFavoritesOnly) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = null,
+                            contentDescription = if (showFavoritesOnly) "Remove favorites filter" else "Filter favorites",
                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                         )
                     },
@@ -611,7 +611,7 @@ fun DictionaryWordCard(
                 leadingIcon = {
                     Icon(
                         imageVector = if (word.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = null
+                        contentDescription = if (word.isFavorite) "Remove from favorites" else "Add to favorites"
                     )
                 }
             )
@@ -624,7 +624,7 @@ fun DictionaryWordCard(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = null
+                        contentDescription = "Practice word"
                     )
                 }
             )
@@ -637,7 +637,7 @@ fun DictionaryWordCard(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = null
+                        contentDescription = "Share word"
                     )
                 }
             )

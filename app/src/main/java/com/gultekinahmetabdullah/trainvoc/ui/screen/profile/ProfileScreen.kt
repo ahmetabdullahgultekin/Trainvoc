@@ -289,7 +289,7 @@ fun ProfileHeroSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = null,
+                        contentDescription = "User level $level",
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier.size(20.dp)
                     )
@@ -506,7 +506,7 @@ fun AdditionalInfoSection(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = null,
+                        contentDescription = "Current streak: $currentStreak days",
                         tint = Color(0xFFFF6F00),
                         modifier = Modifier.size(32.dp)
                     )
@@ -532,7 +532,7 @@ fun AdditionalInfoSection(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
-                        contentDescription = null,
+                        contentDescription = "Longest streak: $longestStreak days",
                         tint = Color(0xFFFFD600),
                         modifier = Modifier.size(32.dp)
                     )
@@ -568,7 +568,7 @@ fun AdditionalInfoSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = null,
+                    contentDescription = "Member since date",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )
@@ -615,7 +615,7 @@ fun AchievementsSection(
                 Text("View All")
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
+                    contentDescription = "View all achievements",
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -637,7 +637,7 @@ fun AchievementsSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
-                        contentDescription = null,
+                        contentDescription = "No achievements unlocked yet",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(48.dp)
                     )
@@ -660,7 +660,10 @@ fun AchievementsSection(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.md),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(achievements.take(10)) { userAchievement ->
+                items(
+                    items = achievements.take(10),
+                    key = { it.achievementId }
+                ) { userAchievement ->
                     val achievement = userAchievement.getAchievement()
                     if (achievement != null) {
                         AchievementBadge(

@@ -151,7 +151,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.Star,
-                                    contentDescription = null,
+                                    contentDescription = "Total score",
                                     tint = MaterialTheme.colorScheme.statsGold,
                                     modifier = Modifier.size(IconSize.medium)
                                 )
@@ -268,7 +268,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.CheckCircle,
-                                    contentDescription = null,
+                                    contentDescription = "Correct answers",
                                     tint = MaterialTheme.colorScheme.statsCorrect,
                                     modifier = Modifier.size(IconSize.small)
                                 )
@@ -283,7 +283,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Default.Close,
-                                    contentDescription = null,
+                                    contentDescription = "Incorrect answers",
                                     tint = MaterialTheme.colorScheme.statsIncorrect,
                                     modifier = Modifier.size(IconSize.small)
                                 )

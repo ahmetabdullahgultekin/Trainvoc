@@ -253,7 +253,11 @@ fun MainScreen(
                     )
                 }
                 composable(Route.ACHIEVEMENTS) {
+                    val viewModel: com.gultekinahmetabdullah.trainvoc.viewmodel.GamificationViewModel = hiltViewModel()
+                    val achievements by viewModel.achievementProgress.collectAsState()
+
                     com.gultekinahmetabdullah.trainvoc.gamification.ui.AchievementsScreen(
+                        achievements = achievements,
                         onBackClick = { navController.popBackStack() }
                     )
                 }
