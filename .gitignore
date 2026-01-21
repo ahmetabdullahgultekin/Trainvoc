@@ -13,3 +13,23 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signing & Security (CRITICAL - Never commit these!)
+*.jks
+*.keystore
+*.p12
+*.pepk
+keystore.properties
+signing.properties
+release-keystore.jks
+trainvoc-upload-key.jks
+trainvoc-release-key.jks
+
+# Google Services & API Keys
+google-services.json
+*-google-services.json
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
