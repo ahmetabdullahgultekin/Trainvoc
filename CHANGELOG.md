@@ -8,8 +8,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **StateComponents.kt**: Unified loading/error/empty state components for consistent UX
+- **Comprehensive documentation**:
+  - NON_IMPLEMENTED_COMPONENTS_AUDIT.md (55 issues documented)
+  - RECOMMENDED_HOOKS_GUIDE.md (8 essential hooks)
+  - GAMES_UI_INVESTIGATION.md (critical discovery report)
 - Open source documentation (README, CONTRIBUTING, LICENSE)
 - GitHub issue and PR templates
+
+### Changed
+- **Theme improvements**: Fixed 10 hardcoded colors to use theme-aware colors
+  - ProfileScreen.kt: 6 color fixes (stats icons, streak icons)
+  - LastQuizResultsScreen.kt: 4 color fixes (XP, progress, performance bars)
+- Enhanced dark mode consistency across ProfileScreen and LastQuizResultsScreen
+
+### Fixed
+- Improved accessibility with proper contentDescription usage
+- Better dark mode support with MaterialTheme.colorScheme usage
+
+### Discovered
+- 🚨 **CRITICAL**: 11 game UI screens were deleted on Jan 20, 2026 (commit d1ec47f)
+  - All games were fully implemented with polished UI/UX
+  - Deleted due to TutorialViewModel dependency issues
+  - Recovery possible in 1-2 days from git history
+  - See GAMES_UI_INVESTIGATION.md for full details
+
+### Documentation
+- Completed comprehensive audit of 55 non-implemented/placeholder components
+- Created hooks guide with 8 recommended development hooks
+- Documented game UI deletion and recovery plan
+
+## [1.2.0] - 2026-01-20
+
+### Removed
+- ⚠️ **Breaking**: All game UI screens removed due to compilation errors
+  - Affected: GamesMenuScreen and 11 individual game screens
+  - Reason: Missing TutorialViewModel dependencies
+  - Impact: Memory games feature no longer accessible
+  - Total deleted: ~5,000+ lines of code
+- Tutorial system and related components
+- Games navigation module
 
 ## [1.1.2] - 2024-01-10
 
