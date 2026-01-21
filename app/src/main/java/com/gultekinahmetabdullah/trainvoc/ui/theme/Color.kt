@@ -396,3 +396,64 @@ val ColorScheme.statsCategory: Color
 fun statsGradient(isDark: Boolean): List<Color> {
     return if (isDark) GradientColors.statsGradientDark else GradientColors.statsGradientLight
 }
+
+// ============================================================
+// Achievement Tier Colors (Theme-Aware)
+// ============================================================
+
+/**
+ * Achievement Tier Color System
+ * Provides theme-aware colors for achievement badges (Bronze, Silver, Gold, Platinum, Diamond)
+ * Each tier has both light and dark theme variants for proper contrast
+ */
+object TierColors {
+    // Bronze tier - Copper/Brown
+    val bronzeLight = Color(0xFFCD7F32)       // Bronze color
+    val bronzeDark = Color(0xFFE59C6D)        // Lighter bronze for dark theme
+
+    // Silver tier - Gray/Silver
+    val silverLight = Color(0xFFC0C0C0)       // Silver gray
+    val silverDark = Color(0xFFD3D3D3)        // Lighter silver for dark theme
+
+    // Gold tier - Yellow/Gold
+    val goldLight = Color(0xFFFFD700)         // Gold
+    val goldDark = Color(0xFFFFE55C)          // Lighter gold for dark theme
+
+    // Platinum tier - Light gray/white
+    val platinumLight = Color(0xFFE5E4E2)     // Platinum
+    val platinumDark = Color(0xFFF5F5F5)      // Brighter platinum for dark theme
+
+    // Diamond tier - Cyan/Blue
+    val diamondLight = Color(0xFF00BCD4)      // Cyan (more saturated for light theme)
+    val diamondDark = Color(0xFFB9F2FF)       // Light cyan for dark theme
+}
+
+/**
+ * Theme-aware tier color extensions for ColorScheme
+ * Automatically selects light/dark variant based on current theme
+ */
+
+val ColorScheme.tierBronze: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) TierColors.bronzeDark else TierColors.bronzeLight
+
+val ColorScheme.tierSilver: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) TierColors.silverDark else TierColors.silverLight
+
+val ColorScheme.tierGold: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) TierColors.goldDark else TierColors.goldLight
+
+val ColorScheme.tierPlatinum: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) TierColors.platinumDark else TierColors.platinumLight
+
+val ColorScheme.tierDiamond: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = if (isSystemInDarkTheme()) TierColors.diamondDark else TierColors.diamondLight

@@ -31,6 +31,11 @@ import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
 import com.gultekinahmetabdullah.trainvoc.gamification.AchievementCategory
 import com.gultekinahmetabdullah.trainvoc.gamification.AchievementProgress
 import com.gultekinahmetabdullah.trainvoc.gamification.AchievementTier
+import com.gultekinahmetabdullah.trainvoc.ui.theme.tierBronze
+import com.gultekinahmetabdullah.trainvoc.ui.theme.tierSilver
+import com.gultekinahmetabdullah.trainvoc.ui.theme.tierGold
+import com.gultekinahmetabdullah.trainvoc.ui.theme.tierPlatinum
+import com.gultekinahmetabdullah.trainvoc.ui.theme.tierDiamond
 
 /**
  * Main achievements screen
@@ -295,7 +300,7 @@ fun TierFilterChips(
                             modifier = Modifier
                                 .size(12.dp)
                                 .clip(CircleShape)
-                                .background(Color(android.graphics.Color.parseColor(tier.color)))
+                                .background(getTierColor(tier))
                         )
                     }
                 )
@@ -326,7 +331,7 @@ fun AchievementCard(
                                 else MaterialTheme.colorScheme.surfaceVariant
             ),
             border = if (achievement.achievement.tier == AchievementTier.DIAMOND && isUnlocked) {
-                BorderStroke(2.dp, Color(android.graphics.Color.parseColor(AchievementTier.DIAMOND.color)))
+                BorderStroke(2.dp, getTierColor(AchievementTier.DIAMOND))
             } else null
         ) {
             Column(
@@ -342,7 +347,7 @@ fun AchievementCard(
                         .size(48.dp)
                         .clip(CircleShape)
                         .background(
-                            if (isUnlocked) Color(android.graphics.Color.parseColor(achievement.achievement.tier.color))
+                            if (isUnlocked) getTierColor(achievement.achievement.tier)
                             else MaterialTheme.colorScheme.surface
                         )
                         .alpha(if (isUnlocked) 1f else 0.5f),
@@ -378,7 +383,7 @@ fun AchievementCard(
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = "Unlocked",
-                        tint = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
+                        tint = getTierColor(achievement.achievement.tier),
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -393,7 +398,7 @@ fun AchievementCard(
                                 else MaterialTheme.colorScheme.surfaceVariant
             ),
             border = if (achievement.achievement.tier == AchievementTier.DIAMOND && isUnlocked) {
-                BorderStroke(2.dp, Color(android.graphics.Color.parseColor(AchievementTier.DIAMOND.color)))
+                BorderStroke(2.dp, getTierColor(AchievementTier.DIAMOND))
             } else null
         ) {
             Row(
@@ -409,7 +414,7 @@ fun AchievementCard(
                         .size(64.dp)
                         .clip(CircleShape)
                         .background(
-                            if (isUnlocked) Color(android.graphics.Color.parseColor(achievement.achievement.tier.color))
+                            if (isUnlocked) getTierColor(achievement.achievement.tier)
                             else MaterialTheme.colorScheme.surface
                         )
                         .alpha(if (isUnlocked) 1f else 0.5f),
@@ -440,7 +445,7 @@ fun AchievementCard(
 
                         // Tier badge
                         Surface(
-                            color = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
+                            color = getTierColor(achievement.achievement.tier),
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
@@ -448,7 +453,7 @@ fun AchievementCard(
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -496,7 +501,7 @@ fun AchievementCard(
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = "Unlocked",
-                        tint = Color(android.graphics.Color.parseColor(achievement.achievement.tier.color)),
+                        tint = getTierColor(achievement.achievement.tier),
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -526,7 +531,7 @@ fun AchievementUnlockDialog(
                     fontSize = 80.sp
                 )
                 Surface(
-                    color = Color(android.graphics.Color.parseColor(achievement.tier.color)),
+                    color = getTierColor(achievement.tier),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
@@ -534,7 +539,7 @@ fun AchievementUnlockDialog(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
@@ -578,6 +583,21 @@ fun AchievementUnlockDialog(
             }
         }
     )
+}
+
+/**
+ * Get theme-aware color for achievement tier
+ * Returns the appropriate color from MaterialTheme based on tier and current theme (light/dark)
+ */
+@Composable
+private fun getTierColor(tier: AchievementTier): Color {
+    return when (tier) {
+        AchievementTier.BRONZE -> MaterialTheme.colorScheme.tierBronze
+        AchievementTier.SILVER -> MaterialTheme.colorScheme.tierSilver
+        AchievementTier.GOLD -> MaterialTheme.colorScheme.tierGold
+        AchievementTier.PLATINUM -> MaterialTheme.colorScheme.tierPlatinum
+        AchievementTier.DIAMOND -> MaterialTheme.colorScheme.tierDiamond
+    }
 }
 
 /**
