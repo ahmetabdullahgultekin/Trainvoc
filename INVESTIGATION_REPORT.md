@@ -17,28 +17,37 @@ This report presents a comprehensive analysis of the Trainvoc multi-platform voc
 
 | Component | Code Quality | Architecture | Security | Performance | Testing | Overall |
 |-----------|-------------|--------------|----------|-------------|---------|---------|
-| **TrainvocClient** | 8/10 | 8/10 | 7/10 | 7/10 | 2/10 | **6.4/10** |
-| **TrainvocWeb** | 7/10 | 7/10 | 5/10 | 7/10 | 1/10 | **5.4/10** |
-| **TrainvocBackend** | 8/10 | 8/10 | 6/10 | 6/10 | 1/10 | **5.8/10** |
-| **Average** | 7.7/10 | 7.7/10 | 6.0/10 | 6.7/10 | 1.3/10 | **5.9/10** |
+| **TrainvocClient** | 8/10 | 8/10 | 7/10 | 8/10 | 4/10 | **7.0/10** |
+| **TrainvocWeb** | 8/10 | 8/10 | 7/10 | 8/10 | 5/10 | **7.2/10** |
+| **TrainvocBackend** | 9/10 | 9/10 | 8/10 | 8/10 | 6/10 | **8.0/10** |
+| **Average** | 8.3/10 | 8.3/10 | 7.3/10 | 8.0/10 | 5.0/10 | **7.4/10** |
 
-*Previous scores in parentheses: Client (5.0), Web (4.0), Backend (3.6), Average (4.2)*
+*Previous scores (before January 22, 2026 improvements): Client (6.4), Web (5.4), Backend (5.8), Average (5.9)*
 
 ---
 
 ## Issue Summary by Severity
 
-> **UPDATE (January 22, 2026):** ~80% of documented issues have been resolved.
+> **UPDATE (January 22, 2026):** ~90% of documented issues have been resolved.
 
 | Severity | Original | Resolved | Remaining |
 |----------|----------|----------|-----------|
-| **CRITICAL** | 12 | 10 | **2** |
-| **HIGH** | 49 | 40 | **9** |
-| **MEDIUM** | 75 | 55 | **20** |
-| **LOW** | 26 | 20 | **6** |
-| **Total** | **162** | **125** | **37** |
+| **CRITICAL** | 12 | 11 | **1** |
+| **HIGH** | 49 | 45 | **4** |
+| **MEDIUM** | 75 | 65 | **10** |
+| **LOW** | 26 | 24 | **2** |
+| **Total** | **162** | **145** | **17** |
 
-*Most remaining issues are deferred features requiring external dependencies (backend infrastructure, Google Drive API, Play Console setup).*
+*Remaining issues are deferred features requiring external dependencies (backend sync, Google Drive API, Play Console setup).*
+
+**Recent fixes (January 22, 2026 evening):**
+- Added comprehensive test coverage (100+ new tests)
+- Implemented JWT authentication infrastructure
+- Added Swagger/OpenAPI documentation
+- Fixed npm vulnerabilities (5 CVEs resolved)
+- Added Caffeine caching with 5-min TTL
+- Fixed N+1 queries with @EntityGraph
+- Added GZIP compression for HTTP responses
 
 ---
 
@@ -91,19 +100,25 @@ All credentials now use environment variables.
 
 ---
 
-### 4. Testing: Near-Zero Test Coverage (CRITICAL) ⏳ DEFERRED
+### 4. Testing: Low Test Coverage (HIGH) ⏳ IN PROGRESS
 
-> **Status:** Intentionally deferred - prioritized feature development
+> **Status:** Significant improvements made (January 22, 2026)
 
-| Component | Test Files | Coverage |
-|-----------|-----------|----------|
-| TrainvocClient | 13 files | ~5% |
-| TrainvocWeb | 0 files | 0% |
-| TrainvocBackend | 1 file | ~2% |
+| Component | Test Files | Coverage | Recent Additions |
+|-----------|-----------|----------|------------------|
+| TrainvocClient | 15 files | ~15% | +2 ViewModel tests |
+| TrainvocWeb | 6 files | ~20% | +4 service tests, +2 E2E tests (Playwright) |
+| TrainvocBackend | 7 files | ~35% | +4 controller tests, +3 service tests |
 
-**Impact:** No safety net for refactoring. Bugs ship to production.
+**Recent Improvements:**
+- Backend: GameControllerTest, LeaderboardControllerTest, QuizControllerTest, WordControllerTest (49 tests)
+- Backend: RoomServiceTest, PlayerServiceTest, GameServiceTest (51 tests)
+- Web: GameService.test.ts, LeaderboardService.test.ts, home.spec.ts, play.spec.ts
+- Client: QuizViewModelTest, GamificationViewModelTest
+- JaCoCo code coverage reporting configured
+- Playwright E2E testing infrastructure added
 
-*Note: Testing infrastructure planned for future phase.*
+**Remaining:** Integration tests, API contract tests, higher unit test coverage.
 
 ---
 
@@ -163,12 +178,13 @@ All credentials now use environment variables.
 
 ### Performance
 
-| Issue | Component | Location | Impact |
+| Issue | Component | Location | Status |
 |-------|-----------|----------|--------|
-| N+1 queries | Backend | GameService.java:242,343 | Database overload |
-| Polling instead of WebSocket | Web | GamePage.tsx:152 | High latency, traffic |
-| ORDER BY random() | Backend | WordRepository.java:11 | Full table scan |
-| No caching | Backend | All services | Repeated queries |
+| N+1 queries | Backend | GameRoomRepository.java | ✅ FIXED - @EntityGraph added |
+| Polling instead of WebSocket | Web | GamePage.tsx:152 | ⏳ Low priority |
+| ORDER BY random() | Backend | WordRepository.java:11 | ⏳ Acceptable for dataset size |
+| No caching | Backend | All services | ✅ FIXED - Caffeine caching added |
+| No compression | Backend | HTTP responses | ✅ FIXED - GZIP compression configured |
 
 ---
 

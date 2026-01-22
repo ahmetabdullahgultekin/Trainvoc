@@ -9,12 +9,15 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.QuizSettings;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.PlayerRepository;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtAuthenticationFilter;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtTokenProvider;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.GameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -31,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(GameController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @DisplayName("GameController Tests")
 class GameControllerTest {
 
@@ -48,6 +52,12 @@ class GameControllerTest {
 
     @MockBean
     private GameMapper gameMapper;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private GameRoom testRoom;
     private Player testPlayer;
@@ -80,13 +90,15 @@ class GameControllerTest {
         testSettings.setLevel("A1");
         testSettings.setTotalQuestionCount(10);
 
-        testRoomResponse = new GameRoomResponse();
-        testRoomResponse.setRoomCode("ABC12");
-        testRoomResponse.setStarted(false);
+        testRoomResponse = GameRoomResponse.builder()
+                .roomCode("ABC12")
+                .started(false)
+                .build();
 
-        testPlayerResponse = new PlayerResponse();
-        testPlayerResponse.setId("player-1");
-        testPlayerResponse.setName("TestPlayer");
+        testPlayerResponse = PlayerResponse.builder()
+                .id("player-1")
+                .name("TestPlayer")
+                .build();
     }
 
     @Nested
