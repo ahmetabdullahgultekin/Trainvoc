@@ -14,3 +14,11 @@ export {
 } from './errors';
 
 export type { ApiError, ErrorCode } from './errors';
+
+export {
+    isFullscreen,
+    enterFullscreen,
+    exitFullscreen,
+    toggleFullscreen,
+    onFullscreenChange,
+} from './fullscreen';

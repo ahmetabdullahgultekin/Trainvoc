@@ -7,6 +7,7 @@ import Modal from '../components/shared/Modal';
 import FullscreenButton from '../components/shared/FullscreenButton';
 import useProfile, {avatarList} from '../components/shared/useProfile';
 import {hashPassword} from '../components/shared/hashPassword';
+import {exitFullscreen} from '../utils/fullscreen';
 import type {LobbyData, Player} from '../interfaces/game';
 
 const LobbyPage: React.FC = () => {
@@ -96,10 +97,7 @@ const LobbyPage: React.FC = () => {
     };
 
     const handleHostLeave = async () => {
-        if (document.exitFullscreen) await document.exitFullscreen().catch(() => {
-        });
-        else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
-        else if ((document as any).msExitFullscreen) (document as any).msExitFullscreen();
+        await exitFullscreen();
         try {
             let hash = '';
             if (roomPassword) hash = await hashPassword(roomPassword);
@@ -112,11 +110,7 @@ const LobbyPage: React.FC = () => {
 
     // Oyuncu sorgusuz sualsiz lobiden çıkabilir
     const handlePlayerLeave = async () => {
-        // Tam ekrandan çık
-        if (document.exitFullscreen) await document.exitFullscreen().catch(() => {
-        });
-        else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
-        else if ((document as any).msExitFullscreen) (document as any).msExitFullscreen();
+        await exitFullscreen();
         try {
             // Oyuncuyu lobiden/veritabanından silmek için backend'e istek at
             if (roomCode && playerId) {
