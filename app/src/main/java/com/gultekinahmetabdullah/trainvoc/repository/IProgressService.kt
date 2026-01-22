@@ -32,4 +32,18 @@ interface IProgressService {
      * Get learned word count for an exam.
      */
     suspend fun getLearnedWordCountByExam(exam: String): Int
+
+    /**
+     * Get word status breakdown counts for progress screen.
+     */
+    suspend fun getMasteredWordCount(): Int
+    suspend fun getLearningWordCount(): Int
+    suspend fun getStrugglingWordCount(): Int
+    suspend fun getNotStartedWordCount(): Int
+
+    /**
+     * Get review schedule counts based on spaced repetition dates.
+     */
+    suspend fun getWordsToReviewByDate(endOfDay: Long): Int
+    suspend fun getWordsToReviewInRange(startDate: Long, endDate: Long): Int
 }

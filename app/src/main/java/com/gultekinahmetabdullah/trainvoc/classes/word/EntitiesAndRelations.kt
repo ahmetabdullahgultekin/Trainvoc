@@ -169,3 +169,71 @@ data class WordExamCrossRef(
     val word: String,
     val exam: String
 )
+
+/**
+ * API Cache entity (Phase 7: Dictionary Enrichment)
+ *
+ * Stores API responses for offline support and to reduce API calls.
+ * Cached data expires after 30 days.
+ */
+@Entity(
+    tableName = "api_cache",
+    indices = [
+        Index(value = ["word"], unique = true),
+        Index(value = ["cached_at"])
+    ]
+)
+data class ApiCache(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long = 0,
+
+    @ColumnInfo(name = "word")
+    val word: String,
+
+    @ColumnInfo(name = "ipa")
+    val ipa: String? = null,
+
+    @ColumnInfo(name = "audio_url")
+    val audioUrl: String? = null,
+
+    @ColumnInfo(name = "cached_at")
+    val cachedAt: Long = System.currentTimeMillis()
+) {
+    companion object {
+        const val CACHE_EXPIRY_DAYS = 30
+        const val CACHE_EXPIRY_MILLIS = CACHE_EXPIRY_DAYS * 24 * 60 * 60 * 1000L
+
+        fun isExpired(cachedAt: Long): Boolean {
+            return System.currentTimeMillis() - cachedAt > CACHE_EXPIRY_MILLIS
+        }
+    }
+}
+
+/**
+ * Synonym entity (Phase 7: Dictionary Enrichment)
+ *
+ * Stores synonyms for words in a many-to-many relationship.
+ * A word can have multiple synonyms, and a synonym can belong to multiple words.
+ */
+@Entity(
+    tableName = "synonyms",
+    primaryKeys = ["word", "synonym"],
+    indices = [
+        Index(value = ["word"]),
+        Index(value = ["synonym"])
+    ]
+)
+data class Synonym(
+    @ColumnInfo(name = "word")
+    val word: String,
+
+    @ColumnInfo(name = "synonym")
+    val synonym: String,
+
+    @ColumnInfo(name = "added_at")
+    val addedAt: Long = System.currentTimeMillis()
+)
+
+// Note: ExampleSentence entity already exists in com.gultekinahmetabdullah.trainvoc.examples package
+// We'll reuse that comprehensive table for Phase 7 dictionary enrichment

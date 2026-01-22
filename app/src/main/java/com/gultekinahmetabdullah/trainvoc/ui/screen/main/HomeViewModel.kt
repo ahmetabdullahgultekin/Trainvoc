@@ -2,11 +2,15 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.gamification.DailyGoal
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
 import com.gultekinahmetabdullah.trainvoc.gamification.StreakTracking
 import com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement
+import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.LevelProgress
+import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.ReviewSchedule
+import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordStatusCounts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 /**
@@ -64,6 +70,37 @@ class HomeViewModel @Inject constructor(
                     ((totalScore - xpForCurrentLevel).toFloat() / (xpForNextLevel - xpForCurrentLevel)).coerceIn(0f, 1f)
                 } else 0f
 
+                // Load progress by level (A1-C2)
+                val levelProgress = WordLevel.entries.map { level ->
+                    LevelProgress(
+                        level = level,
+                        learned = wordDao.getLearnedWordCountByLevel(level.name),
+                        total = wordDao.getWordCountByLevel(level.name)
+                    )
+                }
+
+                // Load word status breakdown
+                val wordStatusCounts = WordStatusCounts(
+                    mastered = wordDao.getMasteredWordCount(),
+                    learning = wordDao.getLearningWordCount(),
+                    struggling = wordDao.getStrugglingWordCount(),
+                    notStarted = wordDao.getNotStartedWordCount()
+                )
+
+                // Load review schedule (spaced repetition)
+                val now = LocalDate.now()
+                val todayEnd = now.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                val tomorrowEnd = now.plusDays(1).atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                val weekEnd = now.plusDays(7).atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                val monthEnd = now.plusDays(30).atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+                val reviewSchedule = ReviewSchedule(
+                    today = wordDao.getWordsToReviewByDate(todayEnd),
+                    tomorrow = wordDao.getWordsToReviewInRange(todayEnd, tomorrowEnd),
+                    thisWeek = wordDao.getWordsToReviewInRange(tomorrowEnd, weekEnd),
+                    thisMonth = wordDao.getWordsToReviewInRange(weekEnd, monthEnd)
+                )
+
                 _uiState.value = HomeUiState(
                     isLoading = false,
                     currentStreak = streak.currentStreak,
@@ -77,7 +114,10 @@ class HomeViewModel @Inject constructor(
                     unlockedAchievements = unlockedAchievements,
                     totalWords = totalWords,
                     learnedWords = learnedWords,
-                    wordsProgress = if (totalWords > 0) learnedWords.toFloat() / totalWords else 0f
+                    wordsProgress = if (totalWords > 0) learnedWords.toFloat() / totalWords else 0f,
+                    levelProgress = levelProgress,
+                    wordStatusCounts = wordStatusCounts,
+                    reviewSchedule = reviewSchedule
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -147,7 +187,12 @@ data class HomeUiState(
     // Word Progress
     val totalWords: Int = 0,
     val learnedWords: Int = 0,
-    val wordsProgress: Float = 0f
+    val wordsProgress: Float = 0f,
+
+    // Detailed Progress (for WordProgressScreen)
+    val levelProgress: List<LevelProgress> = emptyList(),
+    val wordStatusCounts: WordStatusCounts? = null,
+    val reviewSchedule: ReviewSchedule? = null
 ) {
     // Computed properties for daily tasks
     val quizzesCompleted: Int get() = dailyGoal?.quizzesToday ?: 0

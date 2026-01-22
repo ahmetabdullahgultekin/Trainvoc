@@ -42,11 +42,10 @@ fun WordProgressScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // TODO: Load from ViewModel
-    // Current: Mock data for demonstration
-    val levelProgress = remember { generateMockLevelProgress() }
-    val wordStatusBreakdown = remember { generateMockWordStatus() }
-    val wordsToReview = remember { generateMockReviewSchedule() }
+    // Get real data from ViewModel
+    val levelProgress = uiState.levelProgress
+    val wordStatusBreakdown = generateWordStatusList(uiState.wordStatusCounts)
+    val wordsToReview = uiState.reviewSchedule ?: ReviewSchedule(0, 0, 0, 0)
 
     Scaffold(
         topBar = {
@@ -534,6 +533,13 @@ data class ReviewSchedule(
     val thisMonth: Int
 )
 
+data class WordStatusCounts(
+    val mastered: Int,
+    val learning: Int,
+    val struggling: Int,
+    val notStarted: Int
+)
+
 // Extension for WordLevel colors - uses theme-aware CEFR colors
 val WordLevel.color: Color
     get() = when (this) {
@@ -545,53 +551,36 @@ val WordLevel.color: Color
         WordLevel.C2 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.C2
     }
 
-// Mock data generators
-private fun generateMockLevelProgress(): List<LevelProgress> {
-    return listOf(
-        LevelProgress(WordLevel.A1, 45, 50),
-        LevelProgress(WordLevel.A2, 38, 80),
-        LevelProgress(WordLevel.B1, 22, 120),
-        LevelProgress(WordLevel.B2, 8, 150),
-        LevelProgress(WordLevel.C1, 2, 200),
-        LevelProgress(WordLevel.C2, 0, 250)
-    )
-}
+// Real data converter
+private fun generateWordStatusList(counts: WordStatusCounts?): List<WordStatus> {
+    if (counts == null) {
+        return emptyList()
+    }
 
-private fun generateMockWordStatus(): List<WordStatus> {
-    // Using light variants for mock data (will be styled by theme at runtime)
     return listOf(
         WordStatus(
             "Mastered",
-            85,
+            counts.mastered,
             Icons.Default.CheckCircle,
             StatsColors.correctLight
         ),
         WordStatus(
             "Learning",
-            42,
+            counts.learning,
             Icons.Default.School,
             StatsColors.goldLight
         ),
         WordStatus(
             "Struggling",
-            18,
+            counts.struggling,
             Icons.Default.Warning,
             StatsColors.incorrectLight
         ),
         WordStatus(
             "Not Started",
-            705,
+            counts.notStarted,
             Icons.Default.Circle,
             StatsColors.skippedLight
         )
-    )
-}
-
-private fun generateMockReviewSchedule(): ReviewSchedule {
-    return ReviewSchedule(
-        today = 15,
-        tomorrow = 12,
-        thisWeek = 42,
-        thisMonth = 128
     )
 }
