@@ -49,6 +49,12 @@ TrainvocWeb/
 │   │   ├── GameRanking.tsx    # Live ranking display
 │   │   ├── GameStartCountdown.tsx
 │   │   └── PlaySidebar.tsx    # Game sidebar
+│   ├── hooks/                 # Custom React hooks
+│   │   ├── index.ts           # Hook exports
+│   │   ├── useGameState.ts    # Game state management with polling
+│   │   ├── useLobby.ts        # Lobby state management
+│   │   ├── usePolling.ts      # Generic polling utility
+│   │   └── useRooms.ts        # Room list with auto-refresh
 │   ├── interfaces/            # TypeScript interfaces
 │   │   ├── game.ts            # Game-related types
 │   │   └── gameExtra.ts       # Additional game types
@@ -69,12 +75,21 @@ TrainvocWeb/
 │   │   ├── PlayPage.tsx       # Play menu
 │   │   ├── ProfilePage.tsx    # User profile
 │   │   └── RoomDetailPage.tsx # Room details/waiting
+│   ├── services/              # API service layer
+│   │   ├── index.ts           # Service exports
+│   │   ├── GameService.ts     # Game API operations
+│   │   ├── RoomService.ts     # Room management API
+│   │   └── LeaderboardService.ts # Leaderboard API
+│   ├── utils/                 # Utility functions
+│   │   ├── index.ts           # Utility exports
+│   │   └── errors.ts          # Error handling utilities
 │   ├── App.tsx                # Main app component
-│   ├── api.ts                 # Axios API configuration
+│   ├── api.ts                 # Axios API configuration (env-based)
 │   ├── i18n.ts                # i18next configuration
 │   ├── main.tsx               # React entry point
 │   ├── style.css              # Global styles
 │   └── vite-env.d.ts          # Vite type definitions
+├── .env.example               # Environment variable template
 ├── index.html                 # HTML template
 ├── package.json               # Dependencies
 ├── tsconfig.json              # TypeScript configuration
@@ -251,23 +266,24 @@ src/locales/
 
 ### Critical
 
-1. **Hardcoded Backend URL**
-   - `api.ts` has hardcoded `localhost:8080`
-   - Should use environment variables
+1. ~~**Hardcoded Backend URL**~~ ✅ FIXED
+   - ~~`api.ts` has hardcoded `localhost:8080`~~
+   - **Status**: Now uses `VITE_API_URL` environment variable
 
-2. **No Authentication**
+2. **No Authentication** (Deferred)
    - No login/logout functionality
    - User identified only by nickname
+   - **Status**: Requires backend auth implementation first
 
-3. **Limited Error Handling**
-   - API errors not consistently handled
-   - No retry logic
+3. ~~**Limited Error Handling**~~ ✅ FIXED
+   - ~~API errors not consistently handled~~
+   - **Status**: Created centralized error utilities in `utils/errors.ts`
 
 ### Medium
 
-4. **No State Management Library**
-   - Uses React state only
-   - Could benefit from Redux/Zustand for complex state
+4. ~~**No State Management Library**~~ ✅ Partially Fixed
+   - ~~Uses React state only~~
+   - **Status**: Created custom hooks for state management (useGameState, useLobby, useRooms)
 
 5. **Missing Loading States**
    - Some pages lack loading indicators
@@ -289,19 +305,105 @@ src/locales/
 
 ---
 
+## Service Layer
+
+The application now has a proper service layer for API abstraction:
+
+### GameService (`services/GameService.ts`)
+```typescript
+import { GameService } from '../services';
+
+// Submit answer
+await GameService.submitAnswer(roomCode, playerId, answer, answerTime);
+
+// Get game state
+const state = await GameService.getGameState(roomCode, playerId);
+
+// Go to next question
+await GameService.nextQuestion(roomCode, playerId);
+```
+
+### RoomService (`services/RoomService.ts`)
+```typescript
+import { RoomService } from '../services';
+
+// Fetch rooms
+const rooms = await RoomService.fetchRooms();
+
+// Create room
+const room = await RoomService.createRoom(settings);
+
+// Join room
+const player = await RoomService.joinRoom(roomCode, name, avatarId);
+```
+
+### LeaderboardService (`services/LeaderboardService.ts`)
+```typescript
+import { LeaderboardService } from '../services';
+
+// Get global leaderboard
+const entries = await LeaderboardService.getLeaderboard();
+
+// Get room leaderboard
+const roomEntries = await LeaderboardService.getRoomLeaderboard(roomCode);
+```
+
+---
+
+## Custom Hooks
+
+### useGameState
+Manages game state with server polling and local timer synchronization:
+```typescript
+const { step, questions, players, localTimeLeft, loading, error } = useGameState({
+    roomCode,
+    playerId,
+    pollInterval: 1000
+});
+```
+
+### useLobby
+Manages lobby state with game start detection:
+```typescript
+const { lobby, players, isHost, startGame, leaveLobby } = useLobby({
+    roomCode,
+    playerId
+});
+```
+
+### useRooms
+Fetches and filters room list with auto-refresh:
+```typescript
+const { rooms, availableRooms, loading, refresh } = useRooms({
+    autoRefresh: true,
+    refreshInterval: 5000
+});
+```
+
+### usePolling
+Generic polling utility hook:
+```typescript
+const { data, loading, error, stop, start } = usePolling({
+    fetchFn: () => api.get('/endpoint'),
+    interval: 2000
+});
+```
+
+---
+
 ## Recommendations
 
-### Immediate Fixes
+### Immediate Fixes ✅ COMPLETED
 
-1. **Environment Variables**
+1. ~~**Environment Variables**~~ ✅
    ```typescript
-   // api.ts
+   // api.ts - Now implemented
    const api = axios.create({
        baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/',
    });
    ```
 
-2. **Error Boundaries**
+2. **Error Boundaries** (Pending)
    ```typescript
    <ErrorBoundary fallback={<ErrorPage />}>
        <App />
@@ -311,7 +413,7 @@ src/locales/
 ### Future Improvements
 
 1. Add proper authentication (JWT/OAuth)
-2. Implement state management (Zustand recommended)
+2. ~~Implement state management~~ ✅ Custom hooks created
 3. Add comprehensive error handling
 4. Write unit and integration tests
 5. Add PWA support for offline capability
@@ -381,10 +483,13 @@ npm run build
 
 | Type | Count |
 |------|-------|
-| TypeScript/TSX | 38 |
+| TypeScript/TSX | 50+ |
+| Services | 4 |
+| Hooks | 5 |
+| Utils | 2 |
 | CSS | 1 |
 | JSON (translations) | 2+ |
-| Configuration | 4 |
+| Configuration | 5 |
 
 ---
 
@@ -393,6 +498,8 @@ npm run build
 - **Root CLAUDE.md**: `/CLAUDE.md` - Monorepo overview
 - **Backend CLAUDE.md**: `/TrainvocBackend/CLAUDE.md` - API documentation
 - **Architecture**: `/ARCHITECTURE.md` - System design
+- **Changelog**: `/CHANGELOG.md` - Version history
+- **Master Fix Plan**: `/MASTER_FIX_PLAN.md` - Issue tracking
 
 ---
 

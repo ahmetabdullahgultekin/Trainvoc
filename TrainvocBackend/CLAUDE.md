@@ -31,8 +31,10 @@ TrainvocBackend/
 │   ├── main/
 │   │   ├── java/com/rollingcatsoftware/trainvocmultiplayerapplication/
 │   │   │   ├── config/                    # Spring configurations
-│   │   │   │   ├── CorsConfig.java        # CORS settings
+│   │   │   │   ├── CorsConfig.java        # Environment-based CORS
+│   │   │   │   ├── GameConstants.java     # Centralized game constants
 │   │   │   │   ├── PrimaryDataSourceConfig.java  # Main DB config
+│   │   │   │   ├── RateLimitingConfig.java # Rate limiting (bucket4j)
 │   │   │   │   ├── SecondDataSourceConfig.java   # Words DB config
 │   │   │   │   ├── SecurityConfig.java    # Security settings
 │   │   │   │   └── WebSocketConfig.java   # WebSocket setup
@@ -60,6 +62,16 @@ TrainvocBackend/
 │   │   │   │   ├── Statistic.java
 │   │   │   │   ├── Word.java              # Vocabulary word
 │   │   │   │   └── WordExamCrossRef.java  # Word-Exam relation
+│   │   │   ├── pattern/                   # Design patterns
+│   │   │   │   └── state/                 # State pattern for game states
+│   │   │   │       ├── GameStateHandler.java      # State handler interface
+│   │   │   │       ├── GameStateMachine.java      # State machine coordinator
+│   │   │   │       ├── LobbyStateHandler.java     # Waiting state
+│   │   │   │       ├── CountdownStateHandler.java # Countdown state
+│   │   │   │       ├── QuestionStateHandler.java  # Question state
+│   │   │   │       ├── AnswerRevealStateHandler.java # Answer reveal state
+│   │   │   │       ├── RankingStateHandler.java   # Ranking state
+│   │   │   │       └── FinalStateHandler.java     # Game finished state
 │   │   │   ├── repository/                # Data access layer
 │   │   │   │   ├── GameRoomRepository.java
 │   │   │   │   ├── PlayerAnswerRepository.java
@@ -69,17 +81,30 @@ TrainvocBackend/
 │   │   │   │       ├── ExamRepository.java
 │   │   │   │       ├── WordExamCrossRefRepository.java
 │   │   │   │       └── WordRepository.java
-│   │   │   ├── service/                   # Business logic
-│   │   │   │   ├── GameService.java       # Game management
+│   │   │   ├── service/                   # Business logic (SRP-compliant)
+│   │   │   │   ├── GameService.java       # Facade/orchestrator
+│   │   │   │   ├── GameStateService.java  # Game state calculations
+│   │   │   │   ├── IRoomService.java      # Room service interface (DIP)
+│   │   │   │   ├── IPlayerService.java    # Player service interface (DIP)
+│   │   │   │   ├── RoomService.java       # Room CRUD operations
+│   │   │   │   ├── PlayerService.java     # Player management
+│   │   │   │   ├── RoomPasswordService.java # Password validation
 │   │   │   │   ├── LeaderboardService.java
 │   │   │   │   ├── PlayerAnswerService.java
 │   │   │   │   ├── QuizService.java       # Quiz generation
 │   │   │   │   └── RoomCleanupService.java # Scheduled cleanup
 │   │   │   ├── websocket/                 # WebSocket handlers
-│   │   │   │   └── GameWebSocketHandler.java
+│   │   │   │   ├── GameWebSocketHandler.java
+│   │   │   │   └── handler/               # Message handlers (Strategy pattern)
+│   │   │   │       ├── WebSocketMessageHandler.java  # Handler interface
+│   │   │   │       ├── WebSocketContext.java         # Session management
+│   │   │   │       ├── MessageDispatcher.java        # Message routing
+│   │   │   │       ├── CreateRoomHandler.java        # Room creation
+│   │   │   │       └── JoinRoomHandler.java          # Room joining
 │   │   │   └── TrainvocMultiplayerApplication.java  # Main entry
 │   │   └── resources/
-│   │       ├── application.properties     # App configuration
+│   │       ├── application.properties     # Environment-based config
+│   │       ├── application-dev.properties # Development profile
 │   │       ├── keystore.p12              # SSL keystore
 │   │       └── static/                   # Static files
 │   └── test/
@@ -89,6 +114,8 @@ TrainvocBackend/
 │   ├── trainvoc-words-backup.sql
 │   ├── trainvoc-mp-db-for-postgre.sql
 │   └── trainvoc-words-db-for-postgre.sql
+├── .env.example                          # Environment variable template
+├── Dockerfile                            # Docker build config
 ├── build.gradle                          # Build configuration
 ├── settings.gradle                       # Project settings
 ├── gradlew                               # Gradle wrapper
@@ -313,34 +340,36 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 ### Critical
 
-1. **Hardcoded Credentials in application.properties**
-   - Database passwords visible in source
-   - AWS RDS credentials in comments
-   - SSL keystore password exposed
-   - **Fix**: Use environment variables or secrets management
+1. ~~**Hardcoded Credentials in application.properties**~~ ✅ FIXED
+   - ~~Database passwords visible in source~~
+   - ~~AWS RDS credentials in comments~~
+   - ~~SSL keystore password exposed~~
+   - **Status**: Now uses environment variables via `${DB_PASSWORD}`, etc.
 
-2. **No Authentication/Authorization**
+2. **No Authentication/Authorization** (Deferred)
    - All endpoints publicly accessible
    - No user authentication
    - Room passwords are only hashed, not properly secured
+   - **Status**: Requires user management system first
 
-3. **CORS Allows All Origins**
-   - `setAllowedOrigins("*")` is too permissive
-   - Should restrict to specific domains in production
+3. ~~**CORS Allows All Origins**~~ ✅ FIXED
+   - ~~`setAllowedOrigins("*")` is too permissive~~
+   - **Status**: Now uses `CORS_ALLOWED_ORIGINS` environment variable
 
 ### High
 
-4. **No Rate Limiting**
-   - API vulnerable to abuse
-   - Could be DDoS'd easily
+4. ~~**No Rate Limiting**~~ ✅ FIXED
+   - ~~API vulnerable to abuse~~
+   - **Status**: Implemented with bucket4j in `RateLimitingConfig.java`
 
-5. **No Input Validation**
-   - Limited validation on request parameters
-   - Potential for injection attacks
+5. ~~**No Input Validation**~~ ✅ FIXED
+   - ~~Limited validation on request parameters~~
+   - **Status**: Added Jakarta Bean Validation with `@Valid` annotations
 
-6. **Missing Error Handling**
-   - Some endpoints return raw exceptions
-   - Should use consistent error responses
+6. **Missing Error Handling** (Partially Fixed)
+   - ~~Some endpoints return raw exceptions~~
+   - **Status**: `GlobalExceptionHandler` handles validation errors
+   - **Remaining**: Standardize all error responses
 
 ### Medium
 
@@ -465,12 +494,57 @@ public class GameController {
 
 ---
 
+## Design Patterns Implemented
+
+### State Pattern (Game States)
+
+The game state machine uses the State pattern for extensibility:
+
+```java
+public interface GameStateHandler {
+    GameState getState();
+    int calculateRemainingTime(GameRoom room, long elapsedSeconds);
+    int getStateDuration(GameRoom room);
+    GameState getNextState();
+    boolean hasAutomaticTransition();
+}
+```
+
+State handlers: `LobbyStateHandler`, `CountdownStateHandler`, `QuestionStateHandler`, `AnswerRevealStateHandler`, `RankingStateHandler`, `FinalStateHandler`
+
+### Strategy Pattern (WebSocket Messages)
+
+WebSocket messages are handled via the Strategy pattern:
+
+```java
+public interface WebSocketMessageHandler {
+    String getMessageType();
+    void handle(WebSocketSession session, JSONObject message, WebSocketContext context);
+}
+```
+
+`MessageDispatcher` routes messages to appropriate handlers.
+
+### Service Layer (SRP Compliance)
+
+Services are split by responsibility:
+
+| Service | Responsibility |
+|---------|---------------|
+| `GameService` | Facade/orchestrator |
+| `RoomService` | Room CRUD operations |
+| `PlayerService` | Player management |
+| `RoomPasswordService` | Password validation |
+| `GameStateService` | State calculations |
+
+---
+
 ## File Count Summary
 
 | Type | Count |
 |------|-------|
-| Java Classes | 39 |
-| Configuration | 5 |
+| Java Classes | 55+ |
+| Configuration | 8 |
 | SQL Scripts | 4+ |
 | Test Classes | 1 |
 
@@ -482,6 +556,8 @@ public class GameController {
 - **Web CLAUDE.md**: `/TrainvocWeb/CLAUDE.md` - Frontend docs
 - **Architecture**: `/ARCHITECTURE.md` - System design
 - **SQL Queries**: `/TrainvocBackend/sql-queries/` - Database scripts
+- **Changelog**: `/CHANGELOG.md` - Version history
+- **Master Fix Plan**: `/MASTER_FIX_PLAN.md` - Issue tracking
 
 ---
 
