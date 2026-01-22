@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.ui.games
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
@@ -15,6 +16,10 @@ import javax.inject.Inject
 class GamesMenuViewModel @Inject constructor(
     private val gamesDao: GamesDao
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "GamesMenuViewModel"
+    }
 
     private val _uiState = MutableStateFlow(GamesMenuUiState())
     val uiState: StateFlow<GamesMenuUiState> = _uiState.asStateFlow()
@@ -81,8 +86,7 @@ class GamesMenuViewModel @Inject constructor(
                     gameStats = gameStats
                 )
             } catch (e: Exception) {
-                // Handle error - keep default state
-                e.printStackTrace()
+                Log.e(TAG, "Error loading game stats", e)
             }
         }
     }

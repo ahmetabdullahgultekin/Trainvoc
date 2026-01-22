@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -43,6 +44,7 @@ import javax.crypto.spec.GCMParameterSpec
 class EncryptionHelper(private val context: Context) {
 
     companion object {
+        private const val TAG = "EncryptionHelper"
         private const val KEY_ALIAS = "trainvoc_backup_encryption_key"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val IV_SIZE_BYTES = 12 // 96 bits (recommended for GCM)
@@ -147,7 +149,7 @@ class EncryptionHelper(private val context: Context) {
 
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Error encrypting file: ${inputFile.name}", e)
             // Clean up output file on failure
             if (outputFile.exists()) {
                 outputFile.delete()
@@ -213,7 +215,7 @@ class EncryptionHelper(private val context: Context) {
 
             true
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Error decrypting file: ${inputFile.name}", e)
             // Clean up output file on failure
             if (outputFile.exists()) {
                 outputFile.delete()
