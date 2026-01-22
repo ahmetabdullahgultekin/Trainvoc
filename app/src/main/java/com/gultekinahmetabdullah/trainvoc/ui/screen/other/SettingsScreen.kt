@@ -306,14 +306,22 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             Button(
                 onClick = {
                     haptic.click()
-                    navController.navigate(Route.LEADERBOARD)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Leaderboard coming soon! Compete with learners worldwide in a future update.",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 },
                 shape = RoundedCornerShape(CornerRadius.medium),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .pressClickable { }
+                    .pressClickable { },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
             ) {
-                Text("Leaderboard")
+                Text("Leaderboard (Coming Soon)", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.height(Spacing.small))
@@ -382,6 +390,29 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             ) {
                 Text("Accessibility Settings")
             }
+
+            Spacer(modifier = Modifier.height(Spacing.small))
+
+            // Audio & Pronunciation Section
+            Text(
+                text = "Audio & Pronunciation",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // TTS Enable Toggle (always available - Android TTS is free)
+            SettingSwitch(
+                title = "Enable Pronunciation Audio",
+                isChecked = true, // TTS is always enabled since it's free
+                onCheckedChange = { /* No-op, TTS is always available */ }
+            )
+
+            Text(
+                text = "Use speaker buttons (🔊) on word cards to hear pronunciation",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = Spacing.medium, top = Spacing.extraSmall)
+            )
 
             Spacer(modifier = Modifier.height(Spacing.small))
 

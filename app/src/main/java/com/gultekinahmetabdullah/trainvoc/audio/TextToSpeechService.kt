@@ -43,7 +43,8 @@ class TextToSpeechService @Inject constructor(
     @Volatile
     private var mediaPlayer: MediaPlayer? = null
     @Volatile
-    private var isInitialized = false
+    var isInitialized = false
+        private set
     private var currentSpeed = 1.0f
 
     // Audio cache directory
