@@ -1,0 +1,330 @@
+<resources>
+    <string name="app_name">Trainvoc</string>
+    <string name="app_icon_desc">App Icon</string>
+    <string name="home_welcome">Welcome to TrainVoc! 🚀</string>
+    <string name="home_subtitle">Improve your English-Turkish vocabulary with engaging quizzes and smart learning tools.</string>
+    <string name="lottie_desc">Animated diamond</string>
+    <string name="start_quiz">Start Custom Quiz</string>
+    <string name="story_mode">Story Mode</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help</string>
+    <string name="stats">Stats</string>
+    <string name="games">Games</string>
+    <string name="word_management">Word Management</string>
+    <string name="search">Search</string>
+    <string name="add_new_word">Add New Word</string>
+    <string name="add_word">Add Word</string>
+    <string name="word">Word</string>
+    <string name="explanation">Explanation</string>
+    <string name="word_colon">Word: %1$s</string>
+    <string name="meaning_colon">Meaning: %1$s</string>
+    <string name="level_colon">Level: %1$s</string>
+    <string name="category_colon">Category: %1$s</string>
+    <string name="last_reviewed_colon">Last Reviewed: %1$s</string>
+    <string name="stat_id_colon">Stat ID: %1$s</string>
+    <string name="select_level">Select Level</string>
+    <string name="select_category">Select Category</string>
+    <string name="level">Level</string>
+    <string name="category">Category</string>
+    <string name="na">N/A</string>
+    <string name="select_quiz_category">Select Quiz Category</string>
+    <string name="test_your_knowledge_with">Test your knowledge with %1$s level words</string>
+    <string name="select_quiz_type">Select Quiz Type</string>
+    <string name="loading_questions">Loading Questions…</string>
+    <string name="which_one_is_the_correct_meaning">Which one is the correct meaning of:</string>
+    <string name="next_question">Next Question</string>
+    <string name="question_number">Question %1$d</string>
+    <string name="score">Score</string>
+    <string name="quiz_statistics">Quiz Statistics</string>
+    <string name="total_questions">Total Questions</string>
+    <string name="correct_answers">Correct Answers</string>
+    <string name="incorrect_answers">Incorrect Answers</string>
+    <string name="skipped_questions">Skipped Questions</string>
+    <string name="success_rate">Success Rate</string>
+    <string name="failure_rate">Failure Rate</string>
+    <string name="skipped_rate">Skipped Rate</string>
+    <string name="total_score">Total Score</string>
+    <string name="total_time_spent">Total Time Spent</string>
+    <string name="last_answered">Last Answered</string>
+    <string name="answer_distribution">Answer Distribution</string>
+    <string name="correct_label">correct</string>
+    <string name="incorrect_label">incorrect</string>
+    <string name="skipped_label">skipped</string>
+    <string name="performance_trends">Performance Trends</string>
+    <string name="daily_label">Daily</string>
+    <string name="weekly_label">Weekly</string>
+    <string name="total_label">Total</string>
+    <string name="refresh_stats">Refresh Stats</string>
+    <string name="correct_colon">Correct: %1$d</string>
+    <string name="skipped_colon">Skipped: %1$d</string>
+    <string name="incorrect_colon">Incorrect: %1$d</string>
+    <string name="version">Version: %1$s</string>
+    <string name="about_app_desc">Trainvoc is an app that helps you improve your vocabulary in a fun way.</string>
+    <string name="about_developer">Developer</string>
+    <string name="developer_picture">Developer Picture</string>
+    <string name="developer_name">Ahmet Abdullah Gültekin</string>
+    <string name="developer_title">Android Developer</string>
+    <string name="github">GitHub</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="website">Website</string>
+    <string name="credits_licenses">Licenses and Credits</string>
+    <string name="credits_desc">This app is developed with open source libraries and community contributions.</string>
+    <string name="view_license">View License</string>
+    <string name="faq_how_to_use">How to use the app?</string>
+    <string name="faq_how_to_use_desc">You can select one of the categories and start the tests.</string>
+    <string name="faq_how_to_reset">How do I reset my progress?</string>
+    <string name="faq_how_to_reset_desc">You can reset your progress from the settings menu.</string>
+    <string name="faq_how_to_theme">How do I change the theme?</string>
+    <string name="faq_how_to_theme_desc">Theme selection will be available soon.</string>
+    <string name="faq_how_to_contact">How do I contact support?</string>
+    <string name="faq_how_to_contact_desc">You can reach us from the settings or help menu.</string>
+    <string name="faq_how_to_report_bug">How do I report a bug?</string>
+    <string name="faq_how_to_report_bug_desc">You can report bugs via the feedback button or by emailing support@trainvoc.com.</string>
+    <string name="faq_how_to_suggest_feature">How can I suggest a new feature?</string>
+    <string name="faq_how_to_suggest_feature_desc">You can suggest features using the feedback form or by contacting us via email.</string>
+    <string name="faq_how_to_backup">How do I backup my data?</string>
+    <string name="faq_how_to_backup_desc">Backup and restore features will be available soon. Stay tuned!</string>
+    <string name="help_welcome">Welcome to the help center! Here you can find answers to common questions, contact support, and send us your feedback.</string>
+    <string name="help_support">Help &amp; Support</string>
+    <string name="faq_title">Frequently Asked Questions</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="email_support">Email</string>
+    <string name="call_support">Phone</string>
+    <string name="visit_website">Visit Website</string>
+    <string name="give_feedback">Give Feedback</string>
+    <string name="redirecting_feedback">Redirecting to the feedback page…</string>
+    <string name="submit_feedback">Submit</string>
+    <string name="theme">Theme</string>
+    <string name="system_default">System Default</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="theme_coming_soon">Theme changing will be available soon</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="notifications_coming_soon">Notification feature will be available soon</string>
+    <string name="language">Language</string>
+    <string name="spanish">Spanish</string>
+    <string name="french">French</string>
+    <string name="german">German</string>
+    <string name="arabic">Arabic</string>
+    <string name="language_coming_soon">Language changing will be available soon</string>
+    <string name="manage_words">Manage Words</string>
+    <string name="progress_reset">Progress reset</string>
+    <string name="reset_progress">Reset your progress</string>
+    <string name="logout">Logout</string>
+    <string name="more_options">More Options</string>
+    <string name="close">Close</string>
+    <string name="about">About</string>
+    <string name="level_a1">A1</string>
+    <string name="level_a2">A2</string>
+    <string name="level_b1">B1</string>
+    <string name="level_b2">B2</string>
+    <string name="level_c1">C1</string>
+    <string name="level_c2">C2</string>
+    <string name="level_yds">YDS</string>
+    <string name="level_mixed">Mixed</string>
+    <string name="exam_yds">YDS</string>
+    <string name="exam_mixed">Mixed</string>
+    <string name="exam_generic">%1$s Exam</string>
+    <string name="exam_toefl">TOEFL</string>
+    <string name="exam_ielts">IELTS</string>
+    <string name="exam_yokdil">YÖKDİL</string>
+    <string name="exam_kpds">KPDS</string>
+    <string name="test_your_knowledge_with_exam">Test your knowledge with the words asked in the %1$s Exam</string>
+    <string name="test_your_knowledge_with_mixed">Test your knowledge with all levels of words</string>
+    <string name="quiz_multiple_choice">Multiple Choice</string>
+    <string name="quiz_true_false">True/False</string>
+    <string name="quiz_matching">Matching</string>
+    <string name="quiz_generic">%1$s Quiz</string>
+    <string name="quiz_multiple_choice_desc">Answer multiple choice questions.</string>
+    <string name="quiz_true_false_desc">Decide if the statement is true or false.</string>
+    <string name="quiz_matching_desc">Match the correct pairs.</string>
+    <string name="quiz_generic_desc">Test your knowledge with %1$s.</string>
+    <string name="quit_quiz_title">Quit Quiz?</string>
+    <string name="quit_quiz_message">Are you sure you want to quit? This question will be marked as skipped.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="username_prompt">Let us know your name my friend!</string>
+    <string name="your_name">Your Name</string>
+    <string name="choose_language">Choose Language</string>
+    <string name="turkish">Türkçe</string>
+    <string name="english">English</string>
+    <string name="continue_text">Continue</string>
+    <string name="loading">Loading…</string>
+    <string name="word_not_found">Word not found.</string>
+    <string name="last_reviewed">Last Reviewed: %1$s</string>
+    <string name="total_seconds">Total Time: %1$d sec</string>
+    <string name="exam_history">Exam History:</string>
+    <string name="search_word">Search Word</string>
+    <string name="send_test_notification">Send Test Notification</string>
+    <string name="home">Home</string>
+    <string name="quiz">Quiz</string>
+    <string name="welcome_title">Welcome my Friend!</string>
+    <string name="welcome_description">Trainvoc is a vocabulary training app that helps you learn new words in a fun way.</string>
+    <string name="lets_get_down_to_business">Let\'s get down to business!</string>
+    <string name="notifications_enabled">Notifications enabled</string>
+    <string name="notifications_disabled">Notifications disabled</string>
+    <string name="unknown_level">Unknown Level</string>
+    <string name="word_stats">Word Statistics History for "%1$s"</string>
+    <string name="correct">How many times was it answered correctly</string>
+    <string name="wrong">
+        How many times was it answered incorrectly
+    </string>
+    <string name="skipped">
+        How many times was it skipped
+    </string>
+    <string name="learned">You have learned this word before.</string>
+    <string name="not_learned">You have not learned this word yet.</string>
+    <string name="coming_soon">Coming Soon!</string>
+    <string name="total_quizzes">Total Quizzes</string>
+    <string name="avg_time_per_question">Avg. Time per Question</string>
+    <string name="most_wrong_word">Most Wrong Word</string>
+    <string name="daily_correct">Daily Correct</string>
+    <string name="weekly_correct">Weekly Correct</string>
+    <string name="monthly_correct">Monthly Correct</string>
+    <string name="best_category">Best Category</string>
+    <string name="worst_category">Worst Category</string>
+    <string name="total_words">Total Words</string>
+    <string name="welcome_description_2">
+        Trainvoc is a vocabulary training app that helps you learn new words in a fun way.
+        You can test your knowledge with quizzes, track your progress, and manage your vocabulary
+        effectively.
+    </string>
+    <string name="level_with_value">Level: %1$s</string>
+    <string name="total_words_with_value">Total Words: %1$s</string>
+    <string name="learned_words_with_value">Learned Words: %1$s</string>
+    <string name="progress_with_value">Progress: %1$s</string>
+    <string name="custom_mode_with_value">Custom Mod: %1$s</string>
+    <string name="exam_with_value">Exam: %1$s</string>
+    <string name="exam_type_with_value">Exam Type: %1$s</string>
+    <string name="locked_level_warning">Locked - Learn all words in the previous level first!</string>
+
+    <!-- Quiz Exam Menu Screen -->
+    <string name="select_level_and_exam">Select Level &amp; Exam</string>
+    <string name="words_mastered">%1$d words mastered</string>
+    <string name="words_available">%1$d words available</string>
+    <string name="difficulty_beginner">★☆☆</string>
+    <string name="difficulty_elementary">★★☆</string>
+    <string name="difficulty_intermediate">★★★</string>
+    <string name="difficulty_upper_intermediate">★★★★</string>
+    <string name="difficulty_advanced">★★★★★</string>
+    <string name="difficulty_proficient">★★★★★★</string>
+    <string name="toefl_description">Test of English as a Foreign Language</string>
+    <string name="ielts_description">International English Language Testing System</string>
+    <string name="general_vocab_title">General Vocabulary</string>
+    <string name="general_vocab_description">All-purpose word practice</string>
+    <string name="complete_level_first">Complete %1$s first</string>
+    <string name="your_current_level">Your Level</string>
+
+    <!-- Home Screen Gamification -->
+    <string name="username_placeholder">User</string>
+    <string name="daily_tasks">Daily Tasks</string>
+    <string name="task_solve_quizzes">Solve 3 Quizzes</string>
+    <string name="task_learn_words">Learn 10 New Words</string>
+    <string name="task_earn_achievement">Earn 1 Achievement</string>
+    <string name="achievements">Achievements</string>
+    <string name="achievement_first_quiz">First Quiz</string>
+    <string name="achievement_streak_day">Streak Day</string>
+    <string name="achievement_100_words">100 Words</string>
+    <string name="categories">Categories</string>
+    <string name="category_general">General</string>
+    <string name="category_targeted">Targeted</string>
+    <string name="category_quick">Quick</string>
+    <string name="quick_access">Quick Access</string>
+    <string name="word_of_the_day">Word of the Day</string>
+    <string name="favorites">Favorites</string>
+    <string name="last_quiz">Last Quiz</string>
+    <string name="xp_progress">%1$d / %2$d XP</string>
+    <string name="task_progress">%1$d/%2$d</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_name">Word Reminders</string>
+    <string name="notification_learned_title">Do you remember?</string>
+    <string name="notification_learned_message">Do you remember the word \"%1$s\"?</string>
+    <string name="notification_new_title">Do you know?</string>
+    <string name="notification_new_message">Do you know the meaning of \"%1$s\"?</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="decorative_background">Decorative background image</string>
+    <string name="start_quiz_button">Start quiz</string>
+    <string name="achievement_first_place">First place achievement - Gold medal</string>
+    <string name="achievement_streak">Daily streak achievement - Fire icon</string>
+    <string name="achievement_books">Books achievement - Learning milestone</string>
+    <string name="achievement_locked">Locked achievement - Complete tasks to unlock</string>
+    <string name="category_brain_training">Brain training category</string>
+    <string name="category_target_practice">Target practice category</string>
+    <string name="category_quick_quiz">Quick quiz category</string>
+    <string name="quick_access_word_of_day">Word of the day - Star icon</string>
+    <string name="quick_access_favorites">Favorites - Heart icon</string>
+    <string name="quick_access_last_quiz">Last quiz - Clock icon</string>
+    <string name="statistics_icon">Statistics information</string>
+    <string name="trophy_icon">Trophy icon</string>
+
+    <!-- Dictionary & Word Detail Screen -->
+    <string name="no_words_found">No words found</string>
+    <string name="try_different_search">Try a different search term</string>
+    <string name="statistics">Statistics</string>
+    <string name="success_rate_percent">Success Rate: %1$d%%</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_daily_reminder">Daily Reminders</string>
+    <string name="channel_daily_reminder_desc">Daily learning reminders to practice vocabulary</string>
+    <string name="channel_streak_alert">Streak Alerts</string>
+    <string name="channel_streak_alert_desc">Notifications about your learning streak</string>
+    <string name="channel_word_of_day">Word of the Day</string>
+    <string name="channel_word_of_day_desc">Daily featured word notification</string>
+    <string name="channel_general">General</string>
+    <string name="channel_general_desc">General app notifications</string>
+
+    <!-- Daily Reminder Notifications -->
+    <string name="notification_daily_title">Time to practice! 📚</string>
+    <string name="notification_daily_message">Continue your learning streak today</string>
+    <string name="notification_daily_message_expanded">Don\'t forget to practice today! Keep your learning streak alive and improve your vocabulary.</string>
+
+    <!-- Streak Alert Notifications -->
+    <string name="notification_streak_danger_title">🔥 Don\'t break your %1$d day streak!</string>
+    <string name="notification_streak_danger_message">You haven\'t practiced today. Keep your %1$d day streak alive!</string>
+    <string name="notification_streak_milestone_title">🎉 Amazing! %1$d day streak!</string>
+    <string name="notification_streak_milestone_message">Congratulations on your %1$d day learning streak! Keep it up!</string>
+
+    <!-- Word of the Day Notifications -->
+    <string name="notification_wotd_title">📖 Word of the Day</string>
+    <string name="notification_wotd_message">%1$s - %2$s\nLevel: %3$s</string>
+
+    <!-- Notification Settings -->
+    <string name="notification_settings">Notification Settings</string>
+    <string name="enable_daily_reminders">Daily Reminders</string>
+    <string name="daily_reminders_desc">Get reminded to practice every day</string>
+    <string name="enable_streak_alerts">Streak Alerts</string>
+    <string name="streak_alerts_desc">Get notified about your learning streaks</string>
+    <string name="enable_word_of_day">Word of the Day</string>
+    <string name="word_of_day_desc">Receive a featured word daily</string>
+    <string name="advanced_notification_settings">Advanced Notification Settings</string>
+    <string name="notification_time">Notification Time</string>
+    <string name="set_time">Set Time</string>
+
+    <!-- Word Quiz Notification Channel -->
+    <string name="channel_word_quiz">Word Quiz</string>
+    <string name="channel_word_quiz_desc">Interactive word quiz notifications</string>
+
+    <!-- Word Quiz Notification Content -->
+    <string name="word_quiz_title">🎓 Trainvoc Word Quiz</string>
+    <string name="word_quiz_question">Do you know this word?</string>
+
+    <!-- Word Quiz Notification Actions -->
+    <string name="i_know_it">I Know It</string>
+    <string name="show_answer">Show Answer</string>
+    <string name="skip">Skip</string>
+    <string name="got_it">Got It ✓</string>
+    <string name="need_practice">Need Practice</string>
+    <string name="next_word">Next</string>
+
+    <!-- Word Quiz Feedback -->
+    <string name="great_job">Great job! 🎉</string>
+    <string name="word_marked_correct">"%1$s" marked as known</string>
+    <string name="keep_practicing">Keep practicing!</string>
+    <string name="word_marked_wrong">"%1$s" added to practice list</string>
+
+    <!-- Widget Descriptions -->
+    <string name="widget_streak_description">Track your learning streak on your home screen</string>
+    <string name="widget_goals_description">Monitor your daily learning goals progress</string>
+</resources>
