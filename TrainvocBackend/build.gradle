@@ -59,7 +59,13 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // Exclude integration tests by default (require database)
+        // Run with: ./gradlew test -PincludeIntegrationTests to include them
+        if (!project.hasProperty('includeIntegrationTests')) {
+            excludeTags 'integration'
+        }
+    }
     finalizedBy jacocoTestReport
 }
 
