@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainvoc Multiplayer Test Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        input, button, select {
+            margin: 5px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        #result, #roomInfo, #scores {
+            white-space: pre-wrap;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 140px;
+        }
+    </style>
+</head>
+<body>
+<h1>Trainvoc Multiplayer Test Client</h1>
+
+<div class="section">
+    <h2>Oda Oluştur</h2>
+    <label>Host Adı:</label><input id="hostName" placeholder="Host Adı" type="text"><br>
+    <label>Soru Süresi (sn):</label><input id="questionDuration" type="number" value="60"><br>
+    <label>Seçenek Sayısı:</label><input id="optionCount" type="number" value="4"><br>
+    <label>Seviye:</label>
+    <select id="level">
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="B1">B1</option>
+        <option value="B2">B2</option>
+        <option value="C1">C1</option>
+    </select><br>
+    <label>Toplam Soru:</label><input id="totalQuestionCount" type="number" value="5"><br>
+    <label>Host Katılsın mı?</label>
+    <select id="hostWantsToJoin">
+        <option selected value="true">Evet</option>
+        <option value="false">Hayır (Sadece Takip)</option>
+    </select><br>
+    <button onclick="createRoom()">Oluştur</button>
+</div>
+
+<div class="section">
+    <h2>Odaya Katıl</h2>
+    <label>Oda Kodu:</label><input id="roomCode" placeholder="Oda Kodu" type="text"><br>
+    <label>Oyuncu Adı:</label><input id="playerName" placeholder="Oyuncu Adı" type="text"><br>
+    <button onclick="joinRoom()">Katıl</button>
+</div>
+
+<div class="section">
+    <h2>Oda Bilgisi ve Oyuncular</h2>
+    <label>Oda Kodu:</label><input id="infoRoomCode" placeholder="Oda Kodu" type="text">
+    <button onclick="getRoomInfo()">Bilgileri Getir</button>
+    <div id="roomInfo"></div>
+</div>
+
+<div class="section">
+    <h2>Skorlar</h2>
+    <label>Oda Kodu:</label><input id="scoreRoomCode" placeholder="Oda Kodu" type="text">
+    <button onclick="getScores()">Skorları Getir</button>
+    <div id="scores"></div>
+</div>
+
+<div class="section">
+    <h2>API Sonucu</h2>
+    <div id="result"></div>
+</div>
+
+<script>
+    function logRequest(url, options) {
+        console.log('İstek:', url, options);
+    }
+
+    function logResponse(response) {
+        console.log('Cevap:', response);
+    }
+
+    function createRoom() {
+        const hostName = document.getElementById('hostName').value;
+        const hostWantsToJoin = document.getElementById('hostWantsToJoin').value;
+        const settings = {
+            questionDuration: parseInt(document.getElementById('questionDuration').value),
+            optionCount: parseInt(document.getElementById('optionCount').value),
+            level: document.getElementById('level').value,
+            totalQuestionCount: parseInt(document.getElementById('totalQuestionCount').value)
+        };
+        const url = `/api/game/create?hostName=${encodeURIComponent(hostName)}&hostWantsToJoin=${hostWantsToJoin}`;
+        const options = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(settings)
+        };
+        logRequest(url, options);
+        fetch(url, options)
+            .then(async r => {
+                let text = await r.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('JSON parse hatası:', e, text);
+                    data = text;
+                }
+                logResponse(data);
+                showResult(data);
+                if (data.roomCode) document.getElementById('roomCode').value = data.roomCode;
+            })
+            .catch(e => {
+                logResponse(e);
+                showResult(e);
+            });
+    }
+
+    function joinRoom() {
+        const roomCode = document.getElementById('roomCode').value;
+        const playerName = document.getElementById('playerName').value;
+        const url = `/api/game/join?roomCode=${encodeURIComponent(roomCode)}&playerName=${encodeURIComponent(playerName)}`;
+        const options = {method: 'POST'};
+        logRequest(url, options);
+        fetch(url, options)
+            .then(async r => {
+                let data;
+                try {
+                    data = await r.json();
+                } catch {
+                    data = await r.text();
+                }
+                logResponse(data);
+                showResult(data);
+            })
+            .catch(e => {
+                logResponse(e);
+                showResult(e);
+            });
+    }
+
+    function getRoomInfo() {
+        const roomCode = document.getElementById('infoRoomCode').value;
+        const url = `/api/game/${encodeURIComponent(roomCode)}`;
+        logRequest(url, {});
+        fetch(url)
+            .then(async r => {
+                let data;
+                try {
+                    data = await r.json();
+                } catch {
+                    data = await r.text();
+                }
+                logResponse(data);
+                document.getElementById('roomInfo').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(e => {
+                logResponse(e);
+                document.getElementById('roomInfo').textContent = e;
+            });
+    }
+
+    function getScores() {
+        const roomCode = document.getElementById('scoreRoomCode').value;
+        const url = `/api/game/${encodeURIComponent(roomCode)}/scores`;
+        logRequest(url, {});
+        fetch(url)
+            .then(async r => {
+                let data;
+                try {
+                    data = await r.json();
+                } catch {
+                    data = await r.text();
+                }
+                logResponse(data);
+                document.getElementById('scores').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(e => {
+                logResponse(e);
+                document.getElementById('scores').textContent = e;
+            });
+    }
+
+    // Quiz başlatma ve soruları gösterme
+    function startQuiz() {
+        const roomCode = document.getElementById('roomCode').value;
+        const url = `/api/game/${encodeURIComponent(roomCode)}/start`;
+        const options = {method: 'POST'};
+        logRequest(url, options);
+        fetch(url, options)
+            .then(async r => {
+                let data;
+                try {
+                    data = await r.json();
+                } catch {
+                    data = await r.text();
+                }
+                logResponse(data);
+                alert('Quiz başlatıldı!');
+                // Soruları göster
+                if (data && data.questions) {
+                    data.questions.forEach((q, i) => {
+                        console.log(`Soru ${i + 1}:`, q);
+                    });
+                }
+            })
+            .catch(e => {
+                logResponse(e);
+                alert('Quiz başlatılamadı!');
+            });
+    }
+
+    function showResult(data) {
+        document.getElementById('result').textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    }
+</script>
+</body>
+</html>
