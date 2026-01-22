@@ -9,8 +9,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.gultekinahmetabdullah.trainvoc.audio.AudioCache
 import com.gultekinahmetabdullah.trainvoc.billing.database.PurchaseRecord
 import com.gultekinahmetabdullah.trainvoc.billing.database.Subscription
+import com.gultekinahmetabdullah.trainvoc.classes.word.ApiCache
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
+import com.gultekinahmetabdullah.trainvoc.classes.word.Synonym
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
 import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentence
@@ -57,9 +59,11 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
         SpeedMatchStats::class,
         WordOfDay::class,
         QuizHistory::class,
-        QuizQuestionResult::class
+        QuizQuestionResult::class,
+        ApiCache::class,
+        Synonym::class
     ],
-    version = 15
+    version = 17
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -77,6 +81,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun gamesDao(): com.gultekinahmetabdullah.trainvoc.games.GamesDao
     abstract fun wordOfDayDao(): WordOfDayDao
     abstract fun quizHistoryDao(): QuizHistoryDao
+    abstract fun dictionaryEnrichmentDao(): DictionaryEnrichmentDao
 
     object DatabaseBuilder {
         private val DATABASE_NAME = DatabaseConfig.NAME
@@ -736,6 +741,69 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Migration from version 15 to 16: Add API cache table
+         *
+         * PHASE 7: DICTIONARY ENRICHMENT
+         * - Adds api_cache table for offline dictionary API responses
+         * - 30-day cache expiry to balance freshness vs API load
+         * - Stores IPA pronunciations and audio URLs
+         * - Reduces API calls and enables offline functionality
+         */
+        private val MIGRATION_15_16 = object : Migration(15, 16) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create api_cache table
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS api_cache (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        word TEXT NOT NULL,
+                        ipa TEXT,
+                        audio_url TEXT,
+                        cached_at INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+
+                // Create unique index on word
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_api_cache_word ON api_cache(word)")
+
+                // Create index on cached_at for expiry cleanup
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_api_cache_cached_at ON api_cache(cached_at)")
+            }
+        }
+
+        /**
+         * Migration from version 16 to 17: Add synonyms table
+         *
+         * PHASE 7: DICTIONARY ENRICHMENT
+         * - Adds synonyms table for many-to-many word relationships
+         * - Stores synonyms from Free Dictionary API
+         * - Composite primary key (word, synonym) prevents duplicates
+         * - Indexed for fast lookups in both directions
+         */
+        private val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create synonyms table
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS synonyms (
+                        word TEXT NOT NULL,
+                        synonym TEXT NOT NULL,
+                        added_at INTEGER NOT NULL,
+                        PRIMARY KEY(word, synonym)
+                    )
+                    """.trimIndent()
+                )
+
+                // Create index on word for fast lookups
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_synonyms_word ON synonyms(word)")
+
+                // Create index on synonym for reverse lookups
+                database.execSQL("CREATE INDEX IF NOT EXISTS index_synonyms_synonym ON synonyms(synonym)")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(AppDatabase::class) {
                 instance ?: buildRoomDB(context).also { instance = it }
@@ -762,7 +830,9 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_11_12,
                 MIGRATION_12_13,
                 MIGRATION_13_14,
-                MIGRATION_14_15
+                MIGRATION_14_15,
+                MIGRATION_15_16,
+                MIGRATION_16_17
             )
             .build()
     }
