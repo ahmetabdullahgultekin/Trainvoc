@@ -116,7 +116,7 @@ class RoomPasswordServiceTest {
                     () -> passwordService.validatePassword(ROOM_CODE, CORRECT_HASH)
             );
 
-            assertEquals("RoomNotFound", exception.getErrorCode());
+            assertEquals("RoomNotFound", exception.getError());
         }
 
         @Test
@@ -129,7 +129,7 @@ class RoomPasswordServiceTest {
                     () -> passwordService.validatePassword(ROOM_CODE, null)
             );
 
-            assertEquals("RoomPasswordRequired", exception.getErrorCode());
+            assertEquals("RoomPasswordRequired", exception.getError());
         }
 
         @Test
@@ -142,7 +142,7 @@ class RoomPasswordServiceTest {
                     () -> passwordService.validatePassword(ROOM_CODE, "wrongPassword")
             );
 
-            assertEquals("InvalidRoomPassword", exception.getErrorCode());
+            assertEquals("InvalidRoomPassword", exception.getError());
         }
     }
 
