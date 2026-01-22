@@ -78,4 +78,66 @@ interface IPreferencesRepository {
      * Remove the username (logout).
      */
     fun clearUsername()
+
+    // Accessibility Settings
+
+    /**
+     * Check if high contrast mode is enabled.
+     * @return True if enabled, defaults to false
+     */
+    fun isHighContrastEnabled(): Boolean
+
+    /**
+     * Set high contrast mode preference.
+     * @param enabled True to enable high contrast
+     */
+    fun setHighContrastEnabled(enabled: Boolean)
+
+    /**
+     * Get the current color blind mode.
+     * @return Color blind mode string ("deuteranopia", "protanopia", "tritanopia"), or null if disabled
+     */
+    fun getColorBlindMode(): String?
+
+    /**
+     * Set color blind mode preference.
+     * @param mode Color blind mode string, or null to disable
+     */
+    fun setColorBlindMode(mode: String?)
+
+    /**
+     * Get the current text size scale.
+     * @return Text size scale multiplier, defaults to 1.0f (range: 0.8f - 1.5f)
+     */
+    fun getTextSizeScale(): Float
+
+    /**
+     * Set text size scale preference.
+     * @param scale Text size scale multiplier (range: 0.8f - 1.5f)
+     */
+    fun setTextSizeScale(scale: Float)
+
+    /**
+     * Check if haptic feedback is enabled.
+     * @return True if enabled, defaults to true
+     */
+    fun isHapticFeedbackEnabled(): Boolean
+
+    /**
+     * Set haptic feedback preference.
+     * @param enabled True to enable haptic feedback
+     */
+    fun setHapticFeedbackEnabled(enabled: Boolean)
+
+    /**
+     * Check if reduce motion is enabled.
+     * @return True if enabled, defaults to false
+     */
+    fun isReduceMotionEnabled(): Boolean
+
+    /**
+     * Set reduce motion preference.
+     * @param enabled True to enable reduce motion
+     */
+    fun setReduceMotionEnabled(enabled: Boolean)
 }

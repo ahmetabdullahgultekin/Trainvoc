@@ -33,6 +33,12 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_COLOR_PALETTE = "color_palette"
         private const val KEY_NOTIFICATIONS = "notifications"
         private const val KEY_LANGUAGE = "language"
+        // Accessibility keys
+        private const val KEY_HIGH_CONTRAST = "high_contrast"
+        private const val KEY_COLOR_BLIND_MODE = "color_blind_mode"
+        private const val KEY_TEXT_SIZE_SCALE = "text_size_scale"
+        private const val KEY_HAPTIC_FEEDBACK = "haptic_feedback"
+        private const val KEY_REDUCE_MOTION = "reduce_motion"
     }
 
     private val prefs: SharedPreferences by lazy {
@@ -97,9 +103,16 @@ class PreferencesRepository @Inject constructor(
     }
 
     override fun setLanguage(language: LanguagePreference) {
-        // Use commit() instead of apply() to ensure synchronous write
-        // This is critical because activity recreation reads this value immediately
+        // Save to encrypted prefs (primary storage)
         prefs.edit().putString(KEY_LANGUAGE, language.code).commit()
+
+        // CRITICAL: Also save to plain SharedPreferences for MainActivity.attachBaseContext()
+        // attachBaseContext runs before dependency injection, so it can't access EncryptedSharedPreferences
+        // This plain copy is solely for locale switching - all other access uses encrypted prefs
+        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            .edit()
+            .putString("language", language.code)
+            .commit()
     }
 
     override fun clearAll() {
@@ -108,5 +121,48 @@ class PreferencesRepository @Inject constructor(
 
     override fun clearUsername() {
         prefs.edit { remove(KEY_USERNAME) }
+    }
+
+    // Accessibility Settings Implementation
+
+    override fun isHighContrastEnabled(): Boolean =
+        prefs.getBoolean(KEY_HIGH_CONTRAST, false)
+
+    override fun setHighContrastEnabled(enabled: Boolean) {
+        prefs.edit { putBoolean(KEY_HIGH_CONTRAST, enabled) }
+    }
+
+    override fun getColorBlindMode(): String? =
+        prefs.getString(KEY_COLOR_BLIND_MODE, null)
+
+    override fun setColorBlindMode(mode: String?) {
+        prefs.edit {
+            if (mode != null) {
+                putString(KEY_COLOR_BLIND_MODE, mode)
+            } else {
+                remove(KEY_COLOR_BLIND_MODE)
+            }
+        }
+    }
+
+    override fun getTextSizeScale(): Float =
+        prefs.getFloat(KEY_TEXT_SIZE_SCALE, 1.0f)
+
+    override fun setTextSizeScale(scale: Float) {
+        prefs.edit { putFloat(KEY_TEXT_SIZE_SCALE, scale.coerceIn(0.8f, 1.5f)) }
+    }
+
+    override fun isHapticFeedbackEnabled(): Boolean =
+        prefs.getBoolean(KEY_HAPTIC_FEEDBACK, true)
+
+    override fun setHapticFeedbackEnabled(enabled: Boolean) {
+        prefs.edit { putBoolean(KEY_HAPTIC_FEEDBACK, enabled) }
+    }
+
+    override fun isReduceMotionEnabled(): Boolean =
+        prefs.getBoolean(KEY_REDUCE_MOTION, false)
+
+    override fun setReduceMotionEnabled(enabled: Boolean) {
+        prefs.edit { putBoolean(KEY_REDUCE_MOTION, enabled) }
     }
 }
