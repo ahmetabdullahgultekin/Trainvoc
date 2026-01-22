@@ -56,9 +56,9 @@ USER trainvoc
 # Expose port
 EXPOSE 8080
 
-# Health check
+# Health check using actuator endpoint
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8080/api/game/rooms || exit 1
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 # JVM tuning for containers
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"

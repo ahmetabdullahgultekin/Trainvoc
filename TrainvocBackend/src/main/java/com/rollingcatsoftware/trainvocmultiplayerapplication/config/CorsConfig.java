@@ -1,22 +1,24 @@
 package com.rollingcatsoftware.trainvocmultiplayerapplication.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
+    @Value("${cors.allowed-origins:https://trainvoc.rollingcatsoftware.com}")
+    private String allowedOrigins;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        String[] origins = allowedOrigins.split(",");
         registry.addMapping("/**")
-                .allowedOrigins(
-                        "https://trainvoc.rollingcatsoftware.com",
-                        "https://api.trainvoc.rollingcatsoftware.com",
-                        "https://api.trainvoc.rollingcatsoftware.com:8443",
-                        "http://localhost:5173" // Local development
-                )
+                .allowedOrigins(origins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }

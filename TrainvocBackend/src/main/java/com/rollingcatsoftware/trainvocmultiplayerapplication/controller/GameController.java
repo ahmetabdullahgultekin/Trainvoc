@@ -2,17 +2,26 @@ package com.rollingcatsoftware.trainvocmultiplayerapplication.controller;
 
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.AnswerRequest;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameRoom;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.QuizSettings;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.PlayerRepository;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.GameService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/game")
+@Validated
 public class GameController {
     private final GameService gameService;
     private final PlayerRepository playerRepo;
@@ -22,67 +31,57 @@ public class GameController {
         this.playerRepo = playerRepo;
     }
 
-    // Oda oluştur
     @PostMapping("/create")
     public ResponseEntity<GameRoom> createRoom(
-            @RequestParam String hostName,
+            @RequestParam @NotBlank(message = "Host name is required") @Size(min = 2, max = 30, message = "Host name must be between 2 and 30 characters") String hostName,
             @RequestParam(required = false) String avatarId,
             @RequestParam(defaultValue = "true") boolean hostWantsToJoin,
             @RequestParam(required = false) String hashedPassword,
-            @RequestBody QuizSettings settings
+            @RequestBody @Valid QuizSettings settings
     ) {
-        Integer avatarIndex = null;
-        if (avatarId != null) {
-            try {
-                avatarIndex = Integer.valueOf(avatarId);
-            } catch (NumberFormatException _) {
-            }
-        }
+        Integer avatarIndex = parseAvatarId(avatarId);
         GameRoom room = gameService.createRoom(hostName, avatarIndex, settings, hostWantsToJoin, hashedPassword);
         return ResponseEntity.ok(room);
     }
 
-    // Join a room (şifre kontrolü eklendi)
     @PostMapping("/join")
-    public ResponseEntity<?> joinRoom(@RequestParam String roomCode, @RequestParam String playerName, @RequestParam(required = false) String avatarId, @RequestParam(required = false) String hashedPassword) {
-        Integer avatarIndex = null;
-        if (avatarId != null) {
-            try {
-                avatarIndex = Integer.valueOf(avatarId);
-            } catch (NumberFormatException _) {
-            }
-        }
+    public ResponseEntity<?> joinRoom(
+            @RequestParam @NotBlank(message = "Room code is required") String roomCode,
+            @RequestParam @NotBlank(message = "Player name is required") @Size(min = 2, max = 30, message = "Player name must be between 2 and 30 characters") String playerName,
+            @RequestParam(required = false) String avatarId,
+            @RequestParam(required = false) String hashedPassword) {
+        Integer avatarIndex = parseAvatarId(avatarId);
+
         boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
         if (!passwordOk) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Room password is incorrect."));
+            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
         }
+
         Player player = gameService.joinRoom(roomCode, playerName, avatarIndex);
         if (player == null) {
-            // Return a more descriptive error message
             return ResponseEntity.badRequest().body(
-                    java.util.Collections.singletonMap("error", "Room not found or player could not be added. Please check the room code and player name.")
+                    errorResponse("Room not found or player could not be added. Please check the room code and player name.")
             );
         }
         return ResponseEntity.ok(player);
     }
 
-    // Oda detayları
     @GetMapping("/{roomCode}")
-    public ResponseEntity<GameRoom> getRoom(@PathVariable String roomCode) {
+    public ResponseEntity<GameRoom> getRoom(@PathVariable @NotBlank String roomCode) {
         GameRoom room = gameService.getRoom(roomCode);
-        if (room == null) return ResponseEntity.notFound().build();
+        if (room == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(room);
     }
 
-    // List all rooms
     @GetMapping("/rooms")
     public List<GameRoom> getAllRooms() {
         return gameService.getAllRooms();
     }
 
-    // Oda oyuncularını getir
     @GetMapping("/players")
-    public ResponseEntity<List<Player>> getPlayers(@RequestParam String roomCode) {
+    public ResponseEntity<List<Player>> getPlayers(@RequestParam @NotBlank String roomCode) {
         List<Player> players = gameService.getPlayersByRoomCode(roomCode);
         if (players == null) {
             return ResponseEntity.notFound().build();
@@ -90,69 +89,71 @@ public class GameController {
         return ResponseEntity.ok(players);
     }
 
-    // Odayı başlat (şifre kontrolü eklendi)
     @PostMapping("/rooms/{roomCode}/start")
-    public ResponseEntity<?> startRoom(@PathVariable String roomCode, @RequestParam(required = false) String hashedPassword) {
+    public ResponseEntity<?> startRoom(
+            @PathVariable @NotBlank String roomCode,
+            @RequestParam(required = false) String hashedPassword) {
         boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
         if (!passwordOk) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Room password is incorrect."));
+            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
         }
         boolean started = gameService.startRoom(roomCode);
         if (started) {
             return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
-    // Odayı dağıt (şifre kontrolü eklendi)
     @PostMapping("/rooms/{roomCode}/disband")
-    public ResponseEntity<?> disbandRoom(@PathVariable String roomCode, @RequestParam(required = false) String hashedPassword) {
+    public ResponseEntity<?> disbandRoom(
+            @PathVariable @NotBlank String roomCode,
+            @RequestParam(required = false) String hashedPassword) {
         boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
         if (!passwordOk) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Room password is incorrect."));
+            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
         }
         boolean deleted = gameService.disbandRoom(roomCode);
         if (deleted) {
             return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
-    // Oyuncu lobiden ayrılır
     @PostMapping("/rooms/{roomCode}/leave")
-    public ResponseEntity<?> leaveRoom(@PathVariable String roomCode, @RequestParam String playerId) {
+    public ResponseEntity<?> leaveRoom(
+            @PathVariable @NotBlank String roomCode,
+            @RequestParam @NotBlank String playerId) {
         boolean removed = gameService.leaveRoom(roomCode, playerId);
         if (removed) {
             return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/answer")
-    public ResponseEntity<?> submitAnswer(@RequestBody AnswerRequest answerRequest) {
+    public ResponseEntity<?> submitAnswer(@RequestBody @Valid AnswerRequest answerRequest) {
         var room = gameService.getRoom(answerRequest.getRoomCode());
         if (room == null) {
-            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Oda bulunamadı."));
+            return ResponseEntity.status(404).body(errorResponse("Room not found."));
         }
-        // Sadece QUESTION state'inde cevap kabul et
-        if (room.getCurrentState() != com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState.QUESTION) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Şu anda cevap gönderilemez. Sadece soru aşamasında cevap verilebilir."));
+
+        if (room.getCurrentState() != GameState.QUESTION) {
+            return ResponseEntity.status(403).body(errorResponse("Cannot submit answer at this time. Answers can only be submitted during the question phase."));
         }
+
         List<Player> players = room.getPlayers();
         Player player = players.stream()
                 .filter(p -> p.getId().equals(answerRequest.getPlayerId()))
                 .findFirst().orElse(null);
         if (player == null) {
-            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Oyuncu bulunamadı."));
+            return ResponseEntity.status(404).body(errorResponse("Player not found."));
         }
-        // Oyuncu bu soruya zaten cevap verdiyse tekrar cevap vermesini engelle
-        if (player.getCurrentAnsweredQuestionIndex() != null && player.getCurrentAnsweredQuestionIndex() == room.getCurrentQuestionIndex()) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Bu soruya zaten cevap verdiniz."));
+
+        if (player.getCurrentAnsweredQuestionIndex() != null &&
+                player.getCurrentAnsweredQuestionIndex().equals(room.getCurrentQuestionIndex())) {
+            return ResponseEntity.status(403).body(errorResponse("You have already answered this question."));
         }
-        // Skoru backend'de hesapla (oda ayarlarından maxTime alınır)
+
         int maxTime = room.getQuestionDuration();
         int calculatedScore = AnswerRequest.calculateScore(
                 answerRequest.isCorrect(),
@@ -162,61 +163,82 @@ public class GameController {
         );
         player.setScore(player.getScore() + calculatedScore);
         player.setTotalAnswerTime(answerRequest.getAnswerTime());
-        player.setCurrentAnsweredQuestionIndex(room.getCurrentQuestionIndex()); // Cevap verdi olarak işaretle
+        player.setCurrentAnsweredQuestionIndex(room.getCurrentQuestionIndex());
         playerRepo.save(player);
-        // Tüm oyuncular cevapladıysa state'i ANSWER_REVEAL yap
-        boolean allAnswered = players.stream().allMatch(p -> p.getCurrentAnsweredQuestionIndex() != null && p.getCurrentAnsweredQuestionIndex() == room.getCurrentQuestionIndex());
+
+        boolean allAnswered = players.stream().allMatch(p ->
+                p.getCurrentAnsweredQuestionIndex() != null &&
+                        p.getCurrentAnsweredQuestionIndex().equals(room.getCurrentQuestionIndex()));
         if (allAnswered) {
-            room.setCurrentState(com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState.ANSWER_REVEAL);
-            room.setStateStartTime(java.time.LocalDateTime.now());
+            room.setCurrentState(GameState.ANSWER_REVEAL);
+            room.setStateStartTime(LocalDateTime.now());
             gameService.saveRoom(room);
         }
-        // Güncel oyuncu listesini veritabanından çekerek dön
+
         List<Player> updatedPlayers = playerRepo.findByRoom(room);
-        return ResponseEntity.ok(java.util.Collections.singletonMap("players", updatedPlayers));
+        return ResponseEntity.ok(Collections.singletonMap("players", updatedPlayers));
     }
 
-    // Oyun state ve kalan süre endpointi
     @GetMapping("/state")
-    public ResponseEntity<?> getGameState(@RequestParam String roomCode, @RequestParam String playerId) {
+    public ResponseEntity<?> getGameState(
+            @RequestParam @NotBlank String roomCode,
+            @RequestParam String playerId) {
         var stateInfo = gameService.getGameState(roomCode, playerId);
         if (stateInfo == null) {
-            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Oda veya oyuncu bulunamadı."));
+            return ResponseEntity.status(404).body(errorResponse("Room or player not found."));
         }
         return ResponseEntity.ok(stateInfo);
     }
 
-    // Sadece state ve süre döndüren sade endpoint
     @GetMapping("/state-simple")
-    public ResponseEntity<?> getSimpleState(@RequestParam String roomCode, @RequestParam String playerId) {
+    public ResponseEntity<?> getSimpleState(
+            @RequestParam @NotBlank String roomCode,
+            @RequestParam String playerId) {
         var stateInfo = gameService.getSimpleState(roomCode, playerId);
         if (stateInfo == null) {
-            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Oda veya oyuncu bulunamadı."));
+            return ResponseEntity.status(404).body(errorResponse("Room or player not found."));
         }
         return ResponseEntity.ok(stateInfo);
     }
 
-    // Sonraki soruya geçiş endpointi
     @PostMapping("/next")
-    public ResponseEntity<?> nextQuestion(@RequestParam String roomCode, @RequestParam(required = false) String hashedPassword) {
+    public ResponseEntity<?> nextQuestion(
+            @RequestParam @NotBlank String roomCode,
+            @RequestParam(required = false) String hashedPassword) {
         GameRoom room = gameService.getRoom(roomCode);
         if (room == null) {
-            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Oda bulunamadı."));
+            return ResponseEntity.status(404).body(errorResponse("Room not found."));
         }
-        // Eğer şifreli oda ise kontrol et
+
         if (!gameService.checkRoomPassword(roomCode, hashedPassword)) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Room password is incorrect."));
+            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
         }
-        // Sadece ANSWER_REVEAL veya benzeri state'te sonraki soruya geçilebilir
-        if (room.getCurrentState() != com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState.ANSWER_REVEAL) {
-            return ResponseEntity.status(403).body(java.util.Collections.singletonMap("error", "Şu anda sonraki soruya geçilemez. Tüm oyuncular cevaplamalı ve cevaplar açıklanıyor olmalı."));
+
+        if (room.getCurrentState() != GameState.ANSWER_REVEAL) {
+            return ResponseEntity.status(403).body(errorResponse("Cannot advance to next question. All players must answer and answers must be revealed."));
         }
+
         boolean advanced = gameService.goToNextQuestion(room);
         if (!advanced) {
-            return ResponseEntity.status(400).body(java.util.Collections.singletonMap("error", "Sonraki soruya geçilemedi. Oyun bitmiş olabilir veya başka bir hata oluştu."));
+            return ResponseEntity.status(400).body(errorResponse("Could not advance to next question. The game may have ended."));
         }
-        // Oda state'ini güncel olarak döndür
+
         var stateInfo = gameService.getGameState(roomCode, null);
         return ResponseEntity.ok(stateInfo);
+    }
+
+    private Integer parseAvatarId(String avatarId) {
+        if (avatarId == null) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(avatarId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private Map<String, String> errorResponse(String message) {
+        return Collections.singletonMap("error", message);
     }
 }
