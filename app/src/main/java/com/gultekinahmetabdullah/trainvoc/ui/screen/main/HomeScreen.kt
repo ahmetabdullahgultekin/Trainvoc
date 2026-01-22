@@ -88,6 +88,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.data.UpdateNotesManager
 import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressRing
 import com.gultekinahmetabdullah.trainvoc.ui.components.ElevatedCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.FeatureCard
@@ -96,6 +97,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.components.SectionHeader
 import com.gultekinahmetabdullah.trainvoc.ui.components.StatChip
 import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.StreakWidget
+import com.gultekinahmetabdullah.trainvoc.ui.components.cards.UpdateNotesCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
@@ -141,6 +143,11 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
+    // Update Notes management
+    val updateNotesManager = remember { UpdateNotesManager.getInstance(context) }
+    var shouldShowUpdateNotes by remember { mutableStateOf(updateNotesManager.shouldShowUpdateNotes()) }
+    val updateNotes = remember { updateNotesManager.getUpdateNotes() }
+
     // Lifecycle-aware animations
     val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
     val isActive = lifecycleState == Lifecycle.State.RESUMED
@@ -182,6 +189,25 @@ fun HomeScreen(
                     maxXP = uiState.xpForNextLevel,
                     onClick = onNavigateToProfile
                 )
+            }
+
+            // 1.5. UPDATE NOTES (if available and not dismissed)
+            if (shouldShowUpdateNotes && updateNotes != null) {
+                item {
+                    UpdateNotesCard(
+                        updateNotes = updateNotes,
+                        onViewChangelog = {
+                            // Mark as seen and dismiss (ChangelogScreen not yet implemented)
+                            updateNotesManager.markUpdateNotesSeen()
+                            updateNotesManager.dismissUpdateNotes()
+                            shouldShowUpdateNotes = false
+                        },
+                        onDismiss = {
+                            updateNotesManager.dismissUpdateNotes()
+                            shouldShowUpdateNotes = false
+                        }
+                    )
+                }
             }
 
             // 2. DAILY GOALS & STREAK ROW
