@@ -1,0 +1,183 @@
+# ============================================
+# Trainvoc Production Docker Compose
+# ============================================
+# Usage:
+#   1. Create .env file with required variables
+#   2. docker compose up -d
+#   3. docker compose logs -f
+# ============================================
+
+version: '3.8'
+
+services:
+  # ==========================================
+  # PostgreSQL - Primary Database (Game Data)
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: trainvoc-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-trainvoc}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Database password required}
+      POSTGRES_DB: trainvoc
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./TrainvocBackend/sql-queries/trainvoc-mp-db-for-postgre.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-trainvoc} -d trainvoc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - trainvoc-internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================
+  # PostgreSQL - Words Database
+  # ==========================================
+  postgres-words:
+    image: postgres:16-alpine
+    container_name: trainvoc-words-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-trainvoc}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Database password required}
+      POSTGRES_DB: trainvoc-words
+    volumes:
+      - postgres_words_data:/var/lib/postgresql/data
+      - ./TrainvocBackend/sql-queries/trainvoc-words-db-for-postgre.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-trainvoc} -d trainvoc-words"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - trainvoc-internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================
+  # Spring Boot Backend
+  # ==========================================
+  backend:
+    build:
+      context: ./TrainvocBackend
+      dockerfile: Dockerfile
+    image: trainvoc-backend:latest
+    container_name: trainvoc-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      postgres-words:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/trainvoc
+      DATABASE_USER: ${DB_USER:-trainvoc}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_WORDS_URL: jdbc:postgresql://postgres-words:5432/trainvoc-words
+      DATABASE_WORDS_USER: ${DB_USER:-trainvoc}
+      DATABASE_WORDS_PASSWORD: ${DB_PASSWORD}
+      # JVM memory settings (adjust based on VPS RAM)
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Xms512m -Xmx1536m"
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/game/rooms"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - trainvoc-internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ==========================================
+  # Nginx Reverse Proxy + Static Files
+  # ==========================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: trainvoc-nginx
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./TrainvocWeb/dist:/usr/share/nginx/html:ro
+      - certbot_data:/var/www/certbot:ro
+      - letsencrypt:/etc/letsencrypt:ro
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - trainvoc-internal
+      - trainvoc-public
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+  # ==========================================
+  # Certbot for SSL Certificate Management
+  # ==========================================
+  certbot:
+    image: certbot/certbot:latest
+    container_name: trainvoc-certbot
+    volumes:
+      - certbot_data:/var/www/certbot
+      - letsencrypt:/etc/letsencrypt
+    depends_on:
+      - nginx
+    # Auto-renewal every 12 hours
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done;'"
+    networks:
+      - trainvoc-internal
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres_data:
+    name: trainvoc-postgres-data
+  postgres_words_data:
+    name: trainvoc-postgres-words-data
+  certbot_data:
+    name: trainvoc-certbot-data
+  letsencrypt:
+    name: trainvoc-letsencrypt
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  trainvoc-internal:
+    name: trainvoc-internal
+    internal: true
+  trainvoc-public:
+    name: trainvoc-public
