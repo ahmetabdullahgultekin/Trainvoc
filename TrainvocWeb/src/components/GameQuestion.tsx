@@ -1,6 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Box, Button, LinearProgress, Typography} from '@mui/material';
 
+/** MUI Button color options */
+type ButtonColor = 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+
 interface GameQuestionProps {
     question: string;
     options: string[];
@@ -85,7 +88,7 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
                 {Math.ceil(localTimeLeft)} sn
             </Typography>
             {options.map(opt => {
-                let btnColor = 'primary';
+                let btnColor: ButtonColor = 'primary';
                 let btnBg = '#fff';
                 let btnText = '#222';
                 if (answered && selected) {
@@ -115,7 +118,7 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
                     <Button
                         key={opt}
                         variant={selected === opt ? 'contained' : 'outlined'}
-                        color={btnColor as any}
+                        color={btnColor}
                         fullWidth
                         sx={{
                             mb: 2,

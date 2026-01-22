@@ -1,7 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LobbyData, Player } from '../interfaces/game';
+import type { LobbyData, Player, GameRoom } from '../interfaces/game';
 import { RoomService } from '../services';
+
+/** Converts GameRoom to LobbyData format */
+function toLobbyData(room: GameRoom): LobbyData {
+    return {
+        players: room.players,
+        hostId: room.hostId,
+        roomCode: room.roomCode,
+        gameStarted: room.started || room.gameStarted || false,
+        questionDuration: room.questionDuration,
+        optionCount: room.optionCount,
+        level: room.level,
+        totalQuestionCount: room.totalQuestionCount,
+    };
+}
 
 interface UseLobbyOptions {
     roomCode: string | null;
@@ -45,13 +59,14 @@ export function useLobby(options: UseLobbyOptions): UseLobbyResult {
         if (!roomCode) return;
 
         try {
-            const data = await RoomService.fetchRoom(roomCode);
-            if (!mountedRef.current) return;
+            const room = await RoomService.fetchRoom(roomCode);
+            if (!mountedRef.current || !room) return;
 
-            setLobby(data);
+            const lobbyData = toLobbyData(room);
+            setLobby(lobbyData);
             setError(null);
 
-            if (data.gameStarted) {
+            if (lobbyData.gameStarted) {
                 onGameStart?.();
                 navigate(`/game?roomCode=${roomCode}&playerId=${playerId}`);
             }

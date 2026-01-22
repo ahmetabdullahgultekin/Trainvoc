@@ -87,7 +87,7 @@ const LobbyPage: React.FC = () => {
             }
             await api.post(url);
             navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
-        } catch (e: any) {
+        } catch (e: unknown) {
             setError('Oyun başlatılamadı.');
             console.error('Oyun başlatma hatası:', e);
         } finally {
@@ -256,8 +256,8 @@ const LobbyPage: React.FC = () => {
                                                 height: 56,
                                                 fontSize: 36
                                             }}>
-                                                {typeof (player as any).avatarId === 'number' || !isNaN(Number((player as any).avatarId))
-                                                    ? avatarList[Number((player as any).avatarId) % avatarList.length]
+                                                {typeof player.avatarId === 'number' || !isNaN(Number(player.avatarId))
+                                                    ? avatarList[Number(player.avatarId) % avatarList.length]
                                                     : avatarList[Math.floor(Math.random() * avatarList.length)]}
                                             </Avatar>
                                             <Typography fontWeight={600}>
