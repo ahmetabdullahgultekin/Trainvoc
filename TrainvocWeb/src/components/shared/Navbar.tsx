@@ -17,14 +17,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import {Link as RouterLink} from 'react-router-dom';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import {keyframes} from '@emotion/react';
-
-const playPulse = keyframes`
-  0% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(33, 150, 243, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
-`;
+import PlayButton from './PlayButton';
 
 const Navbar: React.FC = () => {
     const [lang, setLang] = React.useState(localStorage.getItem('lang') || 'tr');
@@ -67,50 +60,7 @@ const Navbar: React.FC = () => {
                 <Box display={{xs: 'none', md: 'flex'}} alignItems="center">
                     {navItems.map((item) => (
                         item.to === '/play' ? (
-                            <Button
-                                key={item.to}
-                                color="inherit"
-                                component={RouterLink}
-                                to={item.to}
-                                sx={{
-                                    mx: 1,
-                                    px: 2,
-                                    fontWeight: 700,
-                                    borderRadius: 3,
-                                    background: 'linear-gradient(90deg, #2196f3 0%, #21cbf3 100%)',
-                                    color: '#fff',
-                                    boxShadow: 3,
-                                    animation: `${playPulse} 1.5s infinite`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    '&:hover': {
-                                        background: 'linear-gradient(90deg, #21cbf3 0%, #2196f3 100%)',
-                                        transform: 'scale(1.07)',
-                                        boxShadow: 6,
-                                    },
-                                }}
-                                endIcon={<SportsEsportsIcon sx={{ml: 1, fontSize: 28}}/>}
-                            >
-                                Oyna
-                                <Typography
-                                    component="span"
-                                    sx={{
-                                        ml: 1,
-                                        fontSize: 13,
-                                        fontWeight: 500,
-                                        color: '#fff',
-                                        background: 'rgba(33,150,243,0.7)',
-                                        borderRadius: 2,
-                                        px: 1,
-                                        py: 0.2,
-                                        letterSpacing: 0.5,
-                                        animation: 'pulse 2s infinite',
-                                    }}
-                                >
-                                    Oyun Alanına Git!
-                                </Typography>
-                            </Button>
+                            <PlayButton key={item.to} />
                         ) : (
                             <Button key={item.to} color="inherit" component={RouterLink}
                                     to={item.to}>{item.label}</Button>
@@ -140,50 +90,7 @@ const Navbar: React.FC = () => {
                         {navItems.map((item) => (
                             item.to === '/play' ? (
                                 <ListItem key={item.to}>
-                                    <Button
-                                        color="inherit"
-                                        component={RouterLink}
-                                        to={item.to}
-                                        fullWidth
-                                        sx={{
-                                            my: 1,
-                                            py: 1.5,
-                                            fontWeight: 700,
-                                            borderRadius: 3,
-                                            background: 'linear-gradient(90deg, #2196f3 0%, #21cbf3 100%)',
-                                            color: '#fff',
-                                            boxShadow: 3,
-                                            animation: `${playPulse} 1.5s infinite`,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 1,
-                                            '&:hover': {
-                                                background: 'linear-gradient(90deg, #21cbf3 0%, #2196f3 100%)',
-                                                transform: 'scale(1.07)',
-                                                boxShadow: 6,
-                                            },
-                                        }}
-                                        endIcon={<SportsEsportsIcon sx={{ml: 1, fontSize: 28}}/>}
-                                    >
-                                        Oyna
-                                        <Typography
-                                            component="span"
-                                            sx={{
-                                                ml: 1,
-                                                fontSize: 13,
-                                                fontWeight: 500,
-                                                color: '#fff',
-                                                background: 'rgba(33,150,243,0.7)',
-                                                borderRadius: 2,
-                                                px: 1,
-                                                py: 0.2,
-                                                letterSpacing: 0.5,
-                                                animation: 'pulse 2s infinite',
-                                            }}
-                                        >
-                                            Oyun Alanına Git!
-                                        </Typography>
-                                    </Button>
+                                    <PlayButton fullWidth />
                                 </ListItem>
                             ) : (
                                 <ListItem key={item.to} component={RouterLink} to={item.to}>

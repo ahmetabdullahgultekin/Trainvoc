@@ -2,29 +2,17 @@ import React, {useEffect, useState} from 'react';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import {IconButton, Tooltip} from '@mui/material';
+import {isFullscreen as checkFullscreen, toggleFullscreen, onFullscreenChange} from '../../utils/fullscreen';
 
 const FullscreenButton: React.FC = () => {
-    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(checkFullscreen());
 
     useEffect(() => {
-        const onFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
-        };
-        document.addEventListener('fullscreenchange', onFullscreenChange);
-        return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+        return onFullscreenChange(setIsFullscreen);
     }, []);
 
     const handleToggleFullscreen = () => {
-        const elem = document.documentElement;
-        if (!isFullscreen) {
-            if (elem.requestFullscreen) elem.requestFullscreen();
-            else if ((elem as any).webkitRequestFullscreen) (elem as any).webkitRequestFullscreen();
-            else if ((elem as any).msRequestFullscreen) (elem as any).msRequestFullscreen();
-        } else {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
-            else if ((document as any).msExitFullscreen) (document as any).msExitFullscreen();
-        }
+        toggleFullscreen();
     };
 
     return (
