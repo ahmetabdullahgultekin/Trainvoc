@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Player, LobbyData } from '../interfaces/game';
+import type { Player, LobbyData } from '../interfaces/game';
+import type { QuizQuestion } from '../interfaces/gameExtra';
 import { GameService } from '../services';
 
 export const GameStep = {
@@ -17,7 +18,7 @@ interface GameStateData {
     step: GameStepType;
     currentQuestionIndex: number;
     remainingTime: number | null;
-    questions: any[];
+    questions: QuizQuestion[];
     players: Player[];
     lobby: LobbyData | null;
 }
@@ -52,7 +53,7 @@ export function useGameState(options: UseGameStateOptions): UseGameStateResult {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [remainingTime, setRemainingTime] = useState<number | null>(null);
     const [localTimeLeft, setLocalTimeLeft] = useState<number | null>(null);
-    const [questions, setQuestions] = useState<any[]>([]);
+    const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [players, setPlayers] = useState<Player[]>([]);
     const [lobby, setLobby] = useState<LobbyData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -66,9 +67,10 @@ export function useGameState(options: UseGameStateOptions): UseGameStateResult {
 
         try {
             const data = await GameService.getGameState(roomCode, playerId);
-            if (!mountedRef.current) return;
+            if (!mountedRef.current || !data) return;
 
-            setStep(typeof data.state === 'number' ? data.state : GameStep.lobby);
+            const stateValue = typeof data.state === 'number' ? data.state : GameStep.lobby;
+            setStep(stateValue as GameStepType);
             setCurrentQuestionIndex(data.currentQuestionIndex || 0);
             setRemainingTime(data.remainingTime);
             setLocalTimeLeft(data.remainingTime);
@@ -78,12 +80,14 @@ export function useGameState(options: UseGameStateOptions): UseGameStateResult {
             }
 
             if (Array.isArray(data.players) && data.players.length > 0) {
-                setPlayers(data.players.map((p: any) => ({
+                setPlayers(data.players.map((p) => ({
                     ...p,
-                    id: p.playerId ?? p.id
+                    id: p.playerId ?? p.id ?? '',
+                    name: p.name ?? '',
+                    score: p.score ?? 0
                 })));
             } else if (Array.isArray(data.scores) && data.scores.length > 0) {
-                setPlayers(data.scores.map((s: any) => ({
+                setPlayers(data.scores.map((s) => ({
                     id: s.playerId,
                     name: s.name,
                     score: s.score

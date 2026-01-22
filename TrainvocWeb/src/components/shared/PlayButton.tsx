@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography, SxProps, Theme } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { keyframes } from '@emotion/react';
@@ -13,8 +13,6 @@ const playPulse = keyframes`
 interface PlayButtonProps {
     /** Whether to render as full width (for mobile drawer) */
     fullWidth?: boolean;
-    /** Additional sx props to override styles */
-    sx?: SxProps<Theme>;
     /** Optional click handler */
     onClick?: () => void;
 }
@@ -23,8 +21,8 @@ interface PlayButtonProps {
  * Animated "Play" button used in navigation.
  * Extracted to avoid code duplication between desktop and mobile nav.
  */
-const PlayButton: React.FC<PlayButtonProps> = ({ fullWidth = false, sx, onClick }) => {
-    const baseStyles: SxProps<Theme> = {
+const PlayButton: React.FC<PlayButtonProps> = ({ fullWidth = false, onClick }) => {
+    const baseStyles = {
         mx: fullWidth ? 0 : 1,
         my: fullWidth ? 1 : 0,
         px: 2,
@@ -52,7 +50,7 @@ const PlayButton: React.FC<PlayButtonProps> = ({ fullWidth = false, sx, onClick 
             to="/play"
             fullWidth={fullWidth}
             onClick={onClick}
-            sx={{ ...baseStyles, ...sx }}
+            sx={baseStyles}
             endIcon={<SportsEsportsIcon sx={{ ml: 1, fontSize: 28 }} />}
         >
             Oyna

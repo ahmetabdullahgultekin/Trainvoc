@@ -21,9 +21,30 @@ export interface Exam {
     exam: string;
 }
 
-export interface GameState {
+/** Internal game state for answer tracking */
+export interface AnswerState {
     latestAnswers: Record<string, Answer>;
     answeredPlayers: Set<string>;
+}
+
+/** API response from /api/game/state endpoint */
+export interface GameState {
+    state: number;
+    currentQuestionIndex: number;
+    remainingTime: number | null;
+    questions?: QuizQuestion[];
+    players?: Array<Partial<Player> & { playerId?: string }>;
+    scores?: Array<{ playerId: string; name: string; score: number }>;
+    lobby?: {
+        players: Player[];
+        hostId: string;
+        roomCode: string;
+        gameStarted: boolean;
+        questionDuration: number;
+        optionCount: number;
+        level: string;
+        totalQuestionCount: number;
+    };
 }
 
 export interface PlayerAnswer {

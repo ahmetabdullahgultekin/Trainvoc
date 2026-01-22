@@ -1,5 +1,6 @@
 import api from '../api';
-import { GameRoom, Player, QuizSettings, GameState } from '../interfaces/game';
+import type { GameRoom, Player } from '../interfaces/game';
+import type { QuizSettings, GameState } from '../interfaces/gameExtra';
 
 /**
  * Service for game-related API operations.

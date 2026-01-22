@@ -1,5 +1,6 @@
 import api from '../api';
-import { GameRoom } from '../interfaces/game';
+import type { GameRoom } from '../interfaces/game';
+import { hashPassword } from '../components/shared/hashPassword';
 
 /**
  * Service for room-related operations.
@@ -78,6 +79,37 @@ export const RoomService = {
             const dateB = new Date(b.lastUsed || 0);
             return dateB.getTime() - dateA.getTime();
         });
+    },
+
+    /**
+     * Starts a game in a room (host only).
+     */
+    async startGame(roomCode: string, password?: string): Promise<void> {
+        let url = `/api/game/rooms/${roomCode}/start`;
+        if (password) {
+            const hash = await hashPassword(password);
+            url += `?hashedPassword=${hash}`;
+        }
+        await api.post(url);
+    },
+
+    /**
+     * Disbands/closes a room (host only).
+     */
+    async disbandRoom(roomCode: string, password?: string): Promise<void> {
+        let url = `/api/game/rooms/${roomCode}/disband`;
+        if (password) {
+            const hash = await hashPassword(password);
+            url += `?hashedPassword=${hash}`;
+        }
+        await api.post(url);
+    },
+
+    /**
+     * Leaves a room as a player.
+     */
+    async leaveRoom(roomCode: string, playerId: string): Promise<void> {
+        await api.post(`/api/game/rooms/${roomCode}/leave?playerId=${playerId}`);
     },
 };
 

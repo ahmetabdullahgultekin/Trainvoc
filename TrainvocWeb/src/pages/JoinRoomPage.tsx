@@ -5,7 +5,7 @@ import SharedButton from '../components/shared/Button';
 import api from '../api';
 import {useLocation, useNavigate} from 'react-router-dom';
 import RoomCard from '../components/shared/RoomCard';
-import type {GameRoom} from '../interfaces/game';
+import type {GameRoom, Player} from '../interfaces/game';
 import GroupIcon from '@mui/icons-material/Group';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
@@ -17,7 +17,7 @@ const JoinRoomPage = () => {
     const {t} = useTranslation();
     const [roomCode, setRoomCode] = useState('');
     const [playerName, setPlayerName] = useState('');
-    const [player, setPlayer] = useState<any>(null);
+    const [player, setPlayer] = useState<Player | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [rooms, setRooms] = useState<GameRoom[]>([]);
@@ -58,7 +58,7 @@ const JoinRoomPage = () => {
             // Önce odadaki oyuncu isimlerini kontrol et
             const roomRes = await api.get(`/api/game/${roomCode}`);
             const players = roomRes.data?.players || [];
-            if (players.some((p: any) => p.name?.trim().toLowerCase() === playerName.trim().toLowerCase())) {
+            if (players.some((p: Player) => p.name?.trim().toLowerCase() === playerName.trim().toLowerCase())) {
                 setError('Bu isimle zaten bir oyuncu var, lobiye katılamazsınız.');
                 setLoading(false);
                 return;
@@ -73,9 +73,10 @@ const JoinRoomPage = () => {
             setTimeout(() => {
                 navigate(`/play/lobby?roomCode=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(res.data.id)}`);
             }, 1000);
-        } catch (e: any) {
+        } catch (e: unknown) {
             // Backend'den gelen hata mesajını kontrol et
-            const apiError = e?.response?.data?.error;
+            const axiosError = e as { response?: { data?: { error?: string } } };
+            const apiError = axiosError?.response?.data?.error;
             if (apiError === 'RoomPasswordRequired') {
                 setError('Bu oda için şifre gereklidir.');
             } else if (apiError === 'InvalidRoomPassword') {

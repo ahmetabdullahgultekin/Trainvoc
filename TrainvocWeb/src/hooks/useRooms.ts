@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { GameRoom } from '../interfaces/game';
+import type { GameRoom } from '../interfaces/game';
 import { RoomService } from '../services';
 
 interface UseRoomsOptions {
