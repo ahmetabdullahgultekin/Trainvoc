@@ -103,9 +103,16 @@ class PreferencesRepository @Inject constructor(
     }
 
     override fun setLanguage(language: LanguagePreference) {
-        // Use commit() instead of apply() to ensure synchronous write
-        // This is critical because activity recreation reads this value immediately
+        // Save to encrypted prefs (primary storage)
         prefs.edit().putString(KEY_LANGUAGE, language.code).commit()
+
+        // CRITICAL: Also save to plain SharedPreferences for MainActivity.attachBaseContext()
+        // attachBaseContext runs before dependency injection, so it can't access EncryptedSharedPreferences
+        // This plain copy is solely for locale switching - all other access uses encrypted prefs
+        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            .edit()
+            .putString("language", language.code)
+            .commit()
     }
 
     override fun clearAll() {
