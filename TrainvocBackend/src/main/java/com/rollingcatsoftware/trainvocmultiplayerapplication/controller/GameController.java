@@ -7,6 +7,7 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.QuizSettings;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.PlayerRepository;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.GameService;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.util.ScoreCalculator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -155,7 +156,7 @@ public class GameController {
         }
 
         int maxTime = room.getQuestionDuration();
-        int calculatedScore = AnswerRequest.calculateScore(
+        int calculatedScore = ScoreCalculator.calculate(
                 answerRequest.isCorrect(),
                 answerRequest.getAnswerTime(),
                 answerRequest.getOptionPickRate(),

@@ -36,11 +36,11 @@ const RoomDetailPage = () => {
                     <Typography sx={{fontSize: {xs: 15, sm: 17}}}>{t('settings')}:</Typography>
                     <div>
                         <ul style={{paddingLeft: 18, fontSize: 15, marginBottom: 8}}>
-                            <li>{t('questionCount') || 'Soru Sayısı'}: {room.totalQuestionCount}</li>
-                            <li>{t('timePerQuestion') || 'Soru Süresi'}: {room.questionDuration}</li>
+                            <li>{t('questionCount')}: {room.totalQuestionCount}</li>
+                            <li>{t('timePerQuestion')}: {room.questionDuration}</li>
                         </ul>
                     </div>
-                    <Typography mt={2} sx={{fontSize: {xs: 15, sm: 17}}}>{t('players') || 'Oyuncular'}:</Typography>
+                    <Typography mt={2} sx={{fontSize: {xs: 15, sm: 17}}}>{t('players')}:</Typography>
                     <List sx={{bgcolor: 'grey.50', borderRadius: 2, px: 1, py: 0.5, mb: 2}}>
                         {room.players?.map((p: Player) => (
                             <ListItem key={p.id || p.name} sx={{py: 0.5}}>

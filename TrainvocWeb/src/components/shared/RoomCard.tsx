@@ -15,23 +15,21 @@ interface RoomCardProps {
  * Memoized to prevent unnecessary re-renders when parent updates.
  */
 const RoomCard: React.FC<RoomCardProps> = React.memo(({room, idx, t, joiningRoom, onJoin}) => {
-    // Parametreleri insancıllaştır ve çevir
-    // Seviye ve parametre çevirileri
     const levelMap: Record<string, string> = {
-        a1: t('levelA1') || 'Başlangıç (A1)',
-        a2: t('levelA2') || 'Temel (A2)',
-        b1: t('levelB1') || 'Orta (B1)',
-        b2: t('levelB2') || 'İleri-Orta (B2)',
-        c1: t('levelC1') || 'İleri (C1)',
-        c2: t('levelC2') || 'Usta (C2)',
-        easy: t('easy') || 'Kolay',
-        medium: t('medium') || 'Orta',
-        hard: t('hard') || 'Zor',
+        a1: t('levelA1'),
+        a2: t('levelA2'),
+        b1: t('levelB1'),
+        b2: t('levelB2'),
+        c1: t('levelC1'),
+        c2: t('levelC2'),
+        easy: t('easy'),
+        medium: t('medium'),
+        hard: t('hard'),
     };
-    let levelLabel = room.level || '-';
-    if (room.level && levelMap[room.level.toLowerCase()]) {
-        levelLabel = levelMap[room.level.toLowerCase()];
-    }
+
+    const levelLabel = room.level && levelMap[room.level.toLowerCase()]
+        ? levelMap[room.level.toLowerCase()]
+        : room.level || '-';
     const playersLabel = room.players?.length?.toLocaleString() || '1';
 
     return (
@@ -73,18 +71,18 @@ const RoomCard: React.FC<RoomCardProps> = React.memo(({room, idx, t, joiningRoom
                     }}>{room.roomCode?.slice(0, 2) || '?'}</Avatar>
                     <Box>
                         <Typography variant="subtitle2" color="primary" fontWeight={700} letterSpacing={1}
-                                    mb={0.5}>{t('roomCode') || 'Oda Kodu'}: <b>{room.roomCode || '-'}</b></Typography>
+                                    mb={0.5}>{t('roomCode')}: <b>{room.roomCode || '-'}</b></Typography>
                         <Typography color="text.secondary"
-                                    fontSize={14}>{t('players') || t('playersLabel') || 'Oyuncu Sayısı'}: {playersLabel}</Typography>
+                                    fontSize={14}>{t('players')}: {playersLabel}</Typography>
                     </Box>
                 </Box>
                 <Box sx={{flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', p: 3}}>
                     <Box>
                         <Typography color="text.secondary" fontSize={15} mb={1}>
-                            {t('level') || t('levelLabel') || 'Seviye'}: <b>{levelLabel}</b>
+                            {t('level')}: <b>{levelLabel}</b>
                         </Typography>
                         <Typography color="text.secondary" fontSize={15}>
-                            {t('questionCount') || t('questionCountLabel') || 'Soru Sayısı'}: <b>{room.totalQuestionCount ?? '-'} {t('questions') ? t('questions') : 'Soru'}</b> | {t('timePerQuestion') || t('timePerQuestionLabel') || 'Süre'}: <b>{room.questionDuration ? `${room.questionDuration} ${t('seconds') || 'saniye'}` : '-'}</b>
+                            {t('questionCount')}: <b>{room.totalQuestionCount ?? '-'} {t('questions')}</b> | {t('timePerQuestion')}: <b>{room.questionDuration ? `${room.questionDuration} ${t('seconds')}` : '-'}</b>
                         </Typography>
                     </Box>
                     <Button
@@ -95,7 +93,7 @@ const RoomCard: React.FC<RoomCardProps> = React.memo(({room, idx, t, joiningRoom
                         disabled={joiningRoom === room.roomCode}
                         onClick={() => onJoin(room.roomCode)}
                     >
-                        {joiningRoom === room.roomCode ? t('joining') || 'Katılıyor...' : t('join') || 'Katıl'}
+                        {joiningRoom === room.roomCode ? t('joining') : t('join')}
                     </Button>
                 </Box>
             </Paper>
