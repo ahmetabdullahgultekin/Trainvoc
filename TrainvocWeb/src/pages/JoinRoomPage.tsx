@@ -11,7 +11,6 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import useNick from '../components/shared/useNick.ts';
 import useProfile from '../components/shared/useProfile';
-import {hashPassword} from '../components/shared/hashPassword';
 
 const JoinRoomPage = () => {
     const {t} = useTranslation();
@@ -64,14 +63,16 @@ const JoinRoomPage = () => {
                 return;
             }
             setNick(playerName); // nick'i localStorage'a kaydet
-            // Şifre hashle
-            const hashedPassword = roomPassword ? await hashPassword(roomPassword) : '';
-            // avatarId ve hashedPassword'ü gönder
-            const res = await api.post(`/api/game/join?roomCode=${encodeURIComponent(roomCode)}&playerName=${encodeURIComponent(playerName)}&avatarId=${avatarId}` + (hashedPassword ? `&hashedPassword=${hashedPassword}` : ''));
-            setPlayer(res.data);
+            // Send raw password - server handles hashing
+            const res = await api.post(`/api/game/join?roomCode=${encodeURIComponent(roomCode)}&playerName=${encodeURIComponent(playerName)}&avatarId=${avatarId}` + (roomPassword ? `&password=${encodeURIComponent(roomPassword)}` : ''));
+            setPlayer(res.data.player);
+            // Store JWT token for future API calls
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+            }
             // Başarılı katılım sonrası lobi ekranına yönlendir
             setTimeout(() => {
-                navigate(`/play/lobby?roomCode=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(res.data.id)}`);
+                navigate(`/play/lobby?roomCode=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(res.data.player.id)}`);
             }, 1000);
         } catch (e: unknown) {
             // Backend'den gelen hata mesajını kontrol et

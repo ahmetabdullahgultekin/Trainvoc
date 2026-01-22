@@ -7,7 +7,6 @@ import api from '../api';
 import Modal from '../components/shared/Modal';
 import FullscreenButton from '../components/shared/FullscreenButton';
 import useProfile, {avatarList} from '../components/shared/useProfile';
-import {hashPassword} from '../components/shared/hashPassword';
 import {exitFullscreen} from '../utils/fullscreen';
 import type {LobbyData, Player} from '../interfaces/game';
 
@@ -84,8 +83,7 @@ const LobbyPage: React.FC = () => {
         try {
             let url = `/api/game/rooms/${roomCode}/start`;
             if (roomPassword) {
-                const hash = await hashPassword(roomPassword);
-                url += `?hashedPassword=${hash}`;
+                url += `?password=${encodeURIComponent(roomPassword)}`;
             }
             await api.post(url);
             navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
@@ -101,9 +99,7 @@ const LobbyPage: React.FC = () => {
     const handleHostLeave = async () => {
         await exitFullscreen();
         try {
-            let hash = '';
-            if (roomPassword) hash = await hashPassword(roomPassword);
-            await api.post(`/api/game/rooms/${roomCode}/disband` + (hash ? `?hashedPassword=${hash}` : ''));
+            await api.post(`/api/game/rooms/${roomCode}/disband` + (roomPassword ? `?password=${encodeURIComponent(roomPassword)}` : ''));
             navigate('/play');
         } catch (e) {
             setError('Lobi dağıtılamadı.');

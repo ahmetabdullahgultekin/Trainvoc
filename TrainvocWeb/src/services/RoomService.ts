@@ -1,6 +1,5 @@
 import api from '../api';
 import type { GameRoom } from '../interfaces/game';
-import { hashPassword } from '../components/shared/hashPassword';
 
 /**
  * Service for room-related operations.
@@ -83,24 +82,24 @@ export const RoomService = {
 
     /**
      * Starts a game in a room (host only).
+     * Password is sent raw and hashed server-side.
      */
     async startGame(roomCode: string, password?: string): Promise<void> {
         let url = `/api/game/rooms/${roomCode}/start`;
         if (password) {
-            const hash = await hashPassword(password);
-            url += `?hashedPassword=${hash}`;
+            url += `?password=${encodeURIComponent(password)}`;
         }
         await api.post(url);
     },
 
     /**
      * Disbands/closes a room (host only).
+     * Password is sent raw and hashed server-side.
      */
     async disbandRoom(roomCode: string, password?: string): Promise<void> {
         let url = `/api/game/rooms/${roomCode}/disband`;
         if (password) {
-            const hash = await hashPassword(password);
-            url += `?hashedPassword=${hash}`;
+            url += `?password=${encodeURIComponent(password)}`;
         }
         await api.post(url);
     },
