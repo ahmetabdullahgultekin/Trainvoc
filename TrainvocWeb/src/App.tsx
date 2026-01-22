@@ -15,7 +15,7 @@ function App() {
     return (
         <ErrorBoundary>
             <ScrollToTop/>
-            <Suspense fallback={<div>Yükleniyor...</div>}>
+            <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     <Route path="/" element={<><Navbar/><HomePage/><Footer/></>}/>
                     <Route path="/about" element={<><Navbar/><AboutPage/><Footer/></>}/>

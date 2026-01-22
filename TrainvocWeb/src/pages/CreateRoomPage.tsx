@@ -287,7 +287,7 @@ const CreateRoomPage = () => {
                 <Divider sx={{my: 4}}/>
                 <Box maxWidth={900} mx="auto" mt={4}>
                     <Typography variant="h5" fontWeight={700} mb={3} color="primary.main"
-                                sx={{fontSize: {xs: 18, sm: 24}}}>Aktif Odalar</Typography>
+                                sx={{fontSize: {xs: 18, sm: 24}}}>{t('activeRooms')}</Typography>
                     {roomsLoading ? <Typography>{t('loading')}</Typography> : (
                         rooms.length === 0 ? (
                             <Typography color="text.secondary">{t('noRooms')}</Typography>

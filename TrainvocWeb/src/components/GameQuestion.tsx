@@ -47,7 +47,6 @@ const GameQuestion: React.FC<GameQuestionProps> = ({
                 const elapsed = (now - last) / 1000;
                 last = now;
                 const next = prev - elapsed;
-                console.log('ProgressBar Debug', {prev, now, elapsed, next, initialTimeLeft});
                 if (next <= 0) {
                     clearInterval(timerRef.current!);
                     return 0;

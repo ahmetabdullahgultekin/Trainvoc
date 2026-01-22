@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {Avatar, Box, Button, CircularProgress, Grid, Paper, TextField, Typography} from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
+import {useTranslation} from 'react-i18next';
 import api from '../api';
 import Modal from '../components/shared/Modal';
 import FullscreenButton from '../components/shared/FullscreenButton';
@@ -11,6 +12,7 @@ import {exitFullscreen} from '../utils/fullscreen';
 import type {LobbyData, Player} from '../interfaces/game';
 
 const LobbyPage: React.FC = () => {
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const [lobby, setLobby] = useState<LobbyData | null>(null);
@@ -88,8 +90,8 @@ const LobbyPage: React.FC = () => {
             await api.post(url);
             navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
         } catch (e: unknown) {
-            setError('Oyun başlatılamadı.');
-            console.error('Oyun başlatma hatası:', e);
+            setError(t('gameStartFailed'));
+            console.error('Game start error:', e);
         } finally {
             setStarting(false);
             setLoading(false);
