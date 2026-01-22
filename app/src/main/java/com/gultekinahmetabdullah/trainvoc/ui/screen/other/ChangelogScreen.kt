@@ -74,7 +74,7 @@ fun ChangelogScreen(navController: NavController) {
     }
 
     Scaffold(
-        topAppBar = {
+        topBar = {
             TopAppBar(
                 title = { Text("Changelog") },
                 navigationIcon = {

@@ -359,7 +359,7 @@ fun HomeScreen(
                     ) {
                         items(
                             items = uiState.unlockedAchievements.take(5),
-                            key = { it.achievementId }
+                            key = { it.id }
                         ) { userAchievement ->
                             val achievement = userAchievement.getAchievement()
                             if (achievement != null) {

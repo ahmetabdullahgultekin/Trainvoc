@@ -90,6 +90,11 @@ object DatabaseModule {
     }
 
     @Provides
+    fun provideDictionaryEnrichmentDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.database.DictionaryEnrichmentDao {
+        return database.dictionaryEnrichmentDao()
+    }
+
+    @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): androidx.work.WorkManager {
         return androidx.work.WorkManager.getInstance(context)

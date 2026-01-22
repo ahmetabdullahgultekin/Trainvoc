@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.components.LinearProgressBar
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import com.gultekinahmetabdullah.trainvoc.viewmodel.HomeViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 
 /**
  * Daily Goals Screen

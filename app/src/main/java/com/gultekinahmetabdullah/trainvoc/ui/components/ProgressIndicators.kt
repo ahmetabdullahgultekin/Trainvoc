@@ -5,7 +5,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -224,5 +227,59 @@ fun XPProgressBarSimple(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+/**
+ * Linear Progress Bar
+ * A horizontal progress bar with animated fill
+ *
+ * @param progress Progress value from 0.0 to 1.0
+ * @param modifier Modifier for the progress bar
+ * @param color Color of the progress fill (defaults to primary)
+ * @param backgroundColor Color of the background track
+ * @param height Height of the progress bar
+ */
+@Composable
+fun LinearProgressBar(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    height: Dp = 8.dp
+) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 1f),
+        animationSpec = tween(
+            durationMillis = AnimationDuration.medium,
+            easing = AppEasing.standard
+        ),
+        label = "linearProgress"
+    )
+
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+    ) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        val cornerRadius = canvasHeight / 2
+
+        // Background track
+        drawRoundRect(
+            color = backgroundColor,
+            size = size,
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius, cornerRadius)
+        )
+
+        // Progress fill
+        if (animatedProgress > 0f) {
+            drawRoundRect(
+                color = color,
+                size = Size(canvasWidth * animatedProgress, canvasHeight),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius, cornerRadius)
+            )
+        }
     }
 }

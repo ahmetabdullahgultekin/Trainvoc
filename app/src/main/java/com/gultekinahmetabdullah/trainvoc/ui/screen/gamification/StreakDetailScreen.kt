@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import com.gultekinahmetabdullah.trainvoc.viewmodel.HomeViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

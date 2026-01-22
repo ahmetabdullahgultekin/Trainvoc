@@ -11,6 +11,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
@@ -46,6 +48,7 @@ class TextToSpeechService @Inject constructor(
     var isInitialized = false
         private set
     private var currentSpeed = 1.0f
+    private val initMutex = Mutex()
 
     // Audio cache directory
     private val cacheDir: File by lazy {
@@ -92,10 +95,12 @@ class TextToSpeechService @Inject constructor(
         }
 
         return try {
-            // Synchronized check to prevent race condition
-            synchronized(this) {
-                if (!isInitialized) {
-                    initialize()
+            // Use mutex to prevent race condition during initialization
+            if (!isInitialized) {
+                initMutex.withLock {
+                    if (!isInitialized) {
+                        initialize()
+                    }
                 }
             }
 

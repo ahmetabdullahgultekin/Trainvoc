@@ -7,7 +7,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
-import kotlinx.coroutines.flow.first
+import com.gultekinahmetabdullah.trainvoc.database.WordQueryBuilder
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,46 +42,36 @@ class QuizService @Inject constructor(
     }
 
     /**
-     * Generate questions for a specific word level
+     * Generate questions for a specific word level using dynamic query builder
      */
     private suspend fun generateQuestionsByLevel(
         quizType: QuizType,
         level: WordLevel
     ): MutableList<Question> {
-        val words = when (quizType) {
-            QuizType.NOT_LEARNED -> wordDao.getNotLearnedWordsByLevel(level.name).first()
-            QuizType.RANDOM -> wordDao.getRandomWordsByLevel(level.name, 10).first()
-            QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectWordsByLevel(level.name, 10).first()
-            QuizType.LEAST_WRONG -> wordDao.getLeastWrongWordsByLevel(level.name, 10).first()
-            QuizType.LEAST_RECENT -> wordDao.getLeastRecentWordsByLevel(level.name, 10).first()
-            QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedWordsByLevel(level.name, 10).first()
-            QuizType.MOST_CORRECT -> wordDao.getMostCorrectWordsByLevel(level.name, 10).first()
-            QuizType.MOST_WRONG -> wordDao.getMostWrongWordsByLevel(level.name, 10).first()
-            QuizType.MOST_RECENT -> wordDao.getMostRecentWordsByLevel(level.name, 10).first()
-            QuizType.MOST_REVIEWED -> wordDao.getMostReviewedWordsByLevel(level.name, 10).first()
-        }
+        val query = WordQueryBuilder.buildQuery(
+            quizType = quizType,
+            level = level.name,
+            exam = null,
+            limit = 10
+        )
+        val words = wordDao.getWordsByQuery(query)
         return createQuestions(words)
     }
 
     /**
-     * Generate questions for a specific exam type
+     * Generate questions for a specific exam type using dynamic query builder
      */
     private suspend fun generateQuestionsByExam(
         quizType: QuizType,
         exam: Exam
     ): MutableList<Question> {
-        val words = when (quizType) {
-            QuizType.NOT_LEARNED -> wordDao.getNotLearnedWordsByExam(exam.abbr).first()
-            QuizType.RANDOM -> wordDao.getRandomWordsByExam(exam.abbr, 10).first()
-            QuizType.LEAST_CORRECT -> wordDao.getLeastCorrectWordsByExam(exam.abbr, 10).first()
-            QuizType.LEAST_WRONG -> wordDao.getLeastWrongWordsByExam(exam.abbr, 10).first()
-            QuizType.LEAST_RECENT -> wordDao.getLeastRecentWordsByExam(exam.abbr, 10).first()
-            QuizType.LEAST_REVIEWED -> wordDao.getLeastReviewedWordsByExam(exam.abbr, 10).first()
-            QuizType.MOST_CORRECT -> wordDao.getMostCorrectWordsByExam(exam.abbr, 10).first()
-            QuizType.MOST_WRONG -> wordDao.getMostWrongWordsByExam(exam.abbr, 10).first()
-            QuizType.MOST_RECENT -> wordDao.getMostRecentWordsByExam(exam.abbr, 10).first()
-            QuizType.MOST_REVIEWED -> wordDao.getMostReviewedWordsByExam(exam.abbr, 10).first()
-        }
+        val query = WordQueryBuilder.buildQuery(
+            quizType = quizType,
+            level = null,
+            exam = exam.exam,
+            limit = 10
+        )
+        val words = wordDao.getWordsByQuery(query)
         return createQuestions(words)
     }
 
@@ -89,19 +79,16 @@ class QuizService @Inject constructor(
      * Create Question objects from Word list with random distractors
      */
     private fun createQuestions(words: List<Word>): MutableList<Question> {
-        return words.mapIndexed { index, word ->
+        return words.map { word ->
             val allWords = words.toMutableList()
             allWords.remove(word)
             allWords.shuffle()
 
-            val distractors = allWords.take(3).map { it }
-            val options = (distractors + word).shuffled()
+            val incorrectWords = allWords.take(3)
 
             Question(
-                id = index,
-                word = word,
-                options = options,
-                correctAnswer = word
+                correctWord = word,
+                incorrectWords = incorrectWords
             )
         }.toMutableList()
     }

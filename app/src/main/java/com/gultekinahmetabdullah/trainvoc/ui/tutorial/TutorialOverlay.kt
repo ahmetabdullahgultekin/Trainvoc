@@ -1,5 +1,9 @@
 package com.gultekinahmetabdullah.trainvoc.ui.tutorial
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialState
@@ -23,4 +27,27 @@ fun TutorialOverlay(
 ) {
     // No-op: Tutorial overlay disabled in stub
     // Games will function normally without tutorial overlay
+}
+
+/**
+ * Tutorial Help Button (Stub Implementation)
+ *
+ * Simple help button for game screens.
+ * Shows a help icon that triggers the tutorial when clicked.
+ */
+@Composable
+fun TutorialHelpButton(
+    onClick: () -> Unit,
+    showPulse: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Default.Help,
+            contentDescription = "Help"
+        )
+    }
 }

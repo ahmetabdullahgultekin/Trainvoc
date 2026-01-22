@@ -15,13 +15,16 @@ import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.database.WordExamCrossRefDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Word Repository implementation.
  * Implements all segregated interfaces for complete functionality.
  * This allows clients to depend only on the interfaces they need.
  */
-class WordRepository(
+@Singleton
+class WordRepository @Inject constructor(
     private val wordDao: WordDao,
     private val statisticDao: StatisticDao,
     private val wordExamCrossRefDao: WordExamCrossRefDao,

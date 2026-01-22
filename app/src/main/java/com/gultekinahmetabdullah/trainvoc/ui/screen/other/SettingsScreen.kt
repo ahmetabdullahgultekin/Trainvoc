@@ -112,7 +112,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     }
 
     Scaffold(
-        topAppBar = {
+        topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.settings)) },
                 navigationIcon = {
