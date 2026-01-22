@@ -41,5 +41,8 @@ object Route {
     // Phase 4 - Accessibility
     const val ACCESSIBILITY_SETTINGS = "accessibility_settings"
 
+    // Phase 5 - Update Notes & Changelog
+    const val CHANGELOG = "changelog"
+
     fun wordDetail(wordId: String) = "word_detail/$wordId"
 }
