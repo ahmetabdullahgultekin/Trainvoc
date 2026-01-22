@@ -49,9 +49,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.viewmodel.AccessibilityViewModel
 
 /**
  * Accessibility Settings Screen
@@ -66,16 +68,17 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccessibilitySettingsScreen(
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    viewModel: AccessibilityViewModel = hiltViewModel()
 ) {
     val haptic = rememberHapticPerformer()
 
-    // Settings state (in a real app, these would be persisted)
-    var highContrastEnabled by remember { mutableStateOf(false) }
-    var colorBlindModeEnabled by remember { mutableStateOf(false) }
-    var hapticFeedbackEnabled by remember { mutableStateOf(true) }
-    var reduceMotionEnabled by remember { mutableStateOf(false) }
-    var textSizeScale by remember { mutableFloatStateOf(1.0f) }
+    // Settings state from ViewModel
+    val highContrastEnabled by viewModel.highContrastEnabled.collectAsState()
+    val colorBlindModeEnabled by viewModel.colorBlindModeEnabled.collectAsState()
+    val hapticFeedbackEnabled by viewModel.hapticFeedbackEnabled.collectAsState()
+    val reduceMotionEnabled by viewModel.reduceMotionEnabled.collectAsState()
+    val textSizeScale by viewModel.textSizeScale.collectAsState()
 
     Scaffold(
         topBar = {
@@ -111,7 +114,7 @@ fun AccessibilitySettingsScreen(
                             checked = highContrastEnabled,
                             onCheckedChange = {
                                 haptic.click()
-                                highContrastEnabled = it
+                                viewModel.setHighContrastEnabled(it)
                             }
                         )
                     }
@@ -128,7 +131,7 @@ fun AccessibilitySettingsScreen(
                             checked = colorBlindModeEnabled,
                             onCheckedChange = {
                                 haptic.click()
-                                colorBlindModeEnabled = it
+                                viewModel.setColorBlindModeEnabled(it)
                             }
                         )
                     }
@@ -138,7 +141,7 @@ fun AccessibilitySettingsScreen(
             // Color Blind Mode Options
             if (colorBlindModeEnabled) {
                 item {
-                    ColorBlindModeSelector()
+                    ColorBlindModeSelector(viewModel)
                 }
             }
 
@@ -151,7 +154,7 @@ fun AccessibilitySettingsScreen(
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Slider(
                             value = textSizeScale,
-                            onValueChange = { textSizeScale = it },
+                            onValueChange = { viewModel.setTextSizeScale(it) },
                             valueRange = 0.8f..1.5f,
                             steps = 6,
                             modifier = Modifier.padding(top = Spacing.small)
@@ -183,7 +186,7 @@ fun AccessibilitySettingsScreen(
                             checked = hapticFeedbackEnabled,
                             onCheckedChange = {
                                 if (it) haptic.click()
-                                hapticFeedbackEnabled = it
+                                viewModel.setHapticFeedbackEnabled(it)
                             }
                         )
                     }
@@ -200,7 +203,7 @@ fun AccessibilitySettingsScreen(
                             checked = reduceMotionEnabled,
                             onCheckedChange = {
                                 haptic.click()
-                                reduceMotionEnabled = it
+                                viewModel.setReduceMotionEnabled(it)
                             }
                         )
                     }
@@ -303,8 +306,8 @@ private fun SettingsCard(
 }
 
 @Composable
-private fun ColorBlindModeSelector() {
-    var selectedMode by remember { mutableStateOf("deuteranopia") }
+private fun ColorBlindModeSelector(viewModel: AccessibilityViewModel) {
+    val selectedMode by viewModel.colorBlindMode.collectAsState()
 
     val modes = listOf(
         "deuteranopia" to "Deuteranopia (Green-weak)",
@@ -330,7 +333,7 @@ private fun ColorBlindModeSelector() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
-                        .clickable { selectedMode = key }
+                        .clickable { viewModel.setColorBlindMode(key) }
                         .background(
                             if (selectedMode == key)
                                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
