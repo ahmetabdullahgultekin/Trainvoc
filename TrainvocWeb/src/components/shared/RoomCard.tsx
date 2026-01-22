@@ -10,8 +10,11 @@ interface RoomCardProps {
     onJoin: (roomCode: string) => void;
 }
 
-// RoomCard'ın içini güncelledim, tüm metinler ve bilgiler burada tek tip gösterilecek şekilde ayarlandı.
-const RoomCard: React.FC<RoomCardProps> = ({room, idx, t, joiningRoom, onJoin}) => {
+/**
+ * Room card component displayed in room lists.
+ * Memoized to prevent unnecessary re-renders when parent updates.
+ */
+const RoomCard: React.FC<RoomCardProps> = React.memo(({room, idx, t, joiningRoom, onJoin}) => {
     // Parametreleri insancıllaştır ve çevir
     // Seviye ve parametre çevirileri
     const levelMap: Record<string, string> = {
@@ -98,6 +101,8 @@ const RoomCard: React.FC<RoomCardProps> = ({room, idx, t, joiningRoom, onJoin}) 
             </Paper>
         </Fade>
     );
-};
+});
+
+RoomCard.displayName = 'RoomCard';
 
 export default RoomCard;
