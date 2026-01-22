@@ -36,10 +36,10 @@ public class Player {
     private List<PlayerAnswer> answers = new ArrayList<>();
 
     @Column
-    private Integer avatarId; // int olarak değiştirildi, index olarak tutulacak
+    private Integer avatarId; // Avatar index
 
     @Column
-    private Integer currentAnsweredQuestionIndex = null; // Oyuncunun en son hangi soruya cevap verdiği
+    private Integer currentAnsweredQuestionIndex = null; // Index of last answered question
 
     public Player() {
     }

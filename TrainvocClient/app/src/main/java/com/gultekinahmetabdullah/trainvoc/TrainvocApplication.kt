@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc
 
 import android.app.Application
+import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
@@ -22,6 +23,10 @@ import javax.inject.Inject
  */
 @HiltAndroidApp
 class TrainvocApplication : Application(), Configuration.Provider {
+
+    companion object {
+        private const val TAG = "TrainvocApplication"
+    }
 
     @Inject
     lateinit var featureFlagManager: FeatureFlagManager
@@ -63,8 +68,7 @@ class TrainvocApplication : Application(), Configuration.Provider {
         try {
             featureFlagManager.initialize()
         } catch (e: Exception) {
-            // Log error but don't crash app
-            e.printStackTrace()
+            Log.e(TAG, "Error initializing feature flags", e)
         }
     }
 
@@ -77,8 +81,7 @@ class TrainvocApplication : Application(), Configuration.Provider {
         try {
             DailyUsageResetWorker.schedule(this)
         } catch (e: Exception) {
-            // Log error but don't crash app
-            e.printStackTrace()
+            Log.e(TAG, "Error scheduling daily reset worker", e)
         }
     }
 
@@ -91,8 +94,7 @@ class TrainvocApplication : Application(), Configuration.Provider {
         try {
             SyncWorker.schedule(this)
         } catch (e: Exception) {
-            // Log error but don't crash app
-            e.printStackTrace()
+            Log.e(TAG, "Error scheduling background sync worker", e)
         }
     }
 

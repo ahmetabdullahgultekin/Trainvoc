@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.quiz
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
@@ -19,6 +20,10 @@ import javax.inject.Inject
 class QuizMenuViewModel @Inject constructor(
     private val quizHistoryDao: QuizHistoryDao
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "QuizMenuViewModel"
+    }
 
     private val _quizStats = MutableStateFlow<Map<Int, QuizTypeStats>>(emptyMap())
     val quizStats: StateFlow<Map<Int, QuizTypeStats>> = _quizStats.asStateFlow()
@@ -52,8 +57,7 @@ class QuizMenuViewModel @Inject constructor(
 
                 _quizStats.value = statsMap
             } catch (e: Exception) {
-                // Handle error silently - stats will just show as empty
-                e.printStackTrace()
+                Log.e(TAG, "Error loading quiz stats", e)
             }
         }
     }

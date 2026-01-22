@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.model.UpdateHighlight
 import com.gultekinahmetabdullah.trainvoc.model.UpdateNotes
+import android.util.Log
 import com.gultekinahmetabdullah.trainvoc.model.UpdateType
 import java.io.IOException
 
@@ -21,6 +22,7 @@ class UpdateNotesManager(private val context: Context) {
     private val gson = Gson()
 
     companion object {
+        private const val TAG = "UpdateNotesManager"
         private const val PREFS_NAME = "app_updates"
         private const val KEY_LAST_SEEN_VERSION = "last_seen_version"
         private const val KEY_DISMISSED_PREFIX = "dismissed_"
@@ -50,7 +52,7 @@ class UpdateNotesManager(private val context: Context) {
             // If JSON file doesn't exist yet, return default update notes
             getDefaultUpdateNotes()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Error parsing update notes", e)
             null
         }
     }

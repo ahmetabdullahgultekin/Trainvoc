@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.RemoteViews
 import com.gultekinahmetabdullah.trainvoc.MainActivity
 import com.gultekinahmetabdullah.trainvoc.R
@@ -88,12 +89,13 @@ class StreakWidgetProvider : AppWidgetProvider() {
 
                 appWidgetManager.updateAppWidget(widgetId, views)
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Error updating streak widget", e)
             }
         }
     }
 
     companion object {
+        private const val TAG = "StreakWidgetProvider"
         const val ACTION_UPDATE_WIDGET = "com.gultekinahmetabdullah.trainvoc.ACTION_UPDATE_STREAK_WIDGET"
 
         /**
