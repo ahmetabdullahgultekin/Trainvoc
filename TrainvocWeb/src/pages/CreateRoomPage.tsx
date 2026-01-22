@@ -277,7 +277,7 @@ const CreateRoomPage = () => {
                             {error && <Alert severity="error">{error}</Alert>}
                             {room && (
                                 <Alert severity="success" sx={{mt: 2}}>
-                                    {t('roomCreated') || 'Oda oluşturuldu!'}<br/>
+                                    {t('roomCreated')}<br/>
                                     {t('roomCode')}: <b>{room.roomCode}</b>
                                 </Alert>
                             )}
@@ -287,10 +287,10 @@ const CreateRoomPage = () => {
                 <Divider sx={{my: 4}}/>
                 <Box maxWidth={900} mx="auto" mt={4}>
                     <Typography variant="h5" fontWeight={700} mb={3} color="primary.main"
-                                sx={{fontSize: {xs: 18, sm: 24}}}>Aktif Odalar</Typography>
+                                sx={{fontSize: {xs: 18, sm: 24}}}>{t('activeRooms')}</Typography>
                     {roomsLoading ? <Typography>{t('loading')}</Typography> : (
                         rooms.length === 0 ? (
-                            <Typography color="text.secondary">{t('noRooms') || 'Şu anda aktif oda yok.'}</Typography>
+                            <Typography color="text.secondary">{t('noRooms')}</Typography>
                         ) : (
                             <Box display="grid" gridTemplateColumns={{xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr'}}
                                  gap={2}>

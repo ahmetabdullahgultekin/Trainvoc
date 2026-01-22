@@ -8,6 +8,7 @@ import GameQuestion from '../components/GameQuestion';
 import GameRanking from '../components/GameRanking';
 import GameFinal from '../components/GameFinal';
 import type {LobbyData, Player} from "../interfaces/game.ts";
+import type {QuizQuestion} from "../interfaces/gameExtra.ts";
 
 function useQuery() {
     return new URLSearchParams(useLocation().search);
@@ -33,7 +34,7 @@ const GamePage: React.FC = () => {
     const [step, setStep] = useState<GameStepType>(GameStep.countdown);
     const [current, setCurrent] = useState(0);
     const [, setAnswers] = useState<string[]>([]);
-    const [questions, setQuestions] = useState<any[]>([]);
+    const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [players, setPlayers] = useState<Player[]>([]);
     const [lobby, setLobby] = useState<LobbyData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -56,7 +57,7 @@ const GamePage: React.FC = () => {
                 const pRes = await api.get(`/api/game/players?roomCode=${roomCode}`);
                 let playersData = Array.isArray(pRes.data) ? pRes.data : pRes.data.players;
                 setPlayers(playersData || []);
-            } catch (e: any) {
+            } catch (e: unknown) {
                 setError('Veriler alınamadı.');
             } finally {
                 setLoading(false);
@@ -129,12 +130,14 @@ const GamePage: React.FC = () => {
                     setQuestions(res.data.questions);
                 }
                 if (Array.isArray(res.data.players) && res.data.players.length > 0) {
-                    setPlayers(res.data.players.map((p: any) => ({
+                    setPlayers(res.data.players.map((p: Partial<Player> & { playerId?: string }) => ({
                         ...p,
-                        id: p.playerId ?? p.id
+                        id: p.playerId ?? p.id ?? '',
+                        name: p.name ?? '',
+                        score: p.score ?? 0
                     })));
                 } else if (Array.isArray(res.data.scores) && res.data.scores.length > 0) {
-                    setPlayers(res.data.scores.map((s: any) => ({
+                    setPlayers(res.data.scores.map((s: { playerId: string; name: string; score: number }) => ({
                         id: s.playerId,
                         name: s.name,
                         score: s.score
@@ -175,19 +178,11 @@ const GamePage: React.FC = () => {
         isYou: p.id === playerId || p.name === playerId,
     }));
 
-    // timeLimit ve questionDuration logu
-    useEffect(() => {
-        console.log('GamePage debug', {
-            timeLimit: lobby?.questionDuration ?? 60,
-            questionDuration: lobby?.questionDuration
-        });
-    }, [lobby?.questionDuration]);
-
     if (!roomCode || !playerId) {
         return <Alert severity="error">{t('error')}: roomCode/playerName missing</Alert>;
     }
     if (loading) {
-        return <Alert severity="info">Yükleniyor...</Alert>;
+        return <Alert severity="info">{t('loading')}</Alert>;
     }
     if (error) {
         return <Alert severity="error">{error}</Alert>;
@@ -242,11 +237,10 @@ const GamePage: React.FC = () => {
             )}
             {step === GameStep.final && <GameFinal players={sortedPlayers}/>}
             {step === GameStep.lobby && (
-                <Alert severity="info">Oyun başlatılıyor, lütfen bekleyin...</Alert>
+                <Alert severity="info">{t('gameStarting')}</Alert>
             )}
-            {/* Sadece answer_reveal aşamasında ve showNext false ise göster */}
             {step === GameStep.answer_reveal && !showNext && (
-                <Alert severity="info">Cevaplar açıklanıyor, lütfen bekleyin...</Alert>
+                <Alert severity="info">{t('loading')}</Alert>
             )}
         </Box>
     );
