@@ -255,4 +255,16 @@ class WordRepository(
     override suspend fun getFavoriteCount(): Int = wordDao.getFavoriteCount()
 
     override suspend fun clearAllFavorites() = wordDao.clearAllFavorites()
+
+    // Word Progress Methods (for WordProgressScreen)
+    override suspend fun getMasteredWordCount(): Int = wordDao.getMasteredWordCount()
+    override suspend fun getLearningWordCount(): Int = wordDao.getLearningWordCount()
+    override suspend fun getStrugglingWordCount(): Int = wordDao.getStrugglingWordCount()
+    override suspend fun getNotStartedWordCount(): Int = wordDao.getNotStartedWordCount()
+
+    override suspend fun getWordsToReviewByDate(endOfDay: Long): Int =
+        wordDao.getWordsToReviewByDate(endOfDay)
+
+    override suspend fun getWordsToReviewInRange(startDate: Long, endDate: Long): Int =
+        wordDao.getWordsToReviewInRange(startDate, endDate)
 }

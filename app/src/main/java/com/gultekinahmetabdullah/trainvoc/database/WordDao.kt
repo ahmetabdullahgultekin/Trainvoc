@@ -314,4 +314,78 @@ interface WordDao {
      */
     @Query("UPDATE words SET isFavorite = 0, favoritedAt = NULL")
     suspend fun clearAllFavorites()
+
+    /**
+     * WORD PROGRESS QUERIES (for WordProgressScreen)
+     */
+
+    /**
+     * Get count of words by status category
+     */
+    @Query(
+        """
+        SELECT COUNT(*) FROM words w
+        LEFT JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE s.learned = 1 AND s.correct_count >= 5
+        """
+    )
+    suspend fun getMasteredWordCount(): Int
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM words w
+        LEFT JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE (s.correct_count + s.wrong_count + s.skipped_count) > 0
+        AND s.learned = 0
+        AND s.correct_count >= s.wrong_count
+        """
+    )
+    suspend fun getLearningWordCount(): Int
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM words w
+        LEFT JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE s.wrong_count > s.correct_count AND s.learned = 0
+        """
+    )
+    suspend fun getStrugglingWordCount(): Int
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM words w
+        WHERE w.stat_id = 0
+        """
+    )
+    suspend fun getNotStartedWordCount(): Int
+
+    /**
+     * Get review schedule counts based on spaced repetition
+     */
+    @Query(
+        """
+        SELECT COUNT(*) FROM words
+        WHERE next_review_date IS NOT NULL
+        AND next_review_date <= :endOfDay
+        """
+    )
+    suspend fun getWordsToReviewByDate(endOfDay: Long): Int
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM words
+        WHERE next_review_date IS NOT NULL
+        AND next_review_date > :startDate
+        AND next_review_date <= :endDate
+        """
+    )
+    suspend fun getWordsToReviewInRange(startDate: Long, endDate: Long): Int
+
+    /**
+     * Get learned words count for a specific level (already exists as getLevelUnlockerWordCount)
+     * Added alias for clarity in progress screen context
+     */
+    suspend fun getLearnedWordCountByLevel(level: String): Int {
+        return getLevelUnlockerWordCount(level)
+    }
 }
