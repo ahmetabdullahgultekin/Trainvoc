@@ -2,14 +2,17 @@ import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {Avatar, Box, Button, CircularProgress, Grid, Paper, TextField, Typography} from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
+import {useTranslation} from 'react-i18next';
 import api from '../api';
 import Modal from '../components/shared/Modal';
 import FullscreenButton from '../components/shared/FullscreenButton';
 import useProfile, {avatarList} from '../components/shared/useProfile';
 import {hashPassword} from '../components/shared/hashPassword';
+import {exitFullscreen} from '../utils/fullscreen';
 import type {LobbyData, Player} from '../interfaces/game';
 
 const LobbyPage: React.FC = () => {
+    const {t} = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const [lobby, setLobby] = useState<LobbyData | null>(null);
@@ -86,9 +89,9 @@ const LobbyPage: React.FC = () => {
             }
             await api.post(url);
             navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
-        } catch (e: any) {
-            setError('Oyun başlatılamadı.');
-            console.error('Oyun başlatma hatası:', e);
+        } catch (e: unknown) {
+            setError(t('gameStartFailed'));
+            console.error('Game start error:', e);
         } finally {
             setStarting(false);
             setLoading(false);
@@ -96,10 +99,7 @@ const LobbyPage: React.FC = () => {
     };
 
     const handleHostLeave = async () => {
-        if (document.exitFullscreen) await document.exitFullscreen().catch(() => {
-        });
-        else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
-        else if ((document as any).msExitFullscreen) (document as any).msExitFullscreen();
+        await exitFullscreen();
         try {
             let hash = '';
             if (roomPassword) hash = await hashPassword(roomPassword);
@@ -112,11 +112,7 @@ const LobbyPage: React.FC = () => {
 
     // Oyuncu sorgusuz sualsiz lobiden çıkabilir
     const handlePlayerLeave = async () => {
-        // Tam ekrandan çık
-        if (document.exitFullscreen) await document.exitFullscreen().catch(() => {
-        });
-        else if ((document as any).webkitExitFullscreen) (document as any).webkitExitFullscreen();
-        else if ((document as any).msExitFullscreen) (document as any).msExitFullscreen();
+        await exitFullscreen();
         try {
             // Oyuncuyu lobiden/veritabanından silmek için backend'e istek at
             if (roomCode && playerId) {
@@ -262,8 +258,8 @@ const LobbyPage: React.FC = () => {
                                                 height: 56,
                                                 fontSize: 36
                                             }}>
-                                                {typeof (player as any).avatarId === 'number' || !isNaN(Number((player as any).avatarId))
-                                                    ? avatarList[Number((player as any).avatarId) % avatarList.length]
+                                                {typeof player.avatarId === 'number' || !isNaN(Number(player.avatarId))
+                                                    ? avatarList[Number(player.avatarId) % avatarList.length]
                                                     : avatarList[Math.floor(Math.random() * avatarList.length)]}
                                             </Avatar>
                                             <Typography fontWeight={600}>

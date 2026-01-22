@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class QuizService {
@@ -22,7 +22,7 @@ public class QuizService {
         List<Word> words = wordRepository.findRandomWordsByLevel(level, optionCount);
         if (words.size() < optionCount) throw new RuntimeException("Yeterli kelime yok!");
 
-        Word questionWord = words.get(new Random().nextInt(words.size()));
+        Word questionWord = words.get(ThreadLocalRandom.current().nextInt(words.size()));
         List<String> options = new ArrayList<>();
         for (Word w : words) options.add(w.getMeaning());
         Collections.shuffle(options);
