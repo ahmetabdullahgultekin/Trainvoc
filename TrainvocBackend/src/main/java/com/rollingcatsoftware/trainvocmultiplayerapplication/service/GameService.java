@@ -35,8 +35,13 @@ public class GameService {
 
     // ==================== Room Operations ====================
 
+    /**
+     * Creates a room with server-side password hashing.
+     * @param rawPassword The raw password (will be hashed server-side)
+     */
     public GameRoom createRoom(String hostName, Integer avatarId, QuizSettings settings,
-                               boolean hostWantsToJoin, String hashedPassword) {
+                               boolean hostWantsToJoin, String rawPassword) {
+        String hashedPassword = roomPasswordService.hashPassword(rawPassword);
         return roomService.createRoom(hostName, avatarId, settings, hostWantsToJoin, hashedPassword);
     }
 

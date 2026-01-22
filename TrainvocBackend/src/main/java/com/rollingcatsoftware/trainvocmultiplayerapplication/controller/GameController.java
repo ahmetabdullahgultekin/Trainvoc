@@ -2,6 +2,7 @@ package com.rollingcatsoftware.trainvocmultiplayerapplication.controller;
 
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.AnswerRequest;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.mapper.GameMapper;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.AuthResponse;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.ErrorResponse;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.GameRoomResponse;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.PlayerResponse;
@@ -11,6 +12,7 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.QuizSettings;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.PlayerRepository;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtTokenProvider;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.GameService;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.util.ScoreCalculator;
 import jakarta.validation.Valid;
@@ -32,24 +34,45 @@ public class GameController {
     private final GameService gameService;
     private final PlayerRepository playerRepo;
     private final GameMapper gameMapper;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public GameController(GameService gameService, PlayerRepository playerRepo, GameMapper gameMapper) {
+    public GameController(GameService gameService, PlayerRepository playerRepo,
+                         GameMapper gameMapper, JwtTokenProvider jwtTokenProvider) {
         this.gameService = gameService;
         this.playerRepo = playerRepo;
         this.gameMapper = gameMapper;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<GameRoomResponse> createRoom(
+    public ResponseEntity<AuthResponse> createRoom(
             @RequestParam @NotBlank(message = "Host name is required") @Size(min = 2, max = 30, message = "Host name must be between 2 and 30 characters") String hostName,
             @RequestParam(required = false) String avatarId,
             @RequestParam(defaultValue = "true") boolean hostWantsToJoin,
-            @RequestParam(required = false) String hashedPassword,
+            @RequestParam(required = false) String password,
             @RequestBody @Valid QuizSettings settings
     ) {
         Integer avatarIndex = parseAvatarId(avatarId);
-        GameRoom room = gameService.createRoom(hostName, avatarIndex, settings, hostWantsToJoin, hashedPassword);
-        return ResponseEntity.ok(gameMapper.toGameRoomResponse(room));
+        GameRoom room = gameService.createRoom(hostName, avatarIndex, settings, hostWantsToJoin, password);
+
+        // Find the host player and generate JWT token
+        Player host = room.getPlayers().stream()
+                .filter(p -> p.getId().equals(room.getHostId()))
+                .findFirst()
+                .orElse(null);
+
+        String token = null;
+        PlayerResponse playerResponse = null;
+        if (host != null) {
+            token = jwtTokenProvider.createToken(host.getId(), host.getName(), room.getRoomCode());
+            playerResponse = gameMapper.toPlayerResponse(host);
+        }
+
+        return ResponseEntity.ok(AuthResponse.builder()
+                .token(token)
+                .player(playerResponse)
+                .roomCode(room.getRoomCode())
+                .build());
     }
 
     @PostMapping("/join")
@@ -57,10 +80,10 @@ public class GameController {
             @RequestParam @NotBlank(message = "Room code is required") String roomCode,
             @RequestParam @NotBlank(message = "Player name is required") @Size(min = 2, max = 30, message = "Player name must be between 2 and 30 characters") String playerName,
             @RequestParam(required = false) String avatarId,
-            @RequestParam(required = false) String hashedPassword) {
+            @RequestParam(required = false) String password) {
         Integer avatarIndex = parseAvatarId(avatarId);
 
-        boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
+        boolean passwordOk = gameService.checkRoomPassword(roomCode, password);
         if (!passwordOk) {
             return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
@@ -71,7 +94,15 @@ public class GameController {
                     ErrorResponse.of("Room not found or player could not be added. Please check the room code and player name.")
             );
         }
-        return ResponseEntity.ok(gameMapper.toPlayerResponse(player));
+
+        // Generate JWT token for the player
+        String token = jwtTokenProvider.createToken(player.getId(), player.getName(), roomCode);
+
+        return ResponseEntity.ok(AuthResponse.builder()
+                .token(token)
+                .player(gameMapper.toPlayerResponse(player))
+                .roomCode(roomCode)
+                .build());
     }
 
     @GetMapping("/{roomCode}")
@@ -100,8 +131,8 @@ public class GameController {
     @PostMapping("/rooms/{roomCode}/start")
     public ResponseEntity<?> startRoom(
             @PathVariable @NotBlank String roomCode,
-            @RequestParam(required = false) String hashedPassword) {
-        boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
+            @RequestParam(required = false) String password) {
+        boolean passwordOk = gameService.checkRoomPassword(roomCode, password);
         if (!passwordOk) {
             return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
@@ -115,8 +146,8 @@ public class GameController {
     @PostMapping("/rooms/{roomCode}/disband")
     public ResponseEntity<?> disbandRoom(
             @PathVariable @NotBlank String roomCode,
-            @RequestParam(required = false) String hashedPassword) {
-        boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
+            @RequestParam(required = false) String password) {
+        boolean passwordOk = gameService.checkRoomPassword(roomCode, password);
         if (!passwordOk) {
             return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
@@ -212,13 +243,13 @@ public class GameController {
     @PostMapping("/next")
     public ResponseEntity<?> nextQuestion(
             @RequestParam @NotBlank String roomCode,
-            @RequestParam(required = false) String hashedPassword) {
+            @RequestParam(required = false) String password) {
         GameRoom room = gameService.getRoom(roomCode);
         if (room == null) {
             return ResponseEntity.status(404).body(ErrorResponse.of("Not Found", "Room not found.", 404));
         }
 
-        if (!gameService.checkRoomPassword(roomCode, hashedPassword)) {
+        if (!gameService.checkRoomPassword(roomCode, password)) {
             return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
 

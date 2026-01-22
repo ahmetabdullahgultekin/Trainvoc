@@ -161,14 +161,17 @@ class GameControllerTest {
             when(gameService.checkRoomPassword(anyString(), any())).thenReturn(true);
             when(gameService.joinRoom(anyString(), anyString(), any())).thenReturn(testPlayer);
             when(gameMapper.toPlayerResponse(any())).thenReturn(testPlayerResponse);
+            when(jwtTokenProvider.createToken(anyString(), anyString(), anyString())).thenReturn("test-token");
 
             mockMvc.perform(post("/api/game/join")
                             .with(csrf())
                             .param("roomCode", "ABC12")
                             .param("playerName", "TestPlayer"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value("player-1"))
-                    .andExpect(jsonPath("$.name").value("TestPlayer"));
+                    .andExpect(jsonPath("$.token").value("test-token"))
+                    .andExpect(jsonPath("$.player.id").value("player-1"))
+                    .andExpect(jsonPath("$.player.name").value("TestPlayer"))
+                    .andExpect(jsonPath("$.roomCode").value("ABC12"));
         }
 
         @Test
@@ -181,7 +184,7 @@ class GameControllerTest {
                             .with(csrf())
                             .param("roomCode", "ABC12")
                             .param("playerName", "TestPlayer")
-                            .param("hashedPassword", "wrong"))
+                            .param("password", "wrong"))
                     .andExpect(status().isForbidden());
         }
 
@@ -281,7 +284,7 @@ class GameControllerTest {
 
             mockMvc.perform(post("/api/game/rooms/ABC12/start")
                             .with(csrf())
-                            .param("hashedPassword", "wrong"))
+                            .param("password", "wrong"))
                     .andExpect(status().isForbidden());
         }
     }
