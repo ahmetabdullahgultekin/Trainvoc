@@ -1,0 +1,10 @@
+.langSelect {
+    color: white;
+    border-color: white;
+    background: transparent;
+}
+
+.langSelect .MuiSvgIcon-root {
+    color: white;
+}
+
