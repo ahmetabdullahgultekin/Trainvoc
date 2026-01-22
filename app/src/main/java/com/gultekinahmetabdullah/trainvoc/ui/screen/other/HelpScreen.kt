@@ -82,7 +82,7 @@ fun HelpScreen(navController: NavController) {
     )
 
     Scaffold(
-        topAppBar = {
+        topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.help_support)) },
                 navigationIcon = {

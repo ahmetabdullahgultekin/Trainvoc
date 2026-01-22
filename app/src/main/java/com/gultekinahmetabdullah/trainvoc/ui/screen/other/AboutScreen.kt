@@ -58,7 +58,7 @@ fun AboutScreen(navController: NavController) {
     val context = LocalContext.current
 
     Scaffold(
-        topAppBar = {
+        topBar = {
             TopAppBar(
                 title = { Text("About") },
                 navigationIcon = {

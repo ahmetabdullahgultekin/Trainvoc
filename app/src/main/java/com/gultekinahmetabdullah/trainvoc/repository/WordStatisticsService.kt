@@ -39,10 +39,11 @@ class WordStatisticsService @Inject constructor(
      * Get statistics for a specific word
      *
      * @param word The word to get statistics for
-     * @return The word's statistics
+     * @return The word's statistics, or default statistics if not found
      */
     override suspend fun getWordStats(word: Word): Statistic {
-        return statisticDao.getStatisticById(word.statId)
+        return statisticDao.getStatisticById(word.statId.toLong())
+            ?: Statistic(statId = 0, correctCount = 0, wrongCount = 0, skippedCount = 0, learned = false)
     }
 
     /**
@@ -111,7 +112,7 @@ class WordStatisticsService @Inject constructor(
      * @param word The word identifier
      */
     override suspend fun updateLastAnswered(word: String) {
-        wordDao.updateLastAnsweredTime(word)
+        wordDao.updateLastReviewed(word)
     }
 
     /**
@@ -121,8 +122,7 @@ class WordStatisticsService @Inject constructor(
      * @param word The word
      */
     override suspend fun updateSecondsSpent(secondsSpent: Int, word: Word) {
-        val currentSecondsSpent = statisticDao.getSecondsSpentByStatId(word.statId)
-        statisticDao.updateSecondsSpent(word.statId, currentSecondsSpent + secondsSpent)
+        wordDao.updateSecondsSpent(secondsSpent, word.word)
     }
 
     /**
@@ -131,6 +131,6 @@ class WordStatisticsService @Inject constructor(
      * @param statId The statistic ID
      */
     override suspend fun markWordAsLearned(statId: Long) {
-        statisticDao.markAsLearned(statId)
+        statisticDao.markLearned(statId)
     }
 }

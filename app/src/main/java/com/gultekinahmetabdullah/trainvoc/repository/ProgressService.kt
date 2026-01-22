@@ -72,7 +72,7 @@ class ProgressService @Inject constructor(
      * @return Number of learned words in this level
      */
     override suspend fun getLearnedWordCount(level: String): Int {
-        return wordDao.getLearnedWordCount(level)
+        return wordDao.getLearnedWordCountByLevel(level)
     }
 
     /**
@@ -93,5 +93,47 @@ class ProgressService @Inject constructor(
      */
     override suspend fun getLearnedWordCountByExam(exam: String): Int {
         return wordDao.getLearnedWordCountByExam(exam)
+    }
+
+    /**
+     * Get count of mastered words (learned with 5+ correct answers)
+     */
+    override suspend fun getMasteredWordCount(): Int {
+        return wordDao.getMasteredWordCount()
+    }
+
+    /**
+     * Get count of words being learned (practiced but not mastered)
+     */
+    override suspend fun getLearningWordCount(): Int {
+        return wordDao.getLearningWordCount()
+    }
+
+    /**
+     * Get count of struggling words (more wrong than correct)
+     */
+    override suspend fun getStrugglingWordCount(): Int {
+        return wordDao.getStrugglingWordCount()
+    }
+
+    /**
+     * Get count of words not started yet
+     */
+    override suspend fun getNotStartedWordCount(): Int {
+        return wordDao.getNotStartedWordCount()
+    }
+
+    /**
+     * Get count of words due for review by end of day
+     */
+    override suspend fun getWordsToReviewByDate(endOfDay: Long): Int {
+        return wordDao.getWordsToReviewByDate(endOfDay)
+    }
+
+    /**
+     * Get count of words to review within a date range
+     */
+    override suspend fun getWordsToReviewInRange(startDate: Long, endDate: Long): Int {
+        return wordDao.getWordsToReviewInRange(startDate, endDate)
     }
 }

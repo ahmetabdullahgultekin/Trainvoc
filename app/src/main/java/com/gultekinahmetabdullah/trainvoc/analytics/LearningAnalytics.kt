@@ -225,7 +225,7 @@ class LearningAnalytics(
                 }
             }
 
-            if (reviewDates.isEmpty()) return@try 0
+            if (reviewDates.isEmpty()) return 0
 
             // Sort dates chronologically
             val sortedDates = reviewDates.sorted()

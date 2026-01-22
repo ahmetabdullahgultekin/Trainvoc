@@ -137,7 +137,7 @@ fun AchievementsScreen(
                     columns = GridCells.Fixed(gridColumns),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((filteredAchievements.size / gridColumns + if (filteredAchievements.size % gridColumns > 0) 1 else 0) * 140.dp),
+                        .height(((filteredAchievements.size / gridColumns + if (filteredAchievements.size % gridColumns > 0) 1 else 0) * 140).dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {

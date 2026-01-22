@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,19 +77,3 @@ data class TutorialState(
     val description: String = "",
     val highlightElement: String? = null
 )
-
-/**
- * Game Types for Tutorial
- */
-enum class GameType {
-    MULTIPLE_CHOICE,
-    WORD_SCRAMBLE,
-    FILL_IN_BLANK,
-    FLIP_CARDS,
-    SPEED_MATCH,
-    PICTURE_MATCH,
-    TRANSLATION_RACE,
-    SPELLING_CHALLENGE,
-    LISTENING_QUIZ,
-    CONTEXT_CLUES
-}

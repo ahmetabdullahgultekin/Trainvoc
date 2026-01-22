@@ -2,6 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.ui.games
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.games.GamesDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +32,7 @@ class GamesMenuViewModel @Inject constructor(
                 // Load stats for each game type
                 val gameStats = mutableMapOf<GameType, GameStats>()
 
-                GameType.values().forEach { gameType ->
+                GameType.entries.forEach { gameType ->
                     val gameTypeName = getGameTypeName(gameType)
                     val gamesPlayed = gamesDao.getCompletedGamesCount(gameType = gameTypeName)
                     val sessions = gamesDao.getGameSessions(gameType = gameTypeName, limit = 100)

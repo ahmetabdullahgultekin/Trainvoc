@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -353,6 +354,15 @@ fun StatsGridSection(
     totalAnswers: Int,
     modifier: Modifier = Modifier
 ) {
+    // Calculate responsive grid columns based on screen width
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val gridColumns = when {
+        screenWidthDp >= 840 -> 4  // Large tablets/desktops
+        screenWidthDp >= 600 -> 3  // Small tablets/landscape
+        else -> 2                  // Phones
+    }
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = "Statistics",
@@ -361,6 +371,43 @@ fun StatsGridSection(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = Spacing.md)
         )
+
+        // Get colors in composable context
+        val statsCorrectColor = MaterialTheme.colorScheme.statsCorrect
+        val statsTimeColor = MaterialTheme.colorScheme.statsTime
+        val statsCategoryColor = MaterialTheme.colorScheme.statsCategory
+        val statsAverageColor = MaterialTheme.colorScheme.statsAverage
+
+        // Stats data list (created with colors from composable context)
+        val statsData = remember(learnedWords, quizzesCompleted, studyTimeMinutes, correctAnswers, totalAnswers,
+            statsCorrectColor, statsTimeColor, statsCategoryColor, statsAverageColor) {
+            listOf(
+                StatData(
+                    icon = Icons.Default.Book,
+                    value = "$learnedWords",
+                    label = "Words",
+                    iconTint = statsCorrectColor
+                ),
+                StatData(
+                    icon = Icons.Default.Quiz,
+                    value = "$quizzesCompleted",
+                    label = "Quizzes",
+                    iconTint = statsTimeColor
+                ),
+                StatData(
+                    icon = Icons.Default.Timer,
+                    value = formatStudyTime(studyTimeMinutes),
+                    label = "Study Time",
+                    iconTint = statsCategoryColor
+                ),
+                StatData(
+                    icon = Icons.Default.TrendingUp,
+                    value = "${calculateAccuracy(correctAnswers, totalAnswers)}%",
+                    label = "Accuracy",
+                    iconTint = statsAverageColor
+                )
+            )
+        }
 
         // Responsive Grid with LazyVerticalGrid (2/3/4 columns based on screen size)
         LazyVerticalGrid(
@@ -371,34 +418,7 @@ fun StatsGridSection(
             userScrollEnabled = false
         ) {
             // Words Learned
-            itemsIndexed(
-                listOf(
-                    StatData(
-                        icon = Icons.Default.Book,
-                        value = "$learnedWords",
-                        label = "Words",
-                        iconTint = MaterialTheme.colorScheme.statsCorrect
-                    ),
-                    StatData(
-                        icon = Icons.Default.Quiz,
-                        value = "$quizzesCompleted",
-                        label = "Quizzes",
-                        iconTint = MaterialTheme.colorScheme.statsTime
-                    ),
-                    StatData(
-                        icon = Icons.Default.Timer,
-                        value = formatStudyTime(studyTimeMinutes),
-                        label = "Study Time",
-                        iconTint = MaterialTheme.colorScheme.statsCategory
-                    ),
-                    StatData(
-                        icon = Icons.Default.TrendingUp,
-                        value = "${calculateAccuracy(correctAnswers, totalAnswers)}%",
-                        label = "Accuracy",
-                        iconTint = MaterialTheme.colorScheme.statsAverage
-                    )
-                )
-            ) { index, stat ->
+            itemsIndexed(statsData) { index, stat ->
                 // Staggered animation delay
                 val delay = StaggerDelay.short * index
                 var isVisible by remember { mutableStateOf(false) }
@@ -674,7 +694,7 @@ fun AchievementsSection(
             ) {
                 items(
                     items = achievements.take(10),
-                    key = { it.achievementId }
+                    key = { it.id }
                 ) { userAchievement ->
                     val achievement = userAchievement.getAchievement()
                     if (achievement != null) {
