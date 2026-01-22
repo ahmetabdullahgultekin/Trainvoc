@@ -136,6 +136,7 @@ fun HomeScreen(
     onNavigateToWordProgress: () -> Unit = {},
     onNavigateToDictionary: () -> Unit = {},
     onNavigateToGames: () -> Unit = {},
+    onNavigateToChangelog: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
     viewModel: HomeViewModel = hiltViewModel()
@@ -197,10 +198,9 @@ fun HomeScreen(
                     UpdateNotesCard(
                         updateNotes = updateNotes,
                         onViewChangelog = {
-                            // Mark as seen and dismiss (ChangelogScreen not yet implemented)
+                            // Mark as seen and navigate to full changelog
                             updateNotesManager.markUpdateNotesSeen()
-                            updateNotesManager.dismissUpdateNotes()
-                            shouldShowUpdateNotes = false
+                            onNavigateToChangelog()
                         },
                         onDismiss = {
                             updateNotesManager.dismissUpdateNotes()
