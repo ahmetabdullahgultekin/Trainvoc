@@ -45,9 +45,9 @@ public class GameRoom {
 
     @Enumerated(EnumType.ORDINAL)
     @Column
-    private GameState currentState = GameState.LOBBY; // Oyun state'i: lobby, countdown, question, ranking, vb.
+    private GameState currentState = GameState.LOBBY; // Game state: lobby, countdown, question, ranking, etc.
 
     @Column
-    private LocalDateTime stateStartTime; // O anki state'in başlangıç zamanı
+    private LocalDateTime stateStartTime; // Start time of current state
 }
 

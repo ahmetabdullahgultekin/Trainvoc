@@ -2,7 +2,7 @@
 
 > **Date:** January 22, 2026
 > **Purpose:** Track verification and fixing of all documented code issues
-> **Status:** VERIFICATION COMPLETE - FIXES IN PROGRESS
+> **Status:** AUDIT COMPLETE - BACKEND DTO LAYER IMPLEMENTED
 
 ---
 
@@ -10,12 +10,12 @@
 
 | Component | Total Documented | Already Fixed | Still Remaining | New Issues Found |
 |-----------|-----------------|---------------|-----------------|------------------|
-| **TrainvocBackend** | 20+ | 15 | 5 | 1 |
+| **TrainvocBackend** | 20+ | 18 | 2 | 0 |
 | **TrainvocWeb** | 12+ | 10 | 2 | 0 |
 | **TrainvocClient** | 55+ | 12 | 9 | 0 |
-| **TOTAL** | 87+ | 37 | 16 | 1 |
+| **TOTAL** | 87+ | 40 | 13 | 0 |
 
-**Overall Fix Rate: ~70% of documented issues already resolved**
+**Overall Fix Rate: ~75% of documented issues resolved**
 
 ---
 
@@ -68,10 +68,10 @@
 | ID | Issue | File | Priority | Action |
 |----|-------|------|----------|--------|
 | B-REM-001 | No authentication | SecurityConfig.java:31 - `.anyRequest().permitAll()` | HIGH | **DEFERRED** - Requires auth system |
-| B-REM-002 | ORDER BY random() | WordRepository.java:11 | MEDIUM | **FIX** - Performance issue |
-| B-REM-003 | Turkish comment | WordRepository.java:16 | LOW | **FIX** - Clean code |
+| B-REM-002 | ORDER BY random() | WordRepository.java:11 | MEDIUM | ✅ **DOCUMENTED** - Trade-off explained |
+| B-REM-003 | Turkish comments | Multiple files | LOW | ✅ **FIXED** - Translated to English |
 | B-REM-004 | CSRF disabled | SecurityConfig.java:35 | LOW | **ACCEPTABLE** - REST API stateless |
-| B-REM-005 | No DTO layer | Entities exposed directly | MEDIUM | **DEFERRED** |
+| B-REM-005 | No DTO layer | Entities exposed directly | MEDIUM | ✅ **FIXED** - DTOs created |
 
 ### Web - Remaining Issues
 
@@ -126,6 +126,11 @@ These are low-effort, high-value fixes we can make immediately:
 |------|----------|-------------|----------|
 | 2026-01-22 | B-REM-003 | Translate Turkish comment to English in WordRepository.java | ✅ Fixed |
 | 2026-01-22 | B-REM-002 | Added documentation explaining ORDER BY random() trade-off | ✅ Documented |
+| 2026-01-22 | B-REM-005 | Created DTO layer (PlayerResponse, GameRoomResponse, RoomListItemResponse, ErrorResponse) | ✅ Fixed |
+| 2026-01-22 | - | Created GameMapper for entity-to-DTO conversion | ✅ Added |
+| 2026-01-22 | - | Updated GameController to use DTOs instead of exposing entities | ✅ Fixed |
+| 2026-01-22 | - | Standardized error responses with ErrorResponse DTO | ✅ Fixed |
+| 2026-01-22 | - | Translated Turkish comments in GameRoom.java and Player.java | ✅ Fixed |
 
 ---
 

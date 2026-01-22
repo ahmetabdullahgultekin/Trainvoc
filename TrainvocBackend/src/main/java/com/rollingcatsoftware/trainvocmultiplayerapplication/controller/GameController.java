@@ -1,6 +1,11 @@
 package com.rollingcatsoftware.trainvocmultiplayerapplication.controller;
 
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.AnswerRequest;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.mapper.GameMapper;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.ErrorResponse;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.GameRoomResponse;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.PlayerResponse;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.RoomListItemResponse;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameRoom;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
@@ -26,14 +31,16 @@ import java.util.Map;
 public class GameController {
     private final GameService gameService;
     private final PlayerRepository playerRepo;
+    private final GameMapper gameMapper;
 
-    public GameController(GameService gameService, PlayerRepository playerRepo) {
+    public GameController(GameService gameService, PlayerRepository playerRepo, GameMapper gameMapper) {
         this.gameService = gameService;
         this.playerRepo = playerRepo;
+        this.gameMapper = gameMapper;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<GameRoom> createRoom(
+    public ResponseEntity<GameRoomResponse> createRoom(
             @RequestParam @NotBlank(message = "Host name is required") @Size(min = 2, max = 30, message = "Host name must be between 2 and 30 characters") String hostName,
             @RequestParam(required = false) String avatarId,
             @RequestParam(defaultValue = "true") boolean hostWantsToJoin,
@@ -42,7 +49,7 @@ public class GameController {
     ) {
         Integer avatarIndex = parseAvatarId(avatarId);
         GameRoom room = gameService.createRoom(hostName, avatarIndex, settings, hostWantsToJoin, hashedPassword);
-        return ResponseEntity.ok(room);
+        return ResponseEntity.ok(gameMapper.toGameRoomResponse(room));
     }
 
     @PostMapping("/join")
@@ -55,39 +62,39 @@ public class GameController {
 
         boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
         if (!passwordOk) {
-            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
 
         Player player = gameService.joinRoom(roomCode, playerName, avatarIndex);
         if (player == null) {
             return ResponseEntity.badRequest().body(
-                    errorResponse("Room not found or player could not be added. Please check the room code and player name.")
+                    ErrorResponse.of("Room not found or player could not be added. Please check the room code and player name.")
             );
         }
-        return ResponseEntity.ok(player);
+        return ResponseEntity.ok(gameMapper.toPlayerResponse(player));
     }
 
     @GetMapping("/{roomCode}")
-    public ResponseEntity<GameRoom> getRoom(@PathVariable @NotBlank String roomCode) {
+    public ResponseEntity<GameRoomResponse> getRoom(@PathVariable @NotBlank String roomCode) {
         GameRoom room = gameService.getRoom(roomCode);
         if (room == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(room);
+        return ResponseEntity.ok(gameMapper.toGameRoomResponse(room));
     }
 
     @GetMapping("/rooms")
-    public List<GameRoom> getAllRooms() {
-        return gameService.getAllRooms();
+    public List<RoomListItemResponse> getAllRooms() {
+        return gameMapper.toRoomListItemResponseList(gameService.getAllRooms());
     }
 
     @GetMapping("/players")
-    public ResponseEntity<List<Player>> getPlayers(@RequestParam @NotBlank String roomCode) {
+    public ResponseEntity<List<PlayerResponse>> getPlayers(@RequestParam @NotBlank String roomCode) {
         List<Player> players = gameService.getPlayersByRoomCode(roomCode);
         if (players == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(players);
+        return ResponseEntity.ok(gameMapper.toPlayerResponseList(players));
     }
 
     @PostMapping("/rooms/{roomCode}/start")
@@ -96,7 +103,7 @@ public class GameController {
             @RequestParam(required = false) String hashedPassword) {
         boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
         if (!passwordOk) {
-            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
         boolean started = gameService.startRoom(roomCode);
         if (started) {
@@ -111,7 +118,7 @@ public class GameController {
             @RequestParam(required = false) String hashedPassword) {
         boolean passwordOk = gameService.checkRoomPassword(roomCode, hashedPassword);
         if (!passwordOk) {
-            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
         boolean deleted = gameService.disbandRoom(roomCode);
         if (deleted) {
@@ -135,11 +142,11 @@ public class GameController {
     public ResponseEntity<?> submitAnswer(@RequestBody @Valid AnswerRequest answerRequest) {
         var room = gameService.getRoom(answerRequest.getRoomCode());
         if (room == null) {
-            return ResponseEntity.status(404).body(errorResponse("Room not found."));
+            return ResponseEntity.status(404).body(ErrorResponse.of("Not Found", "Room not found.", 404));
         }
 
         if (room.getCurrentState() != GameState.QUESTION) {
-            return ResponseEntity.status(403).body(errorResponse("Cannot submit answer at this time. Answers can only be submitted during the question phase."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Cannot submit answer at this time. Answers can only be submitted during the question phase.", 403));
         }
 
         List<Player> players = room.getPlayers();
@@ -147,12 +154,12 @@ public class GameController {
                 .filter(p -> p.getId().equals(answerRequest.getPlayerId()))
                 .findFirst().orElse(null);
         if (player == null) {
-            return ResponseEntity.status(404).body(errorResponse("Player not found."));
+            return ResponseEntity.status(404).body(ErrorResponse.of("Not Found", "Player not found.", 404));
         }
 
         if (player.getCurrentAnsweredQuestionIndex() != null &&
                 player.getCurrentAnsweredQuestionIndex().equals(room.getCurrentQuestionIndex())) {
-            return ResponseEntity.status(403).body(errorResponse("You have already answered this question."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "You have already answered this question.", 403));
         }
 
         int maxTime = room.getQuestionDuration();
@@ -177,7 +184,7 @@ public class GameController {
         }
 
         List<Player> updatedPlayers = playerRepo.findByRoom(room);
-        return ResponseEntity.ok(Collections.singletonMap("players", updatedPlayers));
+        return ResponseEntity.ok(Collections.singletonMap("players", gameMapper.toPlayerResponseList(updatedPlayers)));
     }
 
     @GetMapping("/state")
@@ -186,7 +193,7 @@ public class GameController {
             @RequestParam String playerId) {
         var stateInfo = gameService.getGameState(roomCode, playerId);
         if (stateInfo == null) {
-            return ResponseEntity.status(404).body(errorResponse("Room or player not found."));
+            return ResponseEntity.status(404).body(ErrorResponse.of("Not Found", "Room or player not found.", 404));
         }
         return ResponseEntity.ok(stateInfo);
     }
@@ -197,7 +204,7 @@ public class GameController {
             @RequestParam String playerId) {
         var stateInfo = gameService.getSimpleState(roomCode, playerId);
         if (stateInfo == null) {
-            return ResponseEntity.status(404).body(errorResponse("Room or player not found."));
+            return ResponseEntity.status(404).body(ErrorResponse.of("Not Found", "Room or player not found.", 404));
         }
         return ResponseEntity.ok(stateInfo);
     }
@@ -208,20 +215,20 @@ public class GameController {
             @RequestParam(required = false) String hashedPassword) {
         GameRoom room = gameService.getRoom(roomCode);
         if (room == null) {
-            return ResponseEntity.status(404).body(errorResponse("Room not found."));
+            return ResponseEntity.status(404).body(ErrorResponse.of("Not Found", "Room not found.", 404));
         }
 
         if (!gameService.checkRoomPassword(roomCode, hashedPassword)) {
-            return ResponseEntity.status(403).body(errorResponse("Room password is incorrect."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Room password is incorrect.", 403));
         }
 
         if (room.getCurrentState() != GameState.ANSWER_REVEAL) {
-            return ResponseEntity.status(403).body(errorResponse("Cannot advance to next question. All players must answer and answers must be revealed."));
+            return ResponseEntity.status(403).body(ErrorResponse.of("Forbidden", "Cannot advance to next question. All players must answer and answers must be revealed.", 403));
         }
 
         boolean advanced = gameService.goToNextQuestion(room);
         if (!advanced) {
-            return ResponseEntity.status(400).body(errorResponse("Could not advance to next question. The game may have ended."));
+            return ResponseEntity.status(400).body(ErrorResponse.of("Could not advance to next question. The game may have ended."));
         }
 
         var stateInfo = gameService.getGameState(roomCode, null);
@@ -237,9 +244,5 @@ public class GameController {
         } catch (NumberFormatException e) {
             return null;
         }
-    }
-
-    private Map<String, String> errorResponse(String message) {
-        return Collections.singletonMap("error", message);
     }
 }
