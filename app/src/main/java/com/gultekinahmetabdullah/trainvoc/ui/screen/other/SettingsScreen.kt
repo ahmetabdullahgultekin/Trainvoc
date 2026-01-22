@@ -15,15 +15,32 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Accessibility
+import androidx.compose.material.icons.filled.CloudQueue
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Leaderboard
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RecordVoiceOver
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -31,6 +48,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,11 +76,14 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 import com.gultekinahmetabdullah.trainvoc.ui.animations.pressClickable
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
+import com.gultekinahmetabdullah.trainvoc.ui.components.cards.NavigationCard
+import com.gultekinahmetabdullah.trainvoc.ui.components.cards.SettingSectionCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
@@ -90,412 +112,418 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     }
 
     Scaffold(
+        topAppBar = {
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.settings)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
-                .padding(Spacing.mediumLarge),
+                .padding(horizontal = Spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            Text(stringResource(id = R.string.settings), style = MaterialTheme.typography.headlineSmall)
+            // Theme Customization Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Palette,
+                    title = "Theme Customization"
+                ) {
+                    // Theme Mode Selection (System, Light, Dark, AMOLED)
+                    val themeOptions = listOf(
+                        ThemePreference.SYSTEM,
+                        ThemePreference.LIGHT,
+                        ThemePreference.DARK,
+                        ThemePreference.AMOLED
+                    )
+                    val themeLabels = listOf(
+                        stringResource(id = R.string.system_default),
+                        stringResource(id = R.string.light),
+                        stringResource(id = R.string.dark),
+                        "AMOLED"
+                    )
+                    val selectedThemeIndex = themeOptions.indexOf(theme)
+                    SettingDropdown(
+                        title = stringResource(id = R.string.theme),
+                        options = themeLabels,
+                        selectedOption = themeLabels.getOrElse(selectedThemeIndex) { themeLabels[0] },
+                        onOptionSelected = { label ->
+                            val index = themeLabels.indexOf(label)
+                            viewModel.setTheme(themeOptions.getOrElse(index) {
+                                ThemePreference.SYSTEM
+                            })
+                        }
+                    )
 
-            // Theme Customization Section Header
-            Text(
-                text = "Theme Customization",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
+                    Spacer(modifier = Modifier.height(Spacing.small))
 
-            // Theme Mode Selection (System, Light, Dark, AMOLED)
-            val themeOptions = listOf(
-                ThemePreference.SYSTEM,
-                ThemePreference.LIGHT,
-                ThemePreference.DARK,
-                ThemePreference.AMOLED
-            )
-            val themeLabels = listOf(
-                stringResource(id = R.string.system_default),
-                stringResource(id = R.string.light),
-                stringResource(id = R.string.dark),
-                "AMOLED"
-            )
-            val selectedThemeIndex = themeOptions.indexOf(theme)
-            SettingDropdown(
-                title = stringResource(id = R.string.theme),
-                options = themeLabels,
-                selectedOption = themeLabels.getOrElse(selectedThemeIndex) { themeLabels[0] },
-                onOptionSelected = { label ->
-                    val index = themeLabels.indexOf(label)
-                    viewModel.setTheme(themeOptions.getOrElse(index) {
-                        ThemePreference.SYSTEM
-                    })
-                }
-            )
+                    // Color Palette Selection
+                    Text(
+                        text = "Color Palette",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
 
-            // Color Palette Selection
-            Text(
-                text = "Color Palette",
-                style = MaterialTheme.typography.bodyLarge
-            )
+                    Spacer(modifier = Modifier.height(Spacing.extraSmall))
 
-            // Color palette preview cards
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.small),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(ColorPalettePreference.entries.toList(), key = { it }) { palette ->
-                    // Skip Dynamic on older Android versions
-                    if (palette == ColorPalettePreference.DYNAMIC && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                        return@items
+                    // Color palette preview cards
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.small),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(ColorPalettePreference.entries.toList(), key = { it }) { palette ->
+                            // Skip Dynamic on older Android versions
+                            if (palette == ColorPalettePreference.DYNAMIC && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                                return@items
+                            }
+
+                            ColorPaletteCard(
+                                palette = palette,
+                                isSelected = palette == colorPalette,
+                                onClick = { viewModel.setColorPalette(palette) }
+                            )
+                        }
                     }
+                }
+            }
 
-                    ColorPaletteCard(
-                        palette = palette,
-                        isSelected = palette == colorPalette,
-                        onClick = { viewModel.setColorPalette(palette) }
+            // Notification Settings Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Notifications,
+                    title = stringResource(id = R.string.notification_settings)
+                ) {
+                    // Master Notifications Toggle
+                    SettingSwitch(
+                        title = stringResource(id = R.string.enable_notifications),
+                        isChecked = notificationsEnabled,
+                        onCheckedChange = { isChecked ->
+                            viewModel.setNotificationsEnabled(isChecked)
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = context.getString(
+                                        if (isChecked) R.string.notifications_enabled
+                                        else R.string.notifications_disabled
+                                    ),
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    )
+
+                    // Individual notification type controls (only visible when notifications are enabled)
+                    if (notificationsEnabled) {
+                        Spacer(modifier = Modifier.height(Spacing.small))
+
+                        // Daily Reminders
+                        SettingSwitchWithDescription(
+                            title = stringResource(id = R.string.enable_daily_reminders),
+                            description = stringResource(id = R.string.daily_reminders_desc),
+                            isChecked = dailyRemindersEnabled,
+                            onCheckedChange = { isChecked ->
+                                dailyRemindersEnabled = isChecked
+                                notificationPrefs.dailyRemindersEnabled = isChecked
+                            }
+                        )
+
+                        // Streak Alerts
+                        SettingSwitchWithDescription(
+                            title = stringResource(id = R.string.enable_streak_alerts),
+                            description = stringResource(id = R.string.streak_alerts_desc),
+                            isChecked = streakAlertsEnabled,
+                            onCheckedChange = { isChecked ->
+                                streakAlertsEnabled = isChecked
+                                notificationPrefs.streakAlertsEnabled = isChecked
+                            }
+                        )
+
+                        // Word of the Day
+                        SettingSwitchWithDescription(
+                            title = stringResource(id = R.string.enable_word_of_day),
+                            description = stringResource(id = R.string.word_of_day_desc),
+                            isChecked = wordOfDayEnabled,
+                            onCheckedChange = { isChecked ->
+                                wordOfDayEnabled = isChecked
+                                notificationPrefs.wordOfDayEnabled = isChecked
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.height(Spacing.small))
+
+                        // Advanced Notification Settings navigation
+                        NavigationCard(
+                            icon = Icons.Default.Settings,
+                            title = stringResource(id = R.string.advanced_notification_settings),
+                            onClick = {
+                                haptic.click()
+                                navController.navigate(Route.NOTIFICATION_SETTINGS)
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Account Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Person,
+                    title = "Account"
+                ) {
+                    NavigationCard(
+                        icon = Icons.Default.Person,
+                        title = "Profile",
+                        subtitle = "View and edit your profile",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.PROFILE)
+                        }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(Spacing.small))
-
-            // Notification Settings Section
-            Text(
-                text = stringResource(id = R.string.notification_settings),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            // Master Notifications Toggle
-            SettingSwitch(
-                title = stringResource(id = R.string.enable_notifications),
-                isChecked = notificationsEnabled,
-                onCheckedChange = { isChecked ->
-                    viewModel.setNotificationsEnabled(isChecked)
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = context.getString(
-                                if (isChecked) R.string.notifications_enabled
-                                else R.string.notifications_disabled
-                            ),
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-            )
-
-            // Individual notification type controls (only visible when notifications are enabled)
-            if (notificationsEnabled) {
-                // Daily Reminders
-                SettingSwitchWithDescription(
-                    title = stringResource(id = R.string.enable_daily_reminders),
-                    description = stringResource(id = R.string.daily_reminders_desc),
-                    isChecked = dailyRemindersEnabled,
-                    onCheckedChange = { isChecked ->
-                        dailyRemindersEnabled = isChecked
-                        notificationPrefs.dailyRemindersEnabled = isChecked
-                    }
-                )
-
-                // Streak Alerts
-                SettingSwitchWithDescription(
-                    title = stringResource(id = R.string.enable_streak_alerts),
-                    description = stringResource(id = R.string.streak_alerts_desc),
-                    isChecked = streakAlertsEnabled,
-                    onCheckedChange = { isChecked ->
-                        streakAlertsEnabled = isChecked
-                        notificationPrefs.streakAlertsEnabled = isChecked
-                    }
-                )
-
-                // Word of the Day
-                SettingSwitchWithDescription(
-                    title = stringResource(id = R.string.enable_word_of_day),
-                    description = stringResource(id = R.string.word_of_day_desc),
-                    isChecked = wordOfDayEnabled,
-                    onCheckedChange = { isChecked ->
-                        wordOfDayEnabled = isChecked
-                        notificationPrefs.wordOfDayEnabled = isChecked
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(Spacing.small))
-
-                // Advanced Notification Settings button
-                Button(
-                    onClick = {
-                        haptic.click()
-                        navController.navigate(Route.NOTIFICATION_SETTINGS)
-                    },
-                    shape = RoundedCornerShape(CornerRadius.medium),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .pressClickable { }
+            // Learning Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Timeline,
+                    title = "Learning"
                 ) {
-                    Text(stringResource(id = R.string.advanced_notification_settings))
+                    NavigationCard(
+                        icon = Icons.Default.Timeline,
+                        title = "Daily Goals",
+                        subtitle = "Set and track your daily learning goals",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.DAILY_GOALS)
+                        }
+                    )
                 }
             }
 
-            // Account Section (Phase 1)
-            Text(
-                text = "Account",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
+            // Social & Achievements Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.EmojiEvents,
+                    title = "Social & Achievements"
+                ) {
+                    NavigationCard(
+                        icon = Icons.Default.EmojiEvents,
+                        title = "Achievements",
+                        subtitle = "View your unlocked achievements",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.ACHIEVEMENTS)
+                        }
+                    )
 
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.PROFILE)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text("Profile")
+                    Spacer(modifier = Modifier.height(Spacing.extraSmall))
+
+                    NavigationCard(
+                        icon = Icons.Default.Leaderboard,
+                        title = "Leaderboard",
+                        subtitle = "Coming soon - Compete worldwide",
+                        onClick = {
+                            haptic.click()
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "Leaderboard coming soon! Compete with learners worldwide in a future update.",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(Spacing.small))
-
-            // Learning Section (Phase 1 & 2)
-            Text(
-                text = "Learning",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.DAILY_GOALS)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text("Daily Goals")
+            // Progress Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Timeline,
+                    title = "Progress"
+                ) {
+                    NavigationCard(
+                        icon = Icons.Default.Timeline,
+                        title = "Word Progress",
+                        subtitle = "Track your vocabulary growth",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.WORD_PROGRESS)
+                        }
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(Spacing.small))
-
-            // Social & Achievements Section (Phase 1 & 2)
-            Text(
-                text = "Social & Achievements",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.ACHIEVEMENTS)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text("Achievements")
-            }
-
-            Button(
-                onClick = {
-                    haptic.click()
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = "Leaderboard coming soon! Compete with learners worldwide in a future update.",
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Text("Leaderboard (Coming Soon)", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-
-            Spacer(modifier = Modifier.height(Spacing.small))
-
-            // Progress Section (Phase 3)
-            Text(
-                text = "Progress",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.WORD_PROGRESS)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text("Word Progress")
-            }
-
-            Spacer(modifier = Modifier.height(Spacing.small))
 
             // Backup & Sync Section
-            Text(
-                text = "Backup & Sync",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            // Backup & Sync button
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.BACKUP)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text("Backup & Restore")
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.CloudQueue,
+                    title = "Backup & Sync"
+                ) {
+                    NavigationCard(
+                        icon = Icons.Default.CloudQueue,
+                        title = "Backup & Restore",
+                        subtitle = "Manage your cloud backups",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.BACKUP)
+                        }
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(Spacing.small))
 
             // Accessibility Section
-            Text(
-                text = "Accessibility",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.ACCESSIBILITY_SETTINGS)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text("Accessibility Settings")
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Accessibility,
+                    title = "Accessibility"
+                ) {
+                    NavigationCard(
+                        icon = Icons.Default.Accessibility,
+                        title = "Accessibility Settings",
+                        subtitle = "Customize for your needs",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.ACCESSIBILITY_SETTINGS)
+                        }
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(Spacing.small))
 
             // Audio & Pronunciation Section
-            Text(
-                text = "Audio & Pronunciation",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.RecordVoiceOver,
+                    title = "Audio & Pronunciation"
+                ) {
+                    // TTS Enable Toggle (always available - Android TTS is free)
+                    SettingSwitch(
+                        title = "Enable Pronunciation Audio",
+                        isChecked = true, // TTS is always enabled since it's free
+                        onCheckedChange = { /* No-op, TTS is always available */ }
+                    )
 
-            // TTS Enable Toggle (always available - Android TTS is free)
-            SettingSwitch(
-                title = "Enable Pronunciation Audio",
-                isChecked = true, // TTS is always enabled since it's free
-                onCheckedChange = { /* No-op, TTS is always available */ }
-            )
-
-            Text(
-                text = "Use speaker buttons (🔊) on word cards to hear pronunciation",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = Spacing.medium, top = Spacing.extraSmall)
-            )
-
-            Spacer(modifier = Modifier.height(Spacing.small))
-
-            // Language Selection - All 6 supported languages
-            val languageOptions = listOf(
-                LanguagePreference.ENGLISH,
-                LanguagePreference.TURKISH,
-                LanguagePreference.SPANISH,
-                LanguagePreference.GERMAN,
-                LanguagePreference.FRENCH,
-                LanguagePreference.ARABIC
-            )
-            val languageLabels = listOf(
-                stringResource(id = R.string.english),
-                stringResource(id = R.string.turkish),
-                stringResource(id = R.string.spanish),
-                stringResource(id = R.string.german),
-                stringResource(id = R.string.french),
-                stringResource(id = R.string.arabic)
-            )
-            val selectedLanguageIndex = languageOptions.indexOf(language)
-            SettingDropdown(
-                title = stringResource(id = R.string.language),
-                options = languageLabels,
-                selectedOption = languageLabels.getOrElse(selectedLanguageIndex) { languageLabels[0] },
-                onOptionSelected = { label ->
-                    val index = languageLabels.indexOf(label)
-                    viewModel.setLanguage(languageOptions.getOrElse(index) { LanguagePreference.ENGLISH })
+                    Text(
+                        text = "Use speaker buttons (🔊) on word cards to hear pronunciation",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Spacing.extraSmall)
+                    )
                 }
-            )
-
-            // Manage Account
-            Button(
-                onClick = {
-                    haptic.click()
-                    navController.navigate(Route.MANAGEMENT)
-                },
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text(stringResource(id = R.string.manage_words))
             }
 
-            // Reset Progress
-            Button(
-                onClick = {
-                    haptic.longPress()
-                    viewModel.resetProgress()
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.progress_reset),
-                            duration = SnackbarDuration.Short
+            // Language Selection Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Language,
+                    title = stringResource(id = R.string.language)
+                ) {
+                    // Language Selection - All 6 supported languages
+                    val languageOptions = listOf(
+                        LanguagePreference.ENGLISH,
+                        LanguagePreference.TURKISH,
+                        LanguagePreference.SPANISH,
+                        LanguagePreference.GERMAN,
+                        LanguagePreference.FRENCH,
+                        LanguagePreference.ARABIC
+                    )
+                    val languageLabels = listOf(
+                        stringResource(id = R.string.english),
+                        stringResource(id = R.string.turkish),
+                        stringResource(id = R.string.spanish),
+                        stringResource(id = R.string.german),
+                        stringResource(id = R.string.french),
+                        stringResource(id = R.string.arabic)
+                    )
+                    val selectedLanguageIndex = languageOptions.indexOf(language)
+                    SettingDropdown(
+                        title = stringResource(id = R.string.language),
+                        options = languageLabels,
+                        selectedOption = languageLabels.getOrElse(selectedLanguageIndex) { languageLabels[0] },
+                        onOptionSelected = { label ->
+                            val index = languageLabels.indexOf(label)
+                            viewModel.setLanguage(languageOptions.getOrElse(index) { LanguagePreference.ENGLISH })
+                        }
+                    )
+                }
+            }
+
+            // Other Actions Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Settings,
+                    title = "Other Actions"
+                ) {
+                    // Manage Words
+                    NavigationCard(
+                        icon = Icons.Default.Settings,
+                        title = stringResource(id = R.string.manage_words),
+                        subtitle = "Add, edit, or remove words",
+                        onClick = {
+                            haptic.click()
+                            navController.navigate(Route.MANAGEMENT)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(Spacing.small))
+
+                    // Reset Progress Button (Danger action)
+                    Button(
+                        onClick = {
+                            haptic.longPress()
+                            viewModel.resetProgress()
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = context.getString(R.string.progress_reset),
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        shape = RoundedCornerShape(CornerRadius.medium),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .pressClickable { }
+                    ) {
+                        Text(
+                            stringResource(id = R.string.reset_progress),
+                            color = MaterialTheme.colorScheme.onError
                         )
                     }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text(
-                    stringResource(id = R.string.reset_progress),
-                    color = MaterialTheme.colorScheme.onError
-                )
+
+                    Spacer(modifier = Modifier.height(Spacing.extraSmall))
+
+                    // Logout Button (Danger action)
+                    Button(
+                        onClick = {
+                            haptic.click()
+                            viewModel.logout()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                        shape = RoundedCornerShape(CornerRadius.medium),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .pressClickable { }
+                    ) {
+                        Text(stringResource(id = R.string.logout), color = MaterialTheme.colorScheme.onError)
+                    }
+                }
             }
 
-            // Logout
-            Button(
-                onClick = {
-                    haptic.click()
-                    viewModel.logout()
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                shape = RoundedCornerShape(CornerRadius.medium),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pressClickable { }
-            ) {
-                Text(stringResource(id = R.string.logout), color = MaterialTheme.colorScheme.onError)
-            }
+            // Bottom spacing
+            item { Spacer(modifier = Modifier.height(Spacing.medium)) }
         }
     }
 }
