@@ -1,11 +1,64 @@
+# ============================================
+# Trainvoc Monorepo .gitignore
+# ============================================
+
 # Backup folders (temporary)
 _backups/
 *_temp/
+backups/
 
 # IDE
 .idea/
 *.iml
+.vscode/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
+*.log
+
+# ============================================
+# Production / Deployment
+# ============================================
+
+# Environment files (NEVER commit these!)
+.env
+.env.local
+.env.*.local
+*.env
+
+# SSL certificates
+nginx/ssl/
+*.pem
+*.key
+*.crt
+*.p12
+keystore.p12
+
+# Docker volumes
+postgres_data/
+postgres_words_data/
+
+# ============================================
+# Build artifacts
+# ============================================
+
+# Backend
+TrainvocBackend/build/
+TrainvocBackend/.gradle/
+TrainvocBackend/out/
+*.jar
+
+# Web
+TrainvocWeb/node_modules/
+TrainvocWeb/dist/
+TrainvocWeb/.vite/
+
+# Android (usually in TrainvocClient/.gitignore)
+TrainvocClient/build/
+TrainvocClient/app/build/
+TrainvocClient/.gradle/
+*.apk
+*.aab
