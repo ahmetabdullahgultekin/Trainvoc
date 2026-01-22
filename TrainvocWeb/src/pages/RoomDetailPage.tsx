@@ -3,7 +3,6 @@ import {Alert, Box, List, ListItem, ListItemText, Typography} from '@mui/materia
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 
-import SharedButton from '../components/shared/Button';
 import api from '../api';
 import type {GameRoom, Player} from '../interfaces/game';
 
@@ -49,13 +48,6 @@ const RoomDetailPage = () => {
                             </ListItem>
                         ))}
                     </List>
-                    <Box mt={3}>
-                        <SharedButton variant="primary" style={{
-                            width: '100%',
-                            padding: '14px 0',
-                            fontSize: 15
-                        }}>{t('submit')}</SharedButton>
-                    </Box>
                 </>
             )}
         </Box>
