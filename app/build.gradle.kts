@@ -186,6 +186,12 @@ dependencies {
     // Coil for image loading
     implementation(libs.coil.compose)
 
+    // Retrofit & OkHttp for API calls
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+
     // Security
     implementation(libs.androidx.security.crypto)
 
