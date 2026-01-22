@@ -2,11 +2,10 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.other
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,26 +13,36 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.QuestionAnswer
+import androidx.compose.material.icons.filled.Support
+import androidx.compose.material.icons.filled.Web
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,25 +51,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import kotlinx.coroutines.launch
+import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.R
-import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
+import com.gultekinahmetabdullah.trainvoc.ui.components.cards.SettingSectionCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HelpScreen() {
+fun HelpScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
     val faqList = listOf(
         stringResource(id = R.string.faq_how_to_use) to stringResource(id = R.string.faq_how_to_use_desc),
         stringResource(id = R.string.faq_how_to_reset) to stringResource(id = R.string.faq_how_to_reset_desc),
@@ -72,133 +82,246 @@ fun HelpScreen() {
     )
 
     Scaffold(
+        topAppBar = {
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.help_support)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = Spacing.medium),
+            verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
-            // Animasyonlu üst görsel
-            val logoAnim = animateFloatAsState(
-                targetValue = 1.1f,
-                animationSpec = tween(durationMillis = 2000), label = "logoAnim"
-            )
-            Image(
-                painter = painterResource(id = R.drawable.baseline_help_24),
-                contentDescription = "Help icon decoration",
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(Spacing.small)
-                    .size(64.dp)
-                    .scale(logoAnim.value)
-                    .offset(x = 10.dp, y = 0.dp)
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(Spacing.mediumLarge)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                Text(
-                    stringResource(id = R.string.help_support),
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 1.2.sp
-                )
-                // Animasyonlu açıklama
-                AnimatedVisibility(visible = true) {
-                    Text(
-                        text = stringResource(id = R.string.help_welcome),
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.padding(bottom = Spacing.small)
-                    )
-                }
-                // FAQs Section
-                Text(
-                    stringResource(id = R.string.faq_title),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 0.5.sp
-                )
-                faqList.forEachIndexed { i, (question, answer) ->
-                    AnimatedFAQItem(
-                        question = question,
-                        answer = answer,
-                        questionFontSize = 18,
-                        answerFontSize = 16,
-                        delay = i * 100L
-                    )
-                }
-                HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.small))
-                // Contact Support Section
-                Text(
-                    stringResource(id = R.string.contact_support),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 0.5.sp
-                )
-                ContactItem(
-                    stringResource(id = R.string.email_support),
-                    Icons.Default.Email,
-                    "support@trainvoc.com"
+            item { Spacer(modifier = Modifier.height(Spacing.small)) }
+
+            // Welcome Message
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    val emailIntent =
-                        Intent(Intent.ACTION_SENDTO, "mailto:support@trainvoc.com".toUri())
-                    context.startActivity(emailIntent)
+                    Column(modifier = Modifier.padding(Spacing.medium)) {
+                        Text(
+                            text = stringResource(id = R.string.help_welcome),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
                 }
-                ContactItem(
-                    stringResource(id = R.string.call_support),
-                    Icons.Default.Phone,
-                    "+1 234 567 890"
+            }
+
+            // FAQs Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.QuestionAnswer,
+                    title = stringResource(id = R.string.faq_title)
                 ) {
-                    val phoneIntent = Intent(Intent.ACTION_DIAL, "tel:+1234567890".toUri())
-                    context.startActivity(phoneIntent)
-                }
-                ContactItem(
-                    stringResource(id = R.string.visit_website),
-                    Icons.Default.Home,
-                    "www.trainvoc.com"
-                ) {
-                    val webIntent = Intent(Intent.ACTION_VIEW, "https://www.trainvoc.com".toUri())
-                    context.startActivity(webIntent)
-                }
-                HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.small))
-                // Feedback Section
-                Text(
-                    stringResource(id = R.string.give_feedback),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 0.5.sp
-                )
-                val redirectingFeedback = stringResource(id = R.string.redirecting_feedback)
-                Button(
-                    onClick = {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = redirectingFeedback,
-                                duration = SnackbarDuration.Short
+                    Column(verticalArrangement = Arrangement.spacedBy(Spacing.extraSmall)) {
+                        faqList.forEach { (question, answer) ->
+                            ImprovedFAQItem(
+                                question = question,
+                                answer = answer
                             )
                         }
-                        val feedbackIntent =
-                            Intent(Intent.ACTION_VIEW, "https://www.trainvoc.com/feedback".toUri())
-                        context.startActivity(feedbackIntent)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium
+                    }
+                }
+            }
+
+            // Contact Support Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Support,
+                    title = stringResource(id = R.string.contact_support)
                 ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(Spacing.extraSmall)) {
+                        ImprovedContactItem(
+                            icon = Icons.Default.Email,
+                            title = stringResource(id = R.string.email_support),
+                            detail = "support@trainvoc.com",
+                            onClick = {
+                                val emailIntent = Intent(
+                                    Intent.ACTION_SENDTO,
+                                    "mailto:support@trainvoc.com".toUri()
+                                )
+                                context.startActivity(emailIntent)
+                            }
+                        )
+
+                        ImprovedContactItem(
+                            icon = Icons.Default.Phone,
+                            title = stringResource(id = R.string.call_support),
+                            detail = "+1 234 567 890",
+                            onClick = {
+                                val phoneIntent = Intent(
+                                    Intent.ACTION_DIAL,
+                                    "tel:+1234567890".toUri()
+                                )
+                                context.startActivity(phoneIntent)
+                            }
+                        )
+
+                        ImprovedContactItem(
+                            icon = Icons.Default.Web,
+                            title = stringResource(id = R.string.visit_website),
+                            detail = "www.trainvoc.com",
+                            onClick = {
+                                val webIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    "https://www.trainvoc.com".toUri()
+                                )
+                                context.startActivity(webIntent)
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Feedback Section
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Feedback,
+                    title = stringResource(id = R.string.give_feedback)
+                ) {
+                    val redirectingFeedback = stringResource(id = R.string.redirecting_feedback)
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = redirectingFeedback,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                            val feedbackIntent = Intent(
+                                Intent.ACTION_VIEW,
+                                "https://www.trainvoc.com/feedback".toUri()
+                            )
+                            context.startActivity(feedbackIntent)
+                        },
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.submit_feedback),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(Spacing.medium),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            }
+
+            // Bottom spacing
+            item { Spacer(modifier = Modifier.height(Spacing.medium)) }
+        }
+    }
+}
+
+/**
+ * Improved FAQ Item with Card wrapper and chevron rotation animation
+ */
+@Composable
+fun ImprovedFAQItem(
+    question: String,
+    answer: String
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    // Chevron rotation animation
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(durationMillis = 300),
+        label = "chevronRotation"
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(),
+        onClick = { expanded = !expanded },
+        colors = CardDefaults.cardColors(
+            containerColor = if (expanded)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(modifier = Modifier.padding(Spacing.medium)) {
+            // Question with chevron
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.QuestionAnswer,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(12.dp))
                     Text(
-                        stringResource(id = R.string.submit_feedback),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = 0.2.sp
+                        text = question,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        color = if (expanded)
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        else
+                            MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    tint = if (expanded)
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.rotate(rotationAngle)
+                )
+            }
+
+            // Answer (expandable)
+            AnimatedVisibility(visible = expanded) {
+                Column {
+                    Spacer(Modifier.height(8.dp))
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = answer,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                     )
                 }
             }
@@ -206,67 +329,63 @@ fun HelpScreen() {
     }
 }
 
+/**
+ * Improved Contact Item with Card wrapper and circular icon background
+ */
 @Composable
-fun AnimatedFAQItem(
-    question: String,
-    answer: String,
-    questionFontSize: Int,
-    answerFontSize: Int,
-    delay: Long = 0L
+fun ImprovedContactItem(
+    icon: ImageVector,
+    title: String,
+    detail: String,
+    onClick: () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    val anim = animateFloatAsState(
-        targetValue = if (expanded) 1f else 0.97f,
-        animationSpec = tween(durationMillis = 300), label = "faqAnim"
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(anim.value)
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(Spacing.small),
+                .padding(Spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.Info,
-                contentDescription = "FAQ Icon",
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(Spacing.small))
-            Text(text = question, fontSize = questionFontSize.sp, fontWeight = FontWeight.Medium)
-        }
-        AnimatedVisibility(visible = expanded) {
-            Text(
-                text = answer,
-                fontSize = answerFontSize.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(start = IconSize.extraLarge, bottom = Spacing.small)
-            )
-        }
-        HorizontalDivider()
-    }
-}
+            // Circular icon background
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
-// Contact Item (Clickable Email, Phone, Website)
-@Composable
-fun ContactItem(title: String, icon: ImageVector, contactDetail: String, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(Spacing.small),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            modifier = Modifier.size(IconSize.medium)
-        )
-        Spacer(modifier = Modifier.width(Spacing.small))
-        Text(text = contactDetail, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Spacer(Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = detail,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     }
 }
