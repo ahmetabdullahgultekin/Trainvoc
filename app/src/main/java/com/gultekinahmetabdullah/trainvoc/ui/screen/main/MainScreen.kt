@@ -129,6 +129,8 @@ fun MainScreen(
                         onNavigateToWordProgress = { navController.navigate(Route.WORD_PROGRESS) },
                         onNavigateToDictionary = { navController.navigate(Route.DICTIONARY) },
                         onNavigateToGames = { navController.navigate(Route.GAMES_MENU) },
+                        // Phase 5 - Update Notes & Changelog
+                        onNavigateToChangelog = { navController.navigate(Route.CHANGELOG) },
                     )
                 }
                 composable(Route.STORY) {
@@ -194,6 +196,11 @@ fun MainScreen(
                 composable(Route.ACCESSIBILITY_SETTINGS) {
                     com.gultekinahmetabdullah.trainvoc.ui.screen.other.AccessibilitySettingsScreen(
                         onBackClick = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.CHANGELOG) {
+                    com.gultekinahmetabdullah.trainvoc.ui.screen.other.ChangelogScreen(
+                        navController = navController
                     )
                 }
                 composable(Route.HELP) {
