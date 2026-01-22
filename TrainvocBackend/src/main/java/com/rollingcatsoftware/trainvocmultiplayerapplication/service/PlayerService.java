@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Handles player creation, joining rooms, and leaving rooms.
  */
 @Service
-public class PlayerService {
+public class PlayerService implements IPlayerService {
 
     private final PlayerRepository playerRepository;
 
