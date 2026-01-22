@@ -193,7 +193,7 @@ const JoinRoomPage = () => {
                 {error && <Alert severity="error">{error}</Alert>}
                 {player && (
                     <Alert severity="success" sx={{mt: 2}}>
-                        {t('joinSuccess') || 'Odaya başarıyla katıldınız!'}<br/>
+                        {t('joinSuccess')}<br/>
                         {t('playerName')}: <b>{player.name}</b>
                     </Alert>
                 )}

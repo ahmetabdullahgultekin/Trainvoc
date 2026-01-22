@@ -34,24 +34,6 @@ public class AnswerRequest {
     public AnswerRequest() {
     }
 
-    public static int calculateScore(boolean isCorrect, int answerTime, double optionPickRate, int maxTime) {
-        int minScore = -50;
-        int baseCorrectScore = 50;
-
-        // Normalize optionPickRate to [0, 1] range
-        optionPickRate = Math.max(0, Math.min(1, optionPickRate));
-
-        if (!isCorrect) {
-            int rarityPenalty = (int) Math.round((1 - optionPickRate) * 30);
-            int timePenalty = (int) Math.round(((double) answerTime / maxTime) * 20);
-            return minScore + rarityPenalty + timePenalty;
-        }
-
-        int rarityBonus = (int) Math.round((1 - optionPickRate) * 30);
-        int timeBonus = (int) Math.round((1 - ((double) answerTime / maxTime)) * 20);
-        return baseCorrectScore + rarityBonus + timeBonus;
-    }
-
     public void setIsCorrect(boolean isCorrect) {
         this.isCorrect = isCorrect;
     }
