@@ -17,7 +17,7 @@ import java.util.UUID;
  * Handles room creation, retrieval, and deletion.
  */
 @Service
-public class RoomService {
+public class RoomService implements IRoomService {
 
     private final GameRoomRepository gameRoomRepository;
     private final PlayerService playerService;
