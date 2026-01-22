@@ -386,6 +386,34 @@ The Trainvoc codebase has a solid foundation with clean architecture patterns in
 
 ---
 
+## Software Engineering Principles Analysis
+
+A comprehensive analysis of SOLID, Design Patterns, DRY, YAGNI, KISS, and other SE principle violations has been conducted and documented in **`SE_PRINCIPLES_ANALYSIS.md`**.
+
+### Summary of SE Violations
+
+| Principle | Backend | Web | Client | Total |
+|-----------|---------|-----|--------|-------|
+| **SOLID (all 5)** | 12 | 12 | 10 | **34** |
+| **Design Patterns** | 4 | 6 | 5 | **15** |
+| **DRY** | 5 | 8 | 8 | **21** |
+| **YAGNI** | 4 | 9 | 2 | **15** |
+| **KISS** | 3 | 3 | 2 | **8** |
+| **Other (LoD, SoC, etc.)** | 12 | 7 | 7 | **26** |
+| **Total** | **40** | **45** | **34** | **119** |
+
+### Critical SE Issues
+
+1. **God Objects**: GameService.java (Backend), WordRepository.kt (Client) - 5+ responsibilities each
+2. **Missing State Pattern**: Backend uses 40+ line if-else chain for game state machine
+3. **No Abstraction Layers**: Web has no service layer; Client missing UseCase/Domain layer
+4. **Massive DRY Violations**: 80% duplicate code in getGameState/getSimpleState methods
+5. **Props Drilling**: Web passes translation function through multiple component levels
+
+For detailed analysis with code examples and recommended fixes, see **`SE_PRINCIPLES_ANALYSIS.md`**.
+
+---
+
 ## Appendix: File Reference
 
 ### Critical Files to Review
@@ -409,6 +437,8 @@ The Trainvoc codebase has a solid foundation with clean architecture patterns in
 - `/TrainvocWeb/CLAUDE.md` - Web development guide
 - `/TrainvocBackend/CLAUDE.md` - Backend development guide
 - `/INVESTIGATION_REPORT.md` - This report
+- `/SE_PRINCIPLES_ANALYSIS.md` - Software Engineering principles violation analysis
+- `/SYSTEM_ARCHITECTURE_ANALYSIS.md` - Production deployment architecture
 
 ---
 
