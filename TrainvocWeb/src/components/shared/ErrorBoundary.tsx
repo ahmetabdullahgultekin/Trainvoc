@@ -80,10 +80,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                     >
                         <ErrorOutlineIcon sx={{fontSize: 80, color: 'error.main'}} />
                         <Typography variant="h4" component="h1" gutterBottom>
-                            Bir Şeyler Yanlış Gitti
+                            Something Went Wrong
                         </Typography>
                         <Typography variant="body1" color="text.secondary" sx={{mb: 2}}>
-                            Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyinizi veya ana sayfaya dönmeyi deneyin.
+                            An unexpected error occurred. Please refresh the page or return to the homepage.
                         </Typography>
                         {import.meta.env.MODE === 'development' && this.state.error && (
                             <Box

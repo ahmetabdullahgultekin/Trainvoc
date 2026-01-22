@@ -178,19 +178,11 @@ const GamePage: React.FC = () => {
         isYou: p.id === playerId || p.name === playerId,
     }));
 
-    // timeLimit ve questionDuration logu
-    useEffect(() => {
-        console.log('GamePage debug', {
-            timeLimit: lobby?.questionDuration ?? 60,
-            questionDuration: lobby?.questionDuration
-        });
-    }, [lobby?.questionDuration]);
-
     if (!roomCode || !playerId) {
         return <Alert severity="error">{t('error')}: roomCode/playerName missing</Alert>;
     }
     if (loading) {
-        return <Alert severity="info">Yükleniyor...</Alert>;
+        return <Alert severity="info">{t('loading')}</Alert>;
     }
     if (error) {
         return <Alert severity="error">{error}</Alert>;
@@ -245,11 +237,10 @@ const GamePage: React.FC = () => {
             )}
             {step === GameStep.final && <GameFinal players={sortedPlayers}/>}
             {step === GameStep.lobby && (
-                <Alert severity="info">Oyun başlatılıyor, lütfen bekleyin...</Alert>
+                <Alert severity="info">{t('gameStarting')}</Alert>
             )}
-            {/* Sadece answer_reveal aşamasında ve showNext false ise göster */}
             {step === GameStep.answer_reveal && !showNext && (
-                <Alert severity="info">Cevaplar açıklanıyor, lütfen bekleyin...</Alert>
+                <Alert severity="info">{t('loading')}</Alert>
             )}
         </Box>
     );
