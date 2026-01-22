@@ -1,0 +1,11 @@
+# Backup folders (temporary)
+_backups/
+*_temp/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
