@@ -8,7 +8,11 @@ interface GameRankingProps {
 
 const medalColors = ['#ffd700', '#c0c0c0', '#cd7f32'];
 
-const GameRanking: React.FC<GameRankingProps> = ({players}) => {
+/**
+ * Displays player rankings during/after game.
+ * Memoized to prevent re-renders when game state updates but rankings don't change.
+ */
+const GameRanking: React.FC<GameRankingProps> = React.memo(({players}) => {
     return (
         <Box maxWidth={500} mx="auto" mt={6}>
             <Paper elevation={4} sx={{p: 4, borderRadius: 4}}>
@@ -34,6 +38,8 @@ const GameRanking: React.FC<GameRankingProps> = ({players}) => {
             </Paper>
         </Box>
     );
-};
+});
+
+GameRanking.displayName = 'GameRanking';
 
 export default GameRanking;

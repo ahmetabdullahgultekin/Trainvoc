@@ -8,7 +8,11 @@ interface GameFinalProps {
 
 const medalColors = ['#ffd700', '#c0c0c0', '#cd7f32'];
 
-const GameFinal: React.FC<GameFinalProps> = ({players}) => {
+/**
+ * Final game results display.
+ * Memoized since it renders once and shouldn't re-render.
+ */
+const GameFinal: React.FC<GameFinalProps> = React.memo(({players}) => {
     return (
         <Box maxWidth={500} mx="auto" mt={6}>
             <Paper elevation={6} sx={{p: 5, borderRadius: 4, bgcolor: '#fffde7'}}>
@@ -35,6 +39,8 @@ const GameFinal: React.FC<GameFinalProps> = ({players}) => {
             </Paper>
         </Box>
     );
-};
+});
+
+GameFinal.displayName = 'GameFinal';
 
 export default GameFinal;

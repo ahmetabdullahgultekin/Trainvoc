@@ -4,18 +4,19 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Dispatches WebSocket messages to appropriate handlers based on message type.
  * Implements the Strategy pattern for message handling.
+ * Uses ConcurrentHashMap for thread-safe handler registration.
  */
 @Component
 public class MessageDispatcher {
 
-    private final Map<String, WebSocketMessageHandler> handlers = new HashMap<>();
+    private final Map<String, WebSocketMessageHandler> handlers = new ConcurrentHashMap<>();
     private final WebSocketContext context = new WebSocketContext();
 
     public MessageDispatcher(List<WebSocketMessageHandler> messageHandlers) {
