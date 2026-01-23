@@ -44,5 +44,16 @@ object Route {
     // Phase 5 - Update Notes & Changelog
     const val CHANGELOG = "changelog"
 
+    // Phase 6 - Multiplayer
+    const val MULTIPLAYER_HOME = "multiplayer_home"
+    const val MULTIPLAYER_CREATE_ROOM = "multiplayer_create_room"
+    const val MULTIPLAYER_JOIN_ROOM = "multiplayer_join_room"
+    const val MULTIPLAYER_LOBBY = "multiplayer_lobby/{roomCode}"
+    const val MULTIPLAYER_GAME = "multiplayer_game/{roomCode}"
+    const val MULTIPLAYER_RESULTS = "multiplayer_results/{roomCode}"
+
     fun wordDetail(wordId: String) = "word_detail/$wordId"
+    fun multiplayerLobby(roomCode: String) = "multiplayer_lobby/$roomCode"
+    fun multiplayerGame(roomCode: String) = "multiplayer_game/$roomCode"
+    fun multiplayerResults(roomCode: String) = "multiplayer_results/$roomCode"
 }
