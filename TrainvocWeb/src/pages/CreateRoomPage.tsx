@@ -28,7 +28,6 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import useNick from '../components/shared/useNick.ts';
 import useProfile from '../components/shared/useProfile';
-import {hashPassword} from '../components/shared/hashPassword';
 
 const CreateRoomPage = () => {
     const {t} = useTranslation();
@@ -71,16 +70,18 @@ const CreateRoomPage = () => {
         setRoom(null);
         try {
             setNick(hostName); // nick'i localStorage'a kaydet
-            // Şifre hashle
-            const hashedPassword = roomPassword ? await hashPassword(roomPassword) : '';
-            // avatarId'yi ve hashedPassword'ü gönder
-            const res = await api.post('/api/game/create?hostName=' + encodeURIComponent(hostName) + '&hostWantsToJoin=true' + `&avatarId=${avatarId}` + (hashedPassword ? `&hashedPassword=${hashedPassword}` : ''), settings);
+            // Send raw password - server handles hashing
+            const res = await api.post('/api/game/create?hostName=' + encodeURIComponent(hostName) + '&hostWantsToJoin=true' + `&avatarId=${avatarId}` + (roomPassword ? `&password=${encodeURIComponent(roomPassword)}` : ''), settings);
             setRoom(res.data);
             // Oda oluşturulduktan sonra hostu lobiye yönlendir
             const roomCode = res.data.roomCode;
-            const hostId = res.data.hostId || (res.data.host && res.data.host.id);
-            if (roomCode && hostId) {
-                navigate(`/play/lobby?roomCode=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(hostId)}`);
+            const playerId = res.data.player?.id;
+            // Store JWT token for future API calls
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+            }
+            if (roomCode && playerId) {
+                navigate(`/play/lobby?roomCode=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(playerId)}`);
             }
         } catch (e) {
             setError(t('error'));

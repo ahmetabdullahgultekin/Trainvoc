@@ -46,6 +46,7 @@ class GameServiceTest {
     private static final String PLAYER_NAME = "TestPlayer";
     private static final String HOST_NAME = "TestHost";
     private static final Integer AVATAR_ID = 1;
+    private static final String RAW_PASSWORD = "raw-password";
     private static final String HASHED_PASSWORD = "hashed-password";
 
     @BeforeEach
@@ -71,14 +72,17 @@ class GameServiceTest {
     class RoomOperations {
 
         @Test
-        @DisplayName("createRoom delegates to roomService")
-        void createRoom_delegatesToRoomService() {
+        @DisplayName("createRoom hashes password and delegates to roomService")
+        void createRoom_hashesPasswordAndDelegatesToRoomService() {
+            // GameService receives raw password, hashes it, then passes to roomService
+            when(roomPasswordService.hashPassword(RAW_PASSWORD)).thenReturn(HASHED_PASSWORD);
             when(roomService.createRoom(HOST_NAME, AVATAR_ID, testSettings, true, HASHED_PASSWORD))
                     .thenReturn(testRoom);
 
-            GameRoom result = gameService.createRoom(HOST_NAME, AVATAR_ID, testSettings, true, HASHED_PASSWORD);
+            GameRoom result = gameService.createRoom(HOST_NAME, AVATAR_ID, testSettings, true, RAW_PASSWORD);
 
             assertEquals(testRoom, result);
+            verify(roomPasswordService).hashPassword(RAW_PASSWORD);
             verify(roomService).createRoom(HOST_NAME, AVATAR_ID, testSettings, true, HASHED_PASSWORD);
         }
 

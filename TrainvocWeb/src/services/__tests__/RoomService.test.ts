@@ -11,10 +11,7 @@ vi.mock('../../api', () => ({
     },
 }));
 
-// Mock hashPassword
-vi.mock('../../components/shared/hashPassword', () => ({
-    hashPassword: vi.fn((password: string) => Promise.resolve(`hashed_${password}`)),
-}));
+// Note: hashPassword is no longer used - passwords are sent raw to server
 
 describe('RoomService', () => {
     const mockRoom: GameRoom = {
@@ -180,13 +177,13 @@ describe('RoomService', () => {
             expect(api.post).toHaveBeenCalledWith('/api/game/rooms/ABC123/start');
         });
 
-        it('should start game with password', async () => {
+        it('should start game with raw password (server hashes)', async () => {
             vi.mocked(api.post).mockResolvedValueOnce({});
 
             await RoomService.startGame('ABC123', 'secret');
 
             expect(api.post).toHaveBeenCalledWith(
-                '/api/game/rooms/ABC123/start?hashedPassword=hashed_secret'
+                '/api/game/rooms/ABC123/start?password=secret'
             );
         });
     });
@@ -200,13 +197,13 @@ describe('RoomService', () => {
             expect(api.post).toHaveBeenCalledWith('/api/game/rooms/ABC123/disband');
         });
 
-        it('should disband room with password', async () => {
+        it('should disband room with raw password (server hashes)', async () => {
             vi.mocked(api.post).mockResolvedValueOnce({});
 
             await RoomService.disbandRoom('ABC123', 'secret');
 
             expect(api.post).toHaveBeenCalledWith(
-                '/api/game/rooms/ABC123/disband?hashedPassword=hashed_secret'
+                '/api/game/rooms/ABC123/disband?password=secret'
             );
         });
     });

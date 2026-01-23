@@ -1,6 +1,5 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
@@ -10,7 +9,6 @@ import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,12 +21,10 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val repository: IWordRepository,
     private val preferencesRepository: IPreferencesRepository,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
-    private val appContext = context.applicationContext
 
     private val _theme = MutableStateFlow(preferencesRepository.getTheme())
     val theme: StateFlow<ThemePreference> = _theme
