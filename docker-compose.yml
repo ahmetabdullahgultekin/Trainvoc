@@ -7,8 +7,6 @@
 #   3. docker compose logs -f
 # ============================================
 
-version: '3.8'
-
 services:
   # ==========================================
   # PostgreSQL - Primary Database (Game Data)
@@ -25,7 +23,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./TrainvocBackend/sql-queries/trainvoc-mp-db-for-postgre.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:5434:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-trainvoc} -d trainvoc"]
       interval: 10s
@@ -55,7 +53,7 @@ services:
       - postgres_words_data:/var/lib/postgresql/data
       - ./TrainvocBackend/sql-queries/trainvoc-words-db-for-postgre.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     ports:
-      - "127.0.0.1:5433:5432"
+      - "127.0.0.1:5435:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-trainvoc} -d trainvoc-words"]
       interval: 10s
@@ -87,12 +85,16 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DATABASE_URL: jdbc:postgresql://postgres:5432/trainvoc
-      DATABASE_USER: ${DB_USER:-trainvoc}
-      DATABASE_PASSWORD: ${DB_PASSWORD}
-      DATABASE_WORDS_URL: jdbc:postgresql://postgres-words:5432/trainvoc-words
-      DATABASE_WORDS_USER: ${DB_USER:-trainvoc}
-      DATABASE_WORDS_PASSWORD: ${DB_PASSWORD}
+      # Primary database (trainvoc - game data)
+      DB_PRIMARY_URL: jdbc:postgresql://postgres:5432/trainvoc
+      DB_PRIMARY_USERNAME: ${DB_USER:-trainvoc}
+      DB_PRIMARY_PASSWORD: ${DB_PASSWORD}
+      # Secondary database (trainvoc-words - vocabulary)
+      DB_SECONDARY_URL: jdbc:postgresql://postgres-words:5432/trainvoc-words
+      DB_SECONDARY_USERNAME: ${DB_USER:-trainvoc}
+      DB_SECONDARY_PASSWORD: ${DB_PASSWORD}
+      # JPA settings for Docker
+      JPA_DDL_AUTO: update
       # JVM memory settings (adjust based on VPS RAM)
       JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Xms512m -Xmx1536m"
     ports:

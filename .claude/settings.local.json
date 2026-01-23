@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git subtree:*)",
+      "Bash(gh repo create:*)",
+      "Bash(./gradlew compileJava:*)",
+      "Bash(git push)",
+      "Bash(dir \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\*.md\" /b)",
+      "Bash(gradlew test:*)",
+      "Bash(.gradlew.bat test --tests \"*ServiceTest\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew.bat test --tests *ServiceTest 2>&1\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew.bat test 2>&1\":*)",
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew test --continue 2>&1 && echo SUCCESS\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew compileTestJava 2>&1\")",
+      "Bash(cmd.exe /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew compileTestJava:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(npm audit:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(./gradlew clean test:*)",
+      "Bash(npm run build)",
+      "Bash(./gradlew build:*)",
+      "Bash(npm test:*)",
+      "Bash(git push:*)",
+      "Bash(./gradlew compileDebugKotlin:*)",
+      "Bash(./gradlew clean build:*)",
+      "Bash(docker:*)",
+      "Bash(docker compose:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)"
+    ]
+  }
+}
