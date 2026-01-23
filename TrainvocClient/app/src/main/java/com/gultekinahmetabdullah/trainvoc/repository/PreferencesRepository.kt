@@ -39,6 +39,10 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_TEXT_SIZE_SCALE = "text_size_scale"
         private const val KEY_HAPTIC_FEEDBACK = "haptic_feedback"
         private const val KEY_REDUCE_MOTION = "reduce_motion"
+        // Authentication keys
+        private const val KEY_AUTH_TOKEN = "auth_token"
+        private const val KEY_REFRESH_TOKEN = "refresh_token"
+        private const val KEY_DEVICE_ID = "device_id"
     }
 
     private val prefs: SharedPreferences by lazy {
@@ -164,5 +168,40 @@ class PreferencesRepository @Inject constructor(
 
     override fun setReduceMotionEnabled(enabled: Boolean) {
         prefs.edit { putBoolean(KEY_REDUCE_MOTION, enabled) }
+    }
+
+    // Authentication Token Implementation
+
+    override fun getAuthToken(): String? =
+        prefs.getString(KEY_AUTH_TOKEN, null)
+
+    override fun setAuthToken(token: String) {
+        prefs.edit { putString(KEY_AUTH_TOKEN, token) }
+    }
+
+    override fun clearAuthToken() {
+        prefs.edit { remove(KEY_AUTH_TOKEN) }
+    }
+
+    override fun getRefreshToken(): String? =
+        prefs.getString(KEY_REFRESH_TOKEN, null)
+
+    override fun setRefreshToken(token: String) {
+        prefs.edit { putString(KEY_REFRESH_TOKEN, token) }
+    }
+
+    override fun clearRefreshToken() {
+        prefs.edit { remove(KEY_REFRESH_TOKEN) }
+    }
+
+    override fun getDeviceId(): String {
+        val existingId = prefs.getString(KEY_DEVICE_ID, null)
+        if (existingId != null) {
+            return existingId
+        }
+        // Generate a new UUID for this device
+        val newId = java.util.UUID.randomUUID().toString()
+        prefs.edit { putString(KEY_DEVICE_ID, newId) }
+        return newId
     }
 }

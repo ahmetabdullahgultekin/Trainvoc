@@ -27,6 +27,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.navigation.gamesNavGraph
+import com.gultekinahmetabdullah.trainvoc.navigation.multiplayerNavGraph
 import com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordManagementScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppBottomBar
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppBottomSheet
@@ -131,6 +132,8 @@ fun MainScreen(
                         onNavigateToWordProgress = { navController.navigate(Route.WORD_PROGRESS) },
                         onNavigateToDictionary = { navController.navigate(Route.DICTIONARY) },
                         onNavigateToGames = { navController.navigate(Route.GAMES_MENU) },
+                        // Phase 6 - Multiplayer
+                        onNavigateToMultiplayer = { navController.navigate(Route.MULTIPLAYER_HOME) },
                         // Phase 5 - Update Notes & Changelog
                         onNavigateToChangelog = { navController.navigate(Route.CHANGELOG) },
                     )
@@ -310,6 +313,9 @@ fun MainScreen(
                 // Phase 4 - Games Navigation
                 // Add all 11 game screens via games nav graph
                 gamesNavGraph(navController)
+
+                // Phase 6 - Multiplayer Navigation
+                multiplayerNavGraph(navController)
             }
         }
     }
