@@ -38,6 +38,7 @@ class QuizService @Inject constructor(
         return when (quizParameter) {
             is QuizParameter.Level -> generateQuestionsByLevel(quizType, quizParameter.wordLevel)
             is QuizParameter.ExamType -> generateQuestionsByExam(quizType, quizParameter.exam)
+            is QuizParameter.Review -> generateQuestionsByWordIds(quizParameter.wordIds)
         }
     }
 
@@ -73,6 +74,62 @@ class QuizService @Inject constructor(
         )
         val words = wordDao.getWordsByQuery(query)
         return createQuestions(words)
+    }
+
+    /**
+     * Generate questions for specific word IDs (Review mode)
+     * Used for reviewing missed words from previous quizzes
+     *
+     * @param wordIds List of word IDs to create questions from
+     * @return Mutable list of questions for the specified words
+     */
+    private suspend fun generateQuestionsByWordIds(
+        wordIds: List<String>
+    ): MutableList<Question> {
+        val words = wordIds.mapNotNull { wordId ->
+            try {
+                wordDao.getWord(wordId)
+            } catch (e: Exception) {
+                null // Skip words that can't be found
+            }
+        }
+
+        if (words.isEmpty()) {
+            return mutableListOf()
+        }
+
+        return createQuestionsWithDistractors(words)
+    }
+
+    /**
+     * Create Question objects from Word list with random distractors from DB
+     * This method fetches additional words for distractors when needed
+     */
+    private suspend fun createQuestionsWithDistractors(words: List<Word>): MutableList<Question> {
+        // Get additional words for distractors if we don't have enough
+        val distractorPool = if (words.size < 4) {
+            // Need to fetch more words for distractors
+            val query = WordQueryBuilder.buildQuery(
+                quizType = com.gultekinahmetabdullah.trainvoc.classes.enums.QuizType.RANDOM,
+                level = null,
+                exam = null,
+                limit = 20
+            )
+            wordDao.getWordsByQuery(query).toMutableList()
+        } else {
+            words.toMutableList()
+        }
+
+        return words.map { word ->
+            val availableDistractors = distractorPool.filter { it.word != word.word }.toMutableList()
+            availableDistractors.shuffle()
+            val incorrectWords = availableDistractors.take(3)
+
+            Question(
+                correctWord = word,
+                incorrectWords = incorrectWords
+            )
+        }.toMutableList()
     }
 
     /**

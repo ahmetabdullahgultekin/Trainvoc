@@ -228,6 +228,12 @@ fun MainScreen(
                     com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordDetailScreen(
                         wordId = wordId,
                         wordViewModel = wordViewModel,
+                        onNavigateToQuiz = { word ->
+                            // Start quiz with this specific word for practice
+                            parameter.value = QuizParameter.Review(listOf(word))
+                            quizViewModel.startQuiz(parameter.value!!, Quiz.quizTypes[0])
+                            navController.navigate(Route.QUIZ)
+                        },
                         onNavigateToSynonym = { synonymWord ->
                             navController.navigate(Route.wordDetail(synonymWord))
                         }
@@ -257,10 +263,13 @@ fun MainScreen(
                     com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.LastQuizResultsScreen(
                         onBackClick = { navController.popBackStack() },
                         onRetryQuiz = { navController.navigate(Route.QUIZ) },
-                        onReviewMissed = {
-                            // Navigate to quiz with review mode
-                            // For now, restart quiz - future: add review mode parameter
-                            navController.navigate(Route.QUIZ)
+                        onReviewMissed = { missedWordIds ->
+                            // Navigate to quiz with review mode - practice only missed words
+                            if (missedWordIds.isNotEmpty()) {
+                                parameter.value = QuizParameter.Review(missedWordIds)
+                                quizViewModel.startQuiz(parameter.value!!, Quiz.quizTypes[0])
+                                navController.navigate(Route.QUIZ)
+                            }
                         }
                     )
                 }
