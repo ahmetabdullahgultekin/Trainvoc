@@ -140,4 +140,46 @@ interface IPreferencesRepository {
      * @param enabled True to enable reduce motion
      */
     fun setReduceMotionEnabled(enabled: Boolean)
+
+    // Authentication Token Management
+
+    /**
+     * Get the stored authentication token.
+     * @return Auth token string, or null if not logged in
+     */
+    fun getAuthToken(): String?
+
+    /**
+     * Set the authentication token.
+     * @param token The JWT auth token to store
+     */
+    fun setAuthToken(token: String)
+
+    /**
+     * Clear the authentication token (logout).
+     */
+    fun clearAuthToken()
+
+    /**
+     * Get the stored refresh token.
+     * @return Refresh token string, or null if not logged in
+     */
+    fun getRefreshToken(): String?
+
+    /**
+     * Set the refresh token.
+     * @param token The refresh token to store
+     */
+    fun setRefreshToken(token: String)
+
+    /**
+     * Clear the refresh token.
+     */
+    fun clearRefreshToken()
+
+    /**
+     * Get the unique device ID for sync operations.
+     * @return Device ID string (generated if not exists)
+     */
+    fun getDeviceId(): String
 }

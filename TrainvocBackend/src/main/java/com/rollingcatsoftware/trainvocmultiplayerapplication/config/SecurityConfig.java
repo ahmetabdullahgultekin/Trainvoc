@@ -33,6 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/v3/api-docs.yaml").permitAll()
+                        // Authentication endpoints (public)
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         // Public endpoints
                         .requestMatchers("/api/game/**").permitAll()
                         .requestMatchers("/api/quiz/**").permitAll()
@@ -40,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/leaderboard/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        // Sync endpoints require authentication
+                        .requestMatchers("/api/v1/sync/**").authenticated()
                         // All other endpoints require authentication (for future use)
                         .anyRequest().permitAll()
                 )

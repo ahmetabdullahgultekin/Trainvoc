@@ -57,7 +57,7 @@ import java.util.*
 fun LastQuizResultsScreen(
     onBackClick: () -> Unit = {},
     onRetryQuiz: () -> Unit = {},
-    onReviewMissed: () -> Unit = {},
+    onReviewMissed: (List<String>) -> Unit = {},
     onWordClick: (String) -> Unit = {},
     viewModel: QuizHistoryViewModel = hiltViewModel()
 ) {
@@ -142,7 +142,7 @@ private fun QuizResultsContent(
     timestamp: Long,
     missedWords: List<com.gultekinahmetabdullah.trainvoc.classes.word.Word>,
     onRetryQuiz: () -> Unit,
-    onReviewMissed: () -> Unit,
+    onReviewMissed: (List<String>) -> Unit,
     onWordClick: (String) -> Unit
 ) {
     val dateFormat = SimpleDateFormat("MMM d, yyyy 'at' h:mm a", Locale.getDefault())
@@ -333,12 +333,12 @@ private fun QuizResultsContent(
 
                             if (missedWords.isNotEmpty()) {
                                 OutlinedButton(
-                                    onClick = onReviewMissed,
+                                    onClick = { onReviewMissed(missedWords.map { it.word }) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Icon(Icons.AutoMirrored.Filled.Assignment, "Review")
                                     Spacer(Modifier.width(Spacing.sm))
-                                    Text("Review Missed Words")
+                                    Text("Review Missed Words (${missedWords.size})")
                                 }
                             }
                         }

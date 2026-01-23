@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.di
 
 import com.gultekinahmetabdullah.trainvoc.api.DictionaryApiService
+import com.gultekinahmetabdullah.trainvoc.offline.SyncApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -12,6 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -26,7 +28,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://api.dictionaryapi.dev/api/v2/"
+    private const val DICTIONARY_BASE_URL = "https://api.dictionaryapi.dev/api/v2/"
+    private const val TRAINVOC_BASE_URL = "https://api.trainvoc.com/"
     private const val TIMEOUT_SECONDS = 30L
 
     /**
@@ -69,12 +72,30 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideRetrofit(
+    @Named("dictionary")
+    fun provideDictionaryRetrofit(
         okHttpClient: OkHttpClient,
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(DICTIONARY_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
+
+    /**
+     * Provides Retrofit instance for Trainvoc Backend API
+     */
+    @Provides
+    @Singleton
+    @Named("trainvoc")
+    fun provideTrainvocRetrofit(
+        okHttpClient: OkHttpClient,
+        gson: Gson
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(TRAINVOC_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
@@ -85,7 +106,16 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideDictionaryApiService(retrofit: Retrofit): DictionaryApiService {
+    fun provideDictionaryApiService(@Named("dictionary") retrofit: Retrofit): DictionaryApiService {
         return retrofit.create(DictionaryApiService::class.java)
+    }
+
+    /**
+     * Provides SyncApiService instance
+     */
+    @Provides
+    @Singleton
+    fun provideSyncApiService(@Named("trainvoc") retrofit: Retrofit): SyncApiService {
+        return retrofit.create(SyncApiService::class.java)
     }
 }
