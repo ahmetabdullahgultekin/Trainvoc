@@ -136,6 +136,7 @@ fun HomeScreen(
     onNavigateToWordProgress: () -> Unit = {},
     onNavigateToDictionary: () -> Unit = {},
     onNavigateToGames: () -> Unit = {},
+    onNavigateToMultiplayer: () -> Unit = {},
     onNavigateToChangelog: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
@@ -306,8 +307,13 @@ fun HomeScreen(
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer
                     )
 
-                    // Placeholder for future feature
-                    Spacer(modifier = Modifier.weight(1f))
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "👥",
+                        title = "Multiplayer",
+                        onClick = onNavigateToMultiplayer,
+                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
+                    )
                 }
             }
 
