@@ -5,6 +5,7 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.auth.LoginReque
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.auth.RegisterRequest;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.ErrorResponse;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.User;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.UserRepository;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,9 +30,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserRepository userRepository;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserRepository userRepository) {
         this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -130,16 +133,58 @@ public class AuthController {
      */
     @GetMapping("/check-username")
     @Operation(summary = "Check username availability", description = "Returns whether a username is available")
-    public ResponseEntity<?> checkUsername(@RequestParam String username) {
-        // Use UserRepository directly would be better, but using service for now
-        try {
-            // A simple check - try to see if it would cause an error
-            return ResponseEntity.ok(new UsernameCheckResponse(true, "Username is available"));
-        } catch (Exception e) {
-            return ResponseEntity.ok(new UsernameCheckResponse(false, "Username is not available"));
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Check completed",
+            content = @Content(schema = @Schema(implementation = UsernameCheckResponse.class)))
+    })
+    public ResponseEntity<UsernameCheckResponse> checkUsername(@RequestParam String username) {
+        if (username == null || username.trim().isEmpty()) {
+            return ResponseEntity.ok(new UsernameCheckResponse(false, "Username cannot be empty"));
         }
+
+        if (username.length() < 3) {
+            return ResponseEntity.ok(new UsernameCheckResponse(false, "Username must be at least 3 characters"));
+        }
+
+        if (username.length() > 30) {
+            return ResponseEntity.ok(new UsernameCheckResponse(false, "Username must be at most 30 characters"));
+        }
+
+        boolean exists = userRepository.existsByUsernameIgnoreCase(username.trim());
+        if (exists) {
+            return ResponseEntity.ok(new UsernameCheckResponse(false, "Username is already taken"));
+        }
+
+        return ResponseEntity.ok(new UsernameCheckResponse(true, "Username is available"));
     }
 
-    // Simple response record for username check
+    /**
+     * Check if email is available.
+     */
+    @GetMapping("/check-email")
+    @Operation(summary = "Check email availability", description = "Returns whether an email is available")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Check completed",
+            content = @Content(schema = @Schema(implementation = EmailCheckResponse.class)))
+    })
+    public ResponseEntity<EmailCheckResponse> checkEmail(@RequestParam String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.ok(new EmailCheckResponse(false, "Email cannot be empty"));
+        }
+
+        if (!email.contains("@") || !email.contains(".")) {
+            return ResponseEntity.ok(new EmailCheckResponse(false, "Invalid email format"));
+        }
+
+        boolean exists = userRepository.existsByEmailIgnoreCase(email.trim());
+        if (exists) {
+            return ResponseEntity.ok(new EmailCheckResponse(false, "Email is already registered"));
+        }
+
+        return ResponseEntity.ok(new EmailCheckResponse(true, "Email is available"));
+    }
+
+    // Response records for availability checks
     private record UsernameCheckResponse(boolean available, String message) {}
+    private record EmailCheckResponse(boolean available, String message) {}
 }
