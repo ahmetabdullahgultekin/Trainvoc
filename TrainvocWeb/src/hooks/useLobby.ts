@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LobbyData, Player, GameRoom } from '../interfaces/game';
+import { WebSocketService, ConnectionState, Player as WSPlayer } from '../services/WebSocketService';
 import { RoomService } from '../services';
 
 /** Converts GameRoom to LobbyData format */
@@ -20,7 +21,6 @@ function toLobbyData(room: GameRoom): LobbyData {
 interface UseLobbyOptions {
     roomCode: string | null;
     playerId: string | null;
-    pollInterval?: number;
     onGameStart?: () => void;
 }
 
@@ -30,21 +30,22 @@ interface UseLobbyResult {
     isHost: boolean;
     loading: boolean;
     error: string | null;
+    connectionState: ConnectionState;
     refresh: () => Promise<void>;
-    startGame: (password?: string) => Promise<void>;
-    disbandLobby: (password?: string) => Promise<void>;
-    leaveLobby: () => Promise<void>;
+    startGame: () => void;
+    disbandLobby: () => void;
+    leaveLobby: () => void;
     starting: boolean;
 }
 
 /**
- * Hook for lobby management with polling and game start handling.
+ * Hook for lobby management using WebSocket for real-time updates.
+ * Replaces polling with WebSocket events for instant updates.
  */
 export function useLobby(options: UseLobbyOptions): UseLobbyResult {
     const {
         roomCode,
         playerId,
-        pollInterval = 2000,
         onGameStart,
     } = options;
 
@@ -53,78 +54,18 @@ export function useLobby(options: UseLobbyOptions): UseLobbyResult {
     const [loading, setLoading] = useState(true);
     const [starting, setStarting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [connectionState, setConnectionState] = useState<ConnectionState>(
+        WebSocketService.getConnectionState()
+    );
     const mountedRef = useRef(true);
 
-    const fetchLobby = useCallback(async () => {
-        if (!roomCode) return;
+    // Subscribe to connection state
+    useEffect(() => {
+        const unsubscribe = WebSocketService.onStateChange(setConnectionState);
+        return unsubscribe;
+    }, []);
 
-        try {
-            const room = await RoomService.fetchRoom(roomCode);
-            if (!mountedRef.current || !room) return;
-
-            const lobbyData = toLobbyData(room);
-            setLobby(lobbyData);
-            setError(null);
-
-            if (lobbyData.gameStarted) {
-                onGameStart?.();
-                navigate(`/game?roomCode=${roomCode}&playerId=${playerId}`);
-            }
-        } catch (err) {
-            if (mountedRef.current) {
-                setError('Failed to fetch lobby');
-            }
-        } finally {
-            if (mountedRef.current) {
-                setLoading(false);
-            }
-        }
-    }, [roomCode, playerId, navigate, onGameStart]);
-
-    const refresh = useCallback(async () => {
-        setLoading(true);
-        await fetchLobby();
-    }, [fetchLobby]);
-
-    const startGame = useCallback(async (password?: string) => {
-        if (!roomCode) return;
-
-        setStarting(true);
-        setError(null);
-
-        try {
-            await RoomService.startGame(roomCode, password);
-            navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
-        } catch (err) {
-            setError('Failed to start game');
-        } finally {
-            setStarting(false);
-        }
-    }, [roomCode, playerId, navigate]);
-
-    const disbandLobby = useCallback(async (password?: string) => {
-        if (!roomCode) return;
-
-        try {
-            await RoomService.disbandRoom(roomCode, password);
-            navigate('/play');
-        } catch (err) {
-            setError('Failed to disband lobby');
-        }
-    }, [roomCode, navigate]);
-
-    const leaveLobby = useCallback(async () => {
-        if (!roomCode || !playerId) return;
-
-        try {
-            await RoomService.leaveRoom(roomCode, playerId);
-            navigate('/play');
-        } catch (err) {
-            setError('Failed to leave lobby');
-        }
-    }, [roomCode, playerId, navigate]);
-
-    // Polling effect
+    // Initial fetch via REST (for initial state) + WebSocket setup
     useEffect(() => {
         if (!roomCode || !playerId) {
             setError('Room code or player ID missing');
@@ -133,15 +74,146 @@ export function useLobby(options: UseLobbyOptions): UseLobbyResult {
         }
 
         mountedRef.current = true;
-        fetchLobby();
 
-        const interval = setInterval(fetchLobby, pollInterval);
+        // Fetch initial lobby state via REST
+        const fetchInitialState = async () => {
+            try {
+                const room = await RoomService.fetchRoom(roomCode);
+                if (!mountedRef.current || !room) return;
+
+                const lobbyData = toLobbyData(room);
+                setLobby(lobbyData);
+                setError(null);
+
+                if (lobbyData.gameStarted) {
+                    onGameStart?.();
+                    navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
+                }
+            } catch (err) {
+                if (mountedRef.current) {
+                    setError('Failed to fetch lobby');
+                }
+            } finally {
+                if (mountedRef.current) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchInitialState();
+
+        // Set up WebSocket handlers for real-time updates
+        WebSocketService.setHandlers({
+            onConnect: () => {
+                setError(null);
+            },
+            onDisconnect: (reason) => {
+                if (reason && mountedRef.current) {
+                    setError('Disconnected: ' + reason);
+                }
+            },
+            onError: (errorMsg) => {
+                if (mountedRef.current) {
+                    setError(errorMsg);
+                    setStarting(false);
+                }
+            },
+            onPlayersUpdate: (wsPlayers: WSPlayer[]) => {
+                if (!mountedRef.current) return;
+                setLobby(prev => prev ? {
+                    ...prev,
+                    players: wsPlayers.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        avatarId: p.avatarId || 0,
+                        score: p.score || 0
+                    }))
+                } : null);
+            },
+            onPlayerJoined: (newPlayerId, playerName) => {
+                if (!mountedRef.current) return;
+                setLobby(prev => {
+                    if (!prev) return null;
+                    if (prev.players.some(p => p.id === newPlayerId)) return prev;
+                    return {
+                        ...prev,
+                        players: [...prev.players, { id: newPlayerId, name: playerName, avatarId: 0, score: 0 }]
+                    };
+                });
+            },
+            onPlayerLeft: (leftPlayerId) => {
+                if (!mountedRef.current) return;
+                setLobby(prev => prev ? {
+                    ...prev,
+                    players: prev.players.filter(p => p.id !== leftPlayerId)
+                } : null);
+            },
+            onGameStateChanged: (state, _remainingTime) => {
+                if (!mountedRef.current) return;
+                if (state > 0) {
+                    // Game has started (state 0 is lobby)
+                    setStarting(false);
+                    onGameStart?.();
+                    navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
+                }
+            },
+        });
+
+        // Connect to WebSocket if not connected
+        if (connectionState === 'disconnected') {
+            WebSocketService.connect();
+        }
 
         return () => {
             mountedRef.current = false;
-            clearInterval(interval);
         };
-    }, [roomCode, playerId, pollInterval, fetchLobby]);
+    }, [roomCode, playerId, navigate, onGameStart, connectionState]);
+
+    const refresh = useCallback(async () => {
+        if (!roomCode) return;
+        setLoading(true);
+
+        try {
+            const room = await RoomService.fetchRoom(roomCode);
+            if (!mountedRef.current || !room) return;
+
+            const lobbyData = toLobbyData(room);
+            setLobby(lobbyData);
+            setError(null);
+        } catch (err) {
+            if (mountedRef.current) {
+                setError('Failed to refresh lobby');
+            }
+        } finally {
+            if (mountedRef.current) {
+                setLoading(false);
+            }
+        }
+    }, [roomCode]);
+
+    const startGame = useCallback(() => {
+        if (!roomCode) return;
+
+        setStarting(true);
+        setError(null);
+
+        // Use WebSocket to start game
+        WebSocketService.startGame(roomCode);
+    }, [roomCode]);
+
+    const disbandLobby = useCallback(() => {
+        if (!roomCode || !playerId) return;
+
+        WebSocketService.leaveRoom(roomCode, playerId);
+        navigate('/play');
+    }, [roomCode, playerId, navigate]);
+
+    const leaveLobby = useCallback(() => {
+        if (!roomCode || !playerId) return;
+
+        WebSocketService.leaveRoom(roomCode, playerId);
+        navigate('/play');
+    }, [roomCode, playerId, navigate]);
 
     // Sort players with host first
     const players: Player[] = lobby ? (() => {
@@ -158,6 +230,7 @@ export function useLobby(options: UseLobbyOptions): UseLobbyResult {
         isHost,
         loading,
         error,
+        connectionState,
         refresh,
         startGame,
         disbandLobby,
