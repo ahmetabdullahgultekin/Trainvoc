@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LobbyData, Player, GameRoom } from '../interfaces/game';
-import { WebSocketService, ConnectionState, Player as WSPlayer } from '../services/WebSocketService';
+import { WebSocketService } from '../services/WebSocketService';
+import type { ConnectionState, Player as WSPlayer } from '../services/WebSocketService';
 import { RoomService } from '../services';
 
 /** Converts GameRoom to LobbyData format */

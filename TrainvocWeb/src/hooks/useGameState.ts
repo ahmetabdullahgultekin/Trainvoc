@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Player, LobbyData } from '../interfaces/game';
 import type { QuizQuestion } from '../interfaces/gameExtra';
-import { WebSocketService, ConnectionState, Question as WSQuestion, PlayerRanking } from '../services/WebSocketService';
+import { WebSocketService } from '../services/WebSocketService';
+import type { ConnectionState, Question as WSQuestion, PlayerRanking } from '../services/WebSocketService';
 import { GameService } from '../services';
 
 export const GameStep = {
@@ -168,9 +169,9 @@ export function useGameState(options: UseGameStateOptions): UseGameStateResult {
                 setQuestions(prev => {
                     const newQuestions = [...prev];
                     newQuestions[questionIndex] = {
-                        question: question.text,
+                        english: question.text,
+                        correctMeaning: '', // Server won't send this until reveal
                         options: question.options,
-                        correctIndex: -1 // Server won't send this until reveal
                     };
                     return newQuestions;
                 });
@@ -188,7 +189,7 @@ export function useGameState(options: UseGameStateOptions): UseGameStateResult {
                     id: r.id,
                     name: r.name,
                     avatarId: r.avatarId,
-                    score: r.score
+                    score: r.score ?? 0
                 })));
             },
             onPlayersUpdate: (updatedPlayers) => {
@@ -207,7 +208,7 @@ export function useGameState(options: UseGameStateOptions): UseGameStateResult {
                     id: r.id,
                     name: r.name,
                     avatarId: r.avatarId,
-                    score: r.score
+                    score: r.score ?? 0
                 })));
             },
         });
