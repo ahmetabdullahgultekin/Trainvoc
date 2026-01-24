@@ -6,6 +6,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
+import com.gultekinahmetabdullah.trainvoc.offline.SyncManager
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val repository: IWordRepository,
     private val preferencesRepository: IPreferencesRepository,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val syncManager: SyncManager
 ) : ViewModel() {
 
     private val _theme = MutableStateFlow(preferencesRepository.getTheme())
@@ -124,5 +126,25 @@ class SettingsViewModel @Inject constructor(
 
     fun logout() {
         preferencesRepository.clearUsername()
+        syncManager.disableSync()
+    }
+
+    // ========== Sync Functions ==========
+
+    /**
+     * Get pending sync count as a Flow.
+     */
+    val pendingSyncCount = syncManager.getPendingCountFlow()
+
+    /**
+     * Check if sync is enabled.
+     */
+    fun isSyncEnabled(): Boolean = syncManager.isAuthenticatedAndEnabled()
+
+    /**
+     * Trigger manual sync.
+     */
+    fun syncNow() {
+        syncManager.forceSync()
     }
 }

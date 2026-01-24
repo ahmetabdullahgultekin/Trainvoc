@@ -429,10 +429,10 @@ class CloudBackupManager(
     }
 
     /**
-     * Upload to cloud provider (NOT IMPLEMENTED)
+     * Upload to cloud provider (Coming Soon)
      *
-     * IMPORTANT: Cloud backup is not yet implemented. This function always returns
-     * a failure to prevent users from thinking their data is backed up when it isn't.
+     * Cloud backup is planned for a future release. Currently returns a user-friendly
+     * "coming soon" message. Local backup works and is recommended until cloud is available.
      *
      * TODO: Implement with Google Drive API when ready for production
      */
@@ -440,31 +440,29 @@ class CloudBackupManager(
         filePath: String,
         onProgress: ((Float) -> Unit)? = null
     ): Result<String> = withContext(Dispatchers.IO) {
-        // CRITICAL: Do NOT return success - cloud backup is not implemented!
-        // Users must not be misled into thinking their data is backed up.
-        Result.failure(CloudBackupNotImplementedException(
-            "Cloud backup is not yet available. Please use local backup instead. " +
-            "Your data is safely stored on this device."
+        Result.failure(CloudBackupComingSoonException(
+            "Cloud backup coming soon! Your data is safely stored locally."
         ))
     }
 
     /**
-     * Exception indicating cloud backup feature is not implemented
+     * Exception indicating cloud backup feature is coming soon
      */
-    class CloudBackupNotImplementedException(message: String) : Exception(message)
+    class CloudBackupComingSoonException(message: String) : Exception(message)
 
     /**
-     * Download from cloud provider (NOT IMPLEMENTED)
+     * Download from cloud provider (Coming Soon)
      *
-     * IMPORTANT: Cloud restore is not yet implemented.
+     * Cloud restore is planned for a future release. Currently returns a user-friendly
+     * "coming soon" message. Local restore works and is recommended until cloud is available.
      *
      * TODO: Implement with Google Drive API when ready for production
      */
     private suspend fun downloadFromCloudProvider(
         onProgress: ((Float) -> Unit)? = null
     ): Result<String> = withContext(Dispatchers.IO) {
-        Result.failure(CloudBackupNotImplementedException(
-            "Cloud restore is not yet available. Please use local backup restore instead."
+        Result.failure(CloudBackupComingSoonException(
+            "Cloud restore coming soon! Use local backup for now."
         ))
     }
 

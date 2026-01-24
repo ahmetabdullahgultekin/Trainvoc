@@ -76,6 +76,13 @@ android {
             // Disable PNG crunching for faster builds
             // WebP is more efficient anyway
             isCrunchPngs = false
+
+            // Backend API configuration - production
+            // Can be overridden via environment variable for deployment flexibility
+            val apiBaseUrl = System.getenv("TRAINVOC_API_BASE_URL") ?: "https://api.trainvoc.com/"
+            val wsBaseUrl = System.getenv("TRAINVOC_WS_BASE_URL") ?: "wss://api.trainvoc.com"
+            buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+            buildConfigField("String", "WS_BASE_URL", "\"$wsBaseUrl\"")
         }
         debug {
             isMinifyEnabled = false
@@ -84,6 +91,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // Backend API configuration - development
+            // 10.0.2.2 is the Android emulator's alias for localhost
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "WS_BASE_URL", "\"ws://10.0.2.2:8080\"")
         }
     }
 

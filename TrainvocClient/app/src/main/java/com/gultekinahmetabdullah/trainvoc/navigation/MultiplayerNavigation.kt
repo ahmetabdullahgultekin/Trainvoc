@@ -202,7 +202,7 @@ fun NavHostController.navigateToLobby(roomCode: String) {
     navigate(Route.multiplayerLobby(roomCode))
 }
 
-fun NavHostController.navigateToGame(roomCode: String) {
+fun NavHostController.navigateToMultiplayerGame(roomCode: String) {
     navigate(Route.multiplayerGame(roomCode))
 }
 

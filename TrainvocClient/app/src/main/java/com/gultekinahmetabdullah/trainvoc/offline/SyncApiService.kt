@@ -102,9 +102,6 @@ interface SyncApiService {
         @Header("Authorization") token: String
     ): Response<SyncStatusResponse>
 
-    companion object {
-        const val BASE_URL = "https://api.trainvoc.com/"
-    }
 }
 
 // ============ Request DTOs ============

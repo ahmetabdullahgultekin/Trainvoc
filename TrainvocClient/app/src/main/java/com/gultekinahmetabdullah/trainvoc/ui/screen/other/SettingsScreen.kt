@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.CloudQueue
+import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Leaderboard
@@ -95,6 +96,8 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val colorPalette by viewModel.colorPalette.collectAsState()
     val language by viewModel.language.collectAsState()
     val configuration = LocalConfiguration.current // Compose context
+    val pendingSyncCount by viewModel.pendingSyncCount.collectAsState(initial = 0)
+    val isSyncEnabled = remember { viewModel.isSyncEnabled() }
 
     // Notification preferences
     val notificationPrefs = remember { NotificationPreferences.getInstance(context) }
@@ -379,6 +382,42 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.BACKUP)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(Spacing.small))
+
+                    // Sync Now Button
+                    NavigationCard(
+                        icon = Icons.Default.CloudSync,
+                        title = "Sync Now",
+                        subtitle = if (isSyncEnabled) {
+                            if (pendingSyncCount > 0) {
+                                "$pendingSyncCount items pending sync"
+                            } else {
+                                "All data synced"
+                            }
+                        } else {
+                            "Login to enable sync"
+                        },
+                        onClick = {
+                            if (isSyncEnabled) {
+                                haptic.click()
+                                viewModel.syncNow()
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Sync started",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            } else {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Please login to enable sync",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
                         }
                     )
                 }

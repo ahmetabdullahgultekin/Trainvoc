@@ -423,6 +423,7 @@ class QuizViewModel @Inject constructor(
             when (param) {
                 is QuizParameter.Level -> "LEVEL_${param.wordLevel.name}"
                 is QuizParameter.ExamType -> "EXAM_${param.exam.exam}"
+                is QuizParameter.Review -> "REVIEW"
             }
         } ?: "UNKNOWN"
 
@@ -475,6 +476,12 @@ class QuizViewModel @Inject constructor(
                     _totalWords.value = total
                     _learnedWords.value = learned
                     _progressPercent.value = if (total > 0) (learned * 100 / total) else 0
+                }
+
+                is QuizParameter.Review -> {
+                    _totalWords.value = parameter.wordIds.size
+                    _learnedWords.value = 0 // Review mode doesn't track learned words
+                    _progressPercent.value = 0
                 }
             }
         }

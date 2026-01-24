@@ -29,10 +29,11 @@ class MultiplayerRepository @Inject constructor(
 ) {
     companion object {
         private const val TAG = "MultiplayerRepository"
-        // TODO: Move to BuildConfig or environment variable
-        private const val BASE_URL = "wss://api.trainvoc.com"
-        private const val REST_BASE_URL = "https://api.trainvoc.com"
     }
+
+    // WebSocket URL from BuildConfig (configurable per build type)
+    private val wsBaseUrl: String
+        get() = com.gultekinahmetabdullah.trainvoc.BuildConfig.WS_BASE_URL
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -154,7 +155,7 @@ class MultiplayerRepository @Inject constructor(
     // ============ Connection Methods ============
 
     fun connect() {
-        webSocketClient.connect(BASE_URL)
+        webSocketClient.connect(wsBaseUrl)
     }
 
     fun disconnect() {
