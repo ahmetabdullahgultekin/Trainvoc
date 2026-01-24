@@ -24,6 +24,18 @@ public class ErrorResponse {
     private LocalDateTime timestamp = LocalDateTime.now();
 
     /**
+     * Convenience constructor for simple error responses.
+     * @param message The error message
+     * @param error The error code/type
+     */
+    public ErrorResponse(String message, String error) {
+        this.message = message;
+        this.error = error;
+        this.status = 400;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    /**
      * Create a simple error response with just a message.
      */
     public static ErrorResponse of(String message) {
