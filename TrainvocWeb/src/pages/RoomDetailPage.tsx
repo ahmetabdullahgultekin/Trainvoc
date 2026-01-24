@@ -1,28 +1,63 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { AlertCircle, Users } from 'lucide-react'
 import api from '../api'
 import { Card } from '@/components/ui/card'
 import type { GameRoom, Player } from '../interfaces/game'
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search)
+}
+
 const RoomDetailPage = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const query = useQuery()
   const { roomCode } = useParams()
+  const playerId = query.get('playerId') || ''
   const [room, setRoom] = useState<GameRoom | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Fetch room data and poll for game start
   useEffect(() => {
     if (!roomCode) return
+
+    const fetchRoom = async () => {
+      try {
+        const res = await api.get(`/api/game/${roomCode}`)
+        setRoom(res.data)
+
+        // Check if game has started - redirect to game page
+        if (res.data.started || res.data.currentState > 0) {
+          if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current)
+          }
+          navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
+        }
+      } catch {
+        setError(t('error'))
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // Initial fetch
     setLoading(true)
     setError('')
-    setRoom(null)
-    api.get(`/api/game/${roomCode}`)
-      .then(res => setRoom(res.data))
-      .catch(() => setError(t('error')))
-      .finally(() => setLoading(false))
-  }, [roomCode, t])
+    fetchRoom()
+
+    // Poll every 2 seconds to detect game start
+    pollIntervalRef.current = setInterval(fetchRoom, 2000)
+
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current)
+      }
+    }
+  }, [roomCode, playerId, navigate, t])
 
   return (
     <div className="max-w-lg mx-auto mt-6 px-4">
