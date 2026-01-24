@@ -74,11 +74,19 @@ const GamePage: React.FC = () => {
     setShowNext(false)
     setShowRanking(true)
     try {
+      const currentQuestion = questions[current]
+      const isCorrect = answer === currentQuestion?.correctMeaning
+      const optionCount = currentQuestion?.options?.length || 4
+      const optionPickRate = 1 / optionCount
+      const answerTimeInSeconds = Math.min(Math.floor(answerTime / 1000), 300)
+
       await api.post(`/api/game/answer`, {
         roomCode,
         playerId,
         answer,
-        answerTime
+        answerTime: answerTimeInSeconds,
+        isCorrect,
+        optionPickRate
       })
       const pRes = await api.get(`/api/game/players?roomCode=${roomCode}`)
       const playersData = Array.isArray(pRes.data) ? pRes.data : pRes.data.players
