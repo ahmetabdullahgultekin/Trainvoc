@@ -34,8 +34,8 @@ interface WordDao {
      */
 
     // --- WORD QUERIES ---
-    @Query("SELECT * FROM words WHERE word = :word")
-    suspend fun getWord(word: String): Word
+    @Query("SELECT * FROM words WHERE word = :word LIMIT 1")
+    suspend fun getWord(word: String): Word?
 
     @Query("SELECT * FROM words ORDER BY word ASC")
     fun getAllWords(): Flow<List<Word>>

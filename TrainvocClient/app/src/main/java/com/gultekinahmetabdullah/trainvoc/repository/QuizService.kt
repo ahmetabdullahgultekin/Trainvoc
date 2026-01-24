@@ -87,11 +87,7 @@ class QuizService @Inject constructor(
         wordIds: List<String>
     ): MutableList<Question> {
         val words = wordIds.mapNotNull { wordId ->
-            try {
-                wordDao.getWord(wordId)
-            } catch (e: Exception) {
-                null // Skip words that can't be found
-            }
+            wordDao.getWord(wordId) // Returns null if word not found
         }
 
         if (words.isEmpty()) {

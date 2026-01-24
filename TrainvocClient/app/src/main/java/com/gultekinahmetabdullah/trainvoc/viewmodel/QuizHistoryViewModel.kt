@@ -83,11 +83,7 @@ class QuizHistoryViewModel @Inject constructor(
         try {
             val incorrectWordIds = quizHistoryDao.getIncorrectWordIds(quizId)
             val words = incorrectWordIds.mapNotNull { wordId ->
-                try {
-                    wordDao.getWord(wordId)
-                } catch (e: Exception) {
-                    null
-                }
+                wordDao.getWord(wordId) // Returns null if word not found
             }
             _missedWords.value = words
         } catch (e: Exception) {
