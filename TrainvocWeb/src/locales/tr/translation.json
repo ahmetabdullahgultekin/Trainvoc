@@ -1,5 +1,5 @@
 {
-  "welcome": "TrainVoc'a Hoş Geldin!",
+  "welcome": "Trainvoc'a Hoş Geldin!",
   "createRoom": "Oda Oluştur",
   "joinRoom": "Odaya Katıl",
   "roomDetails": "Oda Detayları",
@@ -33,14 +33,14 @@
   "gameStarting": "Oyun başlatılıyor, lütfen bekleyin...",
   "unexpectedError": "Beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyin veya ana sayfaya dönün.",
   "language": "Dil",
-  "footer": "© 2025 TrainVoc. Tüm hakları saklıdır.",
+  "footer": "© 2024-2026 Trainvoc. Tüm hakları saklıdır.",
   "description": "İngilizce-Türkçe kelime ezberini eğlenceli ve sosyal hale getir!",
   "about": "Hakkında",
   "leaderboard": "Liderlik Tablosu",
   "score": "Puan",
   "loading": "Yükleniyor...",
   "error": "Bir hata oluştu. Lütfen tekrar deneyin.",
-  "aboutTitle": "TrainVoc Platformu",
+  "aboutTitle": "Trainvoc Platformu",
   "aboutDesc": "İngilizce-Türkçe kelime ezberini eğlenceli, sosyal ve sürdürülebilir hale getiren yeni nesil platform.",
   "multiRoom": "Çoklu Oda",
   "multiRoomDesc": "Farklı seviyelerde odalar oluştur, katıl ve toplulukla etkileşimde bulun.",
@@ -48,6 +48,6 @@
   "educationalContentDesc": "Kelime kartları, quizler ve istatistiklerle öğrenmeni güçlendir.",
   "advancedTech": "Gelişmiş Teknoloji",
   "advancedTechDesc": "Modern arayüz, hızlı altyapı ve mobil uyumluluk ile her yerde öğren.",
-  "whyTrainvoc": "Neden TrainVoc?",
-  "whyTrainvocDesc": "TrainVoc, klasik ezber uygulamalarının ötesine geçerek, sosyal rekabet ve oyunlaştırma ile öğrenmeyi kalıcı ve eğlenceli hale getirir. Gelişmiş istatistikler, kişiselleştirilmiş quizler ve topluluk desteğiyle her seviyeden kullanıcıya hitap eder."
+  "whyTrainvoc": "Neden Trainvoc?",
+  "whyTrainvocDesc": "Trainvoc, klasik ezber uygulamalarının ötesine geçerek, sosyal rekabet ve oyunlaştırma ile öğrenmeyi kalıcı ve eğlenceli hale getirir. Gelişmiş istatistikler, kişiselleştirilmiş quizler ve topluluk desteğiyle her seviyeden kullanıcıya hitap eder."
 }

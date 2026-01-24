@@ -21,7 +21,7 @@ function ContactPage() {
       title: 'Contact Us',
       subtitle: 'Get in touch with the Trainvoc team',
       description:
-        'As Rolling Cat Software, we develop the TrainVoc platform. You can reach us for any questions, suggestions, and collaborations.',
+        'As Rolling Cat Software, we develop the Trainvoc platform. You can reach us for any questions, suggestions, and collaborations.',
       email: 'Email',
       web: 'Website',
       address: 'Address',
@@ -37,7 +37,7 @@ function ContactPage() {
       title: 'İletişim',
       subtitle: 'Trainvoc ekibiyle iletişime geçin',
       description:
-        'Rolling Cat Software olarak TrainVoc platformunu geliştiriyoruz. Her türlü soru, öneri ve iş birliği için bize ulaşabilirsiniz.',
+        'Rolling Cat Software olarak Trainvoc platformunu geliştiriyoruz. Her türlü soru, öneri ve iş birliği için bize ulaşabilirsiniz.',
       email: 'E-posta',
       web: 'Web Sitesi',
       address: 'Adres',

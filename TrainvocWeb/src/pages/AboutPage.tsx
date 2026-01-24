@@ -26,7 +26,7 @@ function AboutPage() {
       title: 'Trainvoc Hakkında',
       subtitle: 'Oynayarak kelime öğren',
       description1:
-        'TrainVoc, İngilizce-Türkçe kelime öğrenimini eğlenceli, sosyal ve sürdürülebilir hale getirmek için geliştirilmiş yeni nesil bir platformdur. Amacımız, kullanıcıların hem bireysel hem de çok oyunculu modlarda kelime bilgisini geliştirmesini sağlamak ve öğrenmeyi bir oyun deneyimine dönüştürmektir.',
+        'Trainvoc, İngilizce-Türkçe kelime öğrenimini eğlenceli, sosyal ve sürdürülebilir hale getirmek için geliştirilmiş yeni nesil bir platformdur. Amacımız, kullanıcıların hem bireysel hem de çok oyunculu modlarda kelime bilgisini geliştirmesini sağlamak ve öğrenmeyi bir oyun deneyimine dönüştürmektir.',
       description2:
         'Platformumuzda arkadaşlarınla yarışabilir, liderlik tablosunda yerini görebilir ve mobil uygulamamız sayesinde her yerde pratik yapabilirsin. Rolling Cat Software ekibi olarak, kullanıcılarımızın geri bildirimleriyle platformumuzu sürekli geliştiriyoruz.',
       cta: 'Daha fazla bilgi ve güncellemeler için bizi takip etmeye devam et!',

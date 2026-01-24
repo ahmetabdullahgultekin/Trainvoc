@@ -15,7 +15,7 @@ function MobileAppPage() {
       title: 'Mobile App',
       subtitle: 'Learn vocabulary anytime, anywhere',
       description:
-        'Continue your vocabulary learning journey anywhere with the TrainVoc mobile app! Our app is available for free on the Play Store for Android devices.',
+        'Continue your vocabulary learning journey anywhere with the Trainvoc mobile app! Our app is available for free on the Play Store for Android devices.',
       downloadAndroid: 'Download on Play Store',
       comingSoon: 'Coming Soon on App Store',
       features: 'App Features',
@@ -26,7 +26,7 @@ function MobileAppPage() {
       title: 'Mobil Uygulama',
       subtitle: 'Her yerde, her zaman kelime öğren',
       description:
-        "TrainVoc'un mobil uygulaması ile kelime öğrenimini her yerde sürdürebilirsin! Uygulamamız Android cihazlar için Play Store'da ücretsiz olarak sunulmaktadır.",
+        "Trainvoc'un mobil uygulaması ile kelime öğrenimini her yerde sürdürebilirsin! Uygulamamız Android cihazlar için Play Store'da ücretsiz olarak sunulmaktadır.",
       downloadAndroid: "Play Store'da İndir",
       comingSoon: "App Store'da Çok Yakında",
       features: 'Uygulama Özellikleri',

@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="text-xl font-bold hover:opacity-90 transition-opacity">
-            TrainVoc
+            Trainvoc
           </Link>
 
           {/* Mobile menu button */}

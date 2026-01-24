@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Trainvoc</string>
     <string name="app_icon_desc">Uygulama Simgesi</string>
-    <string name="home_welcome">TrainVoc\'a Hoş Geldiniz! 🚀</string>
+    <string name="home_welcome">Trainvoc\'a Hoş Geldiniz!</string>
     <string name="home_subtitle">Eğlenceli testler ve akıllı öğrenme araçlarıyla İngilizce-Türkçe kelime bilginizi geliştirin.</string>
     <string name="lottie_desc">Animasyonlu elmas</string>
     <string name="start_quiz">Özel Teste Başla</string>

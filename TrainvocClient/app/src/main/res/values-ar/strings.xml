@@ -3,7 +3,7 @@
     <!-- App Name and Basic Strings -->
     <string name="app_name">Trainvoc</string>
     <string name="app_icon_desc">أيقونة التطبيق</string>
-    <string name="home_welcome">مرحباً بك في TrainVoc! 🚀</string>
+    <string name="home_welcome">مرحباً بك في Trainvoc!</string>
     <string name="home_subtitle">حسّن مفرداتك الإنجليزية-التركية مع اختبارات مشوقة وأدوات تعلم ذكية.</string>
     <string name="lottie_desc">ماسة متحركة</string>
 
