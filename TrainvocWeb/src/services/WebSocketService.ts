@@ -226,6 +226,14 @@ class WebSocketServiceClass {
         });
     }
 
+    nextQuestion(roomCode: string, playerId: string): void {
+        this.send({
+            type: 'next',
+            roomCode,
+            playerId
+        });
+    }
+
     // ============ Private Methods ============
 
     private setupEventListeners(): void {

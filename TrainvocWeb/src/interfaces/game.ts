@@ -9,7 +9,7 @@ export interface PlayerAnswerRecord {
 export interface Player {
     id: string;
     name: string;
-    score: number;
+    score?: number;
     correctCount?: number;
     wrongCount?: number;
     totalAnswerTime?: number;

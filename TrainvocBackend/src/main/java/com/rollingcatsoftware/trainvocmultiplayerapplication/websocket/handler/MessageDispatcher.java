@@ -17,9 +17,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageDispatcher {
 
     private final Map<String, WebSocketMessageHandler> handlers = new ConcurrentHashMap<>();
-    private final WebSocketContext context = new WebSocketContext();
+    private final WebSocketContext context;
 
-    public MessageDispatcher(List<WebSocketMessageHandler> messageHandlers) {
+    public MessageDispatcher(List<WebSocketMessageHandler> messageHandlers, WebSocketContext context) {
+        this.context = context;
         for (WebSocketMessageHandler handler : messageHandlers) {
             handlers.put(handler.getMessageType(), handler);
         }

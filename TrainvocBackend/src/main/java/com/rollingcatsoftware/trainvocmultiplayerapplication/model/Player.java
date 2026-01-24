@@ -16,6 +16,9 @@ public class Player {
     @Id
     private String id;
 
+    @Version
+    private Long version;
+
     @ManyToOne
     @JoinColumn(name = "room_code")
     @JsonBackReference
