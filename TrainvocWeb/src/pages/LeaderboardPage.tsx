@@ -1,124 +1,121 @@
-import React, {useState} from 'react';
-import {
-    Box,
-    Fade,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
-    Typography,
-    useTheme
-} from '@mui/material';
-import {useTranslation} from 'react-i18next';
-import SharedButton from '../components/shared/Button';
-import api from '../api';
-import Lottie from 'lottie-react';
-import rocketAnim from '../animations/rocket.json';
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
+import { Trophy, Search, Loader2 } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import api from '../api'
 
 interface Player {
-    id: string;
-    name: string;
-    score: number;
+  id: string
+  name: string
+  score: number
 }
 
 const LeaderboardPage: React.FC = () => {
-    const {t} = useTranslation();
-    const [roomCode, setRoomCode] = useState('');
-    const [players, setPlayers] = useState<Player[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const theme = useTheme();
+  const { t } = useTranslation()
+  const [roomCode, setRoomCode] = useState('')
+  const [players, setPlayers] = useState<Player[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-    const fetchLeaderboard = async () => {
-        setLoading(true);
-        setError('');
-        try {
-            const res = await api.get(`/api/leaderboard?roomCode=${roomCode}`);
-            setPlayers(res.data);
-        } catch (e) {
-            setError(t('error'));
-            setPlayers([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchLeaderboard = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await api.get(`/api/leaderboard?roomCode=${roomCode}`)
+      setPlayers(res.data)
+    } catch {
+      setError(t('error'))
+      setPlayers([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    return (
-        <Fade in timeout={800}>
-            <Box maxWidth={{xs: '100%', sm: 500}} mx="auto" mt={{xs: 2, md: 6}} px={{xs: 1, sm: 0}}
-                 sx={{
-                     background: `linear-gradient(135deg, #fffbe7 0%, ${theme.palette.primary.light} 100%)`,
-                     borderRadius: {xs: 2, sm: 4},
-                     boxShadow: 3,
-                     position: 'relative',
-                     overflow: 'hidden',
-                 }}>
-                <Box sx={{position: 'absolute', right: 0, top: 0, width: {xs: 100, sm: 140}, opacity: 0.15, zIndex: 0}}>
-                    <Lottie animationData={rocketAnim} loop={true}/>
-                </Box>
-                <Typography variant="h4" gutterBottom sx={{
-                    fontSize: {xs: 22, sm: 28},
-                    zIndex: 1,
-                    position: 'relative'
-                }}>{t('leaderboard')}</Typography>
-                <Box display="flex" gap={2} mb={3} flexDirection={{xs: 'column', sm: 'row'}}
-                     sx={{zIndex: 1, position: 'relative'}}>
-                    <TextField
-                        label={t('roomCode')}
-                        value={roomCode}
-                        onChange={e => setRoomCode(e.target.value)}
-                        fullWidth
-                        size="small"
-                    />
-                    <SharedButton variant="primary" onClick={fetchLeaderboard}
-                                  style={{minWidth: 120}}>{t('submit')}</SharedButton>
-                </Box>
-                {error && <Typography color="error">{error}</Typography>}
-                {loading && <Typography>{t('loading')}</Typography>}
-                {players.length > 0 && (
-                    <Fade in timeout={1000}>
-                        <TableContainer component={Paper} sx={{
-                            borderRadius: {xs: 2, sm: 4},
-                            zIndex: 1,
-                            position: 'relative',
-                            boxShadow: 6
-                        }}>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell sx={{fontWeight: 700, fontSize: {xs: 14, sm: 16}}}>#</TableCell>
-                                        <TableCell
-                                            sx={{
-                                                fontWeight: 700,
-                                                fontSize: {xs: 14, sm: 16}
-                                            }}>{t('playerName')}</TableCell>
-                                        <TableCell
-                                            sx={{fontWeight: 700, fontSize: {xs: 14, sm: 16}}}>{t('score')}</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {players.map((player, idx) => (
-                                        <TableRow key={player.id} sx={{
-                                            transition: 'background 0.2s',
-                                            '&:hover': {background: theme.palette.action.hover}
-                                        }}>
-                                            <TableCell sx={{fontSize: {xs: 13, sm: 15}}}>{idx + 1}</TableCell>
-                                            <TableCell sx={{fontSize: {xs: 13, sm: 15}}}>{player.name}</TableCell>
-                                            <TableCell sx={{fontSize: {xs: 13, sm: 15}}}>{player.score}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Fade>
-                )}
-            </Box>
-        </Fade>
-    );
-};
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-lg mx-auto mt-6 px-4"
+    >
+      <Card className="p-6 bg-gradient-to-br from-yellow-50 to-brand-50 dark:from-gray-800 dark:to-brand-900/20">
+        <div className="flex items-center gap-2 mb-6">
+          <Trophy className="h-8 w-8 text-yellow-500" />
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+            {t('leaderboard')}
+          </h1>
+        </div>
 
-export default LeaderboardPage;
+        <div className="flex gap-3 mb-6 flex-col sm:flex-row">
+          <Input
+            placeholder={t('roomCode')}
+            value={roomCode}
+            onChange={e => setRoomCode(e.target.value)}
+            className="flex-1"
+          />
+          <Button onClick={fetchLeaderboard} className="min-w-[120px]">
+            <Search className="h-4 w-4 mr-2" />
+            {t('submit')}
+          </Button>
+        </div>
+
+        {error && (
+          <p className="text-red-500 mb-4">{error}</p>
+        )}
+
+        {loading && (
+          <div className="flex items-center justify-center gap-2 py-4">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            <span>{t('loading')}</span>
+          </div>
+        )}
+
+        {players.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
+          >
+            <table className="w-full">
+              <thead className="bg-gray-100 dark:bg-gray-800">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-gray-700 dark:text-gray-300">
+                    #
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-gray-700 dark:text-gray-300">
+                    {t('playerName')}
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-gray-700 dark:text-gray-300">
+                    {t('score')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-900">
+                {players.map((player, idx) => (
+                  <tr
+                    key={player.id}
+                    className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-white font-medium">
+                      {player.name}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-brand-600 dark:text-brand-400 font-bold">
+                      {player.score}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        )}
+      </Card>
+    </motion.div>
+  )
+}
+
+export default LeaderboardPage

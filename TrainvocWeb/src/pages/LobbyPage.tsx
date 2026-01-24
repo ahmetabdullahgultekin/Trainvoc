@@ -1,326 +1,395 @@
-import React, {useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import {Avatar, Box, Button, CircularProgress, Grid, Paper, TextField, Typography} from '@mui/material';
-import GroupIcon from '@mui/icons-material/Group';
-import {useTranslation} from 'react-i18next';
-import api from '../api';
-import Modal from '../components/shared/Modal';
-import FullscreenButton from '../components/shared/FullscreenButton';
-import useProfile, {avatarList} from '../components/shared/useProfile';
-import {exitFullscreen} from '../utils/fullscreen';
-import type {LobbyData, Player} from '../interfaces/game';
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
+import { Users, Play, LogOut, Crown, Clock, HelpCircle, BarChart3, Lock } from 'lucide-react'
+import api from '../api'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Avatar } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { avatarList } from '../components/shared/useProfile'
+import { exitFullscreen } from '../utils/fullscreen'
+import type { LobbyData, Player } from '../interfaces/game'
 
-const LobbyPage: React.FC = () => {
-    const {t} = useTranslation();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [lobby, setLobby] = useState<LobbyData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [starting, setStarting] = useState(false);
-    const [error, setError] = useState('');
-    const [showLeaveModal, setShowLeaveModal] = useState(false);
-    const [roomPassword, setRoomPassword] = useState('');
+function LobbyPage() {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language as 'en' | 'tr'
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [lobby, setLobby] = useState<LobbyData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [starting, setStarting] = useState(false)
+  const [error, setError] = useState('')
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
+  const [roomPassword, setRoomPassword] = useState('')
 
-    // roomCode ve playerId queryden alınır
-    const params = new URLSearchParams(location.search);
-    const roomCode = params.get('roomCode');
-    const playerId = params.get('playerId');
-    // player objesi tamamen kaldırıldı, sadece useProfile global olarak kullanılacak
-    useProfile();
+  const params = new URLSearchParams(location.search)
+  const roomCode = params.get('roomCode')
+  const playerId = params.get('playerId')
 
-    useEffect(() => {
-        // Tam ekrandan çıkılırsa artık lobiyi dağıtma, sadece host çıkarsa dağıt
-        const onFullscreenChange = () => {
-            // Artık burada hiçbir şey yapılmıyor
-        };
-        document.addEventListener('fullscreenchange', onFullscreenChange);
+  const content = {
+    en: {
+      roomCode: 'Room Code',
+      waitingPlayers: 'Waiting for players...',
+      readyMessage: 'Ready? The game is about to start!',
+      roomSettings: 'Room Settings',
+      questionDuration: 'Question Duration',
+      totalQuestions: 'Total Questions',
+      optionCount: 'Options',
+      level: 'Level',
+      startGame: 'Start Game',
+      starting: 'Starting...',
+      leaveLobby: 'Leave Lobby',
+      leaveConfirm: 'Are you sure?',
+      leaveHostMessage: 'If you leave, the room will be disbanded and all players will be removed.',
+      yesDisband: 'Yes, Disband',
+      cancel: 'Cancel',
+      hostPassword: 'Room Password (required for host)',
+      lobbyNotFound: 'Lobby Not Found',
+      lobbyNotFoundMessage: "You haven't joined a lobby yet or the lobby has expired.",
+      joinGame: 'Join Game',
+      missingInfo: 'Room code or player info is missing.',
+      lobbyFetchError: 'Could not fetch lobby info.',
+      disbandError: 'Could not disband lobby.',
+      leaveError: 'Could not leave lobby.',
+    },
+    tr: {
+      roomCode: 'Oda Kodu',
+      waitingPlayers: 'Oyuncular bekleniyor...',
+      readyMessage: 'Hazır mısın? Oyun birazdan başlıyor!',
+      roomSettings: 'Oda Ayarları',
+      questionDuration: 'Soru Süresi',
+      totalQuestions: 'Toplam Soru',
+      optionCount: 'Şık Sayısı',
+      level: 'Seviye',
+      startGame: 'Oyunu Başlat',
+      starting: 'Başlatılıyor...',
+      leaveLobby: 'Lobiden Çık',
+      leaveConfirm: 'Emin misiniz?',
+      leaveHostMessage: 'Lobiden çıkarsanız oda dağıtılacak ve tüm oyuncular atılacak.',
+      yesDisband: 'Evet, Lobi Dağıtılsın',
+      cancel: 'Vazgeç',
+      hostPassword: 'Oda Şifresi (host için gerekli)',
+      lobbyNotFound: 'Lobi Bulunamadı',
+      lobbyNotFoundMessage: 'Henüz bir lobiye katılmadınız veya lobi süresi dolmuş olabilir.',
+      joinGame: 'Oyuna Katıl',
+      missingInfo: 'Oda kodu veya oyuncu bilgisi eksik.',
+      lobbyFetchError: 'Lobi bilgisi alınamadı.',
+      disbandError: 'Lobi dağıtılamadı.',
+      leaveError: 'Lobiden çıkılamadı.',
+    },
+  }
 
-        // Sayfa değişirse/lobiden çıkılırsa/lobi kapatılırsa lobi dağıt
-        const handleUnload = async () => {
-            if (roomCode) {
-                try {
-                    await api.post(`/api/game/rooms/${roomCode}/disband`);
-                } catch {
-                }
-            }
-        };
-        window.addEventListener('beforeunload', handleUnload);
-        window.addEventListener('popstate', handleUnload);
+  const txt = content[lang]
 
-        return () => {
-            document.removeEventListener('fullscreenchange', onFullscreenChange);
-            window.removeEventListener('beforeunload', handleUnload);
-            window.removeEventListener('popstate', handleUnload);
-        };
-    }, [roomCode]);
-
-    useEffect(() => {
-        if (!roomCode || !playerId) {
-            setError('Oda kodu veya oyuncu bilgisi eksik.');
-            return;
-        }
-        setLoading(true);
-        const fetchLobby = () => {
-            api.get(`/api/game/${roomCode}`)
-                .then(res => {
-                    setLobby(res.data);
-                    if (res.data.gameStarted) {
-                        navigate(`/game?roomCode=${roomCode}&playerId=${playerId}`);
-                    }
-                })
-                .catch(() => setError('Lobi bilgisi alınamadı.'))
-                .finally(() => setLoading(false));
-        };
-        fetchLobby();
-        const interval = setInterval(fetchLobby, 2000); // 2 sn'de bir güncelle
-        return () => clearInterval(interval);
-    }, [roomCode, playerId, navigate]);
-
-    const handleStartGame = async () => {
-        setStarting(true);
-        setLoading(true);
-        setError("");
+  useEffect(() => {
+    const handleUnload = async () => {
+      if (roomCode) {
         try {
-            let url = `/api/game/rooms/${roomCode}/start`;
-            if (roomPassword) {
-                url += `?password=${encodeURIComponent(roomPassword)}`;
-            }
-            await api.post(url);
-            navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`);
-        } catch (e: unknown) {
-            setError(t('gameStartFailed'));
-            console.error('Game start error:', e);
-        } finally {
-            setStarting(false);
-            setLoading(false);
+          await api.post(`/api/game/rooms/${roomCode}/disband`)
+        } catch {
+          // Ignore errors on unload
         }
-    };
-
-    const handleHostLeave = async () => {
-        await exitFullscreen();
-        try {
-            await api.post(`/api/game/rooms/${roomCode}/disband` + (roomPassword ? `?password=${encodeURIComponent(roomPassword)}` : ''));
-            navigate('/play');
-        } catch (e) {
-            setError('Lobi dağıtılamadı.');
-        }
-    };
-
-    // Oyuncu sorgusuz sualsiz lobiden çıkabilir
-    const handlePlayerLeave = async () => {
-        await exitFullscreen();
-        try {
-            // Oyuncuyu lobiden/veritabanından silmek için backend'e istek at
-            if (roomCode && playerId) {
-                await api.post(`/api/game/rooms/${roomCode}/leave?playerId=${playerId}`);
-            }
-            navigate('/play');
-        } catch (e) {
-            setError('Lobiden çıkılamadı.');
-        }
-    };
-
-    if (loading && !error && lobby !== null) return <Box display="flex" justifyContent="center" alignItems="center"
-                                                         minHeight="60vh"><CircularProgress/></Box>;
-    if (error) return <Box p={4}><Typography color="error">{error}</Typography></Box>;
-    if (!lobby) return (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-            <Paper elevation={6} sx={{p: 5, borderRadius: 4, maxWidth: 400, width: '100%', textAlign: 'center'}}>
-                <Box mb={2}>
-                    <Avatar sx={{bgcolor: '#e53935', width: 56, height: 56, mx: 'auto'}}>
-                        <GroupIcon sx={{fontSize: 36}}/>
-                    </Avatar>
-                </Box>
-                <Typography variant="h5" fontWeight={700} color="error" gutterBottom>
-                    Lobi Bulunamadı
-                </Typography>
-                <Typography variant="body1" color="text.secondary" mb={3}>
-                    Henüz bir lobiye katılmadınız veya lobi süresi dolmuş olabilir.<br/>
-                    Oyuna katılmak için aşağıdaki butonu kullanabilirsiniz.
-                </Typography>
-                <Button variant="contained" color="primary" size="large" onClick={() => navigate('/play/join')}>
-                    Oyuna Katıl
-                </Button>
-            </Paper>
-        </Box>
-    );
-
-    const isHost = lobby.hostId === playerId;
-
-    // Host oyuncuyu en başa al, diğerlerini sırala
-    let players: Player[] = [];
-    if (lobby) {
-        const hostPlayer = lobby.players.find(p => p.id === lobby.hostId);
-        const otherPlayers = lobby.players.filter(p => p.id !== lobby.hostId);
-        players = hostPlayer ? [hostPlayer, ...otherPlayers] : lobby.players;
+      }
     }
+    window.addEventListener('beforeunload', handleUnload)
+    window.addEventListener('popstate', handleUnload)
 
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload)
+      window.removeEventListener('popstate', handleUnload)
+    }
+  }, [roomCode])
+
+  useEffect(() => {
+    if (!roomCode || !playerId) {
+      setError(txt.missingInfo)
+      return
+    }
+    setLoading(true)
+    const fetchLobby = () => {
+      api.get(`/api/game/${roomCode}`)
+        .then(res => {
+          setLobby(res.data)
+          if (res.data.gameStarted) {
+            navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
+          }
+        })
+        .catch(() => setError(txt.lobbyFetchError))
+        .finally(() => setLoading(false))
+    }
+    fetchLobby()
+    const interval = setInterval(fetchLobby, 2000)
+    return () => clearInterval(interval)
+  }, [roomCode, playerId, navigate, txt.missingInfo, txt.lobbyFetchError])
+
+  const handleStartGame = async () => {
+    setStarting(true)
+    setLoading(true)
+    setError('')
+    try {
+      let url = `/api/game/rooms/${roomCode}/start`
+      if (roomPassword) {
+        url += `?password=${encodeURIComponent(roomPassword)}`
+      }
+      await api.post(url)
+      navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
+    } catch (e: unknown) {
+      setError(t('gameStartFailed'))
+      console.error('Game start error:', e)
+    } finally {
+      setStarting(false)
+      setLoading(false)
+    }
+  }
+
+  const handleHostLeave = async () => {
+    await exitFullscreen()
+    try {
+      await api.post(`/api/game/rooms/${roomCode}/disband` + (roomPassword ? `?password=${encodeURIComponent(roomPassword)}` : ''))
+      navigate('/play')
+    } catch {
+      setError(txt.disbandError)
+    }
+  }
+
+  const handlePlayerLeave = async () => {
+    await exitFullscreen()
+    try {
+      if (roomCode && playerId) {
+        await api.post(`/api/game/rooms/${roomCode}/leave?playerId=${playerId}`)
+      }
+      navigate('/play')
+    } catch {
+      setError(txt.leaveError)
+    }
+  }
+
+  if (loading && !error && lobby === null) {
     return (
-        <>
-            <FullscreenButton/>
-            <Box
-                sx={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    minHeight: '100vh',
-                    minWidth: '100vw',
-                    bgcolor: '#f5f7fa',
-                    zIndex: 9999,
-                    overflow: 'auto',
-                }}
-            >
-                <Box maxWidth={600} mx="auto" mt={6}>
-                    <Paper elevation={4} sx={{p: 4, borderRadius: 4}}>
-                        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
-                            Oda Kodu: <span style={{color: '#1976d2'}}>{lobby.roomCode}</span>
-                        </Typography>
-                        <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    mb: 1
-                                }}
-                            >
-                                <GroupIcon
-                                    sx={{
-                                        fontSize: 48,
-                                        color: '#1976d2',
-                                        animation: 'spin 2s linear infinite'
-                                    }}
-                                />
-                                <Box
-                                    sx={{
-                                        width: 12,
-                                        height: 12,
-                                        borderRadius: '50%',
-                                        bgcolor: '#ffd600',
-                                        ml: 2,
-                                        animation: 'bounce 1s infinite alternate'
-                                    }}
-                                />
-                            </Box>
-                            <Typography variant="h6" align="center" fontWeight={700} sx={{color: '#1976d2'}}>
-                                Oyuncular bekleniyor...
-                            </Typography>
-                            <Typography variant="body2" align="center" sx={{color: '#888', mt: 1}}>
-                                Hazır mısın? Oyun birazdan başlıyor!
-                            </Typography>
-                        </Box>
-                        <Box mb={2}>
-                            <Typography variant="h6" fontWeight={700} sx={{color: '#1976d2', mb: 1}}>
-                                Oda Ayarları
-                            </Typography>
-                            <Box component="ul" sx={{pl: 3, mb: 2, fontSize: 15, color: '#333'}}>
-                                <li>Soru Süresi: <b>{lobby.questionDuration ?? '-'}</b> sn</li>
-                                <li>Toplam Soru: <b>{lobby.totalQuestionCount ?? '-'}</b></li>
-                                <li>Şık Sayısı: <b>{lobby.optionCount ?? '-'}</b></li>
-                                <li>Seviye: <b>{lobby.level ?? '-'}</b></li>
-                            </Box>
-                        </Box>
-                        <style>
-                            {`
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                        @keyframes bounce {
-                            0% { transform: translateY(0); }
-                            100% { transform: translateY(-16px); }
-                        }
-                        `}
-                        </style>
-                        <Grid container spacing={2} justifyContent="center" mb={3}>
-                            {players.map((player) => {
-                                const isHost = player.id === lobby.hostId;
-                                return (
-                                    <Grid key={player.id}>
-                                        <Paper elevation={2} sx={{
-                                            p: 2,
-                                            borderRadius: 2,
-                                            minWidth: 100,
-                                            textAlign: 'center',
-                                            background: isHost ? '#fffde7' : '#e3f2fd'
-                                        }}>
-                                            <Avatar sx={{
-                                                bgcolor: isHost ? '#ffd600' : '#1976d2',
-                                                mx: 'auto',
-                                                mb: 1,
-                                                width: 56,
-                                                height: 56,
-                                                fontSize: 36
-                                            }}>
-                                                {typeof player.avatarId === 'number' || !isNaN(Number(player.avatarId))
-                                                    ? avatarList[Number(player.avatarId) % avatarList.length]
-                                                    : avatarList[Math.floor(Math.random() * avatarList.length)]}
-                                            </Avatar>
-                                            <Typography fontWeight={600}>
-                                                {player.name} {isHost &&
-                                                <span style={{color: '#ff9800', fontWeight: 700}}>(host)</span>}
-                                            </Typography>
-                                        </Paper>
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                        {isHost ? (
-                            <>
-                                <Button variant="contained" color="primary" fullWidth size="large"
-                                        onClick={handleStartGame}
-                                        disabled={starting}>
-                                    {starting ? 'Ba���latılıyor...' : 'Oyunu Başlat'}
-                                </Button>
-                                <Button variant="outlined" color="error" fullWidth size="large" sx={{mt: 2}}
-                                        onClick={() => setShowLeaveModal(true)}>
-                                    Lobiden Çık
-                                </Button>
-                                <Modal open={showLeaveModal} onClose={() => setShowLeaveModal(false)}>
-                                    <Typography variant="h6" fontWeight={700} mb={2}>Emin misiniz?</Typography>
-                                    <Typography mb={3}>Lobiden çıkarsanız oda dağıtılacak ve tüm oyuncular
-                                        atılacak.</Typography>
-                                    <Button variant="contained" color="error" onClick={handleHostLeave} sx={{mr: 2}}>
-                                        Evet, Lobi Dağıtılsın
-                                    </Button>
-                                    <Button variant="outlined" onClick={() => setShowLeaveModal(false)}>
-                                        Vazgeç
-                                    </Button>
-                                </Modal>
-                            </>
-                        ) : (
-                            <Button variant="outlined" color="error" fullWidth size="large" sx={{mt: 2}}
-                                    onClick={handlePlayerLeave}>
-                                Lobiden Çık
-                            </Button>
-                        )}
-                        {/* <Button variant="outlined" color="secondary" fullWidth size="large" sx={{mt: 2}}
-                                onClick={() => document.exitFullscreen && document.exitFullscreen()}>
-                            Tam Ekrandan Çık
-                        </Button> */}
-                    </Paper>
-                </Box>
-                {/* Host ise şifre inputunu göster */}
-                {lobby && lobby.hostId === playerId && (
-                    <Box maxWidth={400} mx="auto" mt={2}>
-                        <TextField
-                            label="Oda Şifresi (host için gerekli)"
-                            type="password"
-                            value={roomPassword}
-                            onChange={async e => {
-                                setRoomPassword(e.target.value);
-                            }}
-                            fullWidth
-                            margin="normal"
-                            size="small"
-                        />
-                    </Box>
-                )}
-            </Box>
-        </>
-    );
-};
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-brand-200 border-t-brand-500 rounded-full animate-spin" />
+      </div>
+    )
+  }
 
-export default LobbyPage;
+  if (error) {
+    return (
+      <div className="p-4">
+        <Card className="p-6 border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
+          <p className="text-red-600 dark:text-red-400">{error}</p>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!lobby) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] p-4">
+        <Card className="p-8 max-w-md text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+            <Users className="h-8 w-8 text-red-500" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            {txt.lobbyNotFound}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {txt.lobbyNotFoundMessage}
+          </p>
+          <Button onClick={() => navigate('/play/join')}>
+            {txt.joinGame}
+          </Button>
+        </Card>
+      </div>
+    )
+  }
+
+  const isHost = lobby.hostId === playerId
+  const hostPlayer = lobby.players.find(p => p.id === lobby.hostId)
+  const otherPlayers = lobby.players.filter(p => p.id !== lobby.hostId)
+  const players: Player[] = hostPlayer ? [hostPlayer, ...otherPlayers] : lobby.players
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
+      <div className="max-w-2xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Card className="p-6 md:p-8">
+            {/* Room Code */}
+            <div className="text-center mb-6">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{txt.roomCode}</p>
+              <h1 className="text-4xl md:text-5xl font-game text-brand-600 dark:text-brand-400">
+                {lobby.roomCode}
+              </h1>
+            </div>
+
+            {/* Waiting indicator */}
+            <div className="flex flex-col items-center mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Users className="h-10 w-10 text-brand-500" />
+                </motion.div>
+                <motion.div
+                  className="w-3 h-3 bg-yellow-400 rounded-full"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 0.6, repeat: Infinity }}
+                />
+              </div>
+              <h2 className="text-lg font-semibold text-brand-600 dark:text-brand-400">
+                {txt.waitingPlayers}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {txt.readyMessage}
+              </p>
+            </div>
+
+            {/* Room Settings */}
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                {txt.roomSettings}
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-600 dark:text-gray-400">{txt.questionDuration}:</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{lobby.questionDuration ?? '-'}s</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <HelpCircle className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-600 dark:text-gray-400">{txt.totalQuestions}:</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{lobby.totalQuestionCount ?? '-'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">{txt.optionCount}:</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{lobby.optionCount ?? '-'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">{txt.level}:</span>
+                  <Badge variant="secondary">{lobby.level ?? '-'}</Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* Players */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+              <AnimatePresence>
+                {players.map((player, index) => {
+                  const isPlayerHost = player.id === lobby.hostId
+                  return (
+                    <motion.div
+                      key={player.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card className={`p-4 text-center ${isPlayerHost ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'}`}>
+                        <Avatar className={`h-14 w-14 mx-auto mb-2 text-2xl ${isPlayerHost ? 'bg-yellow-400' : 'bg-brand-500'}`}>
+                          {typeof player.avatarId === 'number' || !isNaN(Number(player.avatarId))
+                            ? avatarList[Number(player.avatarId) % avatarList.length]
+                            : avatarList[0]}
+                        </Avatar>
+                        <p className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                          {player.name}
+                        </p>
+                        {isPlayerHost && (
+                          <div className="flex items-center justify-center gap-1 mt-1 text-yellow-600 dark:text-yellow-400">
+                            <Crown className="h-3 w-3" />
+                            <span className="text-xs font-medium">Host</span>
+                          </div>
+                        )}
+                      </Card>
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
+            </div>
+
+            {/* Actions */}
+            {isHost ? (
+              <div className="space-y-3">
+                <Button
+                  className="w-full gap-2"
+                  size="lg"
+                  onClick={handleStartGame}
+                  disabled={starting}
+                >
+                  <Play className="h-5 w-5" />
+                  {starting ? txt.starting : txt.startGame}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full gap-2 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                  size="lg"
+                  onClick={() => setShowLeaveModal(true)}
+                >
+                  <LogOut className="h-5 w-5" />
+                  {txt.leaveLobby}
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="w-full gap-2 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                size="lg"
+                onClick={handlePlayerLeave}
+              >
+                <LogOut className="h-5 w-5" />
+                {txt.leaveLobby}
+              </Button>
+            )}
+          </Card>
+
+          {/* Host password input */}
+          {isHost && (
+            <Card className="p-4 mt-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Lock className="h-4 w-4 text-gray-400" />
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {txt.hostPassword}
+                </label>
+              </div>
+              <Input
+                type="password"
+                value={roomPassword}
+                onChange={(e) => setRoomPassword(e.target.value)}
+                placeholder="••••••••"
+              />
+            </Card>
+          )}
+        </motion.div>
+
+        {/* Leave confirmation dialog */}
+        <Dialog open={showLeaveModal} onOpenChange={setShowLeaveModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{txt.leaveConfirm}</DialogTitle>
+            </DialogHeader>
+            <p className="text-gray-600 dark:text-gray-400">
+              {txt.leaveHostMessage}
+            </p>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowLeaveModal(false)}>
+                {txt.cancel}
+              </Button>
+              <Button variant="destructive" onClick={handleHostLeave}>
+                {txt.yesDisband}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  )
+}
+
+export default LobbyPage
