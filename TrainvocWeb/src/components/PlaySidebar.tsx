@@ -1,150 +1,110 @@
-import React, {useState} from 'react';
-import {
-    Box,
-    Divider,
-    Drawer,
-    IconButton,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
-import PersonIcon from '@mui/icons-material/Person';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Menu, X, ArrowLeft, Play, Users, DoorOpen, User } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const sidebarItems = [
-    {label: 'Ana Sayfaya Dön', icon: <ArrowBackIcon/>, path: '/'},
-    {label: 'Oyun Kur', icon: <PlayCircleIcon/>, path: '/play/create'},
-    {label: 'Oyuna Katıl', icon: <GroupAddIcon/>, path: '/play/join'},
-    {label: 'Lobi', icon: <MeetingRoomIcon/>, path: '/play/lobby'},
-    {label: 'Profilim', icon: <PersonIcon/>, path: '/play/profile'},
-];
+  { label: 'Ana Sayfaya Dön', icon: ArrowLeft, path: '/' },
+  { label: 'Oyun Kur', icon: Play, path: '/play/create' },
+  { label: 'Oyuna Katıl', icon: Users, path: '/play/join' },
+  { label: 'Lobi', icon: DoorOpen, path: '/play/lobby' },
+  { label: 'Profilim', icon: User, path: '/play/profile' },
+]
 
 const PlaySidebar: React.FC = () => {
-    const [open, setOpen] = useState(true); // Başlangıçta kapalı
-    const navigate = useNavigate();
-    const location = useLocation();
+  const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
 
-    const handleNavigate = (path: string) => {
-        navigate(path);
-        setOpen(false);
-    };
+  const handleNavigate = (path: string) => {
+    navigate(path)
+    setOpen(false)
+  }
 
-    return (
-        <>
-            <IconButton
-                color="primary"
-                aria-label="menu"
-                onClick={() => setOpen(true)}
-                sx={{
-                    position: 'fixed',
-                    top: 16,
-                    right: 16,
-                    left: 'auto',
-                    zIndex: 1301,
-                    bgcolor: '#fff',
-                    border: '2px solid',
-                    borderColor: open ? 'primary.main' : 'grey.300',
-                    boxShadow: open ? 3 : 1,
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                        bgcolor: 'primary.light',
-                        borderColor: 'primary.main',
-                        cursor: 'pointer',
-                    },
-                    display: open ? 'none' : 'flex',
-                    width: {xs: 44, sm: 52},
-                    height: {xs: 44, sm: 52},
-                }}
-            >
-                <MenuIcon sx={{fontSize: {xs: 28, sm: 32}}}/>
-            </IconButton>
-            <Drawer anchor="right" open={open} onClose={() => {
-                setOpen(false);
-                setTimeout(() => {
-                    const main = document.getElementById('main-content');
-                    if (main) main.focus();
-                }, 100);
-            }}>
-                <Box width={{xs: 220, sm: 270, md: 300}} height="100vh" display="flex" flexDirection="column"
-                     role="presentation" onClick={() => setOpen(false)} sx={{
-                    p: 0,
-                    flex: 1,
-                    maxWidth: '100vw',
-                    bgcolor: '#fff',
-                    boxShadow: 3,
-                    borderTopRightRadius: 16,
-                    borderBottomRightRadius: 16,
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}>
-                    <Typography variant="h6" align="center" mt={2} mb={1} fontWeight={700} color="primary.main">
-                        Oyun Menüsü
-                    </Typography>
-                    <Divider sx={{mb: 1, bgcolor: 'primary.light'}}/>
-                    <List sx={{p: 0, flex: 1}}>
-                        {sidebarItems.map((item) => (
-                            <ListItemButton
-                                key={item.label}
-                                selected={location.pathname === item.path}
-                                onClick={() => handleNavigate(item.path)}
-                                sx={{
-                                    borderRadius: 2,
-                                    mb: 1.2,
-                                    mx: 1.2,
-                                    bgcolor: location.pathname === item.path ? 'primary.main' : 'grey.100',
-                                    color: location.pathname === item.path ? '#fff' : 'primary.main',
-                                    boxShadow: location.pathname === item.path ? 2 : 0,
-                                    fontWeight: location.pathname === item.path ? 700 : 500,
-                                    transition: 'background 0.2s, color 0.2s',
-                                    '&:hover': {
-                                        bgcolor: 'primary.light',
-                                        color: 'primary.main',
-                                        boxShadow: 1,
-                                        cursor: 'pointer',
-                                    },
-                                    minHeight: 48,
-                                    userSelect: 'none',
-                                    WebkitUserSelect: 'none',
-                                    MozUserSelect: 'none',
-                                    msUserSelect: 'none',
-                                }}
-                                disableTouchRipple
-                            >
-                                <ListItemIcon sx={{
-                                    color: location.pathname === item.path ? '#fff' : 'primary.main',
-                                    minWidth: 36
-                                }}>
-                                    {item.icon}
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={item.label}
-                                    sx={{
-                                        fontWeight: location.pathname === item.path ? 700 : 500,
-                                        fontSize: 17,
-                                        letterSpacing: 0.2,
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        pointerEvents: 'none',
-                                        userSelect: 'none',
-                                    }}
-                                />
-                            </ListItemButton>
-                        ))}
-                    </List>
-                </Box>
-            </Drawer>
-        </>
-    );
-};
+  return (
+    <>
+      {/* Menu button */}
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => setOpen(true)}
+        className={cn(
+          'fixed top-4 right-4 z-[1301] bg-white shadow-md',
+          'w-11 h-11 sm:w-13 sm:h-13',
+          open && 'hidden'
+        )}
+      >
+        <Menu className="h-6 w-6 sm:h-7 sm:w-7" />
+      </Button>
 
-export default PlaySidebar;
+      {/* Backdrop */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/50 z-[1300]"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Drawer */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed right-0 top-0 h-full w-[220px] sm:w-[270px] md:w-[300px] bg-white dark:bg-gray-900 shadow-xl z-[1301] flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-bold text-brand-600 dark:text-brand-400">
+                Oyun Menüsü
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            {/* Navigation items */}
+            <nav className="flex-1 p-3 space-y-2">
+              {sidebarItems.map((item) => {
+                const isActive = location.pathname === item.path
+                const Icon = item.icon
+
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => handleNavigate(item.path)}
+                    className={cn(
+                      'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
+                      'text-left font-medium',
+                      isActive
+                        ? 'bg-brand-500 text-white shadow-md'
+                        : 'bg-gray-100 dark:bg-gray-800 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/30'
+                    )}
+                  >
+                    <Icon className="h-5 w-5 flex-shrink-0" />
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                )
+              })}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+export default PlaySidebar
