@@ -114,10 +114,8 @@ public class SyncService {
         log.info("Syncing word for user {}: {}", user.getId(), request.entityId());
 
         Map<String, Object> data = request.data();
-        String word = (String) data.get("word");
-        if (word == null) {
-            word = request.entityId();
-        }
+        String wordFromData = (String) data.get("word");
+        final String word = (wordFromData != null) ? wordFromData : request.entityId();
 
         // Find existing or create new
         UserWordProgress progress = wordProgressRepository
