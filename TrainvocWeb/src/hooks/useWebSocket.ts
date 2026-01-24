@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { WebSocketService, ConnectionState, GameEventHandlers, Player, PlayerRanking, Question, RoomSettings } from '../services/WebSocketService';
+import { WebSocketService } from '../services/WebSocketService';
+import type { ConnectionState, GameEventHandlers, Player, PlayerRanking, Question, RoomSettings } from '../services/WebSocketService';
 
 interface UseWebSocketOptions {
     autoConnect?: boolean;
