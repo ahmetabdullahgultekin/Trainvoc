@@ -52,6 +52,9 @@ public class PrimaryDataSourceConfig {
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(jpaProperties.getProperties());
         properties.putAll(hibernateProperties.determineHibernateProperties(jpaProperties.getProperties(), new org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings()));
+        // Force SQL logging
+        properties.put("hibernate.show_sql", "true");
+        properties.put("hibernate.format_sql", "true");
         em.setJpaPropertyMap(properties);
         return em;
     }
