@@ -1,6 +1,8 @@
 package com.gultekinahmetabdullah.trainvoc.di
 
 import com.gultekinahmetabdullah.trainvoc.api.DictionaryApiService
+import com.gultekinahmetabdullah.trainvoc.auth.AuthApiService
+import com.gultekinahmetabdullah.trainvoc.multiplayer.data.MultiplayerApi
 import com.gultekinahmetabdullah.trainvoc.offline.SyncApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -29,8 +31,11 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val DICTIONARY_BASE_URL = "https://api.dictionaryapi.dev/api/v2/"
-    private const val TRAINVOC_BASE_URL = "https://api.trainvoc.com/"
     private const val TIMEOUT_SECONDS = 30L
+
+    // Backend URL from BuildConfig (configurable per build type)
+    private val TRAINVOC_BASE_URL: String
+        get() = com.gultekinahmetabdullah.trainvoc.BuildConfig.API_BASE_URL
 
     /**
      * Provides Gson instance for JSON serialization/deserialization
@@ -117,5 +122,23 @@ object NetworkModule {
     @Singleton
     fun provideSyncApiService(@Named("trainvoc") retrofit: Retrofit): SyncApiService {
         return retrofit.create(SyncApiService::class.java)
+    }
+
+    /**
+     * Provides AuthApiService instance
+     */
+    @Provides
+    @Singleton
+    fun provideAuthApiService(@Named("trainvoc") retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
+    }
+
+    /**
+     * Provides MultiplayerApi instance
+     */
+    @Provides
+    @Singleton
+    fun provideMultiplayerApi(@Named("trainvoc") retrofit: Retrofit): MultiplayerApi {
+        return retrofit.create(MultiplayerApi::class.java)
     }
 }

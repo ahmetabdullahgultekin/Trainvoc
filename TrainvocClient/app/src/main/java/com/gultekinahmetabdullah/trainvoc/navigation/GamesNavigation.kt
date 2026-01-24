@@ -127,6 +127,6 @@ fun NavHostController.navigateToGamesMenu() {
     navigate(GamesRoutes.GAMES_MENU)
 }
 
-fun NavHostController.navigateToGame(gameRoute: String) {
+fun NavHostController.navigateToGameScreen(gameRoute: String) {
     navigate(gameRoute)
 }

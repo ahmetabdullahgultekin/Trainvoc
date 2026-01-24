@@ -146,6 +146,21 @@ fun QuizStatsCard(
                                 )
                             )
                         }
+
+                        is QuizParameter.Review -> {
+                            Text(
+                                text = stringResource(R.string.review_mode),
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(Spacing.extraSmall))
+                            Text(
+                                text = stringResource(
+                                    R.string.total_words_with_value,
+                                    parameter.wordIds.size.toString()
+                                )
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(Spacing.medium))
                 }

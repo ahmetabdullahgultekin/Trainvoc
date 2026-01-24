@@ -44,7 +44,11 @@ object Route {
     // Phase 5 - Update Notes & Changelog
     const val CHANGELOG = "changelog"
 
-    // Phase 6 - Multiplayer
+    // Phase 6 - Authentication
+    const val LOGIN = "login"
+    const val REGISTER = "register"
+
+    // Phase 7 - Multiplayer
     const val MULTIPLAYER_HOME = "multiplayer_home"
     const val MULTIPLAYER_CREATE_ROOM = "multiplayer_create_room"
     const val MULTIPLAYER_JOIN_ROOM = "multiplayer_join_room"

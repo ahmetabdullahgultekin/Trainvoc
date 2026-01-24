@@ -21,6 +21,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.PlayerInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.GameState
 import com.gultekinahmetabdullah.trainvoc.viewmodel.RoomState
@@ -131,7 +132,7 @@ fun LobbyScreen(
                             style = MaterialTheme.typography.displaySmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            letterSpacing = 4.dp.value.sp
+                            letterSpacing = 4.sp
                         )
                         IconButton(
                             onClick = {
@@ -307,5 +308,3 @@ private fun PlayerCard(
         }
     }
 }
-
-private val Int.sp get() = this.toFloat()

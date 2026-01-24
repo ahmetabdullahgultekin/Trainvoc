@@ -30,11 +30,13 @@ class CalculateProgressUseCase @Inject constructor(
             val totalWords = when (parameter) {
                 is QuizParameter.Level -> progressService.getWordCountByLevel(parameter.wordLevel.name)
                 is QuizParameter.ExamType -> progressService.getWordCountByExam(parameter.exam.exam)
+                is QuizParameter.Review -> parameter.wordIds.size
             }
 
             val learnedWords = when (parameter) {
                 is QuizParameter.Level -> progressService.getLearnedWordCount(parameter.wordLevel.name)
                 is QuizParameter.ExamType -> progressService.getLearnedWordCountByExam(parameter.exam.exam)
+                is QuizParameter.Review -> 0 // Review mode doesn't track learned words
             }
 
             val progressPercent = if (totalWords > 0) {

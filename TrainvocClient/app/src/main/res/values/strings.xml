@@ -6,6 +6,7 @@
     <string name="lottie_desc">Animated diamond</string>
     <string name="start_quiz">Start Custom Quiz</string>
     <string name="story_mode">Story Mode</string>
+    <string name="review_mode">Review Mode</string>
     <string name="settings">Settings</string>
     <string name="help">Help</string>
     <string name="stats">Stats</string>
@@ -161,6 +162,27 @@
     <string name="welcome_title">Welcome my Friend!</string>
     <string name="welcome_description">Trainvoc is a vocabulary training app that helps you learn new words in a fun way.</string>
     <string name="lets_get_down_to_business">Let\'s get down to business!</string>
+
+    <!-- Authentication -->
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="login_subtitle">Sign in to sync your progress across devices</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="create_account">Create Account</string>
+    <string name="skip_login">Continue without account</string>
+    <string name="register_title">Create Your Account</string>
+    <string name="register_subtitle">Join Trainvoc to sync your progress and compete with friends</string>
+    <string name="username_hint">At least 3 characters</string>
+    <string name="password_hint">At least 6 characters</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="back">Back</string>
+
     <string name="notifications_enabled">Notifications enabled</string>
     <string name="notifications_disabled">Notifications disabled</string>
     <string name="unknown_level">Unknown Level</string>
