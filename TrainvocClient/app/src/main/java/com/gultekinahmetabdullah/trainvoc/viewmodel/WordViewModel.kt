@@ -157,7 +157,7 @@ class WordViewModel @Inject constructor(
     )
 
     suspend fun getWordFullDetail(wordId: String): WordFullDetail? {
-        val word = repository.getWordById(wordId)
+        val word = repository.getWordById(wordId) ?: return null
         val statistic = wordStatisticsService.getWordStats(word)
         val exams = repository.getExamsForWord(wordId)
         return WordFullDetail(word, statistic, exams)

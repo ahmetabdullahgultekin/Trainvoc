@@ -75,12 +75,24 @@ class WordOfDayViewModel @Inject constructor(
                 if (wordOfDayEntry != null) {
                     // Load the actual word details
                     val word = wordDao.getWord(wordOfDayEntry.wordId)
-                    _wordOfDay.value = word
-                    _isFavorite.value = word.isFavorite
+                    if (word != null) {
+                        _wordOfDay.value = word
+                        _isFavorite.value = word.isFavorite
 
-                    // Mark as viewed if not already
-                    if (!wordOfDayEntry.wasViewed) {
-                        wordOfDayDao.markAsViewed(today)
+                        // Mark as viewed if not already
+                        if (!wordOfDayEntry.wasViewed) {
+                            wordOfDayDao.markAsViewed(today)
+                        }
+                    } else {
+                        // Word no longer exists, generate a new one
+                        val newEntry = generateNewWordOfDay(today)
+                        if (newEntry != null) {
+                            val newWord = wordDao.getWord(newEntry.wordId)
+                            _wordOfDay.value = newWord
+                            _isFavorite.value = newWord?.isFavorite ?: false
+                        } else {
+                            _error.value = "Could not find any words"
+                        }
                     }
                 } else {
                     _error.value = "Could not load word of the day"

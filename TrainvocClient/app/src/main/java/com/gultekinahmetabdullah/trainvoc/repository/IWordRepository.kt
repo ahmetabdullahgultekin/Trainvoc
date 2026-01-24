@@ -26,7 +26,7 @@ interface IWordRepository {
     fun getAllWords(): Flow<List<Word>>
     suspend fun getAllWordsAskedInExams(): List<WordAskedInExams>
     suspend fun insertWord(word: Word)
-    suspend fun getWordById(wordId: String): Word
+    suspend fun getWordById(wordId: String): Word?
     suspend fun getExamsForWord(wordId: String): List<String>
 
     // Statistic Operations
