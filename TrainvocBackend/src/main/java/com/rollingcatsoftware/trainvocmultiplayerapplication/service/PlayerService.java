@@ -6,6 +6,7 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -50,6 +51,7 @@ public class PlayerService implements IPlayerService {
      * Creates and saves a player who is joining a room.
      * @throws IllegalStateException if the room is not in LOBBY state
      */
+    @Transactional(transactionManager = "primaryTransactionManager")
     public Player joinRoom(GameRoom room, String playerName, Integer avatarId) {
         if (room.getCurrentState() != GameState.LOBBY) {
             throw new IllegalStateException("Cannot join room after game has started.");
@@ -63,6 +65,7 @@ public class PlayerService implements IPlayerService {
      * Removes a player from a room.
      * @return true if player was found and removed, false otherwise
      */
+    @Transactional(transactionManager = "primaryTransactionManager")
     public boolean leaveRoom(String roomCode, String playerId) {
         Player player = playerRepository.findById(playerId).orElse(null);
         if (player != null && player.getRoom() != null &&
@@ -76,6 +79,7 @@ public class PlayerService implements IPlayerService {
     /**
      * Gets all players in a room.
      */
+    @Transactional(readOnly = true, transactionManager = "primaryTransactionManager")
     public List<Player> getPlayersByRoom(GameRoom room) {
         return playerRepository.findByRoom(room);
     }
@@ -83,6 +87,7 @@ public class PlayerService implements IPlayerService {
     /**
      * Finds a player by ID.
      */
+    @Transactional(readOnly = true, transactionManager = "primaryTransactionManager")
     public Player findById(String playerId) {
         return playerRepository.findById(playerId).orElse(null);
     }
@@ -90,13 +95,23 @@ public class PlayerService implements IPlayerService {
     /**
      * Saves a player.
      */
+    @Transactional(transactionManager = "primaryTransactionManager")
     public Player save(Player player) {
+        return playerRepository.save(player);
+    }
+
+    /**
+     * Saves a player without starting a new transaction.
+     * Used when called from within an existing transaction.
+     */
+    public Player saveWithoutTransaction(Player player) {
         return playerRepository.save(player);
     }
 
     /**
      * Resets answer tracking for all players in a room (for new question).
      */
+    @Transactional(transactionManager = "primaryTransactionManager")
     public void resetAnswersForRoom(GameRoom room) {
         List<Player> players = playerRepository.findByRoom(room);
         for (Player player : players) {

@@ -3,6 +3,7 @@ package com.rollingcatsoftware.trainvocmultiplayerapplication.repository;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameRoom;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -52,4 +53,24 @@ public interface GameRoomRepository extends JpaRepository<GameRoom, String> {
      */
     @EntityGraph(attributePaths = {"players"})
     List<GameRoom> findByStarted(boolean started);
+
+    /**
+     * Insert a room using native SQL for debugging.
+     * flushAutomatically ensures the query is executed immediately.
+     * clearAutomatically clears the persistence context after execution.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = "INSERT INTO game_room (room_code, current_question_index, started, host_id, question_duration, option_count, level, total_question_count, current_state, last_used, version) " +
+            "VALUES (:roomCode, :currentQuestionIndex, :started, :hostId, :questionDuration, :optionCount, :level, :totalQuestionCount, :currentState, :lastUsed, 0)",
+            nativeQuery = true)
+    void insertRoom(@Param("roomCode") String roomCode,
+                    @Param("currentQuestionIndex") int currentQuestionIndex,
+                    @Param("started") boolean started,
+                    @Param("hostId") String hostId,
+                    @Param("questionDuration") int questionDuration,
+                    @Param("optionCount") int optionCount,
+                    @Param("level") String level,
+                    @Param("totalQuestionCount") int totalQuestionCount,
+                    @Param("currentState") int currentState,
+                    @Param("lastUsed") LocalDateTime lastUsed);
 }
