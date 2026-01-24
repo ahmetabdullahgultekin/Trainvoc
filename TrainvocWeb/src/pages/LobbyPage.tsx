@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { Users, Play, LogOut, Crown, Clock, HelpCircle, BarChart3, Lock } from 'lucide-react'
+import { Users, Play, LogOut, Crown, Clock, HelpCircle, BarChart3, Lock, Wifi, WifiOff } from 'lucide-react'
 import api from '../api'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -12,19 +12,22 @@ import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { avatarList } from '../components/shared/useProfile'
 import { exitFullscreen } from '../utils/fullscreen'
+import { useWebSocket } from '../hooks/useWebSocket'
 import type { LobbyData, Player } from '../interfaces/game'
 
 function LobbyPage() {
-  const { t, i18n } = useTranslation()
+  const { i18n } = useTranslation()
   const lang = i18n.language as 'en' | 'tr'
   const navigate = useNavigate()
   const location = useLocation()
   const [lobby, setLobby] = useState<LobbyData | null>(null)
+  const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [starting, setStarting] = useState(false)
   const [error, setError] = useState('')
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const [roomPassword, setRoomPassword] = useState('')
+  const initialFetchDone = useRef(false)
 
   const params = new URLSearchParams(location.search)
   const roomCode = params.get('roomCode')
@@ -55,6 +58,9 @@ function LobbyPage() {
       lobbyFetchError: 'Could not fetch lobby info.',
       disbandError: 'Could not disband lobby.',
       leaveError: 'Could not leave lobby.',
+      connected: 'Connected',
+      connecting: 'Connecting...',
+      disconnected: 'Disconnected',
     },
     tr: {
       roomCode: 'Oda Kodu',
@@ -80,75 +86,102 @@ function LobbyPage() {
       lobbyFetchError: 'Lobi bilgisi alınamadı.',
       disbandError: 'Lobi dağıtılamadı.',
       leaveError: 'Lobiden çıkılamadı.',
+      connected: 'Bağlı',
+      connecting: 'Bağlanıyor...',
+      disconnected: 'Bağlantı Kesildi',
     },
   }
 
   const txt = content[lang]
 
-  useEffect(() => {
-    const handleUnload = async () => {
-      if (roomCode) {
-        try {
-          await api.post(`/api/game/rooms/${roomCode}/disband`)
-        } catch {
-          // Ignore errors on unload
-        }
-      }
-    }
-    window.addEventListener('beforeunload', handleUnload)
-    window.addEventListener('popstate', handleUnload)
+  // WebSocket event handlers
+  const handlePlayersUpdate = useCallback((updatedPlayers: Player[]) => {
+    setPlayers(updatedPlayers)
+  }, [])
 
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload)
-      window.removeEventListener('popstate', handleUnload)
-    }
-  }, [roomCode])
+  const handlePlayerJoined = useCallback((newPlayerId: string, playerName: string) => {
+    console.log('Player joined:', playerName, newPlayerId)
+    // Players list will be updated via playersUpdate event
+  }, [])
 
+  const handlePlayerLeft = useCallback((leftPlayerId: string) => {
+    console.log('Player left:', leftPlayerId)
+    // Players list will be updated via playersUpdate event
+  }, [])
+
+  const handleGameStateChanged = useCallback((state: number, remainingTime: number) => {
+    console.log('Game state changed:', state, 'remainingTime:', remainingTime)
+    // State > 0 means game has started
+    if (state > 0) {
+      navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
+    }
+  }, [navigate, roomCode, playerId])
+
+  const handleError = useCallback((errorMsg: string) => {
+    console.error('WebSocket error:', errorMsg)
+    setError(errorMsg)
+  }, [])
+
+  // Initialize WebSocket connection
+  const { connectionState, isConnected, connect, leaveRoom, startGame: wsStartGame } = useWebSocket({
+    autoConnect: true,
+    handlers: {
+      onPlayersUpdate: handlePlayersUpdate,
+      onPlayerJoined: handlePlayerJoined,
+      onPlayerLeft: handlePlayerLeft,
+      onGameStateChanged: handleGameStateChanged,
+      onError: handleError,
+    },
+  })
+
+  // Initial fetch of lobby data (one-time, not polling)
   useEffect(() => {
     if (!roomCode || !playerId) {
       setError(txt.missingInfo)
       return
     }
+
+    if (initialFetchDone.current) return
+    initialFetchDone.current = true
+
     setLoading(true)
-    const fetchLobby = () => {
-      api.get(`/api/game/${roomCode}`)
-        .then(res => {
-          setLobby(res.data)
-          if (res.data.gameStarted) {
-            navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
-          }
-        })
-        .catch(() => setError(txt.lobbyFetchError))
-        .finally(() => setLoading(false))
-    }
-    fetchLobby()
-    const interval = setInterval(fetchLobby, 2000)
-    return () => clearInterval(interval)
+    api.get(`/api/game/${roomCode}`)
+      .then(res => {
+        setLobby(res.data)
+        setPlayers(res.data.players || [])
+        // Check if game already started
+        if (res.data.gameStarted || res.data.currentState > 0) {
+          navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
+        }
+      })
+      .catch(() => setError(txt.lobbyFetchError))
+      .finally(() => setLoading(false))
   }, [roomCode, playerId, navigate, txt.missingInfo, txt.lobbyFetchError])
 
-  const handleStartGame = async () => {
-    setStarting(true)
-    setLoading(true)
-    setError('')
-    try {
-      let url = `/api/game/rooms/${roomCode}/start`
-      if (roomPassword) {
-        url += `?password=${encodeURIComponent(roomPassword)}`
-      }
-      await api.post(url)
-      navigate(`/play/game?roomCode=${roomCode}&playerId=${playerId}`)
-    } catch (e: unknown) {
-      setError(t('gameStartFailed'))
-      console.error('Game start error:', e)
-    } finally {
-      setStarting(false)
-      setLoading(false)
+  // Ensure WebSocket is connected
+  useEffect(() => {
+    if (connectionState === 'disconnected') {
+      connect()
     }
-  }
+  }, [connectionState, connect])
+
+  const handleStartGame = useCallback(() => {
+    if (!roomCode) return
+    setStarting(true)
+    setError('')
+
+    // Start game via WebSocket
+    wsStartGame(roomCode)
+
+    // The navigation will happen via handleGameStateChanged when server broadcasts
+  }, [roomCode, wsStartGame])
 
   const handleHostLeave = async () => {
     await exitFullscreen()
     try {
+      if (roomCode && playerId) {
+        leaveRoom(roomCode, playerId)
+      }
       await api.post(`/api/game/rooms/${roomCode}/disband` + (roomPassword ? `?password=${encodeURIComponent(roomPassword)}` : ''))
       navigate('/play')
     } catch {
@@ -160,6 +193,7 @@ function LobbyPage() {
     await exitFullscreen()
     try {
       if (roomCode && playerId) {
+        leaveRoom(roomCode, playerId)
         await api.post(`/api/game/rooms/${roomCode}/leave?playerId=${playerId}`)
       }
       navigate('/play')
@@ -208,9 +242,9 @@ function LobbyPage() {
   }
 
   const isHost = lobby.hostId === playerId
-  const hostPlayer = lobby.players.find(p => p.id === lobby.hostId)
-  const otherPlayers = lobby.players.filter(p => p.id !== lobby.hostId)
-  const players: Player[] = hostPlayer ? [hostPlayer, ...otherPlayers] : lobby.players
+  const hostPlayer = players.find(p => p.id === lobby.hostId)
+  const otherPlayers = players.filter(p => p.id !== lobby.hostId)
+  const displayPlayers: Player[] = hostPlayer ? [hostPlayer, ...otherPlayers] : players
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
@@ -220,6 +254,26 @@ function LobbyPage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <Card className="p-6 md:p-8">
+            {/* Connection Status */}
+            <div className="absolute top-4 right-4 flex items-center gap-2 text-xs">
+              {isConnected ? (
+                <>
+                  <Wifi className="h-3 w-3 text-green-500" />
+                  <span className="text-green-600 dark:text-green-400">{txt.connected}</span>
+                </>
+              ) : connectionState === 'connecting' ? (
+                <>
+                  <Wifi className="h-3 w-3 text-yellow-500 animate-pulse" />
+                  <span className="text-yellow-600 dark:text-yellow-400">{txt.connecting}</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="h-3 w-3 text-red-500" />
+                  <span className="text-red-600 dark:text-red-400">{txt.disconnected}</span>
+                </>
+              )}
+            </div>
+
             {/* Room Code */}
             <div className="text-center mb-6">
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{txt.roomCode}</p>
@@ -282,7 +336,7 @@ function LobbyPage() {
             {/* Players */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
               <AnimatePresence>
-                {players.map((player, index) => {
+                {displayPlayers.map((player, index) => {
                   const isPlayerHost = player.id === lobby.hostId
                   return (
                     <motion.div
@@ -321,7 +375,7 @@ function LobbyPage() {
                   className="w-full gap-2"
                   size="lg"
                   onClick={handleStartGame}
-                  disabled={starting}
+                  disabled={starting || !isConnected}
                 >
                   <Play className="h-5 w-5" />
                   {starting ? txt.starting : txt.startGame}

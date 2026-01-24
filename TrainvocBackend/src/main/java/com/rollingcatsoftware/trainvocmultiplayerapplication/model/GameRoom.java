@@ -16,6 +16,9 @@ public class GameRoom {
     @Column(length = 32)
     private String roomCode;
 
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Player> players = new ArrayList<>();

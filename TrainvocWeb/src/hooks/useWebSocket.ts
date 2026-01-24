@@ -17,6 +17,7 @@ interface UseWebSocketResult {
     leaveRoom: (roomCode: string, playerId: string) => void;
     startGame: (roomCode: string) => void;
     submitAnswer: (roomCode: string, playerId: string, answerIndex: number, answerTime: number) => void;
+    nextQuestion: (roomCode: string, playerId: string) => void;
 }
 
 /**
@@ -99,6 +100,10 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRes
         WebSocketService.submitAnswer(roomCode, playerId, answerIndex, answerTime);
     }, []);
 
+    const nextQuestion = useCallback((roomCode: string, playerId: string) => {
+        WebSocketService.nextQuestion(roomCode, playerId);
+    }, []);
+
     return {
         connectionState,
         isConnected: connectionState === 'connected',
@@ -109,6 +114,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}): UseWebSocketRes
         leaveRoom,
         startGame,
         submitAnswer,
+        nextQuestion,
     };
 }
 
