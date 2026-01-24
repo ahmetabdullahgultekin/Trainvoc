@@ -57,8 +57,8 @@ function ContactPage() {
     {
       icon: Mail,
       label: t.email,
-      value: 'info@rollingcatsoftware.com',
-      href: 'mailto:info@rollingcatsoftware.com',
+      value: 'rollingcat.help@gmail.com',
+      href: 'mailto:rollingcat.help@gmail.com',
     },
     {
       icon: Globe,

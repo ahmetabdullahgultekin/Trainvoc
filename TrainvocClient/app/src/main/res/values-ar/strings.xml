@@ -1,317 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- App Name and Basic Strings -->
-    <string name="app_name">Trainvoc</string>
-    <string name="app_icon_desc">أيقونة التطبيق</string>
-    <string name="home_welcome">مرحباً بك في Trainvoc!</string>
-    <string name="home_subtitle">حسّن مفرداتك الإنجليزية-التركية مع اختبارات مشوقة وأدوات تعلم ذكية.</string>
-    <string name="lottie_desc">ماسة متحركة</string>
-
-    <!-- Navigation -->
-    <string name="start_quiz">بدء اختبار مخصص</string>
-    <string name="story_mode">وضع القصة</string>
-    <string name="settings">الإعدادات</string>
-    <string name="help">المساعدة</string>
-    <string name="stats">الإحصائيات</string>
-    <string name="word_management">إدارة الكلمات</string>
-    <string name="search">بحث</string>
-
-    <!-- Word Management -->
-    <string name="add_new_word">إضافة كلمة جديدة</string>
-    <string name="add_word">إضافة كلمة</string>
-    <string name="word">كلمة</string>
-    <string name="explanation">شرح</string>
-    <string name="word_colon">الكلمة: %1$s</string>
-    <string name="meaning_colon">المعنى: %1$s</string>
-    <string name="level_colon">المستوى: %1$s</string>
-    <string name="category_colon">الفئة: %1$s</string>
-    <string name="last_reviewed_colon">آخر مراجعة: %1$s</string>
-    <string name="stat_id_colon">معرّف الإحصائيات: %1$s</string>
-
-    <!-- Quiz -->
-    <string name="select_level">اختر المستوى</string>
-    <string name="select_category">اختر الفئة</string>
-    <string name="level">المستوى</string>
-    <string name="category">الفئة</string>
-    <string name="na">غير متاح</string>
-    <string name="select_quiz_category">اختر فئة الاختبار</string>
-    <string name="test_your_knowledge_with">اختبر معرفتك بكلمات المستوى %1$s</string>
-    <string name="select_quiz_type">اختر نوع الاختبار</string>
-    <string name="loading_questions">جارٍ تحميل الأسئلة…</string>
-    <string name="which_one_is_the_correct_meaning">ما هو المعنى الصحيح لـ:</string>
-    <string name="next_question">السؤال التالي</string>
-    <string name="score">النقاط</string>
-
-    <!-- Statistics -->
-    <string name="quiz_statistics">إحصائيات الاختبار</string>
-    <string name="total_questions">إجمالي الأسئلة</string>
-    <string name="correct_answers">الإجابات الصحيحة</string>
-    <string name="incorrect_answers">الإجابات الخاطئة</string>
-    <string name="skipped_questions">الأسئلة المتخطاة</string>
-    <string name="success_rate">معدل النجاح</string>
-    <string name="failure_rate">معدل الفشل</string>
-    <string name="skipped_rate">معدل التخطي</string>
-    <string name="total_score">إجمالي النقاط</string>
-    <string name="total_time_spent">إجمالي الوقت المستغرق</string>
-    <string name="last_answered">آخر إجابة</string>
-    <string name="answer_distribution">توزيع الإجابات</string>
-    <string name="correct_colon">صحيح: %1$d</string>
-    <string name="skipped_colon">متخطى: %1$d</string>
-    <string name="incorrect_colon">خاطئ: %1$d</string>
-
-    <!-- About -->
-    <string name="version">الإصدار: %1$s</string>
-    <string name="about_app_desc">Trainvoc هو تطبيق يساعدك على تحسين مفرداتك بطريقة ممتعة.</string>
-    <string name="about_developer">المطوّر</string>
-    <string name="developer_picture">صورة المطوّر</string>
-    <string name="developer_name">أحمد عبد الله غولتكين</string>
-    <string name="developer_title">مطوّر أندرويد</string>
-    <string name="github">GitHub</string>
-    <string name="linkedin">LinkedIn</string>
-    <string name="website">الموقع الإلكتروني</string>
-    <string name="credits_licenses">التراخيص والإسهامات</string>
-    <string name="credits_desc">هذا التطبيق مطوّر باستخدام مكتبات مفتوحة المصدر ومساهمات المجتمع.</string>
-    <string name="view_license">عرض الترخيص</string>
-
-    <!-- FAQ -->
-    <string name="faq_how_to_use">كيف أستخدم التطبيق؟</string>
-    <string name="faq_how_to_use_desc">يمكنك اختيار إحدى الفئات وبدء الاختبارات.</string>
-    <string name="faq_how_to_reset">كيف أعيد تعيين تقدمي؟</string>
-    <string name="faq_how_to_reset_desc">يمكنك إعادة تعيين تقدمك من قائمة الإعدادات.</string>
-    <string name="faq_how_to_theme">كيف أغيّر المظهر؟</string>
-    <string name="faq_how_to_theme_desc">سيتوفر اختيار المظهر قريباً.</string>
-    <string name="faq_how_to_contact">كيف أتواصل مع الدعم؟</string>
-    <string name="faq_how_to_contact_desc">يمكنك الوصول إلينا من قائمة الإعدادات أو المساعدة.</string>
-    <string name="faq_how_to_report_bug">كيف أبلغ عن خطأ؟</string>
-    <string name="faq_how_to_report_bug_desc">يمكنك الإبلاغ عن الأخطاء عبر زر الملاحظات أو عبر البريد الإلكتروني support@trainvoc.com.</string>
-    <string name="faq_how_to_suggest_feature">كيف يمكنني اقتراح ميزة جديدة؟</string>
-    <string name="faq_how_to_suggest_feature_desc">يمكنك اقتراح ميزات باستخدام نموذج الملاحظات أو عبر البريد الإلكتروني.</string>
-    <string name="faq_how_to_backup">كيف أحفظ نسخة احتياطية من بياناتي؟</string>
-    <string name="faq_how_to_backup_desc">ستتوفر ميزات النسخ الاحتياطي والاستعادة قريباً. ترقبوا!</string>
-
-    <!-- Help & Support -->
-    <string name="help_welcome">مرحباً بك في مركز المساعدة! هنا يمكنك العثور على إجابات للأسئلة الشائعة، والتواصل مع الدعم، وإرسال ملاحظاتك.</string>
-    <string name="help_support">المساعدة والدعم</string>
-    <string name="faq_title">الأسئلة الشائعة</string>
-    <string name="contact_support">التواصل مع الدعم</string>
-    <string name="email_support">البريد الإلكتروني</string>
-    <string name="call_support">الهاتف</string>
-    <string name="visit_website">زيارة الموقع</string>
-    <string name="give_feedback">إرسال ملاحظات</string>
-    <string name="redirecting_feedback">إعادة التوجيه إلى صفحة الملاحظات…</string>
-    <string name="submit_feedback">إرسال</string>
-
-    <!-- Settings -->
-    <string name="theme">المظهر</string>
-    <string name="system_default">افتراضي النظام</string>
-    <string name="light">فاتح</string>
-    <string name="dark">داكن</string>
-    <string name="theme_coming_soon">سيتوفر تغيير المظهر قريباً</string>
-    <string name="enable_notifications">تفعيل الإشعارات</string>
-    <string name="notifications_coming_soon">ستتوفر ميزة الإشعارات قريباً</string>
-    <string name="language">اللغة</string>
-    <string name="spanish">الإسبانية</string>
-    <string name="french">الفرنسية</string>
-    <string name="english">الإنجليزية</string>
-    <string name="turkish">التركية</string>
-    <string name="german">الألمانية</string>
-    <string name="arabic">العربية</string>
-    <string name="language_coming_soon">سيتوفر تغيير اللغة قريباً</string>
-    <string name="manage_words">إدارة الكلمات</string>
-    <string name="progress_reset">تم إعادة تعيين التقدم</string>
-    <string name="reset_progress">إعادة تعيين تقدمك</string>
-    <string name="logout">تسجيل الخروج</string>
-    <string name="more_options">المزيد من الخيارات</string>
-    <string name="close">إغلاق</string>
-    <string name="about">حول</string>
-
-    <!-- Levels -->
-    <string name="level_a1">A1</string>
-    <string name="level_a2">A2</string>
-    <string name="level_b1">B1</string>
-    <string name="level_b2">B2</string>
-    <string name="level_c1">C1</string>
-    <string name="level_c2">C2</string>
-    <string name="level_yds">YDS</string>
-    <string name="level_mixed">مختلط</string>
-
-    <!-- Exams -->
-    <string name="exam_yds">YDS</string>
-    <string name="exam_mixed">مختلط</string>
-    <string name="exam_generic">امتحان %1$s</string>
-    <string name="exam_toefl">TOEFL</string>
-    <string name="exam_ielts">IELTS</string>
-    <string name="exam_yokdil">YÖKDİL</string>
-    <string name="exam_kpds">KPDS</string>
-    <string name="test_your_knowledge_with_exam">اختبر معرفتك بالكلمات المطلوبة في امتحان %1$s</string>
-    <string name="test_your_knowledge_with_mixed">اختبر معرفتك بكلمات من جميع المستويات</string>
-
-    <!-- Quiz Types -->
-    <string name="quiz_multiple_choice">اختيار متعدد</string>
-    <string name="quiz_true_false">صح/خطأ</string>
-    <string name="quiz_matching">مطابقة</string>
-    <string name="quiz_generic">اختبار %1$s</string>
-    <string name="quiz_multiple_choice_desc">أجب عن أسئلة الاختيار المتعدد.</string>
-    <string name="quiz_true_false_desc">حدد ما إذا كانت العبارة صحيحة أم خاطئة.</string>
-    <string name="quiz_matching_desc">طابق الأزواج الصحيحة.</string>
-    <string name="quiz_generic_desc">اختبر معرفتك مع %1$s.</string>
-
-    <!-- Quiz Dialog -->
-    <string name="quit_quiz_title">الخروج من الاختبار؟</string>
-    <string name="quit_quiz_message">هل أنت متأكد من رغبتك في الخروج؟ سيتم وضع علامة على هذا السؤال كمتخطى.</string>
-    <string name="yes">نعم</string>
-    <string name="no">لا</string>
-
-    <!-- Welcome Screen -->
-    <string name="username_prompt">أخبرنا باسمك يا صديقي!</string>
-    <string name="your_name">اسمك</string>
-    <string name="choose_language">اختر اللغة</string>
-    <string name="continue_text">متابعة</string>
-    <string name="loading">جارٍ التحميل…</string>
-
-    <!-- Word Search -->
-    <string name="word_not_found">لم يتم العثور على الكلمة.</string>
-    <string name="last_reviewed">آخر مراجعة: %1$s</string>
-    <string name="total_seconds">إجمالي الوقت: %1$d ثانية</string>
-    <string name="exam_history">سجل الامتحانات:</string>
-    <string name="search_word">بحث عن كلمة</string>
-
-    <!-- Notifications -->
-    <string name="send_test_notification">إرسال إشعار تجريبي</string>
-    <string name="notifications_enabled">تم تفعيل الإشعارات</string>
-    <string name="notifications_disabled">تم تعطيل الإشعارات</string>
-
-    <!-- Home and Navigation -->
-    <string name="home">الرئيسية</string>
-    <string name="quiz">اختبار</string>
-    <string name="welcome_title">مرحباً بك يا صديقي!</string>
-    <string name="welcome_description">Trainvoc هو تطبيق لتدريب المفردات يساعدك على تعلم كلمات جديدة بطريقة ممتعة.</string>
-    <string name="lets_get_down_to_business">لنبدأ العمل!</string>
-
-    <!-- Word Statistics -->
-    <string name="unknown_level">مستوى غير معروف</string>
-    <string name="word_stats">سجل إحصائيات الكلمة \"%1$s\"</string>
-    <string name="correct">كم مرة تمت الإجابة عليها بشكل صحيح</string>
-    <string name="wrong">كم مرة تمت الإجابة عليها بشكل خاطئ</string>
-    <string name="skipped">كم مرة تم تخطيها</string>
-    <string name="learned">لقد تعلمت هذه الكلمة من قبل.</string>
-    <string name="not_learned">لم تتعلم هذه الكلمة بعد.</string>
-
-    <!-- Coming Soon -->
-    <string name="coming_soon">قريباً!</string>
-
-    <!-- Stats Screen -->
-    <string name="total_quizzes">إجمالي الاختبارات</string>
-    <string name="avg_time_per_question">متوسط الوقت لكل سؤال</string>
-    <string name="most_wrong_word">الكلمة الأكثر خطأً</string>
-    <string name="daily_correct">صحيح يومي</string>
-    <string name="weekly_correct">صحيح أسبوعي</string>
-    <string name="monthly_correct">صحيح شهري</string>
-    <string name="best_category">أفضل فئة</string>
-    <string name="worst_category">أسوأ فئة</string>
-    <string name="total_words">إجمالي الكلمات</string>
-
-    <!-- Welcome Description Extended -->
-    <string name="welcome_description_2">
-        Trainvoc هو تطبيق لتدريب المفردات يساعدك على تعلم كلمات جديدة بطريقة ممتعة.
-        يمكنك اختبار معرفتك بالاختبارات، وتتبع تقدمك، وإدارة مفرداتك بفعالية.
-    </string>
-
-    <!-- Test Mode Warning -->
-    <string name="test_mode_warning">⚠️ التطبيق لا يزال في مرحلة الاختبار. قد لا تكون بعض الميزات والأزرار نشطة بعد.</string>
-
-    <!-- Level Details -->
-    <string name="level_with_value">المستوى: %1$s</string>
-    <string name="total_words_with_value">إجمالي الكلمات: %1$s</string>
-    <string name="learned_words_with_value">الكلمات المتعلمة: %1$s</string>
-    <string name="progress_with_value">التقدم: %1$s</string>
-    <string name="custom_mode_with_value">الوضع المخصص: %1$s</string>
-    <string name="exam_with_value">الامتحان: %1$s</string>
-    <string name="exam_type_with_value">نوع الامتحان: %1$s</string>
-    <string name="locked_level_warning">مقفل - تعلّم جميع كلمات المستوى السابق أولاً!</string>
-
-    <!-- Home Screen Gamification -->
-    <string name="username_placeholder">مستخدم</string>
-    <string name="daily_tasks">المهام اليومية</string>
-    <string name="task_solve_quizzes">حل 3 اختبارات</string>
-    <string name="task_learn_words">تعلم 10 كلمات جديدة</string>
-    <string name="task_earn_achievement">احصل على إنجاز واحد</string>
-    <string name="achievements">الإنجازات</string>
-    <string name="achievement_first_quiz">الاختبار الأول</string>
-    <string name="achievement_streak_day">يوم السلسلة</string>
-    <string name="achievement_100_words">100 كلمة</string>
-    <string name="categories">الفئات</string>
-    <string name="category_general">عام</string>
-    <string name="category_targeted">مستهدف</string>
-    <string name="category_quick">سريع</string>
-    <string name="quick_access">الوصول السريع</string>
-    <string name="word_of_the_day">كلمة اليوم</string>
-    <string name="favorites">المفضلة</string>
-    <string name="last_quiz">آخر اختبار</string>
-    <string name="xp_progress">%1$d / %2$d XP</string>
-    <string name="task_progress">%1$d/%2$d</string>
-
-    <!-- Notification Strings -->
-    <string name="notification_channel_name">تذكيرات الكلمات</string>
-    <string name="notification_learned_title">هل تتذكر؟</string>
-    <string name="notification_learned_message">هل تتذكر الكلمة \"%1$s\"؟</string>
-    <string name="notification_new_title">هل تعلم؟</string>
-    <string name="notification_new_message">هل تعرف معنى \"%1$s\"؟</string>
-
-    <!--  Accessibility Descriptions -->
-    <string name="decorative_background">صورة خلفية زخرفية</string>
-    <string name="start_quiz_button">بدء الاختبار</string>
-    <string name="achievement_first_place">إنجاز المركز الأول - ميدالية ذهبية</string>
-    <string name="achievement_streak">إنجاز السلسلة اليومية - أيقونة النار</string>
-    <string name="achievement_books">إنجاز الكتب - معلم تعليمي</string>
-    <string name="category_brain_training">فئة تدريب الدماغ</string>
-    <string name="category_target_practice">فئة التدريب المستهدف</string>
-    <string name="category_quick_quiz">فئة الاختبار السريع</string>
-    <string name="quick_access_word_of_day">كلمة اليوم - أيقونة النجمة</string>
-    <string name="quick_access_favorites">المفضلة - أيقونة القلب</string>
-    <string name="quick_access_last_quiz">آخر اختبار - أيقونة الساعة</string>
-    <string name="statistics_icon">معلومات إحصائية</string>
-    <string name="trophy_icon">أيقونة الكأس</string>
-
-    <!-- Dictionary & Word Detail Screen -->
-    <string name="no_words_found">لم يتم العثور على كلمات</string>
-    <string name="try_different_search">جرب مصطلح بحث آخر</string>
-    <string name="statistics">الإحصائيات</string>
-    <string name="success_rate_percent">معدل النجاح: %1$d%%</string>
-
-    <!-- Notification Channels -->
-    <string name="channel_daily_reminder">التذكيرات اليومية</string>
-    <string name="channel_daily_reminder_desc">تذكيرات تعليمية يومية لممارسة المفردات</string>
-    <string name="channel_streak_alert">تنبيهات السلسلة</string>
-    <string name="channel_streak_alert_desc">إشعارات حول سلسلة التعلم الخاصة بك</string>
-    <string name="channel_word_of_day">كلمة اليوم</string>
-    <string name="channel_word_of_day_desc">إشعار الكلمة المميزة اليومي</string>
-    <string name="channel_general">عام</string>
-    <string name="channel_general_desc">إشعارات التطبيق العامة</string>
-
-    <!-- Daily Reminder Notifications -->
-    <string name="notification_daily_title">حان وقت الممارسة! 📚</string>
-    <string name="notification_daily_message">واصل سلسلة التعلم الخاصة بك اليوم</string>
-    <string name="notification_daily_message_expanded">لا تنس أن تمارس اليوم! حافظ على سلسلة التعلم الخاصة بك نشطة وحسّن مفرداتك.</string>
-
-    <!-- Streak Alert Notifications -->
-    <string name="notification_streak_danger_title">🔥 لا تكسر سلسلتك التي استمرت %1$d يوم!</string>
-    <string name="notification_streak_danger_message">لم تمارس اليوم. حافظ على سلسلتك التي استمرت %1$d يوم نشطة!</string>
-    <string name="notification_streak_milestone_title">🎉 رائع! سلسلة %1$d يوم!</string>
-    <string name="notification_streak_milestone_message">تهانينا على سلسلة التعلم الخاصة بك التي استمرت %1$d يوم! استمر في ذلك!</string>
-
-    <!-- Word of the Day Notifications -->
-    <string name="notification_wotd_title">📖 كلمة اليوم</string>
-    <string name="notification_wotd_message">%1$s - %2$s\nالمستوى: %3$s</string>
-
-    <!-- Notification Settings -->
-    <string name="notification_settings">إعدادات الإشعارات</string>
-    <string name="enable_daily_reminders">التذكيرات اليومية</string>
-    <string name="daily_reminders_desc">احصل على تذكيرات للممارسة كل يوم</string>
-    <string name="enable_streak_alerts">تنبيهات السلسلة</string>
-    <string name="streak_alerts_desc">احصل على إشعارات حول سلاسل التعلم الخاصة بك</string>
-    <string name="enable_word_of_day">كلمة اليوم</string>
-    <string name="word_of_day_desc">احصل على كلمة مميزة يومياً</string>
-    <string name="notification_time">وقت الإشعار</string>
-    <string name="set_time">تعيين الوقت</string>
-</resources>
