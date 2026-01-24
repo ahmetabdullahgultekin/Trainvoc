@@ -21,6 +21,7 @@ describe('RoomService', () => {
         roomCode: 'ABC123',
         hostId: 'player-1',
         started: false,
+        currentQuestionIndex: 0,
         players: [
             { id: 'player-1', name: 'Host', avatarId: 1, score: 0 },
             { id: 'player-2', name: 'Player2', avatarId: 2, score: 0 },
@@ -202,13 +203,13 @@ describe('RoomService', () => {
             expect(api.post).toHaveBeenCalledWith('/api/game/rooms/ABC123/start');
         });
 
-        it('includes hashed password in URL when provided', async () => {
+        it('includes password in URL when provided', async () => {
             vi.mocked(api.post).mockResolvedValueOnce({ data: {} });
 
             await RoomService.startGame('ABC123', 'secret');
 
             expect(api.post).toHaveBeenCalledWith(
-                '/api/game/rooms/ABC123/start?hashedPassword=hashed-secret'
+                '/api/game/rooms/ABC123/start?password=secret'
             );
         });
     });

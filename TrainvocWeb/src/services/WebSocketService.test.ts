@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { WebSocketService } from './WebSocketService';
-import type { ConnectionState, GameEventHandlers } from './WebSocketService';
+import type { GameEventHandlers } from './WebSocketService';
 
 // Mock WebSocket
 class MockWebSocket {
@@ -76,9 +76,10 @@ describe('WebSocketService', () => {
             },
         });
 
-        // Disconnect any previous connection
+        // Disconnect any previous connection and clear state
         WebSocketService.disconnect();
         WebSocketService.clearHandlers();
+        WebSocketService.clearQueue();
     });
 
     afterEach(() => {

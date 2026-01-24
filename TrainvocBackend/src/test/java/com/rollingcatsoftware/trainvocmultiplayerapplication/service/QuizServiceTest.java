@@ -37,25 +37,21 @@ class QuizServiceTest {
         testWords = new ArrayList<>();
 
         Word word1 = new Word();
-        word1.setId(1L);
         word1.setWord("hello");
         word1.setMeaning("merhaba");
         word1.setLevel(TEST_LEVEL);
 
         Word word2 = new Word();
-        word2.setId(2L);
         word2.setWord("goodbye");
         word2.setMeaning("hoşça kal");
         word2.setLevel(TEST_LEVEL);
 
         Word word3 = new Word();
-        word3.setId(3L);
         word3.setWord("thank you");
         word3.setMeaning("teşekkür ederim");
         word3.setLevel(TEST_LEVEL);
 
         Word word4 = new Word();
-        word4.setId(4L);
         word4.setWord("please");
         word4.setMeaning("lütfen");
         word4.setLevel(TEST_LEVEL);
@@ -92,7 +88,7 @@ class QuizServiceTest {
             QuizQuestion question = quizService.generateQuestion(TEST_LEVEL, OPTION_COUNT);
 
             List<String> words = testWords.stream().map(Word::getWord).toList();
-            assertTrue(words.contains(question.getQuestion()));
+            assertTrue(words.contains(question.getEnglish()));
         }
 
         @Test
@@ -103,7 +99,7 @@ class QuizServiceTest {
 
             QuizQuestion question = quizService.generateQuestion(TEST_LEVEL, OPTION_COUNT);
 
-            assertTrue(question.getOptions().contains(question.getCorrectAnswer()));
+            assertTrue(question.getOptions().contains(question.getCorrectMeaning()));
         }
 
         @Test
@@ -191,8 +187,8 @@ class QuizServiceTest {
 
             for (QuizQuestion question : questions) {
                 assertNotNull(question);
-                assertNotNull(question.getQuestion());
-                assertNotNull(question.getCorrectAnswer());
+                assertNotNull(question.getEnglish());
+                assertNotNull(question.getCorrectMeaning());
                 assertEquals(OPTION_COUNT, question.getOptions().size());
             }
         }
