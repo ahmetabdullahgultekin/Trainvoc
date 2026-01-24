@@ -150,6 +150,13 @@ class WebSocketServiceClass {
     }
 
     /**
+     * Clear the message queue. Useful for testing.
+     */
+    clearQueue(): void {
+        this.messageQueue = [];
+    }
+
+    /**
      * Subscribe to connection state changes.
      */
     onStateChange(listener: (state: ConnectionState) => void): () => void {

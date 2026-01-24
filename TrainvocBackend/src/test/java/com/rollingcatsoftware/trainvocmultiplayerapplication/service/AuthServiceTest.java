@@ -62,7 +62,7 @@ class AuthServiceTest {
         testUser = new User(USERNAME, EMAIL, ENCODED_PASSWORD);
         testUser.setId(USER_ID);
         testUser.setDisplayName(DISPLAY_NAME);
-        testUser.setRoles(Set.of("ROLE_USER"));
+        testUser.setRoles(Set.of(User.Role.USER));
     }
 
     @Nested
