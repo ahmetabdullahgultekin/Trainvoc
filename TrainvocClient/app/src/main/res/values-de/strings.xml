@@ -3,7 +3,7 @@
     <!-- App Name and Basic Strings -->
     <string name="app_name">Trainvoc</string>
     <string name="app_icon_desc">App-Symbol</string>
-    <string name="home_welcome">Willkommen bei TrainVoc! 🚀</string>
+    <string name="home_welcome">Willkommen bei Trainvoc!</string>
     <string name="home_subtitle">Verbessern Sie Ihren englisch-türkischen Wortschatz mit spannenden Quiz und intelligenten Lernwerkzeugen.</string>
     <string name="lottie_desc">Animierter Diamant</string>
 

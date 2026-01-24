@@ -1,5 +1,5 @@
 {
-  "welcome": "Welcome to TrainVoc!",
+  "welcome": "Welcome to Trainvoc!",
   "createRoom": "Create Room",
   "joinRoom": "Join Room",
   "roomDetails": "Room Details",
@@ -33,14 +33,14 @@
   "gameStarting": "Starting game, please wait...",
   "unexpectedError": "An unexpected error occurred. Please refresh the page or return to the homepage.",
   "language": "Language",
-  "footer": "© 2025 TrainVoc. All rights reserved.",
+  "footer": "© 2024-2026 Trainvoc. All rights reserved.",
   "description": "Make English-Turkish word memorization fun and social!",
   "about": "About",
   "leaderboard": "Leaderboard",
   "score": "Score",
   "loading": "Loading...",
   "error": "An error occurred. Please try again.",
-  "aboutTitle": "TrainVoc Platform",
+  "aboutTitle": "Trainvoc Platform",
   "aboutDesc": "A next-generation platform that makes English-Turkish word memorization fun, social, and sustainable.",
   "multiRoom": "Multi Room",
   "multiRoomDesc": "Create and join rooms at different levels, interact with the community.",
@@ -48,6 +48,6 @@
   "educationalContentDesc": "Boost your learning with word cards, quizzes, and statistics.",
   "advancedTech": "Advanced Technology",
   "advancedTechDesc": "Learn anywhere with a modern interface, fast infrastructure, and mobile compatibility.",
-  "whyTrainvoc": "Why TrainVoc?",
-  "whyTrainvocDesc": "TrainVoc goes beyond classic memorization apps, making learning permanent and fun with social competition and gamification. With advanced statistics, personalized quizzes, and community support, it appeals to users of all levels."
+  "whyTrainvoc": "Why Trainvoc?",
+  "whyTrainvocDesc": "Trainvoc goes beyond classic memorization apps, making learning permanent and fun with social competition and gamification. With advanced statistics, personalized quizzes, and community support, it appeals to users of all levels."
 }
