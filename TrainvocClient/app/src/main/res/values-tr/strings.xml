@@ -153,7 +153,7 @@
     <string name="not_learned">Bu Kelime Henüz Öğrenilmedi</string>
     <string name="coming_soon">Yakında!</string>
     <string name="faq_how_to_report_bug">Uygulamada bir hata nasıl bildirilir?</string>
-    <string name="faq_how_to_report_bug_desc">Hataları geri bildirim butonu ile veya support@trainvoc.com adresine e-posta göndererek bildirebilirsiniz.</string>
+    <string name="faq_how_to_report_bug_desc">Hataları geri bildirim butonu ile veya rollingcat.help@gmail.com adresine e-posta göndererek bildirebilirsiniz.</string>
     <string name="faq_how_to_suggest_feature">Yeni bir özellik nasıl önerilir?</string>
     <string name="faq_how_to_suggest_feature_desc">Geri bildirim formunu kullanarak veya e-posta ile bize ulaşarak yeni özellikler önerebilirsiniz.</string>
     <string name="faq_how_to_backup">Verilerimi nasıl yedeklerim?</string>

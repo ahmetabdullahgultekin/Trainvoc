@@ -13,6 +13,8 @@ const MobileAppPage = lazy(() => import('./pages/MobileAppPage'))
 const PlayLayout = lazy(() => import('./pages/PlayLayout'))
 const GameMenuPage = lazy(() => import('./pages/GameMenuPage'))
 const OfflinePage = lazy(() => import('./pages/OfflinePage'))
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'))
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'))
 
 // Loading spinner
 function LoadingSpinner() {
@@ -81,6 +83,22 @@ function App() {
               element={
                 <PageWrapper>
                   <MobileAppPage />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/privacy"
+              element={
+                <PageWrapper>
+                  <PrivacyPolicyPage />
+                </PageWrapper>
+              }
+            />
+            <Route
+              path="/terms"
+              element={
+                <PageWrapper>
+                  <TermsOfServicePage />
                 </PageWrapper>
               }
             />

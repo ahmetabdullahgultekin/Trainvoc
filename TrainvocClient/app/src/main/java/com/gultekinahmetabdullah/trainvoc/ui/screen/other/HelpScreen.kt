@@ -156,11 +156,11 @@ fun HelpScreen(navController: NavController) {
                         ImprovedContactItem(
                             icon = Icons.Default.Email,
                             title = stringResource(id = R.string.email_support),
-                            detail = "support@trainvoc.com",
+                            detail = "rollingcat.help@gmail.com",
                             onClick = {
                                 val emailIntent = Intent(
                                     Intent.ACTION_SENDTO,
-                                    "mailto:support@trainvoc.com".toUri()
+                                    "mailto:rollingcat.help@gmail.com".toUri()
                                 )
                                 context.startActivity(emailIntent)
                             }
@@ -182,11 +182,11 @@ fun HelpScreen(navController: NavController) {
                         ImprovedContactItem(
                             icon = Icons.Default.Web,
                             title = stringResource(id = R.string.visit_website),
-                            detail = "www.trainvoc.com",
+                            detail = "trainvoc.rollingcatsoftware.com",
                             onClick = {
                                 val webIntent = Intent(
                                     Intent.ACTION_VIEW,
-                                    "https://www.trainvoc.com".toUri()
+                                    "https://trainvoc.rollingcatsoftware.com".toUri()
                                 )
                                 context.startActivity(webIntent)
                             }

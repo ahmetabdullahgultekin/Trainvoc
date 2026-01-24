@@ -58,7 +58,7 @@ export function Footer() {
                 <Twitter className="h-5 w-5" />
               </a>
               <a
-                href="mailto:contact@trainvoc.com"
+                href="mailto:rollingcat.help@gmail.com"
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 <Mail className="h-5 w-5" />
@@ -128,7 +128,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {currentYear} Trainvoc. {currentLang === 'tr' ? 'Tüm hakları saklıdır.' : 'All rights reserved.'}
+              © 2024-{currentYear} Trainvoc. {currentLang === 'tr' ? 'Tüm hakları saklıdır.' : 'All rights reserved.'}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {currentLang === 'tr' ? 'Sevgiyle yapıldı' : 'Made with'} ❤️ {currentLang === 'tr' ? 'Türkiye\'de' : 'in Turkey'}

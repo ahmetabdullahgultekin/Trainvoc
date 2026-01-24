@@ -108,8 +108,8 @@
 | **Copyright Holder** | Ahmet Abdullah Gultekin |
 | **Copyright Years** | 2024-2026 |
 | **Copyright Notice** | `Copyright (c) 2024-2026 Ahmet Abdullah Gultekin` |
-| **Privacy Policy** | TODO: Create at `/privacy-policy` |
-| **Terms of Service** | TODO: Create at `/terms` |
+| **Privacy Policy** | `/privacy` - TrainvocWeb/src/pages/PrivacyPolicyPage.tsx |
+| **Terms of Service** | `/terms` - TrainvocWeb/src/pages/TermsOfServicePage.tsx |
 
 ---
 
@@ -272,13 +272,13 @@ When making branding updates, verify:
 
 - [x] Product name uses consistent casing (`Trainvoc`)
 - [x] Copyright year is current (`2024-2026`)
-- [ ] Support email updated to `rollingcat.help@gmail.com`
-- [ ] Website URLs point to `trainvoc.rollingcatsoftware.com`
+- [x] Support email updated to `rollingcat.help@gmail.com`
+- [x] Website URLs point to `trainvoc.rollingcatsoftware.com`
 - [ ] Package ID migrated to `com.rollingcatsoftware.trainvoc`
-- [ ] Remove incomplete language translations (ES, FR, DE, AR)
-- [ ] Unified tagline applied across all platforms
-- [ ] Privacy Policy created
-- [ ] Terms of Service created
+- [x] Remove incomplete language translations (ES, FR, DE, AR)
+- [x] Unified tagline applied across all platforms
+- [x] Privacy Policy created
+- [x] Terms of Service created
 - [x] Translations exist for all user-facing strings (EN, TR)
 - [x] License information is consistent across all files
 
@@ -288,16 +288,16 @@ When making branding updates, verify:
 
 | Task | Priority | Status |
 |------|----------|--------|
-| Update support email in all files | High | TODO |
-| Create Privacy Policy page | High | TODO |
-| Create Terms of Service page | High | TODO |
+| Update support email in all files | High | ✅ DONE |
+| Create Privacy Policy page | High | ✅ DONE |
+| Create Terms of Service page | High | ✅ DONE |
 | Migrate Android package ID | Medium | TODO |
-| Remove incomplete translations | Medium | TODO |
-| Update website URLs in meta tags | Medium | TODO |
-| Unify tagline across all pages | Medium | TODO |
+| Remove incomplete translations | Medium | ✅ DONE |
+| Update website URLs in meta tags | Medium | ✅ DONE |
+| Unify tagline across all pages | Medium | ✅ DONE |
 
 ---
 
-*Last Updated: January 2026*
+*Last Updated: January 25, 2026*
 *Maintainer: Ahmet Abdullah Gultekin*
 *Company: Rolling Cat Software*
