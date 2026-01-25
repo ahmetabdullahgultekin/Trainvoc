@@ -66,6 +66,7 @@ import kotlin.math.roundToInt
 fun ProfileScreen(
     onBackClick: () -> Unit = {},
     onEditProfile: () -> Unit = {},
+    onSignIn: () -> Unit = {},
     onSignOut: () -> Unit = {},
     onViewAchievements: () -> Unit = {},
     onViewLeaderboard: () -> Unit = {},
@@ -88,6 +89,7 @@ fun ProfileScreen(
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
     val username = prefs.getString("username", null) ?: "User"
     val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
+    val isLoggedIn = prefs.getString("email", null) != null || prefs.getString("auth_token", null) != null
     var currentAvatar by remember {
         mutableStateOf(prefs.getString("avatar", com.gultekinahmetabdullah.trainvoc.constants.Avatars.getRandomAvatar()) ?: "\uD83E\uDD8A")
     }
@@ -197,7 +199,9 @@ fun ProfileScreen(
                         onEditProfile = { showEditDialog.value = true },
                         onViewLeaderboard = onViewLeaderboard,
                         onSettings = onSettings,
+                        onSignIn = onSignIn,
                         onSignOut = onSignOut,
+                        isLoggedIn = isLoggedIn,
                         modifier = Modifier.padding(horizontal = Spacing.md)
                     )
                 }
@@ -757,14 +761,16 @@ fun AchievementsSection(
 }
 
 /**
- * Actions Section - Edit Profile, View Leaderboard, Settings, Sign Out
+ * Actions Section - Edit Profile, View Leaderboard, Settings, Sign In/Sign Out
  */
 @Composable
 fun ActionsSection(
     onEditProfile: () -> Unit,
     onViewLeaderboard: () -> Unit,
     onSettings: () -> Unit,
+    onSignIn: () -> Unit,
     onSignOut: () -> Unit,
+    isLoggedIn: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -772,7 +778,7 @@ fun ActionsSection(
         verticalArrangement = Arrangement.spacedBy(Spacing.sm)
     ) {
         Text(
-            text = "Actions",
+            text = stringResource(id = R.string.actions),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -782,31 +788,40 @@ fun ActionsSection(
         // Edit Profile
         ActionCard(
             icon = Icons.Default.Edit,
-            title = "Edit Profile",
+            title = stringResource(id = R.string.edit_profile),
             onClick = onEditProfile
         )
 
         // View Leaderboard
         ActionCard(
             icon = Icons.Default.Leaderboard,
-            title = "View Leaderboard",
+            title = stringResource(id = R.string.view_leaderboard),
             onClick = onViewLeaderboard
         )
 
         // Settings
         ActionCard(
             icon = Icons.Default.Settings,
-            title = "Settings",
+            title = stringResource(id = R.string.settings),
             onClick = onSettings
         )
 
-        // Sign Out
-        ActionCard(
-            icon = Icons.Default.Logout,
-            title = "Sign Out",
-            onClick = onSignOut,
-            isDestructive = true
-        )
+        // Sign In or Sign Out based on auth state
+        if (isLoggedIn) {
+            ActionCard(
+                icon = Icons.Default.Logout,
+                title = stringResource(id = R.string.sign_out),
+                onClick = onSignOut,
+                isDestructive = true
+            )
+        } else {
+            ActionCard(
+                icon = Icons.Default.Login,
+                title = stringResource(id = R.string.sign_in),
+                onClick = onSignIn,
+                isPrimary = true
+            )
+        }
     }
 }
 
@@ -819,18 +834,24 @@ private fun ActionCard(
     title: String,
     onClick: () -> Unit,
     isDestructive: Boolean = false,
+    isPrimary: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val iconColor = if (isDestructive) {
-        MaterialTheme.colorScheme.error
-    } else {
-        MaterialTheme.colorScheme.primary
+    val iconColor = when {
+        isDestructive -> MaterialTheme.colorScheme.error
+        isPrimary -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.primary
     }
 
-    val textColor = if (isDestructive) {
-        MaterialTheme.colorScheme.error
-    } else {
-        MaterialTheme.colorScheme.onSurface
+    val textColor = when {
+        isDestructive -> MaterialTheme.colorScheme.error
+        isPrimary -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.onSurface
+    }
+
+    val containerColor = when {
+        isPrimary -> MaterialTheme.colorScheme.primaryContainer
+        else -> MaterialTheme.colorScheme.surface
     }
 
     Card(
@@ -839,7 +860,7 @@ private fun ActionCard(
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = Elevation.level1),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = containerColor
         )
     ) {
         Row(

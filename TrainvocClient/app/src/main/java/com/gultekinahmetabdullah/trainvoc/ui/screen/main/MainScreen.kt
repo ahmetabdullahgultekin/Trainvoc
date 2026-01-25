@@ -30,6 +30,8 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.navigation.gamesNavGraph
 import com.gultekinahmetabdullah.trainvoc.navigation.multiplayerNavGraph
+import com.gultekinahmetabdullah.trainvoc.ui.screen.auth.LoginScreen
+import com.gultekinahmetabdullah.trainvoc.ui.screen.auth.RegisterScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordManagementScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppBottomBar
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppNavigationDrawerContent
@@ -198,6 +200,28 @@ fun MainScreen(
                 composable(Route.USERNAME) {
                     UsernameScreen(navController)
                 }
+                // Authentication screens
+                composable(Route.LOGIN) {
+                    LoginScreen(
+                        onLoginSuccess = {
+                            navController.navigate(Route.HOME) {
+                                popUpTo(Route.HOME) { inclusive = true }
+                            }
+                        },
+                        onNavigateToRegister = { navController.navigate(Route.REGISTER) },
+                        onSkipLogin = { navController.popBackStack() }
+                    )
+                }
+                composable(Route.REGISTER) {
+                    RegisterScreen(
+                        onRegisterSuccess = {
+                            navController.navigate(Route.HOME) {
+                                popUpTo(Route.HOME) { inclusive = true }
+                            }
+                        },
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
                 composable(Route.SETTINGS) {
                     SettingsScreen(navController, settingsViewModel)
                 }
@@ -261,6 +285,7 @@ fun MainScreen(
                         onEditProfile = { /* Handled by dialog inside ProfileScreen */ },
                         onViewLeaderboard = { navController.navigate(Route.LEADERBOARD) },
                         onSettings = { navController.navigate(Route.SETTINGS) },
+                        onSignIn = { navController.navigate(Route.LOGIN) },
                         onSignOut = {
                             // Clear user data and navigate to home
                             val prefs = navController.context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
