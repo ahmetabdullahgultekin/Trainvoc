@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 5 | 15 | 0 | 20 |
+| 🔴 CRITICAL | 4 | 16 | 0 | 20 |
 | 🟠 HIGH | 9 | 18 | 1 | 28 |
 | 🟡 MEDIUM | 36 | 24 | 1 | 61 |
 | 🟢 LOW | 26 | 7 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **97** | **67** | **3** | **167** |
+| **TOTAL** | **96** | **68** | **3** | **167** |
 
 ---
 
@@ -68,7 +68,7 @@
 | 155 | Android | `ProfileScreen.kt:144-159` | 0% Mastery displayed - now uses learnedWords/totalWords for better UX | ✅ FIXED 2026-01-25 |
 | 156 | Android | `ProfileScreen.kt:144-159` | 0m Study Time - now shows total time when today's time is 0 | ✅ FIXED 2026-01-25 |
 | 157 | Android | `StatsScreen.kt` | Stats inconsistency: Profile shows TODAY's quizzes, Stats shows TOTAL | ⚪ BY DESIGN |
-| 158 | Android | Navigation | No Login/Register access point visible in app - only Sign Out shown | ⬜ OPEN |
+| 158 | Android | Navigation | No Login/Register access point visible in app - only Sign Out shown | ✅ FIXED 2026-01-25 (added Sign In button, connected Login/Register screens) |
 
 ---
 
