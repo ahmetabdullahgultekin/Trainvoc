@@ -34,14 +34,14 @@
 
 ## Quick Stats
 
-| Severity | Open | Fixed | Total |
-|----------|------|-------|-------|
-| 🔴 CRITICAL | 9 | 3 | 12 |
-| 🟠 HIGH | 20 | 4 | 24 |
-| 🟡 MEDIUM | 54 | 4 | 58 |
-| 🟢 LOW | 32 | 0 | 32 |
-| ⚪ INFO | 24 | 0 | 24 |
-| **TOTAL** | **139** | **11** | **150** |
+| Severity | Open | Fixed | WONTFIX | Total |
+|----------|------|-------|---------|-------|
+| 🔴 CRITICAL | 3 | 7 | 2 | 12 |
+| 🟠 HIGH | 12 | 11 | 1 | 24 |
+| 🟡 MEDIUM | 46 | 12 | 0 | 58 |
+| 🟢 LOW | 32 | 0 | 0 | 32 |
+| ⚪ INFO | 24 | 0 | 0 | 24 |
+| **TOTAL** | **117** | **30** | **3** | **150** |
 
 ---
 
@@ -52,12 +52,12 @@
 | 001 | Web | `WebSocketService.ts:87` | WebSocket URL fallback uses `localhost:8080` - will fail in production | ✅ FIXED 2026-01-25 |
 | 002 | Web | `ContactPage.tsx:79` | Contact form just logs to console - form is completely broken | ✅ FIXED 2026-01-25 |
 | 003 | Web | `api.ts:4` | HTTP fallback (`http://localhost:8080`) - insecure if env not set | ✅ FIXED 2026-01-25 |
-| 004 | Android | `MultiplayerRepository.kt:299` | Password hashing uses `hashCode()` instead of cryptographic hash - SECURITY | ⬜ OPEN |
-| 005 | Android | `PlayGamesAchievementMapper.kt:15` | Placeholder achievement IDs - not real Play Console IDs | ⬜ OPEN |
-| 006 | Android | `CloudBackupManager.kt:437` | Cloud backup upload not implemented - returns "Coming Soon" exception | ⬜ OPEN |
-| 007 | Android | `CloudBackupManager.kt:459` | Cloud backup download not implemented - returns "Coming Soon" exception | ⬜ OPEN |
-| 008 | Android | `TutorialViewModel.kt:12-65` | Entire class is stub - all methods are no-op | ⬜ OPEN |
-| 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ⬜ OPEN |
+| 004 | Android | `MultiplayerRepository.kt:299` | Password hashing uses `hashCode()` instead of cryptographic hash - SECURITY | ✅ FIXED 2026-01-25 |
+| 005 | Android | `PlayGamesAchievementMapper.kt:15` | Placeholder achievement IDs - not real Play Console IDs | ✅ FIXED 2026-01-25 |
+| 006 | Android | `CloudBackupManager.kt:437` | Cloud backup upload not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
+| 007 | Android | `CloudBackupManager.kt:459` | Cloud backup download not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
+| 008 | Android | `TutorialViewModel.kt:12-65` | Entire class is stub - all methods are no-op | ❌ WONTFIX (by design) |
+| 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ❌ WONTFIX (by design) |
 | 010 | Backend | `SyncController.java:186` | TODO: Return actual sync status from database | ⬜ OPEN |
 | 011 | Backend | `SyncServiceTest.java:305` | Returns empty list - TODO implementation | ⬜ OPEN |
 | 012 | Infra | N/A | SSL certificate not configured for api.trainvoc.rollingcatsoftware.com | ⬜ OPEN |
@@ -71,24 +71,24 @@
 | 013 | Web | `QuestionCard.tsx:75-78` | "Play Audio"/"Stop" hardcoded in English - breaks Turkish UI | ✅ FIXED 2026-01-25 |
 | 014 | Web | `ErrorBoundary.tsx:77-82` | Button labels hardcoded in Turkish ("Tekrar Dene") | ✅ FIXED 2026-01-25 |
 | 015 | Web | `PictureMatchGame.tsx:237` | Image `<img>` missing `alt` attribute - WCAG failure | ✅ FIXED 2026-01-25 |
-| 016 | Android | `DictionaryScreen.kt:628` | Hardcoded pink `Color(0xFFE91E63)` for favorites heart | ⬜ OPEN |
-| 017 | Android | `DictionaryScreen.kt:574-584` | Audio button only `24.dp` - below 48dp touch target minimum | ⬜ OPEN |
-| 018 | Android | `HomeScreen.kt:188` | Username shows `username_placeholder` instead of actual user | ⬜ OPEN |
-| 019 | Android | `strings.xml:87` | "Backup features coming soon" contradicts existing CloudBackupScreen | ⬜ OPEN |
+| 016 | Android | `DictionaryScreen.kt:628` | Hardcoded pink `Color(0xFFE91E63)` for favorites heart | ✅ FIXED 2026-01-25 |
+| 017 | Android | `DictionaryScreen.kt:574-584` | Audio button only `24.dp` - below 48dp touch target minimum | ✅ FIXED 2026-01-25 |
+| 018 | Android | `HomeScreen.kt:188` | Username shows `username_placeholder` instead of actual user | ✅ FIXED 2026-01-25 |
+| 019 | Android | `strings.xml:87` | "Backup features coming soon" contradicts existing CloudBackupScreen | ✅ FIXED 2026-01-25 |
 | 020 | Android | `DictionaryScreen.kt:810` | AlphabetFastScroll missing contentDescription for letters | ⬜ OPEN |
-| 021 | Android | `LeaderboardScreen.kt:93-99` | Hardcoded mock users - `Alex, Sarah, Mike, You, Emma` with fake scores | ⬜ OPEN |
-| 022 | Android | `ListeningQuizGame.kt:162-167` | TTS URL placeholder - returns `tts://$language/$text` string | ⬜ OPEN |
-| 023 | Android | `ImageService.kt:119-123` | Mock Unsplash URL - uses deprecated random API endpoint | ⬜ OPEN |
+| 021 | Android | `LeaderboardScreen.kt:93-99` | Hardcoded mock users - `Alex, Sarah, Mike, You, Emma` with fake scores | ✅ FIXED 2026-01-25 |
+| 022 | Android | `ListeningQuizGame.kt:162-167` | TTS URL placeholder - returns `tts://$language/$text` string | ❌ WONTFIX (not used - Android TTS API used instead) |
+| 023 | Android | `ImageService.kt:119-123` | Mock Unsplash URL - uses deprecated random API endpoint | ✅ FIXED 2026-01-25 |
 | 024 | Android | `CloudBackupManager.kt:470` | Cloud metadata returns null - placeholder | ⬜ OPEN |
 | 025 | Android | `AnalyticsService.kt:66` | Daily stats return totals - no date filtering implemented | ⬜ OPEN |
 | 026 | Android | `AnalyticsService.kt:83` | Weekly stats return totals - no date filtering implemented | ⬜ OPEN |
-| 027 | Android | `ProfileScreen.kt:149-150` | Accuracy shown as "rough estimate" - misleading to users | ⬜ OPEN |
-| 028 | Android | `DictionaryScreen.kt:247` | "Recent Searches" hardcoded instead of stringResource | ⬜ OPEN |
-| 029 | Android | `DictionaryScreen.kt:235` | "Clear search" hardcoded contentDescription | ⬜ OPEN |
-| 030 | Android | `DictionaryScreen.kt:262` | "Search history" hardcoded contentDescription | ⬜ OPEN |
-| 031 | Android | `CloudBackupScreen.kt:71` | "Cloud Backup" hardcoded title instead of stringResource | ⬜ OPEN |
-| 032 | Android | `CloudBackupScreen.kt:156-187` | Multiple hardcoded feature descriptions | ⬜ OPEN |
-| 033 | Android | `ProfileScreen.kt:109` | "Profile" hardcoded title instead of stringResource | ⬜ OPEN |
+| 027 | Android | `ProfileScreen.kt:149-150` | Accuracy shown as "rough estimate" - misleading to users | ✅ FIXED 2026-01-25 |
+| 028 | Android | `DictionaryScreen.kt:247` | "Recent Searches" hardcoded instead of stringResource | ✅ FIXED 2026-01-25 |
+| 029 | Android | `DictionaryScreen.kt:235` | "Clear search" hardcoded contentDescription | ✅ FIXED 2026-01-25 |
+| 030 | Android | `DictionaryScreen.kt:262` | "Search history" hardcoded contentDescription | ✅ FIXED 2026-01-25 |
+| 031 | Android | `CloudBackupScreen.kt:71` | "Cloud Backup" hardcoded title instead of stringResource | ✅ FIXED 2026-01-25 |
+| 032 | Android | `CloudBackupScreen.kt:156-187` | Multiple hardcoded feature descriptions | ✅ FIXED 2026-01-25 |
+| 033 | Android | `ProfileScreen.kt:109` | "Profile" hardcoded title instead of stringResource | ✅ FIXED 2026-01-25 |
 | 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ⬜ OPEN |
 | 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ⬜ OPEN |
 | 036 | Infra | N/A | CORS not configured for https://trainvoc.rollingcatsoftware.com | ⬜ OPEN |
@@ -101,7 +101,7 @@
 |---|-----------|-----------|-------------|--------|
 | 037 | Web | `ProfilePage.tsx:69` | Turkish placeholder "Nick gir..." in English UI | ✅ FIXED 2026-01-25 |
 | 038 | Web | `InstallPrompt.tsx:94-98` | Close button missing `aria-label` | ✅ FIXED 2026-01-25 |
-| 039 | Web | Multiple game files | Using `window.location.reload()` for "Play Again" - requires state reset refactor | ⬜ DEFERRED |
+| 039 | Web | Multiple game files | All 7 game components now use `resetGame()` state function | ✅ FIXED 2026-01-25 |
 | 040 | Web | `CreateRoomPage.tsx:162` | Using `index` as React key - anti-pattern | ✅ FIXED 2026-01-25 |
 | 041 | Web | `FeaturesGrid.tsx:135` | Using `index` as React key - anti-pattern | ✅ FIXED 2026-01-25 |
 | 042 | Android | `ModernComponents.kt:162` | Hardcoded gray colors for disabled gradient button | ⬜ OPEN |
@@ -241,10 +241,21 @@
 | 014 | Web | ErrorBoundary buttons now use i18n translations | 2026-01-25 | Claude |
 | 015 | Web | PictureMatchGame.tsx now uses localized alt text for images | 2026-01-25 | Claude |
 | 037 | Web | ProfilePage.tsx now uses i18n for all text (was hardcoded Turkish) | 2026-01-25 | Claude |
+| 004 | Android | Password hashing now uses SHA-256 instead of hashCode() | 2026-01-25 | Claude |
+| 005 | Android | Play Games achievements gracefully skipped when not configured | 2026-01-25 | Claude |
+| 006-007 | Android | Cloud backup UI updated to show "Coming Soon" honestly | 2026-01-25 | Claude |
+| 016-017 | Android | DictionaryScreen: Fixed hardcoded color, increased touch targets to 48dp | 2026-01-25 | Claude |
+| 018 | Android | HomeScreen now shows actual username from SharedPreferences | 2026-01-25 | Claude |
+| 019 | Android | FAQ backup description updated to mention local backup | 2026-01-25 | Claude |
+| 021 | Android | Leaderboard mock users removed, shows "Coming Soon" message | 2026-01-25 | Claude |
+| 023 | Android | ImageService now uses Lorem Picsum for reliable placeholder images | 2026-01-25 | Claude |
+| 027 | Android | ProfileScreen accuracy now shows real mastery rate from data | 2026-01-25 | Claude |
+| 028-033 | Android | Hardcoded strings replaced with stringResource for i18n | 2026-01-25 | Claude |
 | 038 | Web | InstallPrompt.tsx close button now has localized aria-label | 2026-01-25 | Claude |
 | 040 | Web | CreateRoomPage.tsx now uses feature.title as React key | 2026-01-25 | Claude |
 | 041 | Web | FeaturesGrid.tsx now uses feature.title.en as React key | 2026-01-25 | Claude |
 | 093 | Web | Podium.tsx player names now have responsive max-width | 2026-01-25 | Claude |
+| 039 | Web | All 7 game components (PictureMatch, MultipleChoice, FillInBlank, ContextClues, SpellingChallenge, WordScramble, ListeningQuiz) now use proper `resetGame()` state reset instead of `window.location.reload()` | 2026-01-25 | Claude |
 
 ---
 

@@ -139,6 +139,20 @@ export function PictureMatchGame({
     }
   }
 
+  const resetGame = () => {
+    setCurrentIndex(0)
+    setScore(0)
+    setStreak(0)
+    setMaxStreak(0)
+    setCorrectCount(0)
+    setSelectedAnswer(null)
+    setShowResult(false)
+    setIsCorrect(false)
+    setShowCelebration(false)
+    setTimeLeft(questionDuration)
+    setGameComplete(false)
+  }
+
   const isWarning = timeLeft <= 5 && timeLeft > 3
   const isCritical = timeLeft <= 3
 
@@ -167,7 +181,7 @@ export function PictureMatchGame({
                 <p className="text-sm text-gray-500">{t.maxStreak}</p>
               </div>
             </div>
-            <Button onClick={() => window.location.reload()} className="w-full gap-2">
+            <Button onClick={resetGame} className="w-full gap-2">
               <RotateCcw className="h-4 w-4" />
               {t.playAgain}
             </Button>
