@@ -318,53 +318,67 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: January 22, 2026
+### Latest Session: January 25, 2026
+
+**Branch:** `master`
+**Focus:** Fix WebSocket Database Persistence & Manual Testing
+
+**Critical Bug Fixed:**
+- **WebSocket Room Creation Not Persisting to Database**
+  - **Root Cause:** Spring's thread-bound EntityManager wasn't available in WebSocket threads
+  - **Solution:** Direct EntityManager management with explicit transaction control
+  - **Files Modified:**
+    - `RoomService.java` - Direct EntityManager with begin/commit/rollback
+    - `GameRoomRepository.java` - Added `@Modifying(clearAutomatically=true, flushAutomatically=true)`
+    - `application-dev.properties` - Added transaction logging at TRACE level
+
+**Manual Testing Completed:**
+- [x] Room Creation via WebSocket ✅
+- [x] Join Room via WebSocket ✅
+- [x] Start Game via WebSocket ✅
+- [x] Answer Submission via WebSocket ✅
+- [x] Score Calculation ✅
+- [x] Rankings Broadcast ✅
+- [x] Game Timer State Transitions ✅
+
+**All WebSocket flows verified working:**
+1. Create room → persisted to database
+2. Join room → player added, broadcasts sent
+3. Start game → COUNTDOWN state, questions generated
+4. Submit answers → scores calculated, rankings broadcast
+5. State transitions → LOBBY → COUNTDOWN → QUESTION → ANSWER_REVEAL → RANKING → FINAL
+
+---
+
+### Remaining Work
+
+**High Priority:**
+- [ ] Deploy to GCP Compute Engine VM
+- [ ] Configure SSL certificates for production
+- [ ] Verify production WebSocket connections (wss://)
+
+**Medium Priority:**
+- [ ] Phase 4: DRY & Code Deduplication (from Master Fix Plan)
+- [ ] Phase 5: Architecture Improvements
+- [ ] Phase 6: Testing Infrastructure
+- [ ] Add automated integration tests for WebSocket flows
+
+**Low Priority:**
+- [ ] Add WebSocket reconnection logic in frontend
+- [ ] Implement proper authentication (JWT)
+- [ ] Add comprehensive error handling for edge cases
+
+---
+
+### Previous Session: January 22, 2026
 
 **Branch:** `claude/implement-master-fixes-zM4J3`
 **Focus:** Implement Master Fix Plan (Phases 1-3)
 
 **Completed:**
 - [x] Phase 1: Critical Security & Blockers
-  - Environment-based configuration
-  - Rate limiting with bucket4j
-  - Input validation with Jakarta Bean Validation
-  - CORS configuration for production
-  - Docker and CI/CD infrastructure
 - [x] Phase 2: SOLID Principle Fixes
-  - SRP: Split GameService into focused services
-  - SRP: WebSocket handler strategy pattern
-  - OCP: State pattern for game states
-  - DIP: Service interfaces (IRoomService, IPlayerService)
 - [x] Phase 3: Design Pattern Implementation
-  - Backend: State pattern with 7 state handlers
-  - Web: Service layer (GameService, RoomService, LeaderboardService)
-  - Web: Custom hooks (useRooms, useGameState, useLobby, usePolling)
-  - Web: Error handling utilities
-
-**Progress:** ~30% of Master Fix Plan complete
-
-**Next Steps:**
-- [ ] Phase 4: DRY & Code Deduplication
-- [ ] Phase 5: Architecture Improvements
-- [ ] Phase 6: Testing Infrastructure
-
----
-
-### Previous Session: January 22, 2026
-
-**Branch:** `claude/explore-project-structure-Fvomz`
-**Focus:** Prepare repository for public release and conduct investigation
-
-**Completed:**
-- [x] Create/update CLAUDE.md files for all modules
-- [x] Create README.md for monorepo
-- [x] Create ARCHITECTURE.md
-- [x] Create CONTRIBUTING.md
-- [x] Create LICENSE
-- [x] Conduct comprehensive investigation
-- [x] Create INVESTIGATION_REPORT.md
-- [x] Create SE_PRINCIPLES_ANALYSIS.md
-- [x] Create MASTER_FIX_PLAN.md
 
 ---
 
