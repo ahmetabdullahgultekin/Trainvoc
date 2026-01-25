@@ -28,7 +28,7 @@
 ├── TrainvocBackend/         # Server (Spring Boot, Java 24)
 │   ├── CLAUDE.md            # Backend development guide
 │   └── src/                 # Controllers, services, models
-├── TODOS.md                 # ⭐ UNIFIED ISSUE TRACKER - Single source of truth
+├── TODO.md                  # ⭐ UNIFIED ISSUE TRACKER - Single source of truth
 ├── README.md                # Public repository README
 ├── ARCHITECTURE.md          # System architecture documentation
 ├── CONTRIBUTING.md          # Contribution guidelines
@@ -48,22 +48,22 @@ Each module has its own `CLAUDE.md` with detailed information:
 
 ## 🚨 CRITICAL: Issue Tracking Workflow
 
-### TODOS.md - Unified Issue Tracker
+### TODO.md - Unified Issue Tracker
 
-**Location:** `/TODOS.md` (root of repository)
+**Location:** `/TODO.md` (root of repository)
 
 This is the **SINGLE SOURCE OF TRUTH** for all issues, bugs, TODOs, and improvements across the entire project.
 
 ### Claude AI Session Rules
 
 #### When You Find an Issue:
-1. **IMMEDIATELY add it to TODOS.md** with the next available number
+1. **IMMEDIATELY add it to TODO.md** with the next available number
 2. Use the correct severity level (🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW, ⚪ INFO)
 3. Include: Component, File:Line, Description, Status (⬜ OPEN)
 4. Do NOT fix the issue in the same session (unless explicitly requested)
 
 #### When You Fix an Issue:
-1. Mark the issue in TODOS.md with ✅ FIXED and add the date
+1. Mark the issue in TODO.md with ✅ FIXED and add the date
 2. Add your entry to the "Recently Fixed" section
 3. Update the Quick Stats counts
 4. Never delete issues - keep for history
@@ -75,8 +75,8 @@ This is the **SINGLE SOURCE OF TRUTH** for all issues, bugs, TODOs, and improvem
 ```
 
 #### Session Types:
-- **Discovery Session**: Find issues → Add to TODOS.md → Do NOT fix
-- **Fix Session**: Read TODOS.md → Fix issues → Mark as ✅ FIXED
+- **Discovery Session**: Find issues → Add to TODO.md → Do NOT fix
+- **Fix Session**: Read TODO.md → Fix issues → Mark as ✅ FIXED
 - **Mixed Session**: User explicitly requests both
 
 ### Priority Order for Fixes:
