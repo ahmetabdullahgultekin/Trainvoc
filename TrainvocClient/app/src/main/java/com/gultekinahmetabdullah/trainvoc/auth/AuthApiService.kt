@@ -1,19 +1,37 @@
 package com.gultekinahmetabdullah.trainvoc.auth
 
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Body
 
 /**
  * Retrofit interface for authentication API endpoints.
  * Connects to the Trainvoc backend for user authentication.
+ *
+ * Note: With Firebase Auth integration, most authentication is handled
+ * by Firebase SDK. This service is primarily used for:
+ * - Syncing Firebase users to backend database
+ * - Backend-specific user operations
  */
 interface AuthApiService {
 
     /**
-     * Register a new user.
+     * Sync Firebase user to backend database.
+     * Called after successful Firebase authentication to ensure
+     * user exists in backend and to get backend-specific user info.
+     *
+     * The Firebase ID token is sent in the Authorization header.
+     */
+    @GET("api/v1/auth/firebase-sync")
+    suspend fun firebaseSync(
+        @Header("Authorization") token: String
+    ): Response<FirebaseSyncResponse>
+
+    /**
+     * Register a new user (legacy endpoint, kept for backward compatibility).
+     * With Firebase Auth, registration is handled by Firebase SDK.
      */
     @POST("api/v1/auth/register")
     suspend fun register(
@@ -21,7 +39,8 @@ interface AuthApiService {
     ): Response<AuthResponse>
 
     /**
-     * Login with username and password.
+     * Login with username and password (legacy endpoint, kept for backward compatibility).
+     * With Firebase Auth, login is handled by Firebase SDK.
      */
     @POST("api/v1/auth/login")
     suspend fun login(
@@ -29,7 +48,7 @@ interface AuthApiService {
     ): Response<AuthResponse>
 
     /**
-     * Validate current token.
+     * Validate current token (legacy endpoint).
      */
     @GET("api/v1/auth/me")
     suspend fun validateToken(
@@ -37,7 +56,7 @@ interface AuthApiService {
     ): Response<UserInfo>
 
     /**
-     * Refresh access token.
+     * Refresh access token (legacy endpoint).
      */
     @POST("api/v1/auth/refresh")
     suspend fun refreshToken(
@@ -79,4 +98,20 @@ data class UserInfo(
     val username: String,
     val email: String,
     val createdAt: String?
+)
+
+/**
+ * Response from Firebase sync endpoint.
+ */
+data class FirebaseSyncResponse(
+    val id: Long,
+    val username: String,
+    val email: String,
+    val displayName: String?,
+    val firebaseUid: String,
+    val emailVerified: Boolean,
+    val authProvider: String,
+    val totalGamesPlayed: Int,
+    val totalScore: Int,
+    val gamesWon: Int
 )

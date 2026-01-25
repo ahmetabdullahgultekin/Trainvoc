@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -54,6 +55,7 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.AuthViewModel
 
 /**
  * Login screen for user authentication.
+ * Uses Firebase Authentication with email/password.
  */
 @Composable
 fun LoginScreen(
@@ -65,10 +67,14 @@ fun LoginScreen(
     val authState by viewModel.authState.collectAsState()
     val loginError by viewModel.loginError.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val passwordResetSent by viewModel.passwordResetSent.collectAsState()
+    val passwordResetError by viewModel.passwordResetError.collectAsState()
 
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var showForgotPasswordDialog by remember { mutableStateOf(false) }
+    var forgotPasswordEmail by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
 
@@ -78,8 +84,16 @@ fun LoginScreen(
 
     // Navigate on successful login
     LaunchedEffect(authState) {
-        if (authState is AuthState.Authenticated) {
+        if (authState is AuthState.Authenticated || authState is AuthState.AuthenticatedOffline) {
             onLoginSuccess()
+        }
+    }
+
+    // Handle password reset sent
+    LaunchedEffect(passwordResetSent) {
+        if (passwordResetSent) {
+            showForgotPasswordDialog = false
+            viewModel.clearPasswordResetState()
         }
     }
 
@@ -117,19 +131,19 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(Spacing.large))
 
-        // Username field
+        // Email field
         OutlinedTextField(
-            value = username,
+            value = email,
             onValueChange = {
-                username = it
+                email = it
                 viewModel.clearLoginError()
             },
-            label = { Text(stringResource(R.string.username)) },
+            label = { Text(stringResource(R.string.email)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             shape = MaterialTheme.shapes.medium,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
@@ -163,7 +177,7 @@ fun LoginScreen(
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
-                    viewModel.login(username, password)
+                    viewModel.login(email, password)
                 }
             ),
             trailingIcon = {
@@ -185,6 +199,25 @@ fun LoginScreen(
             enabled = !isLoading
         )
 
+        // Forgot password link
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            TextButton(
+                onClick = {
+                    forgotPasswordEmail = email
+                    showForgotPasswordDialog = true
+                }
+            ) {
+                Text(
+                    stringResource(R.string.forgot_password),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
         // Error message
         if (loginError != null) {
             Spacer(modifier = Modifier.height(Spacing.small))
@@ -195,14 +228,14 @@ fun LoginScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(Spacing.large))
+        Spacer(modifier = Modifier.height(Spacing.medium))
 
         // Login button
         Button(
-            onClick = { viewModel.login(username, password) },
+            onClick = { viewModel.login(email, password) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.large,
-            enabled = !isLoading && username.isNotBlank() && password.isNotBlank()
+            enabled = !isLoading && email.isNotBlank() && password.isNotBlank()
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
@@ -245,4 +278,97 @@ fun LoginScreen(
             )
         }
     }
+
+    // Forgot Password Dialog
+    if (showForgotPasswordDialog) {
+        ForgotPasswordDialog(
+            email = forgotPasswordEmail,
+            onEmailChange = { forgotPasswordEmail = it },
+            onDismiss = {
+                showForgotPasswordDialog = false
+                viewModel.clearPasswordResetState()
+            },
+            onSendResetEmail = {
+                viewModel.sendPasswordResetEmail(forgotPasswordEmail)
+            },
+            isLoading = isLoading,
+            error = passwordResetError
+        )
+    }
+}
+
+/**
+ * Forgot password dialog.
+ */
+@Composable
+private fun ForgotPasswordDialog(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onSendResetEmail: () -> Unit,
+    isLoading: Boolean,
+    error: String?
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(stringResource(R.string.forgot_password_title))
+        },
+        text = {
+            Column {
+                Text(
+                    stringResource(R.string.forgot_password_description),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(modifier = Modifier.height(Spacing.medium))
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = onEmailChange,
+                    label = { Text(stringResource(R.string.email)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onSendResetEmail() }
+                    ),
+                    enabled = !isLoading
+                )
+
+                if (error != null) {
+                    Spacer(modifier = Modifier.height(Spacing.small))
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onSendResetEmail,
+                enabled = !isLoading && email.isNotBlank()
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(stringResource(R.string.send_reset_email))
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }
