@@ -55,6 +55,14 @@ TrainvocBackend/out/
 TrainvocWeb/node_modules/
 TrainvocWeb/dist/
 TrainvocWeb/.vite/
+TrainvocWeb/dev-dist/
+TrainvocWeb/test-results/
+TrainvocWeb/nul
+
+# Root level
+node_modules/
+package-lock.json
+nul
 
 # Android (usually in TrainvocClient/.gitignore)
 TrainvocClient/build/
