@@ -15,10 +15,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+import com.rollingcatsoftware.trainvocmultiplayerapplication.model.UserWordProgress;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.model.UserWordStatistic;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.model.UserExamHistory;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.model.UserAchievement;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("SyncService Tests")
@@ -302,11 +312,122 @@ class SyncServiceTest {
     class GetServerChanges {
 
         @Test
-        @DisplayName("returns empty list for now (TODO implementation)")
-        void returnsEmptyList() {
+        @DisplayName("returns empty list when user not found")
+        void returnsEmptyList_whenUserNotFound() {
+            when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
             List<Map<String, Object>> result = syncService.getServerChanges(USER_ID, System.currentTimeMillis());
 
             assertTrue(result.isEmpty());
+        }
+
+        @Test
+        @DisplayName("returns empty list when no changes exist")
+        void returnsEmptyList_whenNoChanges() {
+            when(userRepository.findById(USER_ID)).thenReturn(Optional.of(testUser));
+            when(wordProgressRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+            when(wordStatisticRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+            when(examHistoryRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+            when(achievementRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+
+            List<Map<String, Object>> result = syncService.getServerChanges(USER_ID, System.currentTimeMillis() - 86400000);
+
+            assertTrue(result.isEmpty());
+        }
+
+        @Test
+        @DisplayName("returns word changes when word progress exists")
+        void returnsWordChanges_whenWordProgressExists() {
+            UserWordProgress wordProgress = new UserWordProgress(testUser, "hello");
+            wordProgress.setEasinessFactor(2.5f);
+            wordProgress.setIntervalDays(7);
+            wordProgress.setRepetitions(3);
+            wordProgress.setFavorite(true);
+            wordProgress.setSecondsSpent(120);
+            wordProgress.setLearned(false);
+
+            when(userRepository.findById(USER_ID)).thenReturn(Optional.of(testUser));
+            when(wordProgressRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of(wordProgress));
+            when(wordStatisticRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+            when(examHistoryRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+            when(achievementRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of());
+
+            List<Map<String, Object>> result = syncService.getServerChanges(USER_ID, System.currentTimeMillis() - 86400000);
+
+            assertEquals(1, result.size());
+            assertEquals("word", result.get(0).get("entityType"));
+            assertEquals("hello", result.get(0).get("entityId"));
+            @SuppressWarnings("unchecked")
+            Map<String, Object> data = (Map<String, Object>) result.get(0).get("data");
+            assertEquals("hello", data.get("word"));
+            assertEquals(2.5f, data.get("easinessFactor"));
+            assertEquals(7, data.get("intervalDays"));
+            assertEquals(true, data.get("isFavorite"));
+        }
+
+        @Test
+        @DisplayName("returns multiple entity types when all have changes")
+        void returnsMultipleEntityTypes_whenAllHaveChanges() {
+            UserWordProgress wordProgress = new UserWordProgress(testUser, "world");
+
+            UserWordStatistic statistic = new UserWordStatistic();
+            statistic.setUser(testUser);
+            statistic.setWordId("stat-word-1");
+            statistic.setCorrectCount(10);
+            statistic.setWrongCount(2);
+            statistic.setSkippedCount(1);
+
+            UserExamHistory examHistory = new UserExamHistory();
+            examHistory.setUser(testUser);
+            examHistory.setExamId("exam-1");
+            examHistory.setScore(85);
+            examHistory.setTotalQuestions(20);
+            examHistory.setCorrectAnswers(17);
+            examHistory.setDurationSeconds(600);
+            examHistory.setExamType("quiz");
+
+            UserAchievement achievement = new UserAchievement();
+            achievement.setUser(testUser);
+            achievement.setAchievementId("first_word");
+            achievement.setProgress(100);
+            achievement.setTargetProgress(100);
+            achievement.setUnlocked(true);
+
+            when(userRepository.findById(USER_ID)).thenReturn(Optional.of(testUser));
+            when(wordProgressRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of(wordProgress));
+            when(wordStatisticRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of(statistic));
+            when(examHistoryRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of(examHistory));
+            when(achievementRepository.findByUserAndUpdatedAtAfter(eq(testUser), any(LocalDateTime.class)))
+                .thenReturn(List.of(achievement));
+
+            List<Map<String, Object>> result = syncService.getServerChanges(USER_ID, System.currentTimeMillis() - 86400000);
+
+            assertEquals(4, result.size());
+
+            Map<String, String> entityTypes = Map.of(
+                "word", "world",
+                "statistic", "stat-word-1",
+                "exam", "exam-1",
+                "achievement", "first_word"
+            );
+
+            for (Map<String, Object> change : result) {
+                String entityType = (String) change.get("entityType");
+                String entityId = (String) change.get("entityId");
+                assertTrue(entityTypes.containsKey(entityType), "Unexpected entity type: " + entityType);
+                assertEquals(entityTypes.get(entityType), entityId);
+            }
         }
     }
 }

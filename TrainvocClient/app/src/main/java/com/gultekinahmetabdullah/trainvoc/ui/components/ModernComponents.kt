@@ -124,6 +124,7 @@ fun GradientButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
+    iconContentDescription: String? = null,
     enabled: Boolean = true,
     gradientColors: List<Color> = listOf(
         MaterialTheme.colorScheme.primary,
@@ -133,6 +134,19 @@ fun GradientButton(
     val haptic = rememberHapticPerformer()
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+
+    // Theme-aware colors for disabled state
+    val disabledColors = listOf(
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    )
+
+    // Content color based on gradient (use onPrimary for theme consistency)
+    val contentColor = if (enabled) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
 
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.96f else 1f,
@@ -158,8 +172,7 @@ fun GradientButton(
             .clip(RoundedCornerShape(CornerRadius.round))
             .background(
                 brush = Brush.linearGradient(
-                    colors = if (enabled) gradientColors
-                    else listOf(Color.Gray, Color.DarkGray)
+                    colors = if (enabled) gradientColors else disabledColors
                 )
             )
             .clickable(
@@ -180,8 +193,8 @@ fun GradientButton(
             if (icon != null) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = "Icon",
-                    tint = Color.White,
+                    contentDescription = iconContentDescription,
+                    tint = contentColor,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(Spacing.small))
@@ -190,7 +203,7 @@ fun GradientButton(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = contentColor
             )
         }
     }

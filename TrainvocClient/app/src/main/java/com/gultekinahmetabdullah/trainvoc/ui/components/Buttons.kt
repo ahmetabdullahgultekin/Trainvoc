@@ -38,7 +38,8 @@ fun PrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
+    iconContentDescription: String? = null
 ) {
     // Scale animation on press
     val scale by animateFloatAsState(
@@ -77,7 +78,7 @@ fun PrimaryButton(
             icon != null -> {
                 Icon(
                     imageVector = icon,
-                    contentDescription = "Button icon",
+                    contentDescription = iconContentDescription,
                     modifier = Modifier.size(20.dp)
                 )
                 androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(Spacing.sm))
@@ -106,7 +107,8 @@ fun SecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
+    iconContentDescription: String? = null
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -124,7 +126,7 @@ fun SecondaryButton(
         if (icon != null) {
             Icon(
                 imageVector = icon,
-                contentDescription = "Button icon",
+                contentDescription = iconContentDescription,
                 modifier = Modifier.size(20.dp)
             )
             androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(Spacing.sm))
