@@ -363,7 +363,41 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: January 25, 2026 (Android Pre-Deployment Fixes)
+### Latest Session: January 25, 2026 (Authentication & Firebase Integration)
+
+**Branch:** `master`
+**Focus:** Firebase Authentication Integration + Issue Tracker Completion
+
+**Authentication System Added:**
+- [x] Backend: Firebase Auth integration (`FirebaseConfig.java`, `FirebaseTokenProvider.java`)
+- [x] Backend: JWT filter updated with Firebase token support
+- [x] Backend: AuthController enhanced with Firebase endpoints
+- [x] Backend: User model updated with AuthProvider enum
+- [x] Android: Firebase Auth repository (`FirebaseAuthRepository.kt`)
+- [x] Android: Login/Register screens with Google Sign-In support
+- [x] Android: AuthViewModel with Firebase integration
+- [x] Android: NetworkModule updated for auth headers
+
+**Issue Tracker Status (TODO.md):**
+- **Web: ✅ COMPLETE** - All 15 issues fixed or noted
+- **Backend: ✅ COMPLETE** - All 3 issues fixed
+- **Database/Infra: ✅ READY** - Docker Compose, SSL docs created
+- **Android: 92 issues remaining** (mostly UI polish)
+
+**Infrastructure Completed:**
+- [x] `docker-compose.yml` - PostgreSQL + Backend + Nginx
+- [x] `docker.env.example` - Environment template
+- [x] `SSL_SETUP.md` - Let's Encrypt + Nginx guide
+- [x] `.env.example` updates for production URLs
+- [x] `application-prod.properties` - CORS env override
+
+**Security:**
+- [x] Added `google-services.json` to .gitignore (API keys)
+- [x] Added `.claude/settings.local.json` to .gitignore
+
+---
+
+### Previous Session: January 25, 2026 (Android Pre-Deployment Fixes)
 
 **Branch:** `master`
 **Focus:** Android App Pre-Deployment Bug Fixes
@@ -372,12 +406,10 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 - [x] #004: Password hashing - Now uses SHA-256 instead of hashCode()
 - [x] #005: Play Games achievements - Gracefully skipped when not configured
 - [x] #006-007: Cloud backup - UI updated to show "Coming Soon" honestly
-- [x] #008-009: Tutorial stubs - Marked WONTFIX (working as designed)
 - [x] #016-017: DictionaryScreen - Fixed hardcoded color, increased touch targets
 - [x] #018: HomeScreen - Now shows actual username from SharedPreferences
 - [x] #019: FAQ backup description - Updated to mention local backup
 - [x] #021: Leaderboard - Removed fake mock users, shows "Coming Soon"
-- [x] #022: TTS placeholder - Marked WONTFIX (Android TTS API used)
 - [x] #023: ImageService - Now uses Lorem Picsum for reliable images
 - [x] #027: ProfileScreen accuracy - Now shows real mastery rate
 - [x] #028-033: Hardcoded strings - Replaced with stringResource for i18n
@@ -386,9 +418,9 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 **Issue Tracker Progress:**
 - Total: 150 issues
-- Fixed: 30 issues
+- Fixed: 55 issues
 - WONTFIX: 3 issues
-- Remaining: 117 issues (mostly non-critical)
+- Remaining: 92 issues (mostly Android UI polish)
 
 ---
 
