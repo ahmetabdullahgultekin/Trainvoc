@@ -85,6 +85,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
@@ -516,7 +518,7 @@ fun CEFRFilterChip(
         modifier = modifier.scale(scale),
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = levelColor,
-            selectedLabelColor = Color.White
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary
         )
     )
 }
@@ -806,7 +808,10 @@ fun AlphabetFastScroll(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .width(32.dp)
+            .width(40.dp)  // Increased from 32.dp for better touch targets
+            .semantics {
+                contentDescription = "Alphabet navigation. Drag to jump to words starting with a letter."
+            }
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = { offset ->
@@ -839,7 +844,9 @@ fun AlphabetFastScroll(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 1.dp)
+                modifier = Modifier
+                    .padding(vertical = 1.dp)
+                    .semantics { contentDescription = "Jump to letter $letter" }
             )
         }
     }

@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 1 | 9 | 2 | 12 |
 | 🟠 HIGH | 8 | 15 | 1 | 24 |
-| 🟡 MEDIUM | 38 | 20 | 0 | 58 |
+| 🟡 MEDIUM | 36 | 21 | 1 | 58 |
 | 🟢 LOW | 31 | 0 | 1 | 32 |
 | ⚪ INFO | 22 | 2 | 0 | 24 |
-| **TOTAL** | **100** | **46** | **4** | **150** |
+| **TOTAL** | **98** | **47** | **5** | **150** |
 
 ---
 
@@ -111,7 +111,7 @@
 | 046 | Android | `SplashScreen.kt:87` | Fixed 96.dp size for splash - should scale for tablets | ⬜ OPEN |
 | 047 | Android | `DictionaryScreen.kt:459` | Fixed 80.dp letter preview box size | ⬜ OPEN |
 | 048 | Android | `QuizScreen.kt:98` | Fixed 180.dp Lottie animation size | ⬜ OPEN |
-| 049 | Android | `AnswerOptionCard.kt:181-182` | Fixed 32.dp checkmark icon - below 48dp minimum | ⬜ OPEN |
+| 049 | Android | `AnswerOptionCard.kt:181-182` | Fixed 32.dp checkmark icon - below 48dp minimum | ❌ WONTFIX (visual indicator, not touch target) |
 | 050 | Android | `CloudBackupScreen.kt:149` | Fixed 80.dp CloudOff icon size | ⬜ OPEN |
 | 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ⬜ OPEN |
 | 052 | Android | `CloudBackupScreen.kt` | No error state UI when backup operations fail | ⬜ OPEN |
@@ -122,7 +122,7 @@
 | 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ⬜ OPEN |
 | 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
 | 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ⬜ OPEN |
-| 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ⬜ OPEN |
+| 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ✅ FIXED (uses stringResource) |
 | 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ⬜ OPEN |
 | 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ✅ FIXED 2026-01-25 |
 | 063 | Android | `QuizScreen.kt:210` | LazyColumn uses fixed Spacing - no tablet adaptation | ⬜ OPEN |
