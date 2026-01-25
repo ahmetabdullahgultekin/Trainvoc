@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
@@ -115,20 +116,22 @@ fun AppBottomSheet(
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    item {
-                        Text(
-                            text = "Test Mode - For development use only",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .padding(Spacing.small)
-                                .background(
-                                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
-                                    shape = MaterialTheme.shapes.medium
-                                )
-                                .padding(Spacing.medium),
-                            fontSize = 18.sp
-                        )
+                    if (BuildConfig.DEBUG) {
+                        item {
+                            Text(
+                                text = "Test Mode - For development use only",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier
+                                    .padding(Spacing.small)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
+                                        shape = MaterialTheme.shapes.medium
+                                    )
+                                    .padding(Spacing.medium),
+                                fontSize = 18.sp
+                            )
+                        }
                     }
                     items(
                         count = menuItems.size,

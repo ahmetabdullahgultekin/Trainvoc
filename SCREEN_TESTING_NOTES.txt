@@ -1,0 +1,632 @@
+================================================================================
+                        TRAINVOC MOBILE APP - SCREEN TESTING NOTES
+================================================================================
+Date: 2026-01-25
+Tester: Developer Ahmet Abdullah Gültekin + Claude AI Analysis
+Device: Xiaomi 14T Pro
+Screenshots Analyzed: 76/76 COMPLETE
+
+================================================================================
+                         CRITICAL ISSUES SUMMARY (FIX FIRST)
+================================================================================
+
+1. [CRITICAL] "Test Mode - For development use only" banner visible in More Options
+2. [CRITICAL] Multiplayer: "CLEARTEXT communication to 10.0.2.2 not permitted"
+   - Android 9+ blocks HTTP by default - need HTTPS or network security config
+3. [CRITICAL] Heart/favorite button not responding in DictionaryScreen
+4. [CRITICAL] Alphabet sidebar overlaps heart icons in Dictionary
+5. [CRITICAL] 0% Mastery despite 24 words learned - calculation wrong
+6. [CRITICAL] 0m Study Time despite quizzes taken - tracking not working
+7. [CRITICAL] Stats inconsistency: Profile shows 2 quizzes, Stats shows 45-46
+8. [CRITICAL] No Login/Register access point visible in app
+9. [HIGH] Duplicate top bar (user-reported)
+10. [HIGH] "Perfect Start" achievement appears twice in Recent Achievements
+
+================================================================================
+                              1. ONBOARDING & AUTH
+================================================================================
+
+[1] SplashScreen
+    Status: OK (with suggestions)
+    User Notes: Takes too long, makes app seem slow.
+
+    Claude Analysis: Cute cat mascot (Rolling Cat) with spiral animation.
+    Nice branding but duration needs optimization.
+
+    POSITIVE: Memorable mascot, good brand identity
+    ISSUES: Duration too long for returning users
+
+    ACTION ITEMS:
+    - [ ] Reduce splash duration to <1 second
+    - [ ] Use Android 12+ SplashScreen API
+    - [ ] Consider showing only on first launch
+
+
+[2] WelcomeScreen
+    Status: NOT_VISIBLE
+    User Notes: Need to examine. Should we have it?
+
+    ACTION ITEMS:
+    - [ ] Test welcome/onboarding flow separately
+
+
+[3] UsernameScreen
+    Status: NOT_VISIBLE
+    User Notes: Too basic, just username.
+
+    ACTION ITEMS:
+    - [ ] Review current implementation
+
+
+[4] LoginScreen
+    Status: CRITICAL ISSUE
+    User Notes: Not accessible from anywhere.
+
+    Claude Analysis: No login option found anywhere in the app.
+    Only "Sign Out" visible in Profile.
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Add login access from Profile when logged out
+    - [ ] Add "Already have account?" in onboarding
+
+
+[5] RegisterScreen
+    Status: CRITICAL ISSUE
+    User Notes: Not accessible from anywhere.
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Expose registration flow
+
+
+================================================================================
+                              2. MAIN NAVIGATION
+================================================================================
+
+[6] MainScreen (Bottom navigation)
+    Status: ISSUE
+    User Notes: Game button at center missing. Need to plan for multiplayer.
+
+    Claude Analysis: Bottom nav has 4 items: Home, Quiz, Dictionary, Profile.
+    Games accessible only from Home Quick Actions.
+
+    POSITIVE: Clean navigation, clear icons
+    ISSUES: No dedicated Games tab
+
+    ACTION ITEMS:
+    - [ ] Consider 5-item nav with Games in center
+    - [ ] Or combine Games/Multiplayer into one tab
+
+
+[7] HomeScreen
+    Status: ISSUE
+    User Notes: Two top bars visible. Should have exactly one.
+
+    Claude Analysis: Observed components:
+    - "Trainvoc" header with logo
+    - Profile card (avatar, name, level, XP)
+    - Daily Goals + Streak cards
+    - Quick Actions grid (6 buttons)
+    - Your Stats section
+    - Recent Achievements (Perfect Start appears twice!)
+    - Story Mode + Stats links
+
+    POSITIVE: Good information density
+    ISSUES:
+    - Double header
+    - "Perfect Start" duplicate in achievements
+    - Redundant stats display
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Remove duplicate top bar
+    - [ ] Fix duplicate achievement display
+
+
+[8] StoryScreen
+    Status: ISSUE
+    User Notes: Needs UI/UX polish. Too simple. Should show A1 completion requirements.
+
+    Claude Analysis: Leaf/petal visual design for levels.
+    - "Beginner" shown (unlocked)
+    - Others locked with message
+
+    POSITIVE: Creative visual metaphor (growing plant)
+    ISSUES:
+    - No level names (A1, A2, etc.)
+    - No progress within levels
+    - Repetitive lock messages
+
+    ACTION ITEMS:
+    - [ ] Add level names (A1 Beginner, A2 Elementary, etc.)
+    - [ ] Add progress bar per level (e.g., "42/150 words")
+    - [ ] Show lock message once, not on every level
+
+
+================================================================================
+                              3. DICTIONARY
+================================================================================
+
+[9] DictionaryScreen
+    Status: CRITICAL ISSUE
+    User Notes:
+    - Need more filters
+    - Heart button not responding
+    - Level label invisible on long words
+    - Letter scrollbar overlaps heart button
+
+    Claude Analysis: Layout:
+    - Search bar
+    - Filter chips: Favorites, A1-C2
+    - Word cards with English, TTS, heart, level, Turkish
+    - Alphabet sidebar (A-Z) on right
+
+    ISSUES CONFIRMED:
+    - Alphabet sidebar definitely overlaps heart icons
+    - Some words missing level badge (e.g., "Zip")
+    - Heart button click handler broken
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Fix heart button click handler
+    - [ ] CRITICAL: Put cards and sidebar in Row (separate them)
+    - [ ] Fix level badge visibility on long text
+    - [ ] Add filters: Part of Speech, Mastery Level
+
+
+[10] WordDetailScreen
+    Status: ISSUE
+    User Notes: Screen is nice. Heart and TTS work. Some mock data sentences.
+    Synonyms showing "similar words" not true synonyms.
+
+    Claude Analysis: NOT FULLY VISIBLE - need dedicated testing
+
+    ACTION ITEMS:
+    - [ ] Audit example sentences for mock data
+    - [ ] Rename "Synonyms" to "Related Words" if needed
+
+
+[11] WordManagementScreen
+    Status: NOT_TESTED
+
+
+================================================================================
+                              4. QUIZ
+================================================================================
+
+[12] QuizMenuScreen
+    Status: OK
+    Claude Analysis: "Select Level & Exam" screen:
+    - 6 level cards (A1-C2) in 2x3 grid
+    - Color coded: Green (A1-A2), Blue (B1-B2), Orange/Red (C1-C2)
+    - Star ratings for difficulty
+
+    POSITIVE: Clean design, intuitive colors
+
+
+[13] QuizExamMenuScreen
+    Status: OK
+    Claude Analysis:
+    - TOEFL: "Coming Soon!" (locked)
+    - IELTS: "Coming Soon!" (locked)
+    - General Vocabulary: Available
+
+    POSITIVE: Honest about upcoming features
+
+
+[14] QuizScreen
+    Status: OK (EXCELLENT!)
+    Claude Analysis: "Select Quiz Type" screen with many options:
+    - Not Learned, Random, Least Correct, Least Wrong
+    - Least Recent, Least Reviewed, Most Correct, Most Wrong
+    - Most Recent, Most Reviewed
+    - Some marked "NEW"
+
+    Quiz gameplay observed:
+    - Score display with streak fire icon
+    - Question counter (Question 1, 2, 3...)
+    - Timer (60s countdown)
+    - Progress bar
+    - Word to translate (e.g., "Welfare", "Spite", "Crop", "Strengthen", "Prior")
+    - 4 multiple choice Turkish options
+    - Green checkmark for correct, Red X for wrong
+    - Info button shows word statistics panel
+
+    Word Statistics Panel (i button):
+    - Story Mode level (B2)
+    - Total Words in level (1290)
+    - Learned Words count (9)
+    - Progress percentage
+    - Individual word history (correct/incorrect/skipped counts)
+
+    Confetti celebration on correct answers!
+
+    POSITIVE: Comprehensive quiz system, great feedback, good gamification
+
+
+[15] LastQuizResultsScreen
+    Status: NOT_VISIBLE (quiz was quit mid-way)
+
+
+================================================================================
+                              5. GAMES
+================================================================================
+
+[16] GamesMenuScreen
+    Status: OK (EXCELLENT!)
+    Claude Analysis: "Memory Games" screen:
+    - Stats bar: Games Played (2), Best Accuracy (100%), Favorite (Speed Match)
+    - Filter tabs: All Games, Vocabulary, Memory, Listening
+    - Game cards with colorful design:
+      * Multiple Choice (Easy) - Purple
+      * Flip Cards (Easy) - Pink
+      * Speed Match (Hard) - Yellow/Orange
+      * Fill in Blank (Medium) - Teal
+      * Word Scramble (Medium) - Blue
+      * Listening Quiz (Medium) - Purple
+      * Picture Match (Easy) - Yellow
+      * Spelling (Hard) - Cyan
+      * Translation Race (Hard) - Red/Pink
+      * Context Clues (Medium) - Teal
+    - Each card shows: Icon, Name, Description, Play count, Best score
+
+    POSITIVE: Colorful, engaging design. Great variety of games.
+    Clear difficulty labels.
+
+
+[17-26] Individual Game Screens
+    Status: NOT_TESTED (need to play each game)
+
+    ACTION ITEMS:
+    - [ ] Test each game type for functionality
+
+
+================================================================================
+                              6. MULTIPLAYER
+================================================================================
+
+[27] MultiplayerHomeScreen
+    Status: CRITICAL ISSUE
+    Claude Analysis: "Play with Friends" screen with:
+    - Create Room button
+    - Join Room button
+    - Description: "Compete against up to 8 players..."
+
+    CRITICAL ERROR VISIBLE:
+    >>> "Server Status: CLEARTEXT communication to 10.0.2.2 not permitted
+    by network security policy" <<<
+
+    This is a network security issue - Android 9+ blocks HTTP by default.
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Enable HTTPS for backend
+    - [ ] OR add network_security_config.xml to allow cleartext for dev
+    - [ ] Update backend URL to use HTTPS in production
+
+
+[28-32] Other Multiplayer Screens
+    Status: NOT_TESTABLE (due to server connection issue)
+
+
+================================================================================
+                              7. GAMIFICATION
+================================================================================
+
+[33] DailyGoalsScreen
+    Status: NOT_VISIBLE (only shown on HomeScreen)
+    Claude Analysis: Daily Goals card shows Words: 0/10, Quizzes: 2/5
+
+
+[34] StreakDetailScreen
+    Status: OK
+    Claude Analysis: "Streak Details" screen:
+    - Fire emoji with "1 Day Streak!"
+    - "Keep it up!" message
+    - Best Streak: 0 days (personal record)
+    - Last 7 Days list showing each day:
+      * Sunday, Jan 25: Completed (green checkmark)
+      * Saturday-Monday: Missed (gray X)
+
+    POSITIVE: Clean design, clear visual feedback
+
+    ISSUE: Best Streak shows 0 days but Current shows 1 day
+    (might be correct if this is first streak)
+
+
+[35] AchievementsScreen
+    Status: OK (with minor issues)
+    Claude Analysis: "Achievements" screen (3/36 Unlocked, 8% Complete):
+    - Trophy icon with progress bar
+    - Category filters: All, Streak, Words Learned, Quizzes
+    - Rarity filters: All, Bronze, Silver, Gold
+
+    36 Achievements total including:
+    - Getting Started, Week Warrior, Monthly Master, Unstoppable
+    - Year Long Learner, First Steps, Vocabulary Builder, Word Collector
+    - Linguist, Master Linguist, Word Wizard, Quiz Starter (unlocked)
+    - Quiz Enthusiast, Quiz Master, Quiz Champion, Perfect Start (unlocked)
+    - Perfectionist, Flawless, Ace, Goal Getter
+    - Consistent Learner, Dedicated Student, Goal Master, Reviewer
+    - Review Champion, Master Reviewer, Review Legend, Time Investor
+    - Time Committed, Time Master, Time Legend, Early Bird
+    - Night Owl, Weekend Warrior, Speed Demon (unlocked), Comeback Kid
+
+    POSITIVE: Great variety, nice icons, progress tracking
+
+    ISSUES:
+    - Perfect Start shown twice in HomeScreen Recent Achievements
+
+
+================================================================================
+                              8. FEATURES
+================================================================================
+
+[36] FavoritesScreen
+    Status: OK
+    Claude Analysis: "Favorites (6)" screen:
+    - Search favorites bar
+    - Word cards with red filled hearts
+    - Words: Zero, Abstain from, Absurd, Keen, Absolve, Punishment
+    - "Practice All" button at bottom
+    - Trash/delete icon in header
+
+    POSITIVE: Clean design, "Practice All" is great feature
+
+
+[37] WordOfTheDayScreen
+    Status: OK (EXCELLENT!)
+    Claude Analysis:
+    - Date with sparkles: "January 25"
+    - Word card: "ROOKIE" with pronunciation, TTS
+    - Level badge: C1, Part of speech: noun
+    - Turkish meaning: "Caylak"
+    - Example sentence
+    - Heart button for favorites
+    - Your Streak: "5 days in a row!" with weekly calendar
+    - "Practice This Word" button (green)
+    - "View Previous Words" button (outline)
+
+    POSITIVE: Beautiful design, great engagement features
+
+
+================================================================================
+                              9. PROFILE & PROGRESS
+================================================================================
+
+[38] ProfileScreen
+    Status: CRITICAL ISSUES
+    Claude Analysis:
+    - Avatar circle with initial "A"
+    - Username "AAG", Level 2
+    - Progress ring: 47%, 140/300 XP, Total XP: 240
+    - Statistics: 24 Words, 2 Quizzes, 0m Study Time, 0% Mastery
+    - Additional Info: 1 Current Streak, 0 Longest Streak, Member Since
+    - Achievements preview (gold circles with icons)
+    - Actions: Edit Profile, View Leaderboard, Settings, Sign Out
+
+    Edit Profile Dialog: Only Username field visible
+
+    ISSUES:
+    - 0% Mastery with 24 words learned - WRONG
+    - 0m Study Time with quizzes taken - WRONG
+    - No Login option (only Sign Out)
+    - Edit Profile only has Username (no avatar, email, etc.)
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Fix Mastery calculation
+    - [ ] CRITICAL: Fix Study Time tracking
+    - [ ] Add more profile editing options
+
+
+[39] WordProgressScreen
+    Status: NOT_VISIBLE
+
+
+================================================================================
+                              10. SOCIAL
+================================================================================
+
+[40] LeaderboardScreen
+    Status: NOT_VISIBLE
+
+
+================================================================================
+                              11. SETTINGS
+================================================================================
+
+[41] SettingsScreen
+    Status: NOT_VISIBLE
+
+[42] HelpScreen
+    Status: OK
+    Claude Analysis: "Help & Support" screen:
+    - Welcome banner (purple)
+    - FAQ section with expandable items:
+      * How to use the app?
+      * How do I reset my progress?
+      * How do I change the theme? -> "Theme selection will be available soon."
+      * How do I contact support?
+      * How do I report a bug?
+      * How can I suggest a new feature?
+      * How do I backup my data? -> "Settings > Backup. Cloud backup coming soon!"
+    - Contact Support section:
+      * Email: rollingcat.help@gmail.com
+      * Phone: +1 234 567 890 (PLACEHOLDER?)
+      * Website: trainvoc.rollingcatsoftware.com
+    - Give Feedback section with Submit button
+
+    ISSUES:
+    - Phone number looks like placeholder (+1 234 567 890)
+
+    ACTION ITEMS:
+    - [ ] Remove or update placeholder phone number
+
+
+[43] AboutScreen
+    Status: OK
+    Claude Analysis:
+    - Trainvoc logo and "Version: 1.0.0"
+    - "Trainvoc is an app that helps you improve your vocabulary in a fun way."
+    - Developer section: Ahmet Abdullah Gultekin, Android Developer
+    - Connect section:
+      * GitHub: github.com/gultekinahmetabdullah
+      * LinkedIn: linkedin.com/in/gultekinahmetabdullah
+      * Website: ahmetabdullahgultekin.com
+    - Licenses and Credits: "View License" button
+
+    POSITIVE: Professional, complete information
+
+
+[44] StatsScreen
+    Status: ISSUE
+    Claude Analysis: "Quiz Statistics" screen:
+    - Total Score: 240
+    - Total Quizzes: 45-46
+    - Time Spent: 4m-5m
+    - Best Category: A1
+    - Most Wrong Word: Camera
+    - Success Rate: 52-53% (donut chart)
+    - Breakdown: 24 correct, 13 incorrect, 8-9 skipped
+    - Performance Trends: Daily/Weekly/Total bars (all showing 24!)
+    - Refresh Stats button
+
+    ISSUES:
+    - Profile shows 2 quizzes, Stats shows 45-46 - DATA INCONSISTENCY
+    - Bar chart shows same value for all periods
+
+    ACTION ITEMS:
+    - [ ] CRITICAL: Fix stats data consistency
+    - [ ] Fix Performance Trends chart
+
+
+[45-48] Other Settings Screens
+    Status: NOT_VISIBLE
+
+
+================================================================================
+                              12. BACKUP
+================================================================================
+
+[49] BackupScreen
+    Status: NOT_VISIBLE
+
+
+================================================================================
+                              13. ADMIN / ADVANCED
+================================================================================
+
+[50-52] Admin/Feature Flag/Subscription Screens
+    Status: NOT_VISIBLE
+
+
+================================================================================
+                         MORE OPTIONS MENU (Bottom Sheet)
+================================================================================
+
+Status: CRITICAL ISSUE
+
+Claude Analysis: Bottom sheet with:
+- Home, Story Mode, Stats, Search Word, Manage Words, Settings, Help, About
+- Close button (red)
+
+>>> CRITICAL: "Test Mode - For development use only" banner visible! <<<
+
+ACTION ITEMS:
+- [ ] CRITICAL: Remove Test Mode banner for production
+
+
+================================================================================
+                              DIALOGS OBSERVED
+================================================================================
+
+Quit Quiz Dialog:
+- "Quit Quiz?" title
+- "Are you sure you want to quit? This question will be marked as skipped."
+- No / Yes buttons
+- POSITIVE: Clear messaging, good UX
+
+Edit Profile Dialog:
+- Username text field only
+- Cancel / Save buttons
+- ISSUE: Very limited - no avatar, email, or other options
+
+
+================================================================================
+                              OVERALL ASSESSMENT
+================================================================================
+
+STRENGTHS:
+1. Colorful, engaging UI design
+2. Comprehensive quiz system with multiple modes
+3. Good gamification (achievements, streaks, XP)
+4. Variety of memory games (10 different types!)
+5. Word of the Day feature is excellent
+6. Favorites with "Practice All" is useful
+7. Quiz info panel showing word statistics is great
+8. Confetti celebrations add fun
+9. Rolling Cat mascot is memorable
+
+WEAKNESSES:
+1. Critical data bugs (Mastery, Study Time, Stats inconsistency)
+2. Multiplayer blocked by network security
+3. Dictionary heart button not working
+4. No login/register access visible
+5. Test Mode banner in production
+6. Some placeholder data (phone number)
+
+UI/UX POLISH NEEDED:
+1. Double header issue
+2. Story Mode level names
+3. Duplicate achievement display
+4. Dictionary sidebar overlap
+
+READY FOR OPEN TEST: NO - Critical fixes needed first
+
+================================================================================
+                         PRIORITY FIX ORDER
+================================================================================
+
+PHASE 1 - BLOCKERS (Must fix before any testing):
+1. Remove "Test Mode" banner
+2. Fix Multiplayer CLEARTEXT error (add network security config)
+3. Fix Dictionary heart button
+4. Fix Dictionary sidebar overlap
+
+PHASE 2 - DATA BUGS (Critical for user trust):
+5. Fix Mastery % calculation
+6. Fix Study Time tracking
+7. Fix Stats data inconsistency (2 vs 45 quizzes)
+
+PHASE 3 - MISSING FEATURES:
+8. Add Login/Register access
+9. Remove/update placeholder phone number
+10. Fix duplicate achievement display
+
+PHASE 4 - POLISH:
+11. Fix double header
+12. Add level names to Story Mode
+13. Reduce splash screen duration
+14. Enhance Edit Profile dialog
+
+================================================================================
+                         SCREENSHOTS ANALYZED: 76/76 COMPLETE
+================================================================================
+
+Screens fully observed:
+- SplashScreen (Rolling Cat mascot)
+- HomeScreen (multiple views)
+- QuizMenuScreen, QuizExamMenuScreen
+- QuizScreen (gameplay, word stats panel, answer feedback)
+- DictionaryScreen (with search, filters, alphabet sidebar)
+- FavoritesScreen (dedicated)
+- ProfileScreen (with Edit Profile dialog)
+- StoryScreen
+- StatsScreen
+- StreakDetailScreen
+- AchievementsScreen (full list, 36 achievements)
+- GamesMenuScreen (10 games listed)
+- MultiplayerHomeScreen (with connection error)
+- WordOfTheDayScreen
+- HelpScreen (FAQ, contact info)
+- AboutScreen
+- More Options Menu (with Test Mode banner)
+- Quit Quiz Dialog
+
+================================================================================

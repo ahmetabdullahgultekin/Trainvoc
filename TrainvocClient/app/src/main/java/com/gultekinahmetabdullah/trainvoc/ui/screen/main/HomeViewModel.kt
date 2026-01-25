@@ -58,6 +58,10 @@ class HomeViewModel @Inject constructor(
                 val totalWords = wordDao.getWordCount()
                 val learnedWords = wordDao.getLearnedWordCount()
 
+                // Load total study time (in seconds, convert to minutes)
+                val totalStudyTimeSeconds = wordDao.getTotalTimeSpent()
+                val totalStudyTimeMinutes = totalStudyTimeSeconds / 60
+
                 // Calculate total score from statistics
                 val totalCorrect = wordDao.getCorrectAnswers()
                 val totalScore = totalCorrect * 10
@@ -117,7 +121,9 @@ class HomeViewModel @Inject constructor(
                     wordsProgress = if (totalWords > 0) learnedWords.toFloat() / totalWords else 0f,
                     levelProgress = levelProgress,
                     wordStatusCounts = wordStatusCounts,
-                    reviewSchedule = reviewSchedule
+                    reviewSchedule = reviewSchedule,
+                    totalStudyTimeMinutes = totalStudyTimeMinutes,
+                    totalCorrectAnswers = totalCorrect
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -192,7 +198,11 @@ data class HomeUiState(
     // Detailed Progress (for WordProgressScreen)
     val levelProgress: List<LevelProgress> = emptyList(),
     val wordStatusCounts: WordStatusCounts? = null,
-    val reviewSchedule: ReviewSchedule? = null
+    val reviewSchedule: ReviewSchedule? = null,
+
+    // Total accumulated stats (for Profile)
+    val totalStudyTimeMinutes: Int = 0,
+    val totalCorrectAnswers: Int = 0
 ) {
     // Computed properties for daily tasks
     val quizzesCompleted: Int get() = dailyGoal?.quizzesToday ?: 0

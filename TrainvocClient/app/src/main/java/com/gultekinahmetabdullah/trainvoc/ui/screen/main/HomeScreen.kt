@@ -358,7 +358,9 @@ fun HomeScreen(
             }
 
             // 5. RECENT ACHIEVEMENTS
-            if (uiState.unlockedAchievements.isNotEmpty()) {
+            // Deduplicate achievements by achievement_id to prevent showing same achievement twice
+            val uniqueAchievements = uiState.unlockedAchievements.distinctBy { it.achievementId }
+            if (uniqueAchievements.isNotEmpty()) {
                 item {
                     SectionHeader(title = "Recent Achievements")
                 }
@@ -368,7 +370,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(Spacing.md)
                     ) {
                         items(
-                            items = uiState.unlockedAchievements.take(5),
+                            items = uniqueAchievements.take(5),
                             key = { it.id }
                         ) { userAchievement ->
                             val achievement = userAchievement.getAchievement()
