@@ -194,6 +194,19 @@ export function MultipleChoiceGame({
     }
   }
 
+  const resetGame = () => {
+    setCurrentIndex(0)
+    setScore(0)
+    setStreak(0)
+    setSelectedIndex(null)
+    setShowResult(false)
+    setIsCorrect(false)
+    setShowCelebration(false)
+    setTimeLeft(questionDuration)
+    setGameComplete(false)
+    setAnswers([])
+  }
+
   if (gameComplete) {
     const correctCount = answers.filter((a) => a.correct).length
     const wrongCount = answers.filter((a) => !a.correct).length
@@ -222,7 +235,7 @@ export function MultipleChoiceGame({
                 <p className="text-sm text-gray-500">{t.wrong_answers}</p>
               </div>
             </div>
-            <Button onClick={() => window.location.reload()} className="w-full">
+            <Button onClick={resetGame} className="w-full">
               {t.playAgain}
             </Button>
           </Card>
