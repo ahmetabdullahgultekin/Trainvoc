@@ -189,7 +189,7 @@ fun AnswerOptionCard(
                     Icon(
                         imageVector = if (isCorrect) Icons.Default.Check else Icons.Default.Close,
                         contentDescription = if (isCorrect) "Correct" else "Wrong",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -209,7 +209,7 @@ fun AnswerOptionCard(
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Correct answer",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
