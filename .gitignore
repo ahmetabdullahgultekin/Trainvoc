@@ -2,6 +2,13 @@
 # Trainvoc Monorepo .gitignore
 # ============================================
 
+# Claude Code local settings
+.claude/settings.local.json
+
+# Firebase configuration (contains API keys)
+google-services.json
+**/google-services.json
+
 # Backup folders (temporary)
 _backups/
 *_temp/
