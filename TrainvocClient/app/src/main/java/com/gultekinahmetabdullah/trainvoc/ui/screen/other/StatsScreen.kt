@@ -307,7 +307,7 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
 
             item { Spacer(modifier = Modifier.height(Spacing.medium)) }
 
-            // SECTION 3: Performance Trends - Condensed Bar Chart
+            // SECTION 3: Performance Trends - Show total only until time-based tracking is implemented
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -327,18 +327,9 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                         )
                         Spacer(modifier = Modifier.height(Spacing.small))
 
+                        // Show total correct answers as single bar
                         VerticalBarChart(
                             data = listOf(
-                                ChartData(
-                                    label = stringResource(id = R.string.daily_label),
-                                    value = dailyCorrect.toFloat(),
-                                    color = MaterialTheme.colorScheme.statsQuiz
-                                ),
-                                ChartData(
-                                    label = stringResource(id = R.string.weekly_label),
-                                    value = weeklyCorrect.toFloat(),
-                                    color = MaterialTheme.colorScheme.statsAverage
-                                ),
                                 ChartData(
                                     label = stringResource(id = R.string.total_label),
                                     value = correctAnswers.toFloat(),
@@ -346,6 +337,15 @@ fun StatsScreen(statsViewModel: StatsViewModel) {
                                 )
                             ),
                             maxHeight = 100.dp
+                        )
+
+                        Spacer(modifier = Modifier.height(Spacing.small))
+
+                        // Note about upcoming features
+                        Text(
+                            text = stringResource(id = R.string.time_based_trends_coming_soon),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

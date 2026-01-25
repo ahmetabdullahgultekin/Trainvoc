@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.GenericShape
@@ -162,29 +163,28 @@ fun LeafButton(
                     )
                 }
             } else {
+                // Locked state - simplified view without repetitive warning
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_lock_24),
-                        contentDescription = "Locked level $levelCode",
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        contentDescription = stringResource(id = R.string.locked_level_description, levelCode),
+                        tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+                        modifier = Modifier.size(32.dp)
                     )
+                    Spacer(modifier = Modifier.height(Spacing.extraSmall))
                     Text(
-                        text = "$levelCode - $levelName",
+                        text = levelCode,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                     )
                     Text(
-                        text = stringResource(id = R.string.locked_level_warning),
+                        text = levelName,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .padding(top = Spacing.small)
-                            .fillMaxWidth(0.5f)
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.4f)
                     )
                 }
             }

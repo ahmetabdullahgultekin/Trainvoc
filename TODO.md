@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 5 | 15 | 0 | 20 |
 | 🟠 HIGH | 9 | 18 | 1 | 28 |
-| 🟡 MEDIUM | 39 | 21 | 1 | 61 |
+| 🟡 MEDIUM | 36 | 24 | 1 | 61 |
 | 🟢 LOW | 26 | 7 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **100** | **64** | **3** | **167** |
+| **TOTAL** | **97** | **67** | **3** | **167** |
 
 ---
 
@@ -169,9 +169,9 @@
 | 092 | Android | `WordDetailScreen.kt:1031` | Comment says "Phase 7 Complete" - outdated | ⬜ OPEN |
 | 093 | Web | `Podium.tsx:63` | Fixed max-width truncation 100px for player names | ✅ FIXED 2026-01-25 |
 | 094 | Web | `ListeningQuizGame.tsx:263` | Custom motion.button for audio player - intentional design | ❌ WONTFIX |
-| 163 | Android | `HelpScreen.kt` | Placeholder phone number "+1 234 567 890" in Contact Support section | ⬜ OPEN |
-| 164 | Android | `StatsScreen.kt` | Performance Trends bar chart shows same value (24) for all periods | ⬜ OPEN |
-| 165 | Android | `StoryScreen.kt` | Repetitive lock messages shown on every locked level | ⬜ OPEN |
+| 163 | Android | `HelpScreen.kt` | Placeholder phone number "+1 234 567 890" in Contact Support section | ✅ FIXED 2026-01-25 (removed fake phone support) |
+| 164 | Android | `StatsScreen.kt` | Performance Trends bar chart shows same value (24) for all periods | ✅ FIXED 2026-01-25 (show only total, note about time-based coming soon) |
+| 165 | Android | `StoryScreen.kt` | Repetitive lock messages shown on every locked level | ✅ FIXED 2026-01-25 (simplified locked state UI) |
 
 ---
 

@@ -59,6 +59,7 @@
     <string name="incorrect_label">incorrect</string>
     <string name="skipped_label">skipped</string>
     <string name="performance_trends">Performance Trends</string>
+    <string name="time_based_trends_coming_soon">Daily and weekly trends coming soon</string>
     <string name="daily_label">Daily</string>
     <string name="weekly_label">Weekly</string>
     <string name="total_label">Total</string>
@@ -234,6 +235,7 @@
     <string name="exam_with_value">Exam: %1$s</string>
     <string name="exam_type_with_value">Exam Type: %1$s</string>
     <string name="locked_level_warning">Locked - Learn all words in the previous level first!</string>
+    <string name="locked_level_description">Level %1$s is locked</string>
 
     <!-- Quiz Exam Menu Screen -->
     <string name="select_level_and_exam">Select Level &amp; Exam</string>
