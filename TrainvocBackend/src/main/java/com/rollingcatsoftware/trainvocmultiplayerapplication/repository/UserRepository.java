@@ -45,6 +45,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmailIgnoreCase(String email);
 
     /**
+     * Find user by Firebase UID.
+     */
+    Optional<User> findByFirebaseUid(String firebaseUid);
+
+    /**
+     * Check if Firebase UID exists.
+     */
+    boolean existsByFirebaseUid(String firebaseUid);
+
+    /**
      * Update last login timestamp.
      */
     @Modifying

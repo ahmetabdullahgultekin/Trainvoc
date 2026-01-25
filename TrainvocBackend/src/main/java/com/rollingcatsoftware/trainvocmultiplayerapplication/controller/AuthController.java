@@ -6,6 +6,7 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.auth.RegisterRe
 import com.rollingcatsoftware.trainvocmultiplayerapplication.dto.response.ErrorResponse;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.User;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.UserRepository;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtAuthenticationFilter.FirebaseAuthentication;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -184,7 +185,68 @@ public class AuthController {
         return ResponseEntity.ok(new EmailCheckResponse(true, "Email is available"));
     }
 
+    /**
+     * Sync Firebase user to local database.
+     * This endpoint is called after Firebase authentication to ensure
+     * the user exists in the local database and to get the local user info.
+     *
+     * The Firebase ID token is verified by the JwtAuthenticationFilter,
+     * which also syncs the user. This endpoint returns the synced user info.
+     */
+    @GetMapping("/firebase-sync")
+    @Operation(summary = "Sync Firebase user",
+            description = "Syncs authenticated Firebase user to local database and returns user info")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User synced successfully",
+            content = @Content(schema = @Schema(implementation = FirebaseSyncResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Invalid or missing Firebase token",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<?> firebaseSync(
+            @org.springframework.security.core.annotation.AuthenticationPrincipal Object principal) {
+
+        if (principal instanceof FirebaseAuthentication firebaseAuth) {
+            User user = userRepository.findById(firebaseAuth.userId())
+                    .orElse(null);
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse("User sync failed", "USER_NOT_FOUND"));
+            }
+
+            return ResponseEntity.ok(new FirebaseSyncResponse(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getDisplayName(),
+                    user.getFirebaseUid(),
+                    user.isEmailVerified(),
+                    user.getAuthProvider().name(),
+                    user.getTotalGamesPlayed(),
+                    user.getTotalScore(),
+                    user.getGamesWon()
+            ));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("Firebase authentication required", "FIREBASE_AUTH_REQUIRED"));
+    }
+
     // Response records for availability checks
     private record UsernameCheckResponse(boolean available, String message) {}
     private record EmailCheckResponse(boolean available, String message) {}
+
+    // Response record for Firebase sync
+    private record FirebaseSyncResponse(
+            Long id,
+            String username,
+            String email,
+            String displayName,
+            String firebaseUid,
+            boolean emailVerified,
+            String authProvider,
+            int totalGamesPlayed,
+            int totalScore,
+            int gamesWon
+    ) {}
 }
