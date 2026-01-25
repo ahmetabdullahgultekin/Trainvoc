@@ -85,7 +85,8 @@
       "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat -d \"*:E\")",
       "Bash(echo:*)",
       "Bash(timeout 60 \"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat \"*:E\")",
-      "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat -d)"
+      "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat -d)",
+      "Bash(git mv:*)"
     ]
   }
 }
