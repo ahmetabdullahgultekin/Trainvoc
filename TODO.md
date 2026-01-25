@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 1 | 9 | 2 | 12 |
+| 🔴 CRITICAL | 3 | 9 | 0 | 12 |
 | 🟠 HIGH | 8 | 15 | 1 | 24 |
 | 🟡 MEDIUM | 36 | 21 | 1 | 58 |
-| 🟢 LOW | 31 | 0 | 1 | 32 |
-| ⚪ INFO | 22 | 2 | 0 | 24 |
-| **TOTAL** | **98** | **47** | **5** | **150** |
+| 🟢 LOW | 24 | 7 | 1 | 32 |
+| ⚪ INFO | 21 | 3 | 0 | 24 |
+| **TOTAL** | **92** | **55** | **3** | **150** |
 
 ---
 
@@ -56,8 +56,8 @@
 | 005 | Android | `PlayGamesAchievementMapper.kt:15` | Placeholder achievement IDs - not real Play Console IDs | ✅ FIXED 2026-01-25 |
 | 006 | Android | `CloudBackupManager.kt:437` | Cloud backup upload not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
 | 007 | Android | `CloudBackupManager.kt:459` | Cloud backup download not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
-| 008 | Android | `TutorialViewModel.kt:12-65` | Entire class is stub - all methods are no-op | ❌ WONTFIX (by design) |
-| 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ❌ WONTFIX (by design) |
+| 008 | Android | `TutorialViewModel.kt:12-65` | Stub implementation - needs real tutorial logic | ⬜ OPEN |
+| 009 | Android | `TutorialOverlay.kt:12-30` | Stub implementation - needs actual overlay UI | ⬜ OPEN |
 | 010 | Backend | `SyncController.java:186` | Now returns actual sync counts and timestamps from database | ✅ FIXED 2026-01-25 |
 | 011 | Backend | `SyncServiceTest.java:305` | Proper test coverage with mocked repositories | ✅ FIXED 2026-01-25 |
 | 012 | Infra | `SSL_SETUP.md` | SSL setup guide created - needs server execution | 🔄 DOCUMENTED |
@@ -170,7 +170,7 @@
 | 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ⬜ OPEN |
 | 099 | Android | `strings.xml:79` | "Theme selection coming soon" - outdated | ⬜ OPEN |
 | 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ⬜ OPEN |
-| 101 | Web | `Header.tsx:94-95` | Language button correctly uses sr-only - GOOD but noted | ⬜ OPEN |
+| 101 | Web | `Header.tsx:94-95` | Language button correctly uses sr-only | ✅ NOTED (good pattern) |
 | 102 | Android | `ProfileScreen.kt:112` | "Back" hardcoded contentDescription | ⬜ OPEN |
 | 103 | Android | Various | Test files contain hardcoded localhost references | ⬜ OPEN |
 | 104 | Docs | `sync/README.md:730` | TODO: Add encryption for backups | ⬜ OPEN |
@@ -179,12 +179,12 @@
 | 107 | Android | `DataExporter.kt` | Error handling note - non-production-ready | ⬜ OPEN |
 | 108 | Android | `GoogleAuthManager.kt:~150` | Simplified version mentioned in comments | ⬜ OPEN |
 | 109 | Android | `ListeningQuizGame.kt` | Production note about TTS integration | ⬜ OPEN |
-| 110 | Web | `ProfilePage.tsx:29` | Good responsive design noted | ⬜ OPEN |
-| 111 | Web | `Header.tsx:145` | Mobile menu overflow handling good | ⬜ OPEN |
-| 112 | Web | `LeaderboardPage.tsx:68-73` | Proper loading state - GOOD | ⬜ OPEN |
-| 113 | Web | `CreateRoomPage.tsx:360-363` | Empty state for rooms - GOOD | ⬜ OPEN |
-| 114 | Web | `JoinRoomPage.tsx:122-136` | Good error differentiation - GOOD | ⬜ OPEN |
-| 115 | Web | `style.css:148-192` | Dark mode CSS properly defined - GOOD | ⬜ OPEN |
+| 110 | Web | `ProfilePage.tsx:29` | Good responsive design | ✅ NOTED (good pattern) |
+| 111 | Web | `Header.tsx:145` | Mobile menu overflow handling | ✅ NOTED (good pattern) |
+| 112 | Web | `LeaderboardPage.tsx:68-73` | Proper loading state | ✅ NOTED (good pattern) |
+| 113 | Web | `CreateRoomPage.tsx:360-363` | Empty state for rooms | ✅ NOTED (good pattern) |
+| 114 | Web | `JoinRoomPage.tsx:122-136` | Good error differentiation | ✅ NOTED (good pattern) |
+| 115 | Web | `style.css:148-192` | Dark mode CSS properly defined | ✅ NOTED (good pattern) |
 | 116 | Web | `JoinRoomPage.tsx:206` | Room code input with validation - shows format hint and error states | ✅ FIXED 2026-01-25 |
 | 117 | Android | `ShimmerEffect.kt:246` | Chart placeholder comment | ⬜ OPEN |
 | 118 | Android | `ShimmerEffect.kt:259` | Simple text placeholder comment | ⬜ OPEN |
@@ -219,7 +219,7 @@
 | 140 | Android | `AnimatedComponents.kt:203` | pressClickable with empty onClick - preview | ⬜ OPEN |
 | 141 | Config | `.env.example` | Production URLs documented for GCP and Hostinger | ✅ FIXED 2026-01-25 |
 | 142 | Config | `application-prod.properties` | CORS configured with env var override for Hostinger | ✅ FIXED 2026-01-25 |
-| 143 | Infra | N/A | Docker Compose setup for GCP not documented | ⬜ OPEN |
+| 143 | Infra | `docker-compose.yml` | Docker Compose with PostgreSQL, Backend, Nginx | ✅ FIXED 2026-01-25 |
 | 144 | Infra | `SSL_SETUP.md` | Hostinger/GCP deployment partially documented (SSL, Nginx, systemd) | 🔄 PARTIAL |
 | 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ❌ WONTFIX (tests should use predictable URLs) |
 | 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ⬜ OPEN |
