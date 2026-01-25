@@ -34,4 +34,9 @@ public interface UserWordProgressRepository extends JpaRepository<UserWordProgre
     List<UserWordProgress> findByUserAndUpdatedAtAfter(User user, LocalDateTime since);
 
     void deleteByUserAndWord(User user, String word);
+
+    long countByUser(User user);
+
+    @Query("SELECT MAX(uwp.updatedAt) FROM UserWordProgress uwp WHERE uwp.user = :user")
+    LocalDateTime findLatestUpdatedAtByUser(@Param("user") User user);
 }

@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 3 | 7 | 2 | 12 |
+| 🔴 CRITICAL | 2 | 8 | 2 | 12 |
 | 🟠 HIGH | 12 | 11 | 1 | 24 |
 | 🟡 MEDIUM | 46 | 12 | 0 | 58 |
 | 🟢 LOW | 32 | 0 | 0 | 32 |
 | ⚪ INFO | 24 | 0 | 0 | 24 |
-| **TOTAL** | **117** | **30** | **3** | **150** |
+| **TOTAL** | **115** | **32** | **3** | **150** |
 
 ---
 
@@ -58,7 +58,7 @@
 | 007 | Android | `CloudBackupManager.kt:459` | Cloud backup download not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
 | 008 | Android | `TutorialViewModel.kt:12-65` | Entire class is stub - all methods are no-op | ❌ WONTFIX (by design) |
 | 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ❌ WONTFIX (by design) |
-| 010 | Backend | `SyncController.java:186` | TODO: Return actual sync status from database | ⬜ OPEN |
+| 010 | Backend | `SyncController.java:186` | Now returns actual sync counts and timestamps from database | ✅ FIXED 2026-01-25 |
 | 011 | Backend | `SyncServiceTest.java:305` | Returns empty list - TODO implementation | ⬜ OPEN |
 | 012 | Infra | N/A | SSL certificate not configured for api.trainvoc.rollingcatsoftware.com | ⬜ OPEN |
 
@@ -256,6 +256,7 @@
 | 041 | Web | FeaturesGrid.tsx now uses feature.title.en as React key | 2026-01-25 | Claude |
 | 093 | Web | Podium.tsx player names now have responsive max-width | 2026-01-25 | Claude |
 | 039 | Web | All 7 game components (PictureMatch, MultipleChoice, FillInBlank, ContextClues, SpellingChallenge, WordScramble, ListeningQuiz) now use proper `resetGame()` state reset instead of `window.location.reload()` | 2026-01-25 | Claude |
+| 010 | Backend | SyncController.getSyncStatus() now returns actual counts and last sync timestamps from database via SyncService.getSyncStatus() | 2026-01-25 | Claude |
 
 ---
 

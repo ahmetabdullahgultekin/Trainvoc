@@ -128,6 +128,19 @@ export function WordScrambleGame({ questions, onComplete }: WordScrambleGameProp
     }
   }
 
+  const resetGame = () => {
+    setCurrentIndex(0)
+    setUserInput('')
+    setScore(0)
+    setCorrectCount(0)
+    setShowResult(false)
+    setIsCorrect(false)
+    setHintsUsed(0)
+    setRevealedLetters([])
+    setShowCelebration(false)
+    setGameComplete(false)
+  }
+
   const getHintDisplay = () => {
     return currentQuestion.word
       .split('')
@@ -153,7 +166,7 @@ export function WordScrambleGame({ questions, onComplete }: WordScrambleGameProp
             <p className="text-gray-600 dark:text-gray-400 mt-4 mb-6">
               {correctCount} / {questions.length} {t.correct}
             </p>
-            <Button onClick={() => window.location.reload()} className="w-full gap-2">
+            <Button onClick={resetGame} className="w-full gap-2">
               <RotateCcw className="h-4 w-4" />
               {t.playAgain}
             </Button>

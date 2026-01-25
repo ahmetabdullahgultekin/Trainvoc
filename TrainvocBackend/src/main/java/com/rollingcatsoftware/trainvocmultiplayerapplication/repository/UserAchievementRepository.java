@@ -31,4 +31,9 @@ public interface UserAchievementRepository extends JpaRepository<UserAchievement
     List<UserAchievement> findByUserAndUpdatedAtAfter(User user, LocalDateTime since);
 
     void deleteByUserAndAchievementId(User user, String achievementId);
+
+    long countByUser(User user);
+
+    @Query("SELECT MAX(ua.updatedAt) FROM UserAchievement ua WHERE ua.user = :user")
+    LocalDateTime findLatestUpdatedAtByUser(@Param("user") User user);
 }

@@ -183,17 +183,8 @@ public class SyncController {
             @RequestHeader("Authorization") String authHeader) {
         try {
             User user = getUserFromToken(authHeader);
-            // TODO: Return actual sync status from database
-            return ResponseEntity.ok(Map.of(
-                "userId", user.getId(),
-                "lastSyncTime", System.currentTimeMillis(),
-                "entityStatus", Map.of(
-                    "words", Map.of("lastSync", 0, "pendingCount", 0),
-                    "statistics", Map.of("lastSync", 0, "pendingCount", 0),
-                    "achievements", Map.of("lastSync", 0, "pendingCount", 0),
-                    "exams", Map.of("lastSync", 0, "pendingCount", 0)
-                )
-            ));
+            Map<String, Object> syncStatus = syncService.getSyncStatus(user);
+            return ResponseEntity.ok(syncStatus);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(e.getMessage(), "UNAUTHORIZED"));

@@ -30,4 +30,9 @@ public interface UserWordStatisticRepository extends JpaRepository<UserWordStati
     List<UserWordStatistic> findByUserAndUpdatedAtAfter(User user, LocalDateTime since);
 
     void deleteByUserAndWordId(User user, String wordId);
+
+    long countByUser(User user);
+
+    @Query("SELECT MAX(uws.updatedAt) FROM UserWordStatistic uws WHERE uws.user = :user")
+    LocalDateTime findLatestUpdatedAtByUser(@Param("user") User user);
 }

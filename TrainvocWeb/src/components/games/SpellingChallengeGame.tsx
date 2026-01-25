@@ -168,6 +168,21 @@ export function SpellingChallengeGame({
     }
   }
 
+  const resetGame = () => {
+    setCurrentIndex(0)
+    setUserInput('')
+    setScore(0)
+    setCorrectCount(0)
+    setPerfectCount(0)
+    setShowResult(false)
+    setIsCorrect(false)
+    setHintsUsed(0)
+    setRevealedLetters([])
+    setShowCelebration(false)
+    setTimeLeft(questionDuration)
+    setGameComplete(false)
+  }
+
   const getHintDisplay = () => {
     return currentQuestion.word
       .split('')
@@ -233,7 +248,7 @@ export function SpellingChallengeGame({
                 <p className="text-sm text-gray-500">{t.perfect}</p>
               </div>
             </div>
-            <Button onClick={() => window.location.reload()} className="w-full gap-2">
+            <Button onClick={resetGame} className="w-full gap-2">
               <RotateCcw className="h-4 w-4" />
               {t.playAgain}
             </Button>
