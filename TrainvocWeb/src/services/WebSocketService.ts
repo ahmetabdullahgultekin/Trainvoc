@@ -83,9 +83,22 @@ class WebSocketServiceClass {
         if (baseUrl) {
             this.baseUrl = baseUrl;
         } else if (!this.baseUrl) {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = import.meta.env.VITE_API_URL?.replace(/^https?:\/\//, '') || 'localhost:8080';
-            this.baseUrl = `${protocol}//${host}`;
+            // Priority: VITE_WS_URL > derive from VITE_API_URL > derive from window.location
+            if (import.meta.env.VITE_WS_URL) {
+                this.baseUrl = import.meta.env.VITE_WS_URL;
+            } else if (import.meta.env.VITE_API_URL) {
+                // Derive WebSocket URL from API URL
+                const apiUrl = import.meta.env.VITE_API_URL;
+                const isSecure = apiUrl.startsWith('https');
+                const host = apiUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+                this.baseUrl = `${isSecure ? 'wss' : 'ws'}://${host}`;
+            } else {
+                // Fallback: derive from current page location (works for same-origin deployment)
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const host = window.location.host;
+                this.baseUrl = `${protocol}//${host}`;
+                console.warn('WebSocket: No VITE_WS_URL or VITE_API_URL configured, using current host:', this.baseUrl);
+            }
         }
 
         this.setConnectionState('connecting');

@@ -1,4 +1,13 @@
 {
+  "game": {
+    "playAudio": "Play Audio",
+    "stopAudio": "Stop"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "retry": "Try Again",
+    "goHome": "Go to Home"
+  },
   "welcome": "Welcome to Trainvoc!",
   "createRoom": "Create Room",
   "joinRoom": "Join Room",

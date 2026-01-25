@@ -1,6 +1,7 @@
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import i18n from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
@@ -56,15 +57,16 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       }
 
       // Default error UI
+      const t = i18n.t.bind(i18n)
       return (
         <div className="max-w-md mx-auto px-4">
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4">
             <AlertTriangle className="h-20 w-20 text-red-500" />
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Something Went Wrong
+              {t('errorBoundary.title', 'Something Went Wrong')}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mb-2">
-              An unexpected error occurred. Please refresh the page or return to the homepage.
+              {t('unexpectedError')}
             </p>
             {import.meta.env.MODE === 'development' && this.state.error && (
               <Card className="p-4 w-full overflow-auto text-left bg-gray-100 dark:bg-gray-800">
@@ -75,10 +77,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             )}
             <div className="flex gap-3">
               <Button onClick={this.handleRetry}>
-                Tekrar Dene
+                {t('errorBoundary.retry', 'Try Again')}
               </Button>
               <Button variant="outline" onClick={this.handleGoHome}>
-                Ana Sayfaya Dön
+                {t('errorBoundary.goHome', 'Go to Home')}
               </Button>
             </div>
           </div>

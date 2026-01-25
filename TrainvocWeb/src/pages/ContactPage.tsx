@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { Mail, MapPin, Globe, Send } from 'lucide-react'
+import { Mail, MapPin, Globe, Send, CheckCircle } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,8 @@ function ContactPage() {
     email: '',
     message: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const content = {
     en: {
@@ -32,6 +34,9 @@ function ContactPage() {
       yourEmail: 'Your Email',
       message: 'Message',
       send: 'Send Message',
+      successTitle: 'Email Client Opened!',
+      successMessage: 'Please send the email from your email application to complete your message.',
+      sendAnother: 'Send Another Message',
     },
     tr: {
       title: 'İletişim',
@@ -48,6 +53,9 @@ function ContactPage() {
       yourEmail: 'E-posta Adresiniz',
       message: 'Mesaj',
       send: 'Mesaj Gönder',
+      successTitle: 'E-posta Uygulaması Açıldı!',
+      successMessage: 'Mesajınızı tamamlamak için lütfen e-posta uygulamanızdan gönderin.',
+      sendAnother: 'Başka Mesaj Gönder',
     },
   }
 
@@ -75,8 +83,28 @@ function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formState)
+    setIsSubmitting(true)
+
+    // Build mailto link with form data
+    const subject = encodeURIComponent(`Trainvoc Contact: Message from ${formState.name}`)
+    const body = encodeURIComponent(
+      `Name: ${formState.name}\nEmail: ${formState.email}\n\nMessage:\n${formState.message}`
+    )
+    const mailtoLink = `mailto:rollingcat.help@gmail.com?subject=${subject}&body=${body}`
+
+    // Open email client
+    window.location.href = mailtoLink
+
+    // Show success state after a brief delay
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setIsSubmitted(true)
+    }, 500)
+  }
+
+  const handleSendAnother = () => {
+    setIsSubmitted(false)
+    setFormState({ name: '', email: '', message: '' })
   }
 
   return (
@@ -156,59 +184,79 @@ function ContactPage() {
               transition={{ delay: 0.2 }}
             >
               <Card className="p-6 md:p-8">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-                  {t.formTitle}
-                </h2>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {t.name}
-                    </label>
-                    <Input
-                      type="text"
-                      value={formState.name}
-                      onChange={(e) =>
-                        setFormState({ ...formState, name: e.target.value })
-                      }
-                      placeholder={t.name}
-                    />
+                {isSubmitted ? (
+                  <div className="text-center py-8">
+                    <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {t.successTitle}
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-300 mb-6">
+                      {t.successMessage}
+                    </p>
+                    <Button onClick={handleSendAnother} variant="outline">
+                      {t.sendAnother}
+                    </Button>
                   </div>
+                ) : (
+                  <>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                      {t.formTitle}
+                    </h2>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {t.yourEmail}
-                    </label>
-                    <Input
-                      type="email"
-                      value={formState.email}
-                      onChange={(e) =>
-                        setFormState({ ...formState, email: e.target.value })
-                      }
-                      placeholder={t.yourEmail}
-                    />
-                  </div>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t.name}
+                        </label>
+                        <Input
+                          type="text"
+                          value={formState.name}
+                          onChange={(e) =>
+                            setFormState({ ...formState, name: e.target.value })
+                          }
+                          placeholder={t.name}
+                          required
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {t.message}
-                    </label>
-                    <textarea
-                      value={formState.message}
-                      onChange={(e) =>
-                        setFormState({ ...formState, message: e.target.value })
-                      }
-                      placeholder={t.message}
-                      rows={4}
-                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors resize-none"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t.yourEmail}
+                        </label>
+                        <Input
+                          type="email"
+                          value={formState.email}
+                          onChange={(e) =>
+                            setFormState({ ...formState, email: e.target.value })
+                          }
+                          placeholder={t.yourEmail}
+                          required
+                        />
+                      </div>
 
-                  <Button type="submit" className="w-full gap-2">
-                    <Send className="h-4 w-4" />
-                    {t.send}
-                  </Button>
-                </form>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          {t.message}
+                        </label>
+                        <textarea
+                          value={formState.message}
+                          onChange={(e) =>
+                            setFormState({ ...formState, message: e.target.value })
+                          }
+                          placeholder={t.message}
+                          rows={4}
+                          required
+                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors resize-none"
+                        />
+                      </div>
+
+                      <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
+                        <Send className="h-4 w-4" />
+                        {t.send}
+                      </Button>
+                    </form>
+                  </>
+                )}
               </Card>
             </motion.div>
           </div>
