@@ -167,19 +167,6 @@ fun HelpScreen(navController: NavController) {
                         )
 
                         ImprovedContactItem(
-                            icon = Icons.Default.Phone,
-                            title = stringResource(id = R.string.call_support),
-                            detail = "+1 234 567 890",
-                            onClick = {
-                                val phoneIntent = Intent(
-                                    Intent.ACTION_DIAL,
-                                    "tel:+1234567890".toUri()
-                                )
-                                context.startActivity(phoneIntent)
-                            }
-                        )
-
-                        ImprovedContactItem(
                             icon = Icons.Default.Web,
                             title = stringResource(id = R.string.visit_website),
                             detail = "trainvoc.rollingcatsoftware.com",
