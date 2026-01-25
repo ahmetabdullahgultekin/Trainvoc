@@ -1,0 +1,270 @@
+# Trainvoc - Unified Issue Tracker
+
+> **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
+> **Last Updated**: 2026-01-25
+> **Total Issues**: 150+
+
+## How This Document Works
+
+### For Claude AI Sessions:
+1. **When you find an issue**: Add it to this document with the next available number
+2. **When you fix an issue**: Mark it with ✅ and add the fix date
+3. **Never delete issues**: Keep history for tracking
+
+### Issue Format:
+```
+| #ID | Component | Severity | File:Line | Description | Status |
+```
+
+### Severity Levels:
+- 🔴 **CRITICAL** - Production blocker, security issue, or crash
+- 🟠 **HIGH** - Major feature broken or significant UX problem
+- 🟡 **MEDIUM** - Feature works but has issues
+- 🟢 **LOW** - Minor polish or improvement
+- ⚪ **INFO** - Documentation, cleanup, or nice-to-have
+
+### Status:
+- ⬜ **OPEN** - Not yet fixed
+- 🔄 **IN PROGRESS** - Being worked on
+- ✅ **FIXED** - Resolved (include date)
+- ❌ **WONTFIX** - Decided not to fix (include reason)
+- 🔁 **DUPLICATE** - Duplicate of another issue (reference #ID)
+
+---
+
+## Quick Stats
+
+| Severity | Open | Fixed | Total |
+|----------|------|-------|-------|
+| 🔴 CRITICAL | 12 | 0 | 12 |
+| 🟠 HIGH | 24 | 0 | 24 |
+| 🟡 MEDIUM | 58 | 0 | 58 |
+| 🟢 LOW | 32 | 0 | 32 |
+| ⚪ INFO | 24 | 0 | 24 |
+| **TOTAL** | **150** | **0** | **150** |
+
+---
+
+## 🔴 CRITICAL Issues (Production Blockers)
+
+| # | Component | File:Line | Description | Status |
+|---|-----------|-----------|-------------|--------|
+| 001 | Web | `WebSocketService.ts:87` | WebSocket URL fallback uses `localhost:8080` - will fail in production | ⬜ OPEN |
+| 002 | Web | `ContactPage.tsx:79` | Contact form just logs to console - form is completely broken | ⬜ OPEN |
+| 003 | Web | `api.ts:4` | HTTP fallback (`http://localhost:8080`) - insecure if env not set | ⬜ OPEN |
+| 004 | Android | `MultiplayerRepository.kt:299` | Password hashing uses `hashCode()` instead of cryptographic hash - SECURITY | ⬜ OPEN |
+| 005 | Android | `PlayGamesAchievementMapper.kt:15` | Placeholder achievement IDs - not real Play Console IDs | ⬜ OPEN |
+| 006 | Android | `CloudBackupManager.kt:437` | Cloud backup upload not implemented - returns "Coming Soon" exception | ⬜ OPEN |
+| 007 | Android | `CloudBackupManager.kt:459` | Cloud backup download not implemented - returns "Coming Soon" exception | ⬜ OPEN |
+| 008 | Android | `TutorialViewModel.kt:12-65` | Entire class is stub - all methods are no-op | ⬜ OPEN |
+| 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ⬜ OPEN |
+| 010 | Backend | `SyncController.java:186` | TODO: Return actual sync status from database | ⬜ OPEN |
+| 011 | Backend | `SyncServiceTest.java:305` | Returns empty list - TODO implementation | ⬜ OPEN |
+| 012 | Infra | N/A | SSL certificate not configured for api.trainvoc.rollingcatsoftware.com | ⬜ OPEN |
+
+---
+
+## 🟠 HIGH Issues (Major Features/UX)
+
+| # | Component | File:Line | Description | Status |
+|---|-----------|-----------|-------------|--------|
+| 013 | Web | `QuestionCard.tsx:75-78` | "Play Audio"/"Stop" hardcoded in English - breaks Turkish UI | ⬜ OPEN |
+| 014 | Web | `ErrorBoundary.tsx:77-82` | Button labels hardcoded in Turkish ("Tekrar Dene") | ⬜ OPEN |
+| 015 | Web | `PictureMatchGame.tsx:237` | Image `<img>` missing `alt` attribute - WCAG failure | ⬜ OPEN |
+| 016 | Android | `DictionaryScreen.kt:628` | Hardcoded pink `Color(0xFFE91E63)` for favorites heart | ⬜ OPEN |
+| 017 | Android | `DictionaryScreen.kt:574-584` | Audio button only `24.dp` - below 48dp touch target minimum | ⬜ OPEN |
+| 018 | Android | `HomeScreen.kt:188` | Username shows `username_placeholder` instead of actual user | ⬜ OPEN |
+| 019 | Android | `strings.xml:87` | "Backup features coming soon" contradicts existing CloudBackupScreen | ⬜ OPEN |
+| 020 | Android | `DictionaryScreen.kt:810` | AlphabetFastScroll missing contentDescription for letters | ⬜ OPEN |
+| 021 | Android | `LeaderboardScreen.kt:93-99` | Hardcoded mock users - `Alex, Sarah, Mike, You, Emma` with fake scores | ⬜ OPEN |
+| 022 | Android | `ListeningQuizGame.kt:162-167` | TTS URL placeholder - returns `tts://$language/$text` string | ⬜ OPEN |
+| 023 | Android | `ImageService.kt:119-123` | Mock Unsplash URL - uses deprecated random API endpoint | ⬜ OPEN |
+| 024 | Android | `CloudBackupManager.kt:470` | Cloud metadata returns null - placeholder | ⬜ OPEN |
+| 025 | Android | `AnalyticsService.kt:66` | Daily stats return totals - no date filtering implemented | ⬜ OPEN |
+| 026 | Android | `AnalyticsService.kt:83` | Weekly stats return totals - no date filtering implemented | ⬜ OPEN |
+| 027 | Android | `ProfileScreen.kt:149-150` | Accuracy shown as "rough estimate" - misleading to users | ⬜ OPEN |
+| 028 | Android | `DictionaryScreen.kt:247` | "Recent Searches" hardcoded instead of stringResource | ⬜ OPEN |
+| 029 | Android | `DictionaryScreen.kt:235` | "Clear search" hardcoded contentDescription | ⬜ OPEN |
+| 030 | Android | `DictionaryScreen.kt:262` | "Search history" hardcoded contentDescription | ⬜ OPEN |
+| 031 | Android | `CloudBackupScreen.kt:71` | "Cloud Backup" hardcoded title instead of stringResource | ⬜ OPEN |
+| 032 | Android | `CloudBackupScreen.kt:156-187` | Multiple hardcoded feature descriptions | ⬜ OPEN |
+| 033 | Android | `ProfileScreen.kt:109` | "Profile" hardcoded title instead of stringResource | ⬜ OPEN |
+| 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ⬜ OPEN |
+| 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ⬜ OPEN |
+| 036 | Infra | N/A | CORS not configured for https://trainvoc.rollingcatsoftware.com | ⬜ OPEN |
+
+---
+
+## 🟡 MEDIUM Issues (Partial Functionality)
+
+| # | Component | File:Line | Description | Status |
+|---|-----------|-----------|-------------|--------|
+| 037 | Web | `ProfilePage.tsx:69` | Turkish placeholder "Nick gir..." in English UI | ⬜ OPEN |
+| 038 | Web | `InstallPrompt.tsx:94-98` | Close button missing `aria-label` | ⬜ OPEN |
+| 039 | Web | Multiple game files | Using `window.location.reload()` instead of navigation | ⬜ OPEN |
+| 040 | Web | `CreateRoomPage.tsx:162` | Using `index` as React key - anti-pattern | ⬜ OPEN |
+| 041 | Web | `FeaturesGrid.tsx:135` | Using `index` as React key - anti-pattern | ⬜ OPEN |
+| 042 | Android | `ModernComponents.kt:162` | Hardcoded gray colors for disabled gradient button | ⬜ OPEN |
+| 043 | Android | `ModernComponents.kt:184` | Hardcoded `Color.White` for icon tint | ⬜ OPEN |
+| 044 | Android | `ModernComponents.kt:193` | Hardcoded `Color.White` for text | ⬜ OPEN |
+| 045 | Android | `DictionaryScreen.kt:519` | Hardcoded `Color.White` for chip selected text | ⬜ OPEN |
+| 046 | Android | `SplashScreen.kt:87` | Fixed 96.dp size for splash - should scale for tablets | ⬜ OPEN |
+| 047 | Android | `DictionaryScreen.kt:459` | Fixed 80.dp letter preview box size | ⬜ OPEN |
+| 048 | Android | `QuizScreen.kt:98` | Fixed 180.dp Lottie animation size | ⬜ OPEN |
+| 049 | Android | `AnswerOptionCard.kt:181-182` | Fixed 32.dp checkmark icon - below 48dp minimum | ⬜ OPEN |
+| 050 | Android | `CloudBackupScreen.kt:149` | Fixed 80.dp CloudOff icon size | ⬜ OPEN |
+| 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ⬜ OPEN |
+| 052 | Android | `CloudBackupScreen.kt` | No error state UI when backup operations fail | ⬜ OPEN |
+| 053 | Android | `QuizScreen.kt:288-293` | Shows loading but no error state if questions fail | ⬜ OPEN |
+| 054 | Android | `DictionaryScreen.kt:336-345` | Shimmer loading shown but no error message if search fails | ⬜ OPEN |
+| 055 | Android | `CloudBackupScreen.kt:108` | SignedInContent doesn't show clear loading state | ⬜ OPEN |
+| 056 | Android | `ProfileScreen.kt` | No loading skeleton for stats before they load | ⬜ OPEN |
+| 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ⬜ OPEN |
+| 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
+| 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ⬜ OPEN |
+| 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ⬜ OPEN |
+| 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ⬜ OPEN |
+| 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ⬜ OPEN |
+| 063 | Android | `QuizScreen.kt:210` | LazyColumn uses fixed Spacing - no tablet adaptation | ⬜ OPEN |
+| 064 | Android | `SplashScreen.kt` | No responsive considerations for landscape | ⬜ OPEN |
+| 065 | Android | `ProfileScreen.kt:81-85` | No horizontal padding adjustment for ultra-wide | ⬜ OPEN |
+| 066 | Android | `DailyGoalsScreen.kt:78-86` | Study time hardcoded to 0/30 - not tracking actual time | ⬜ OPEN |
+| 067 | Android | `WordProgressScreen.kt:299,321` | Learning timeline hardcoded `listOf(12, 18, 15, 22)` | ⬜ OPEN |
+| 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ⬜ OPEN |
+| 069 | Android | `BackupScreen.kt:462` | Cloud backup shows "not yet implemented" message | ⬜ OPEN |
+| 070 | Android | `BackupScreen.kt:514` | Coming Soon section | ⬜ OPEN |
+| 071 | Android | `SettingsScreen.kt:340,345` | Leaderboard marked "Coming soon" - shows toast only | ⬜ OPEN |
+| 072 | Android | `UpdateNotesCard.kt:162-164` | "Coming Soon" section for features | ⬜ OPEN |
+| 073 | Android | `ChangelogScreen.kt:225` | "Coming Soon" label in changelog | ⬜ OPEN |
+| 074 | Android | `DictionaryScreen.kt:336-345` | Shimmer shows for ALL cards during search | ⬜ OPEN |
+| 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ⬜ OPEN |
+| 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ⬜ OPEN |
+| 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ⬜ OPEN |
+| 078 | Backend | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
+| 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
+| 080 | Android | `strings.xml` | Email placeholder uses old branding | ⬜ OPEN |
+| 081 | Android | Various | Inconsistent MaterialTheme vs hardcoded colors throughout | ⬜ OPEN |
+| 082 | Android | `FavoritesScreen.kt:237` | Level chip onClick empty | ⬜ OPEN |
+| 083 | Android | `WordDetailScreen.kt:499` | Exam chips onClick empty | ⬜ OPEN |
+| 084 | Android | `UserFeatureFlagScreen.kt:246,256` | Premium/Uses Data chips onClick empty | ⬜ OPEN |
+| 085 | Android | `AdminFeatureFlagScreen.kt:303,310,320` | Filter chips onClick empty | ⬜ OPEN |
+| 086 | Android | `SubscriptionScreen.kt:321` | Disabled "Current Plan" button onClick empty | ⬜ OPEN |
+| 087 | Android | `NavigationCard.kt:132,137,151` | Preview defaults with empty onClick | ⬜ OPEN |
+| 088 | Android | `ExampleSentenceCard.kt:117,130` | Preview defaults with empty onClick | ⬜ OPEN |
+| 089 | Android | `CloudBackupScreen.kt:197` | "Sign in" contentDescription should be "Sign in with Google" | ⬜ OPEN |
+| 090 | Android | `CloudBackupScreen.kt:74` | "Back" contentDescription too generic | ⬜ OPEN |
+| 091 | Android | `CloudBackupScreen.kt:80` | "Refresh" should be "Refresh backup list" | ⬜ OPEN |
+| 092 | Android | `WordDetailScreen.kt:1031` | Comment says "Phase 7 Complete" - outdated | ⬜ OPEN |
+| 093 | Web | `Podium.tsx:63` | Fixed max-width truncation 100px for player names | ⬜ OPEN |
+| 094 | Web | `ListeningQuizGame.tsx:263` | Custom motion.button instead of Button component | ⬜ OPEN |
+
+---
+
+## 🟢 LOW Issues (Polish)
+
+| # | Component | File:Line | Description | Status |
+|---|-----------|-----------|-------------|--------|
+| 095 | Android | `QuizScreen.kt:98` | Fixed Lottie size could adapt | ⬜ OPEN |
+| 096 | Android | `AnswerOptionCard.kt:148-150` | ContentDescription could be more specific | ⬜ OPEN |
+| 097 | Android | `DictionaryScreen.kt:336-345` | Loading text during search basic | ⬜ OPEN |
+| 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ⬜ OPEN |
+| 099 | Android | `strings.xml:79` | "Theme selection coming soon" - outdated | ⬜ OPEN |
+| 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ⬜ OPEN |
+| 101 | Web | `Header.tsx:94-95` | Language button correctly uses sr-only - GOOD but noted | ⬜ OPEN |
+| 102 | Android | `ProfileScreen.kt:112` | "Back" hardcoded contentDescription | ⬜ OPEN |
+| 103 | Android | Various | Test files contain hardcoded localhost references | ⬜ OPEN |
+| 104 | Docs | `sync/README.md:730` | TODO: Add encryption for backups | ⬜ OPEN |
+| 105 | Docs | `sync/README.md:294` | Cloud provider implementation is placeholder | ⬜ OPEN |
+| 106 | Docs | `sync/README.md:888` | Cloud backup described as placeholder | ⬜ OPEN |
+| 107 | Android | `DataExporter.kt` | Error handling note - non-production-ready | ⬜ OPEN |
+| 108 | Android | `GoogleAuthManager.kt:~150` | Simplified version mentioned in comments | ⬜ OPEN |
+| 109 | Android | `ListeningQuizGame.kt` | Production note about TTS integration | ⬜ OPEN |
+| 110 | Web | `ProfilePage.tsx:29` | Good responsive design noted | ⬜ OPEN |
+| 111 | Web | `Header.tsx:145` | Mobile menu overflow handling good | ⬜ OPEN |
+| 112 | Web | `LeaderboardPage.tsx:68-73` | Proper loading state - GOOD | ⬜ OPEN |
+| 113 | Web | `CreateRoomPage.tsx:360-363` | Empty state for rooms - GOOD | ⬜ OPEN |
+| 114 | Web | `JoinRoomPage.tsx:122-136` | Good error differentiation - GOOD | ⬜ OPEN |
+| 115 | Web | `style.css:148-192` | Dark mode CSS properly defined - GOOD | ⬜ OPEN |
+| 116 | Web | `JoinRoomPage.tsx:206` | Room code input no format validation feedback | ⬜ OPEN |
+| 117 | Android | `ShimmerEffect.kt:246` | Chart placeholder comment | ⬜ OPEN |
+| 118 | Android | `ShimmerEffect.kt:259` | Simple text placeholder comment | ⬜ OPEN |
+| 119 | Android | `UnifiedStates.kt:194-299` | Multiple placeholder comments for shimmer | ⬜ OPEN |
+| 120 | Android | `FillInTheBlankScreen.kt:236` | placeholder prop for TextField | ⬜ OPEN |
+| 121 | Android | `SpellingChallengeScreen.kt:223` | placeholder prop for TextField | ⬜ OPEN |
+| 122 | Android | `WordScrambleScreen.kt:205` | placeholder prop for TextField | ⬜ OPEN |
+| 123 | Android | `GameScreens.kt:472,481` | placeholder parameter in function | ⬜ OPEN |
+| 124 | Android | `FavoritesScreen.kt:87` | placeholder prop for TextField | ⬜ OPEN |
+| 125 | Android | `DictionaryScreen.kt:219` | placeholder prop for TextField | ⬜ OPEN |
+| 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ⬜ OPEN |
+
+---
+
+## ⚪ INFO (Documentation/Cleanup)
+
+| # | Component | File:Line | Description | Status |
+|---|-----------|-----------|-------------|--------|
+| 127 | Docs | Root | 116 documentation files need consolidation | ⬜ OPEN |
+| 128 | Docs | `DOCUMENT_AUDIT_TRACKER.md` | Audit not started on any files | ⬜ OPEN |
+| 129 | Docs | `NON_IMPLEMENTED_COMPONENTS_AUDIT.md` | Some items may be outdated | ⬜ OPEN |
+| 130 | Docs | Various WEEK_*.md files | Historical docs - consider archiving | ⬜ OPEN |
+| 131 | Docs | Various PHASE_*.md files | Historical docs - consider archiving | ⬜ OPEN |
+| 132 | Docs | `README.old.md` | Old README - should be deleted | ⬜ OPEN |
+| 133 | Docs | Multiple SESSION_SUMMARY files | Historical - consider archiving | ⬜ OPEN |
+| 134 | Docs | `GAMES_UI_INVESTIGATION.md` | May be resolved - verify | ⬜ OPEN |
+| 135 | Docs | `BUILD_ISSUES.md` | May be resolved - verify | ⬜ OPEN |
+| 136 | Docs | `BUILD_STATUS.md` | May be outdated - verify | ⬜ OPEN |
+| 137 | Project | Multiple | Many .md files could be archived to `docs/archive/` | ⬜ OPEN |
+| 138 | Android | `FeatureFlagManager.kt:226,246` | fallback/disabled params have empty defaults - OK | ⬜ OPEN |
+| 139 | Android | `MemoryLeakPrevention.kt:102` | cleanup param has empty default - OK | ⬜ OPEN |
+| 140 | Android | `AnimatedComponents.kt:203` | pressClickable with empty onClick - preview | ⬜ OPEN |
+| 141 | Config | `.env.example` | Needs production URLs documented | ⬜ OPEN |
+| 142 | Config | `application-prod.properties` | May need CORS update for Hostinger | ⬜ OPEN |
+| 143 | Infra | N/A | Docker Compose setup for GCP not documented | ⬜ OPEN |
+| 144 | Infra | N/A | Hostinger deployment steps not documented | ⬜ OPEN |
+| 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ⬜ OPEN |
+| 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ⬜ OPEN |
+| 147 | Android | Various | Multiple files have "In production" comments | ⬜ OPEN |
+| 148 | Android | `sync/README.md` | Large README could be split | ⬜ OPEN |
+| 149 | Docs | `TrainvocClient/CLAUDE.md` | Session notes getting long - consider archiving | ⬜ OPEN |
+| 150 | Docs | Root `CLAUDE.md` | May have outdated session info | ⬜ OPEN |
+
+---
+
+## Recently Fixed
+
+| # | Component | Description | Fixed Date | Fixed By |
+|---|-----------|-------------|------------|----------|
+| - | - | - | - | - |
+
+---
+
+## Issue Categories Summary
+
+| Category | Count | Description |
+|----------|-------|-------------|
+| **Web UI/UX** | 15 | React frontend issues |
+| **Android UI/UX** | 58 | Mobile app UI issues |
+| **Security** | 2 | Password hashing, auth |
+| **Placeholder/Stub** | 12 | Non-functional code |
+| **Hardcoded Values** | 25 | Strings, colors, URLs |
+| **Accessibility** | 15 | WCAG, contentDescription |
+| **i18n/l10n** | 8 | Localization issues |
+| **Documentation** | 24 | Docs needing update |
+| **Infrastructure** | 5 | Deployment, config |
+
+---
+
+## Next Fix Session Priority
+
+When starting a fix session, prioritize in this order:
+
+1. **🔴 CRITICAL #001-012** - Production blockers
+2. **🟠 HIGH #013-036** - Major UX issues
+3. **Deployment blockers** - SSL, CORS, env vars
+4. **🟡 MEDIUM** - As time allows
+5. **🟢 LOW** - Polish phase
+6. **⚪ INFO** - Cleanup session
+
+---
+
+*This document is the single source of truth for all project issues. Update it whenever you find or fix an issue.*
