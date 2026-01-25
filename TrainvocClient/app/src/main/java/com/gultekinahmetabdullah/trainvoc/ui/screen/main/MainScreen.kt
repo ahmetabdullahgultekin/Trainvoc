@@ -3,10 +3,12 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,7 +32,7 @@ import com.gultekinahmetabdullah.trainvoc.navigation.gamesNavGraph
 import com.gultekinahmetabdullah.trainvoc.navigation.multiplayerNavGraph
 import com.gultekinahmetabdullah.trainvoc.ui.screen.dictionary.WordManagementScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppBottomBar
-import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppBottomSheet
+import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppNavigationDrawerContent
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.components.AppTopBar
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.AboutScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.other.HelpScreen
@@ -46,6 +48,7 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizMenuScreen
+import kotlinx.coroutines.launch
 
 /**
  * Main screen with bottom navigation
@@ -63,11 +66,7 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { true }
-    )
-    val showBottomSheet = remember { mutableStateOf(false) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
     val isTopAppBarVisible = remember { mutableStateOf(true) }
@@ -84,7 +83,19 @@ fun MainScreen(
     val settingsViewModel: SettingsViewModel = hiltViewModel()
     val storyViewModel: StoryViewModel = hiltViewModel()
 
-    Scaffold(
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppNavigationDrawerContent(
+                drawerState = drawerState,
+                coroutineScope = coroutineScope,
+                navController = navController,
+                currentRoute = navBackStackEntry.value?.destination?.route
+            )
+        },
+        gesturesEnabled = drawerState.isOpen
+    ) {
+        Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
         bottomBar = {
@@ -97,7 +108,7 @@ fun MainScreen(
                 AppTopBar(
                     navBackStackEntry = navBackStackEntry.value,
                     navController = navController,
-                    onMenuClick = { showBottomSheet.value = true }
+                    onMenuClick = { coroutineScope.launch { drawerState.open() } }
                 )
             }
         }
@@ -331,15 +342,7 @@ fun MainScreen(
             }
         }
     }
-
-    if (showBottomSheet.value) {
-        AppBottomSheet(
-            sheetState = sheetState,
-            coroutineScope = coroutineScope,
-            showBottomSheet = showBottomSheet,
-            navController = navController
-        )
-    }
+    } // End of ModalNavigationDrawer
 
     LaunchedEffect(startWordId) {
         if (!startWordId.isNullOrEmpty()) {
