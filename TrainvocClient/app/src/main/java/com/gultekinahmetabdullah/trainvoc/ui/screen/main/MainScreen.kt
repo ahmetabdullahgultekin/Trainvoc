@@ -246,7 +246,19 @@ fun MainScreen(
                 // Phase 1 - New Screens
                 composable(Route.PROFILE) {
                     com.gultekinahmetabdullah.trainvoc.ui.screen.profile.ProfileScreen(
-                        onBackClick = { navController.popBackStack() }
+                        onBackClick = { navController.popBackStack() },
+                        onEditProfile = { /* Handled by dialog inside ProfileScreen */ },
+                        onViewLeaderboard = { navController.navigate(Route.LEADERBOARD) },
+                        onSettings = { navController.navigate(Route.SETTINGS) },
+                        onSignOut = {
+                            // Clear user data and navigate to home
+                            val prefs = navController.context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+                            prefs.edit().clear().apply()
+                            navController.navigate(Route.HOME) {
+                                popUpTo(Route.HOME) { inclusive = true }
+                            }
+                        },
+                        onViewAchievements = { navController.navigate(Route.ACHIEVEMENTS) }
                     )
                 }
                 composable(Route.WORD_OF_DAY) {

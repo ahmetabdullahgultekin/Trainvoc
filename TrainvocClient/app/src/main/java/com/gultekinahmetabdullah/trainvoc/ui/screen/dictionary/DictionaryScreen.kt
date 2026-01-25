@@ -354,13 +354,17 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                         )
                     }
                     else -> {
-                        // Word List with alphabet fast scroll
+                        // Word List with alphabet fast scroll using Row layout
                         val listState = rememberLazyListState()
 
-                        Box(modifier = Modifier.fillMaxSize()) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
+                        ) {
+                            // Main word list - takes remaining space
                             LazyColumn(
                                 state = listState,
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.weight(1f),
                                 contentPadding = PaddingValues(bottom = Spacing.md)
                             ) {
                                 itemsIndexed(
@@ -429,12 +433,10 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                                 }
                             }
 
-                            // Alphabet Fast Scroll
+                            // Alphabet Fast Scroll - in Row, aligned vertically
                             if (displayedWords.isNotEmpty() && !isSearching) {
                                 AlphabetFastScroll(
-                                    modifier = Modifier
-                                        .align(Alignment.CenterEnd)
-                                        .padding(end = Spacing.xs),
+                                    modifier = Modifier.align(Alignment.CenterVertically),
                                     onLetterSelected = { letter ->
                                         // Haptic feedback
                                         view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
@@ -452,13 +454,16 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                                     }
                                 )
                             }
+                        }
 
-                            // Large letter preview when scrolling
-                            if (currentScrollLetter.isNotEmpty()) {
+                        // Large letter preview when scrolling (overlay on top)
+                        if (currentScrollLetter.isNotEmpty()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Surface(
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .size(80.dp),
+                                    modifier = Modifier.size(80.dp),
                                     shape = RoundedCornerShape(CornerRadius.large),
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shadowElevation = Elevation.level3
@@ -471,11 +476,11 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                                         )
                                     }
                                 }
+                            }
 
-                                LaunchedEffect(currentScrollLetter) {
-                                    delay(500)
-                                    currentScrollLetter = ""
-                                }
+                            LaunchedEffect(currentScrollLetter) {
+                                delay(500)
+                                currentScrollLetter = ""
                             }
                         }
                     }

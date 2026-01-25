@@ -84,12 +84,16 @@ fun ProfileScreen(
         else -> 2                  // Phones
     }
 
-    // Get username from SharedPreferences
+    // Get username and avatar from SharedPreferences
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
     val username = prefs.getString("username", null) ?: "User"
     val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
+    var currentAvatar by remember {
+        mutableStateOf(prefs.getString("avatar", com.gultekinahmetabdullah.trainvoc.constants.Avatars.getRandomAvatar()) ?: "\uD83E\uDD8A")
+    }
 
     val showEditDialog = remember { mutableStateOf(false) }
+    val showAvatarDialog = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     // Pull to refresh state
@@ -130,6 +134,8 @@ fun ProfileScreen(
                 item {
                     ProfileHeroSection(
                         username = username,
+                        avatar = currentAvatar,
+                        onAvatarClick = { showAvatarDialog.value = true },
                         level = uiState.level,
                         xpCurrent = uiState.xpCurrent,
                         xpForNextLevel = uiState.xpForNextLevel,
@@ -141,18 +147,20 @@ fun ProfileScreen(
 
                 // Stats Cards Grid (2x2)
                 item {
-                    // Calculate mastery rate from actual data
-                    val masteredWords = uiState.wordStatusCounts?.mastered ?: 0
-                    val learningWords = uiState.wordStatusCounts?.learning ?: 0
-                    val totalAttempted = masteredWords + learningWords + (uiState.wordStatusCounts?.struggling ?: 0)
+                    // Use total study time if today's time is 0
+                    val studyTime = if ((uiState.dailyGoal?.timeTodayMinutes ?: 0) > 0) {
+                        uiState.dailyGoal?.timeTodayMinutes ?: 0
+                    } else {
+                        uiState.totalStudyTimeMinutes
+                    }
 
                     StatsGridSection(
                         learnedWords = uiState.learnedWords,
                         totalWords = uiState.totalWords,
                         quizzesCompleted = uiState.quizzesCompleted,
-                        studyTimeMinutes = uiState.dailyGoal?.timeTodayMinutes ?: 0,
-                        correctAnswers = masteredWords,  // Words fully mastered
-                        totalAnswers = if (totalAttempted > 0) totalAttempted else 1,  // All words attempted
+                        studyTimeMinutes = studyTime,
+                        correctAnswers = uiState.learnedWords,  // Words learned = mastery progress
+                        totalAnswers = if (uiState.totalWords > 0) uiState.totalWords else 1,  // Total words in dictionary
                         modifier = Modifier.padding(horizontal = Spacing.md)
                     )
                 }
@@ -212,6 +220,19 @@ fun ProfileScreen(
             }
         )
     }
+
+    // Avatar Selection Dialog
+    if (showAvatarDialog.value) {
+        AvatarSelectionDialog(
+            currentAvatar = currentAvatar,
+            onDismiss = { showAvatarDialog.value = false },
+            onSelect = { newAvatar ->
+                currentAvatar = newAvatar
+                prefs.edit().putString("avatar", newAvatar).apply()
+                showAvatarDialog.value = false
+            }
+        )
+    }
 }
 
 /**
@@ -221,6 +242,8 @@ fun ProfileScreen(
 @Composable
 fun ProfileHeroSection(
     username: String,
+    avatar: String,
+    onAvatarClick: () -> Unit,
     level: Int,
     xpCurrent: Int,
     xpForNextLevel: Int,
@@ -266,20 +289,36 @@ fun ProfileHeroSection(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Large Avatar
+            // Large Avatar - Emoji based, clickable to change
             Box(
                 modifier = Modifier
                     .size(ComponentSize.avatarLarge)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .clickable(onClick = onAvatarClick),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = username.firstOrNull()?.uppercase() ?: "U",
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontWeight = FontWeight.Bold
+                    text = avatar,
+                    style = MaterialTheme.typography.displayLarge,
+                    modifier = Modifier.padding(8.dp)
                 )
+                // Edit indicator
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.secondary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Change avatar",
+                        tint = MaterialTheme.colorScheme.onSecondary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(Spacing.md))
@@ -903,6 +942,73 @@ fun EditProfileDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text("Cancel")
+            }
+        }
+    )
+}
+
+/**
+ * Avatar Selection Dialog - Grid of emoji avatars to choose from
+ */
+@Composable
+fun AvatarSelectionDialog(
+    currentAvatar: String,
+    onDismiss: () -> Unit,
+    onSelect: (String) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Choose Avatar") },
+        text = {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(5),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.height(280.dp)
+            ) {
+                items(com.gultekinahmetabdullah.trainvoc.constants.Avatars.AVATAR_LIST.size) { index ->
+                    val avatar = com.gultekinahmetabdullah.trainvoc.constants.Avatars.AVATAR_LIST[index]
+                    val isSelected = avatar == currentAvatar
+
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                                else MaterialTheme.colorScheme.surfaceVariant
+                            )
+                            .clickable { onSelect(avatar) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = avatar,
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                        if (isSelected) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .size(16.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Selected",
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Done")
             }
         }
     )

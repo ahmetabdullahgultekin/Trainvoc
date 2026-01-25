@@ -172,6 +172,7 @@ class WordViewModel @Inject constructor(
         viewModelScope.launch(dispatchers.io) {
             val timestamp = if (isFavorite) System.currentTimeMillis() else null
             repository.setFavorite(wordId, isFavorite, timestamp)
+            fetchWords() // Refresh the word list to update UI
         }
     }
 

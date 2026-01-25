@@ -12,6 +12,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Data class for level display info
+ */
+data class LevelInfo(
+    val level: WordLevel,
+    val isUnlocked: Boolean,
+    val learnedWords: Int,
+    val totalWords: Int
+) {
+    val progress: Float
+        get() = if (totalWords > 0) learnedWords.toFloat() / totalWords else 0f
+}
+
 @HiltViewModel
 class StoryViewModel @Inject constructor(
     private val progressService: IProgressService,
@@ -20,6 +33,9 @@ class StoryViewModel @Inject constructor(
 
     private val _levels = MutableStateFlow<Map<WordLevel, Boolean>>(emptyMap())
     val levels: StateFlow<Map<WordLevel, Boolean>> = _levels
+
+    private val _levelInfos = MutableStateFlow<List<LevelInfo>>(emptyList())
+    val levelInfos: StateFlow<List<LevelInfo>> = _levelInfos
 
     init {
         loadLevels()
@@ -33,6 +49,19 @@ class StoryViewModel @Inject constructor(
                 }.associate { it.await() }
             }
             _levels.value = levelStatus
+
+            // Also load progress info for each level
+            val infos = kotlinx.coroutines.coroutineScope {
+                WordLevel.entries.map { level ->
+                    async {
+                        val isUnlocked = levelStatus[level] ?: false
+                        val learned = progressService.getLearnedWordCount(level.name)
+                        val total = progressService.getWordCountByLevel(level.name)
+                        LevelInfo(level, isUnlocked, learned, total)
+                    }
+                }.map { it.await() }
+            }
+            _levelInfos.value = infos
         }
     }
 

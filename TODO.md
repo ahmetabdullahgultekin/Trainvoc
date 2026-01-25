@@ -2,7 +2,7 @@
 
 > **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
 > **Last Updated**: 2026-01-25
-> **Total Issues**: 150+
+> **Total Issues**: 167
 
 ## How This Document Works
 
@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 3 | 9 | 0 | 12 |
-| 🟠 HIGH | 8 | 15 | 1 | 24 |
-| 🟡 MEDIUM | 36 | 21 | 1 | 58 |
-| 🟢 LOW | 24 | 7 | 1 | 32 |
+| 🔴 CRITICAL | 5 | 15 | 0 | 20 |
+| 🟠 HIGH | 9 | 18 | 1 | 28 |
+| 🟡 MEDIUM | 39 | 21 | 1 | 61 |
+| 🟢 LOW | 26 | 7 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **92** | **55** | **3** | **150** |
+| **TOTAL** | **100** | **64** | **3** | **167** |
 
 ---
 
@@ -61,6 +61,14 @@
 | 010 | Backend | `SyncController.java:186` | Now returns actual sync counts and timestamps from database | ✅ FIXED 2026-01-25 |
 | 011 | Backend | `SyncServiceTest.java:305` | Proper test coverage with mocked repositories | ✅ FIXED 2026-01-25 |
 | 012 | Infra | `SSL_SETUP.md` | SSL setup guide created - needs server execution | 🔄 DOCUMENTED |
+| 151 | Android | `AppBottomSheet.kt:119` | "Test Mode - For development use only" banner visible in production build | ✅ FIXED 2026-01-25 |
+| 152 | Android | `AndroidManifest.xml` | CLEARTEXT communication to 10.0.2.2 not permitted - Android 9+ blocks HTTP | ✅ FIXED 2026-01-25 |
+| 153 | Android | `WordViewModel.kt:175` | Heart/favorite button not responding - toggleFavorite wasn't refreshing UI | ✅ FIXED 2026-01-25 |
+| 154 | Android | `DictionaryScreen.kt:364` | Alphabet sidebar overlaps heart icons - added end padding to LazyColumn | ✅ FIXED 2026-01-25 |
+| 155 | Android | `ProfileScreen.kt:144-159` | 0% Mastery displayed - now uses learnedWords/totalWords for better UX | ✅ FIXED 2026-01-25 |
+| 156 | Android | `ProfileScreen.kt:144-159` | 0m Study Time - now shows total time when today's time is 0 | ✅ FIXED 2026-01-25 |
+| 157 | Android | `StatsScreen.kt` | Stats inconsistency: Profile shows TODAY's quizzes, Stats shows TOTAL | ⚪ BY DESIGN |
+| 158 | Android | Navigation | No Login/Register access point visible in app - only Sign Out shown | ⬜ OPEN |
 
 ---
 
@@ -92,6 +100,10 @@
 | 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ✅ FIXED 2026-01-25 |
 | 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ✅ FIXED 2026-01-25 |
 | 036 | Infra | N/A | CORS configured - default: trainvoc.rollingcatsoftware.com, dev: localhost | ✅ FIXED 2026-01-25 |
+| 159 | Android | `HomeScreen.kt` | Duplicate top bar/header visible - should have exactly one | ⬜ OPEN |
+| 160 | Android | `HomeScreen.kt:360-362` | "Perfect Start" achievement appears twice - added distinctBy filter | ✅ FIXED 2026-01-25 |
+| 161 | Android | `StoryScreen.kt:75-83` | Missing level names - now shows both A1/A2 code AND Beginner/Elementary | ✅ FIXED 2026-01-25 |
+| 162 | Android | `StoryScreen.kt:147-162` | Progress bar added per level showing learned/total words | ✅ FIXED 2026-01-25 |
 
 ---
 
@@ -157,6 +169,9 @@
 | 092 | Android | `WordDetailScreen.kt:1031` | Comment says "Phase 7 Complete" - outdated | ⬜ OPEN |
 | 093 | Web | `Podium.tsx:63` | Fixed max-width truncation 100px for player names | ✅ FIXED 2026-01-25 |
 | 094 | Web | `ListeningQuizGame.tsx:263` | Custom motion.button for audio player - intentional design | ❌ WONTFIX |
+| 163 | Android | `HelpScreen.kt` | Placeholder phone number "+1 234 567 890" in Contact Support section | ⬜ OPEN |
+| 164 | Android | `StatsScreen.kt` | Performance Trends bar chart shows same value (24) for all periods | ⬜ OPEN |
+| 165 | Android | `StoryScreen.kt` | Repetitive lock messages shown on every locked level | ⬜ OPEN |
 
 ---
 
@@ -196,6 +211,8 @@
 | 124 | Android | `FavoritesScreen.kt:87` | placeholder prop for TextField | ⬜ OPEN |
 | 125 | Android | `DictionaryScreen.kt:219` | placeholder prop for TextField | ⬜ OPEN |
 | 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ⬜ OPEN |
+| 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ⬜ OPEN |
+| 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ⬜ OPEN |
 
 ---
 
@@ -285,12 +302,34 @@
 
 When starting a fix session, prioritize in this order:
 
-1. **🔴 CRITICAL #001-012** - Production blockers
-2. **🟠 HIGH #013-036** - Major UX issues
-3. **Deployment blockers** - SSL, CORS, env vars
-4. **🟡 MEDIUM** - As time allows
-5. **🟢 LOW** - Polish phase
-6. **⚪ INFO** - Cleanup session
+### PHASE 1 - BLOCKERS (Must fix before Open Test)
+1. **#151** - Remove "Test Mode" banner from production
+2. **#152** - Fix Multiplayer CLEARTEXT error (network security config)
+3. **#153** - Fix Dictionary heart button click handler
+4. **#154** - Fix Dictionary sidebar overlap with Row layout
+
+### PHASE 2 - DATA BUGS (Critical for user trust)
+5. **#155** - Fix Mastery % calculation
+6. **#156** - Fix Study Time tracking
+7. **#157** - Fix Stats data inconsistency (2 vs 45 quizzes)
+
+### PHASE 3 - MISSING FEATURES
+8. **#158** - Add Login/Register access point
+9. **#163** - Remove placeholder phone number
+10. **#160** - Fix duplicate achievement display
+
+### PHASE 4 - POLISH
+11. **#159** - Fix double header
+12. **#161-162** - Add level names and progress to Story Mode
+13. **#167** - Reduce splash screen duration
+14. **#166** - Enhance Edit Profile dialog
+
+### Legacy Issues (still open)
+- **🔴 CRITICAL #008-009** - Tutorial stub implementations
+- **🟠 HIGH #024-026** - Cloud backup and analytics stubs
+- **🟡 MEDIUM** - As time allows
+- **🟢 LOW** - Polish phase
+- **⚪ INFO** - Cleanup session
 
 ---
 
