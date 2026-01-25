@@ -145,6 +145,10 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
+    // Get username from SharedPreferences
+    val prefs = remember { context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE) }
+    val username = prefs.getString("username", null) ?: stringResource(id = R.string.username_placeholder)
+
     // Update Notes management
     val updateNotesManager = remember { UpdateNotesManager.getInstance(context) }
     var shouldShowUpdateNotes by remember { mutableStateOf(updateNotesManager.shouldShowUpdateNotes()) }
@@ -185,7 +189,7 @@ fun HomeScreen(
             // 1. PROFILE SUMMARY
             item {
                 ProfileSummaryCard(
-                    username = stringResource(id = R.string.username_placeholder),
+                    username = username,
                     level = uiState.level,
                     currentXP = uiState.xpCurrent,
                     maxXP = uiState.xpForNextLevel,

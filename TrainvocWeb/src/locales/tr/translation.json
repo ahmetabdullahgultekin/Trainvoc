@@ -8,6 +8,12 @@
     "retry": "Tekrar Dene",
     "goHome": "Ana Sayfaya Dön"
   },
+  "profile": {
+    "editProfile": "Profilini Düzenle",
+    "nickname": "Nick",
+    "nicknamePlaceholder": "Nick gir...",
+    "save": "Kaydet"
+  },
   "welcome": "Trainvoc'a Hoş Geldin!",
   "createRoom": "Oda Oluştur",
   "joinRoom": "Odaya Katıl",

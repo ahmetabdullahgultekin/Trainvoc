@@ -125,14 +125,14 @@ export function FeaturesGrid() {
           whileInView="animate"
           viewport={{ once: true }}
         >
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const Icon = feature.icon
             const isLarge = feature.size === 'lg'
             const isMedium = feature.size === 'md'
 
             return (
               <motion.div
-                key={index}
+                key={feature.title.en}
                 variants={staggerItemVariants}
                 className={cn(
                   'group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-card hover:shadow-card-hover transition-shadow',

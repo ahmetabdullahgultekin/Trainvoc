@@ -37,11 +37,11 @@
 | Severity | Open | Fixed | Total |
 |----------|------|-------|-------|
 | 🔴 CRITICAL | 9 | 3 | 12 |
-| 🟠 HIGH | 22 | 2 | 24 |
-| 🟡 MEDIUM | 58 | 0 | 58 |
+| 🟠 HIGH | 20 | 4 | 24 |
+| 🟡 MEDIUM | 54 | 4 | 58 |
 | 🟢 LOW | 32 | 0 | 32 |
 | ⚪ INFO | 24 | 0 | 24 |
-| **TOTAL** | **145** | **5** | **150** |
+| **TOTAL** | **139** | **11** | **150** |
 
 ---
 
@@ -70,7 +70,7 @@
 |---|-----------|-----------|-------------|--------|
 | 013 | Web | `QuestionCard.tsx:75-78` | "Play Audio"/"Stop" hardcoded in English - breaks Turkish UI | ✅ FIXED 2026-01-25 |
 | 014 | Web | `ErrorBoundary.tsx:77-82` | Button labels hardcoded in Turkish ("Tekrar Dene") | ✅ FIXED 2026-01-25 |
-| 015 | Web | `PictureMatchGame.tsx:237` | Image `<img>` missing `alt` attribute - WCAG failure | ⬜ OPEN |
+| 015 | Web | `PictureMatchGame.tsx:237` | Image `<img>` missing `alt` attribute - WCAG failure | ✅ FIXED 2026-01-25 |
 | 016 | Android | `DictionaryScreen.kt:628` | Hardcoded pink `Color(0xFFE91E63)` for favorites heart | ⬜ OPEN |
 | 017 | Android | `DictionaryScreen.kt:574-584` | Audio button only `24.dp` - below 48dp touch target minimum | ⬜ OPEN |
 | 018 | Android | `HomeScreen.kt:188` | Username shows `username_placeholder` instead of actual user | ⬜ OPEN |
@@ -99,11 +99,11 @@
 
 | # | Component | File:Line | Description | Status |
 |---|-----------|-----------|-------------|--------|
-| 037 | Web | `ProfilePage.tsx:69` | Turkish placeholder "Nick gir..." in English UI | ⬜ OPEN |
-| 038 | Web | `InstallPrompt.tsx:94-98` | Close button missing `aria-label` | ⬜ OPEN |
-| 039 | Web | Multiple game files | Using `window.location.reload()` instead of navigation | ⬜ OPEN |
-| 040 | Web | `CreateRoomPage.tsx:162` | Using `index` as React key - anti-pattern | ⬜ OPEN |
-| 041 | Web | `FeaturesGrid.tsx:135` | Using `index` as React key - anti-pattern | ⬜ OPEN |
+| 037 | Web | `ProfilePage.tsx:69` | Turkish placeholder "Nick gir..." in English UI | ✅ FIXED 2026-01-25 |
+| 038 | Web | `InstallPrompt.tsx:94-98` | Close button missing `aria-label` | ✅ FIXED 2026-01-25 |
+| 039 | Web | Multiple game files | Using `window.location.reload()` for "Play Again" - requires state reset refactor | ⬜ DEFERRED |
+| 040 | Web | `CreateRoomPage.tsx:162` | Using `index` as React key - anti-pattern | ✅ FIXED 2026-01-25 |
+| 041 | Web | `FeaturesGrid.tsx:135` | Using `index` as React key - anti-pattern | ✅ FIXED 2026-01-25 |
 | 042 | Android | `ModernComponents.kt:162` | Hardcoded gray colors for disabled gradient button | ⬜ OPEN |
 | 043 | Android | `ModernComponents.kt:184` | Hardcoded `Color.White` for icon tint | ⬜ OPEN |
 | 044 | Android | `ModernComponents.kt:193` | Hardcoded `Color.White` for text | ⬜ OPEN |
@@ -155,8 +155,8 @@
 | 090 | Android | `CloudBackupScreen.kt:74` | "Back" contentDescription too generic | ⬜ OPEN |
 | 091 | Android | `CloudBackupScreen.kt:80` | "Refresh" should be "Refresh backup list" | ⬜ OPEN |
 | 092 | Android | `WordDetailScreen.kt:1031` | Comment says "Phase 7 Complete" - outdated | ⬜ OPEN |
-| 093 | Web | `Podium.tsx:63` | Fixed max-width truncation 100px for player names | ⬜ OPEN |
-| 094 | Web | `ListeningQuizGame.tsx:263` | Custom motion.button instead of Button component | ⬜ OPEN |
+| 093 | Web | `Podium.tsx:63` | Fixed max-width truncation 100px for player names | ✅ FIXED 2026-01-25 |
+| 094 | Web | `ListeningQuizGame.tsx:263` | Custom motion.button for audio player - intentional design | ❌ WONTFIX |
 
 ---
 
@@ -239,6 +239,12 @@
 | 003 | Web | API URL now warns in dev, uses origin in prod if env not set | 2026-01-25 | Claude |
 | 013 | Web | QuestionCard audio buttons now use i18n translations | 2026-01-25 | Claude |
 | 014 | Web | ErrorBoundary buttons now use i18n translations | 2026-01-25 | Claude |
+| 015 | Web | PictureMatchGame.tsx now uses localized alt text for images | 2026-01-25 | Claude |
+| 037 | Web | ProfilePage.tsx now uses i18n for all text (was hardcoded Turkish) | 2026-01-25 | Claude |
+| 038 | Web | InstallPrompt.tsx close button now has localized aria-label | 2026-01-25 | Claude |
+| 040 | Web | CreateRoomPage.tsx now uses feature.title as React key | 2026-01-25 | Claude |
+| 041 | Web | FeaturesGrid.tsx now uses feature.title.en as React key | 2026-01-25 | Claude |
+| 093 | Web | Podium.tsx player names now have responsive max-width | 2026-01-25 | Claude |
 
 ---
 

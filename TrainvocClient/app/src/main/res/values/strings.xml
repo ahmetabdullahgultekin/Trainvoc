@@ -13,6 +13,13 @@
     <string name="games">Games</string>
     <string name="word_management">Word Management</string>
     <string name="search">Search</string>
+    <string name="clear_search">Clear search</string>
+    <string name="recent_searches">Recent Searches</string>
+    <string name="search_history">Search history</string>
+    <string name="cloud_backup">Cloud Backup</string>
+    <string name="back">Back</string>
+    <string name="refresh">Refresh</string>
+    <string name="profile">Profile</string>
     <string name="add_new_word">Add New Word</string>
     <string name="add_word">Add Word</string>
     <string name="word">Word</string>
@@ -84,7 +91,7 @@
     <string name="faq_how_to_suggest_feature">How can I suggest a new feature?</string>
     <string name="faq_how_to_suggest_feature_desc">You can suggest features using the feedback form or by contacting us via email.</string>
     <string name="faq_how_to_backup">How do I backup my data?</string>
-    <string name="faq_how_to_backup_desc">Backup and restore features will be available soon. Stay tuned!</string>
+    <string name="faq_how_to_backup_desc">You can create local backups in Settings > Backup. Cloud backup to Google Drive is coming soon!</string>
     <string name="help_welcome">Welcome to the help center! Here you can find answers to common questions, contact support, and send us your feedback.</string>
     <string name="help_support">Help &amp; Support</string>
     <string name="faq_title">Frequently Asked Questions</string>
@@ -181,7 +188,6 @@
     <string name="username_hint">At least 3 characters</string>
     <string name="password_hint">At least 6 characters</string>
     <string name="already_have_account">Already have an account?</string>
-    <string name="back">Back</string>
 
     <string name="notifications_enabled">Notifications enabled</string>
     <string name="notifications_disabled">Notifications disabled</string>

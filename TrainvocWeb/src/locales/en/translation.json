@@ -8,6 +8,12 @@
     "retry": "Try Again",
     "goHome": "Go to Home"
   },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "nickname": "Nickname",
+    "nicknamePlaceholder": "Enter nickname...",
+    "save": "Save"
+  },
   "welcome": "Welcome to Trainvoc!",
   "createRoom": "Create Room",
   "joinRoom": "Join Room",

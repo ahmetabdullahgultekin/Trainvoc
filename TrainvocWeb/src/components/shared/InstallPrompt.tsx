@@ -93,6 +93,7 @@ export function InstallPrompt() {
                   </h3>
                   <button
                     onClick={handleDismiss}
+                    aria-label={lang === 'tr' ? 'Kapat' : 'Close'}
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   >
                     <X className="h-5 w-5" />

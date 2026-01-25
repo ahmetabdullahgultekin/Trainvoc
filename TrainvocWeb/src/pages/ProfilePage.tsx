@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { User, Save } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -12,6 +13,7 @@ const avatarList = [
 ]
 
 const ProfilePage: React.FC = () => {
+  const { t } = useTranslation()
   const { nick, setNick, avatar, setAvatar } = useProfile()
   const [tempNick, setTempNick] = useState(nick)
   const [tempAvatar, setTempAvatar] = useState(
@@ -31,7 +33,7 @@ const ProfilePage: React.FC = () => {
         <div className="flex items-center gap-2 mb-6">
           <User className="h-6 w-6 text-brand-500" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Profilini Düzenle
+            {t('profile.editProfile', 'Edit Profile')}
           </h1>
         </div>
 
@@ -61,18 +63,18 @@ const ProfilePage: React.FC = () => {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Nick
+              {t('profile.nickname', 'Nickname')}
             </label>
             <Input
               value={tempNick}
               onChange={e => setTempNick(e.target.value)}
-              placeholder="Nick gir..."
+              placeholder={t('profile.nicknamePlaceholder', 'Enter nickname...')}
             />
           </div>
 
           <Button onClick={handleSave} className="w-full" size="lg">
             <Save className="h-4 w-4 mr-2" />
-            Kaydet
+            {t('profile.save', 'Save')}
           </Button>
         </div>
       </Card>

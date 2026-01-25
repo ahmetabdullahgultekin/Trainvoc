@@ -232,7 +232,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                         IconButton(onClick = { searchQuery = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear search"
+                                contentDescription = stringResource(id = R.string.clear_search)
                             )
                         }
                     }
@@ -244,7 +244,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                 // Search history/suggestions
                 if (searchHistory.isNotEmpty()) {
                     Text(
-                        text = "Recent Searches",
+                        text = stringResource(id = R.string.recent_searches),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(Spacing.md)
@@ -259,7 +259,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Search,
-                                    contentDescription = "Search history",
+                                    contentDescription = stringResource(id = R.string.search_history),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -573,13 +573,13 @@ fun DictionaryWordCard(
 
                     IconButton(
                         onClick = onAudioClick,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(48.dp)  // Minimum touch target for accessibility
                     ) {
                         Icon(
                             imageVector = Icons.Default.VolumeUp,
                             contentDescription = "Pronunciation",
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
@@ -620,12 +620,12 @@ fun DictionaryWordCard(
             // Favorite toggle
             IconButton(
                 onClick = onFavoriteClick,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(48.dp)  // Minimum touch target for accessibility
             ) {
                 Icon(
                     imageVector = if (word.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                     contentDescription = if (word.isFavorite) "Remove from favorites" else "Add to favorites",
-                    tint = if (word.isFavorite) Color(0xFFE91E63) else MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = if (word.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

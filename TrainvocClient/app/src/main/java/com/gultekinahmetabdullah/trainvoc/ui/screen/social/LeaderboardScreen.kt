@@ -81,31 +81,30 @@ fun LeaderboardScreen(
                 }
             }
 
-            // Placeholder leaderboard
+            // Coming soon message
             item {
-                Text(
-                    text = "Top Learners This Week",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            val mockUsers = listOf(
-                Triple("Alex", 2450, "🥇"),
-                Triple("Sarah", 2180, "🥈"),
-                Triple("Mike", 1950, "🥉"),
-                Triple("You", 1720, ""),
-                Triple("Emma", 1580, "")
-            )
-
-            itemsIndexed(mockUsers) { index, (name, score, medal) ->
-                LeaderboardItem(
-                    rank = index + 1,
-                    name = name,
-                    score = score,
-                    medal = medal,
-                    isCurrentUser = name == "You"
-                )
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Spacing.lg),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Leaderboards are being prepared!",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(Spacing.sm))
+                        Text(
+                            text = "Keep learning - your progress is tracked locally and will sync when leaderboards launch.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
 
             item { Spacer(modifier = Modifier.height(Spacing.lg)) }

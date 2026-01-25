@@ -295,8 +295,10 @@ class MultiplayerRepository @Inject constructor(
     }
 
     private fun hashPassword(password: String): String {
-        // Simple hash for demo - in production use proper hashing
-        return password.hashCode().toString()
+        // SHA-256 hash for secure password hashing
+        val bytes = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(password.toByteArray(Charsets.UTF_8))
+        return bytes.joinToString("") { "%02x".format(it) }
     }
 }
 

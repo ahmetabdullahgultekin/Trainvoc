@@ -99,14 +99,18 @@ class PlayGamesManager @Inject constructor(
 
     /**
      * Unlock achievement
+     * Returns success if Play Games is not configured (local achievements still work)
      */
     suspend fun unlockAchievement(achievement: Achievement): Result<Unit> {
+        // Skip Play Games if not configured - local achievements still work
+        val playGamesId = PlayGamesAchievementMapper.getPlayGamesIdOrNull(achievement)
+            ?: return Result.success(Unit)
+
         if (!isAuthenticated()) {
             return Result.failure(Exception("Not signed in"))
         }
 
         return try {
-            val playGamesId = PlayGamesAchievementMapper.getPlayGamesId(achievement)
             val client = PlayGames.getAchievementsClient(context as Activity)
             client.unlock(playGamesId)
             Result.success(Unit)
@@ -118,14 +122,18 @@ class PlayGamesManager @Inject constructor(
     /**
      * Increment incremental achievement
      * (for achievements that require multiple steps)
+     * Returns success if Play Games is not configured
      */
     suspend fun incrementAchievement(achievement: Achievement, steps: Int = 1): Result<Unit> {
+        // Skip Play Games if not configured
+        val playGamesId = PlayGamesAchievementMapper.getPlayGamesIdOrNull(achievement)
+            ?: return Result.success(Unit)
+
         if (!isAuthenticated()) {
             return Result.failure(Exception("Not signed in"))
         }
 
         return try {
-            val playGamesId = PlayGamesAchievementMapper.getPlayGamesId(achievement)
             val client = PlayGames.getAchievementsClient(context as Activity)
             client.increment(playGamesId, steps)
             Result.success(Unit)

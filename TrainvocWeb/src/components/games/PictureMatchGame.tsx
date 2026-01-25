@@ -236,7 +236,7 @@ export function PictureMatchGame({
               <div className="relative aspect-video bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden mb-4">
                 <img
                   src={currentQuestion.imageUrl}
-                  alt="Question"
+                  alt={t.instruction}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src = `https://placehold.co/400x300/6366f1/white?text=${encodeURIComponent(currentQuestion.correctWord)}`
