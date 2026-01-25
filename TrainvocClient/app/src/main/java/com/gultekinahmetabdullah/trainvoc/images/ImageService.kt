@@ -113,13 +113,15 @@ class ImageService @Inject constructor(
     }
 
     /**
-     * Mock Unsplash URL generator
-     * In production, replace with actual Unsplash API call
+     * Placeholder image URL generator
+     * Uses Lorem Picsum which provides reliable free images
+     * In production, replace with actual Unsplash API call with API key
      */
     private fun getUnsplashImageUrl(query: String): String {
-        // Using Unsplash's random photo API with search query
-        // Replace with actual API call in production
-        return "https://source.unsplash.com/800x600/?$query"
+        // Using Lorem Picsum for reliable placeholder images
+        // Each word gets a consistent image based on its hash
+        val seed = query.hashCode().and(0xFFFF)
+        return "https://picsum.photos/seed/$seed/800/600"
     }
 
     /**

@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.cloud.DriveBackup
 import com.gultekinahmetabdullah.trainvoc.sync.ConflictStrategy
 import com.gultekinahmetabdullah.trainvoc.viewmodel.CloudAuthState
@@ -68,16 +70,16 @@ fun CloudBackupScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Cloud Backup") },
+                title = { Text(stringResource(id = R.string.cloud_backup)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back))
                     }
                 },
                 actions = {
                     if (authState is CloudAuthState.SignedIn) {
                         IconButton(onClick = { viewModel.refreshBackups() }) {
-                            Icon(Icons.Default.Refresh, "Refresh")
+                            Icon(Icons.Default.Refresh, stringResource(id = R.string.refresh))
                         }
                     }
                 }
@@ -175,28 +177,39 @@ private fun SignedOutContent(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Features:",
+                    text = "Coming Soon:",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                FeatureItem("✓ Automatic daily backups")
-                FeatureItem("✓ Cross-device sync")
-                FeatureItem("✓ Encrypted and secure")
-                FeatureItem("✓ Easy restore")
+                FeatureItem("• Cloud backup to Google Drive")
+                FeatureItem("• Cross-device sync")
+                FeatureItem("• Automatic daily backups")
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Currently Available:",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FeatureItem("✓ Local backup (Settings > Backup)")
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
+        OutlinedButton(
             onClick = onSignIn,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = false  // Disabled until cloud backup is implemented
         ) {
-            Icon(Icons.AutoMirrored.Filled.Login, contentDescription = "Sign in")
+            Icon(Icons.AutoMirrored.Filled.Login, contentDescription = "Sign in with Google")
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Sign in with Google")
+            Text("Sign in with Google (Coming Soon)")
         }
     }
 }

@@ -156,10 +156,10 @@ function CreateRoomPage() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
         >
-          {features.map((feature, index) => {
+          {features.map((feature) => {
             const Icon = feature.icon
             return (
-              <Card key={index} className="p-4 text-center">
+              <Card key={feature.title} className="p-4 text-center">
                 <Icon className={`h-10 w-10 mx-auto mb-3 ${feature.color}`} />
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                   {feature.title}

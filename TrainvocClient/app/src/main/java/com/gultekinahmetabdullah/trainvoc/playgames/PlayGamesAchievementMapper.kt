@@ -12,9 +12,24 @@ import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
  * 2. Create 38 achievements matching our Achievement enum
  * 3. Copy the achievement IDs here
  *
- * For now, using placeholder IDs. Replace with real IDs from Play Console.
+ * Current Status: Using placeholder IDs. Play Games achievements will be skipped
+ * until real IDs are configured. Local achievements work normally.
  */
 object PlayGamesAchievementMapper {
+
+    /**
+     * Whether Play Games achievement IDs are configured
+     * Set to true when real Play Console IDs are added
+     */
+    const val PLAY_GAMES_CONFIGURED = false
+
+    /**
+     * Maps local achievement to Play Games achievement ID
+     * Returns null if Play Games is not configured
+     */
+    fun getPlayGamesIdOrNull(achievement: Achievement): String? {
+        return if (PLAY_GAMES_CONFIGURED) getPlayGamesId(achievement) else null
+    }
 
     /**
      * Maps local achievement to Play Games achievement ID

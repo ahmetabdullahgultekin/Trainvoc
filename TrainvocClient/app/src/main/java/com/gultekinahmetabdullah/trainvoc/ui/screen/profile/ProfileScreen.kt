@@ -106,10 +106,10 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Profile") },
+                title = { Text(stringResource(id = R.string.profile)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
                     }
                 }
             )
@@ -141,13 +141,18 @@ fun ProfileScreen(
 
                 // Stats Cards Grid (2x2)
                 item {
+                    // Calculate mastery rate from actual data
+                    val masteredWords = uiState.wordStatusCounts?.mastered ?: 0
+                    val learningWords = uiState.wordStatusCounts?.learning ?: 0
+                    val totalAttempted = masteredWords + learningWords + (uiState.wordStatusCounts?.struggling ?: 0)
+
                     StatsGridSection(
                         learnedWords = uiState.learnedWords,
                         totalWords = uiState.totalWords,
                         quizzesCompleted = uiState.quizzesCompleted,
                         studyTimeMinutes = uiState.dailyGoal?.timeTodayMinutes ?: 0,
-                        correctAnswers = uiState.totalScore / 10, // Rough estimate
-                        totalAnswers = (uiState.totalScore / 10 * 1.2f).roundToInt(), // Rough estimate
+                        correctAnswers = masteredWords,  // Words fully mastered
+                        totalAnswers = if (totalAttempted > 0) totalAttempted else 1,  // All words attempted
                         modifier = Modifier.padding(horizontal = Spacing.md)
                     )
                 }
@@ -403,7 +408,7 @@ fun StatsGridSection(
                 StatData(
                     icon = Icons.Default.TrendingUp,
                     value = "${calculateAccuracy(correctAnswers, totalAnswers)}%",
-                    label = "Accuracy",
+                    label = "Mastery",
                     iconTint = statsAverageColor
                 )
             )

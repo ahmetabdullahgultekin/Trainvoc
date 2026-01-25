@@ -60,7 +60,7 @@ export function Podium({ players, className }: PodiumProps) {
                   <Trophy className="absolute -top-2 -right-2 h-8 w-8 text-yellow-500" />
                 )}
               </div>
-              <p className="mt-2 font-bold text-gray-900 dark:text-white truncate max-w-[100px]">
+              <p className="mt-2 font-bold text-gray-900 dark:text-white truncate w-full max-w-[120px] sm:max-w-[140px]">
                 {player.name}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
