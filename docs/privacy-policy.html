@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Trainvoc</title>
+    <style>
+        :root {
+            --primary: #6366F1;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-alt: #f9fafb;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text: #f3f4f6;
+                --text-light: #9ca3af;
+                --bg: #111827;
+                --bg-alt: #1f2937;
+            }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { color: var(--primary); margin-bottom: 0.5rem; }
+        h2 { margin-top: 2rem; margin-bottom: 1rem; color: var(--primary); }
+        h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        p, ul, ol { margin-bottom: 1rem; }
+        ul, ol { padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+        .last-updated { color: var(--text-light); margin-bottom: 2rem; }
+        a { color: var(--primary); }
+        .section { background: var(--bg-alt); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; }
+        .lang-switch { margin-bottom: 2rem; }
+        .lang-switch button {
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .lang-switch button.active {
+            background: var(--primary);
+            color: white;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="lang-switch">
+        <button id="btn-en" class="active" onclick="showLang('en')">English</button>
+        <button id="btn-tr" onclick="showLang('tr')">Türkçe</button>
+    </div>
+
+    <!-- English Version -->
+    <div id="content-en">
+        <h1>Privacy Policy</h1>
+        <p class="last-updated">Last Updated: January 25, 2026</p>
+
+        <p>Trainvoc ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.</p>
+
+        <h2>1. Information We Collect</h2>
+
+        <h3>1.1 Data Stored Locally on Your Device</h3>
+        <ul>
+            <li><strong>Learning Progress:</strong> Quiz scores, vocabulary mastery levels, and game statistics</li>
+            <li><strong>User Preferences:</strong> App settings, theme preferences, and notification settings</li>
+            <li><strong>Achievement Data:</strong> Badges earned, streaks, and milestones</li>
+            <li><strong>Custom Word Lists:</strong> Words you add or favorite</li>
+        </ul>
+        <p><em>This data is stored exclusively on your device and is not transmitted to our servers.</em></p>
+
+        <h3>1.2 Optional Cloud Services</h3>
+        <p>If you choose to enable cloud backup or Google Play Games integration:</p>
+        <ul>
+            <li><strong>Google Play Games:</strong> Game progress for achievements and leaderboards (governed by Google's Privacy Policy)</li>
+            <li><strong>Cloud Backup:</strong> Encrypted backup of your learning progress (optional feature)</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+        <ul>
+            <li>To provide personalized vocabulary recommendations</li>
+            <li>To track your learning progress and display statistics</li>
+            <li>To enable achievement and gamification features</li>
+            <li>To sync your progress across devices (if enabled)</li>
+        </ul>
+
+        <h2>3. Data Storage and Security</h2>
+        <div class="section">
+            <p><strong>Local-First Architecture:</strong> Trainvoc is designed with privacy in mind. All your learning data is stored locally on your device using encrypted storage (Android EncryptedSharedPreferences and Room Database).</p>
+        </div>
+        <ul>
+            <li>Data is encrypted at rest on your device</li>
+            <li>No personal data is transmitted without your explicit consent</li>
+            <li>We do not sell or share your data with third parties</li>
+        </ul>
+
+        <h2>4. Third-Party Services</h2>
+        <p>Trainvoc may integrate with the following third-party services:</p>
+        <ul>
+            <li><strong>Google Play Games:</strong> For achievements and leaderboards (optional)</li>
+            <li><strong>Text-to-Speech:</strong> Uses device's built-in TTS engine for pronunciation</li>
+        </ul>
+        <p>These services have their own privacy policies, and we encourage you to review them.</p>
+
+        <h2>5. Your Rights (GDPR & KVKK Compliance)</h2>
+        <p>You have the right to:</p>
+        <ul>
+            <li><strong>Access:</strong> View all data stored by the app</li>
+            <li><strong>Export:</strong> Download your data in a portable format (JSON)</li>
+            <li><strong>Delete:</strong> Permanently delete all your data from the app</li>
+            <li><strong>Restrict:</strong> Disable optional data collection features</li>
+        </ul>
+        <p>These features are available in the app under Settings > Privacy & Data.</p>
+
+        <h2>6. Children's Privacy</h2>
+        <p>Trainvoc is suitable for users of all ages. We do not knowingly collect personal information from children under 13. The app functions fully offline without requiring any personal information.</p>
+
+        <h2>7. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy in the app and updating the "Last Updated" date.</p>
+
+        <h2>8. Contact Us</h2>
+        <p>If you have questions about this Privacy Policy, please contact us:</p>
+        <div class="section">
+            <p><strong>Email:</strong> <a href="mailto:rollingcat.help@gmail.com">rollingcat.help@gmail.com</a></p>
+            <p><strong>Website:</strong> <a href="https://trainvoc.rollingcatsoftware.com">trainvoc.rollingcatsoftware.com</a></p>
+            <p><strong>Developer:</strong> Rolling Cat Software</p>
+        </div>
+    </div>
+
+    <!-- Turkish Version -->
+    <div id="content-tr" class="hidden">
+        <h1>Gizlilik Politikası</h1>
+        <p class="last-updated">Son Güncelleme: 25 Ocak 2026</p>
+
+        <p>Trainvoc ("biz", "bizim") gizliliğinizi korumaya kararlıdır. Bu Gizlilik Politikası, mobil uygulamamızı kullandığınızda bilgilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklar.</p>
+
+        <h2>1. Topladığımız Bilgiler</h2>
+
+        <h3>1.1 Cihazınızda Yerel Olarak Saklanan Veriler</h3>
+        <ul>
+            <li><strong>Öğrenme İlerlemesi:</strong> Quiz puanları, kelime ustalık seviyeleri ve oyun istatistikleri</li>
+            <li><strong>Kullanıcı Tercihleri:</strong> Uygulama ayarları, tema tercihleri ve bildirim ayarları</li>
+            <li><strong>Başarı Verileri:</strong> Kazanılan rozetler, seriler ve kilometre taşları</li>
+            <li><strong>Özel Kelime Listeleri:</strong> Eklediğiniz veya favorilediğiniz kelimeler</li>
+        </ul>
+        <p><em>Bu veriler yalnızca cihazınızda saklanır ve sunucularımıza iletilmez.</em></p>
+
+        <h3>1.2 İsteğe Bağlı Bulut Hizmetleri</h3>
+        <p>Bulut yedekleme veya Google Play Oyunları entegrasyonunu etkinleştirmeyi seçerseniz:</p>
+        <ul>
+            <li><strong>Google Play Oyunları:</strong> Başarılar ve liderlik tabloları için oyun ilerlemesi (Google'ın Gizlilik Politikası kapsamında)</li>
+            <li><strong>Bulut Yedekleme:</strong> Öğrenme ilerlemenizin şifreli yedeği (isteğe bağlı özellik)</li>
+        </ul>
+
+        <h2>2. Bilgilerinizi Nasıl Kullanıyoruz</h2>
+        <ul>
+            <li>Kişiselleştirilmiş kelime önerileri sunmak için</li>
+            <li>Öğrenme ilerlemenizi takip etmek ve istatistikleri görüntülemek için</li>
+            <li>Başarı ve oyunlaştırma özelliklerini etkinleştirmek için</li>
+            <li>İlerlemenizi cihazlar arasında senkronize etmek için (etkinleştirilmişse)</li>
+        </ul>
+
+        <h2>3. Veri Depolama ve Güvenlik</h2>
+        <div class="section">
+            <p><strong>Yerel Öncelikli Mimari:</strong> Trainvoc, gizlilik düşünülerek tasarlanmıştır. Tüm öğrenme verileriniz, şifreli depolama kullanılarak cihazınızda yerel olarak saklanır (Android EncryptedSharedPreferences ve Room Veritabanı).</p>
+        </div>
+        <ul>
+            <li>Veriler cihazınızda şifreli olarak saklanır</li>
+            <li>Açık onayınız olmadan kişisel veri iletilmez</li>
+            <li>Verilerinizi üçüncü taraflarla satmıyor veya paylaşmıyoruz</li>
+        </ul>
+
+        <h2>4. Üçüncü Taraf Hizmetleri</h2>
+        <p>Trainvoc aşağıdaki üçüncü taraf hizmetleriyle entegre olabilir:</p>
+        <ul>
+            <li><strong>Google Play Oyunları:</strong> Başarılar ve liderlik tabloları için (isteğe bağlı)</li>
+            <li><strong>Metin-Konuşma:</strong> Telaffuz için cihazın yerleşik TTS motorunu kullanır</li>
+        </ul>
+        <p>Bu hizmetlerin kendi gizlilik politikaları vardır ve bunları incelemenizi öneririz.</p>
+
+        <h2>5. Haklarınız (KVKK Uyumluluğu)</h2>
+        <p>Aşağıdaki haklara sahipsiniz:</p>
+        <ul>
+            <li><strong>Erişim:</strong> Uygulama tarafından saklanan tüm verileri görüntüleme</li>
+            <li><strong>Dışa Aktarma:</strong> Verilerinizi taşınabilir formatta (JSON) indirme</li>
+            <li><strong>Silme:</strong> Uygulamadan tüm verilerinizi kalıcı olarak silme</li>
+            <li><strong>Kısıtlama:</strong> İsteğe bağlı veri toplama özelliklerini devre dışı bırakma</li>
+        </ul>
+        <p>Bu özellikler uygulamada Ayarlar > Gizlilik ve Veri altında mevcuttur.</p>
+
+        <h2>6. Çocukların Gizliliği</h2>
+        <p>Trainvoc her yaştan kullanıcı için uygundur. 13 yaşın altındaki çocuklardan bilerek kişisel bilgi toplamıyoruz. Uygulama, herhangi bir kişisel bilgi gerektirmeden tamamen çevrimdışı çalışır.</p>
+
+        <h2>7. Bu Politikadaki Değişiklikler</h2>
+        <p>Bu Gizlilik Politikasını zaman zaman güncelleyebiliriz. Yeni Gizlilik Politikasını uygulamada yayınlayarak ve "Son Güncelleme" tarihini güncelleyerek değişiklikleri size bildireceğiz.</p>
+
+        <h2>8. Bize Ulaşın</h2>
+        <p>Bu Gizlilik Politikası hakkında sorularınız varsa, lütfen bizimle iletişime geçin:</p>
+        <div class="section">
+            <p><strong>E-posta:</strong> <a href="mailto:rollingcat.help@gmail.com">rollingcat.help@gmail.com</a></p>
+            <p><strong>Web Sitesi:</strong> <a href="https://trainvoc.rollingcatsoftware.com">trainvoc.rollingcatsoftware.com</a></p>
+            <p><strong>Geliştirici:</strong> Rolling Cat Software</p>
+        </div>
+    </div>
+
+    <script>
+        function showLang(lang) {
+            document.getElementById('content-en').classList.toggle('hidden', lang !== 'en');
+            document.getElementById('content-tr').classList.toggle('hidden', lang !== 'tr');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
+        }
+    </script>
+</body>
+</html>
