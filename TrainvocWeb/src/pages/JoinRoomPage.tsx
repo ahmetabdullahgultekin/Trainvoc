@@ -51,6 +51,8 @@ function JoinRoomPage() {
       passwordRequired: 'This room requires a password.',
       invalidPassword: 'Wrong password.',
       roomNotFound: 'Room not found.',
+      roomCodeFormat: '6 alphanumeric characters',
+      roomCodeInvalid: 'Invalid format - must be 6 alphanumeric characters',
     },
     tr: {
       title: 'Odaya Katıl',
@@ -72,7 +74,13 @@ function JoinRoomPage() {
       passwordRequired: 'Bu oda için şifre gereklidir.',
       invalidPassword: 'Şifre yanlış.',
       roomNotFound: 'Oda bulunamadı.',
+      roomCodeFormat: '6 alfanumerik karakter',
+      roomCodeInvalid: 'Geçersiz format - 6 alfanumerik karakter olmalı',
     },
+  }
+
+  const isRoomCodeValid = (code: string): boolean => {
+    return /^[A-Z0-9]{6}$/.test(code)
   }
 
   const txt = content[lang]
@@ -203,10 +211,30 @@ function JoinRoomPage() {
                 </label>
                 <Input
                   value={roomCode}
-                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                  onChange={(e) => setRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))}
                   placeholder="ABCD12"
-                  className="font-mono text-lg tracking-wider"
+                  className={`font-mono text-lg tracking-wider ${
+                    roomCode && !isRoomCodeValid(roomCode)
+                      ? 'border-red-500 focus:ring-red-500'
+                      : roomCode && isRoomCodeValid(roomCode)
+                        ? 'border-green-500 focus:ring-green-500'
+                        : ''
+                  }`}
+                  maxLength={6}
+                  aria-describedby="room-code-hint"
                 />
+                <p
+                  id="room-code-hint"
+                  className={`mt-1 text-xs ${
+                    roomCode && !isRoomCodeValid(roomCode)
+                      ? 'text-red-500'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
+                  {roomCode && !isRoomCodeValid(roomCode)
+                    ? txt.roomCodeInvalid
+                    : txt.roomCodeFormat}
+                </p>
               </div>
 
               <div>
@@ -240,7 +268,7 @@ function JoinRoomPage() {
                 className="w-full gap-2"
                 size="lg"
                 onClick={handleJoin}
-                disabled={loading || !roomCode || !playerName}
+                disabled={loading || !isRoomCodeValid(roomCode) || !playerName}
               >
                 <LogIn className="h-5 w-5" />
                 {loading ? t('loading') : txt.joinRoom}

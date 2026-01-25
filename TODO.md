@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 2 | 8 | 2 | 12 |
-| 🟠 HIGH | 12 | 11 | 1 | 24 |
-| 🟡 MEDIUM | 46 | 12 | 0 | 58 |
-| 🟢 LOW | 32 | 0 | 0 | 32 |
-| ⚪ INFO | 24 | 0 | 0 | 24 |
-| **TOTAL** | **115** | **32** | **3** | **150** |
+| 🔴 CRITICAL | 1 | 9 | 2 | 12 |
+| 🟠 HIGH | 11 | 12 | 1 | 24 |
+| 🟡 MEDIUM | 45 | 13 | 0 | 58 |
+| 🟢 LOW | 31 | 0 | 1 | 32 |
+| ⚪ INFO | 22 | 2 | 0 | 24 |
+| **TOTAL** | **110** | **37** | **4** | **150** |
 
 ---
 
@@ -59,7 +59,7 @@
 | 008 | Android | `TutorialViewModel.kt:12-65` | Entire class is stub - all methods are no-op | ❌ WONTFIX (by design) |
 | 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ❌ WONTFIX (by design) |
 | 010 | Backend | `SyncController.java:186` | Now returns actual sync counts and timestamps from database | ✅ FIXED 2026-01-25 |
-| 011 | Backend | `SyncServiceTest.java:305` | Returns empty list - TODO implementation | ⬜ OPEN |
+| 011 | Backend | `SyncServiceTest.java:305` | Proper test coverage with mocked repositories | ✅ FIXED 2026-01-25 |
 | 012 | Infra | N/A | SSL certificate not configured for api.trainvoc.rollingcatsoftware.com | ⬜ OPEN |
 
 ---
@@ -91,7 +91,7 @@
 | 033 | Android | `ProfileScreen.kt:109` | "Profile" hardcoded title instead of stringResource | ✅ FIXED 2026-01-25 |
 | 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ⬜ OPEN |
 | 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ⬜ OPEN |
-| 036 | Infra | N/A | CORS not configured for https://trainvoc.rollingcatsoftware.com | ⬜ OPEN |
+| 036 | Infra | N/A | CORS configured - default: trainvoc.rollingcatsoftware.com, dev: localhost | ✅ FIXED 2026-01-25 |
 
 ---
 
@@ -140,7 +140,7 @@
 | 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ⬜ OPEN |
 | 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ⬜ OPEN |
 | 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ⬜ OPEN |
-| 078 | Backend | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
+| 078 | Android | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
 | 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
 | 080 | Android | `strings.xml` | Email placeholder uses old branding | ⬜ OPEN |
 | 081 | Android | Various | Inconsistent MaterialTheme vs hardcoded colors throughout | ⬜ OPEN |
@@ -185,7 +185,7 @@
 | 113 | Web | `CreateRoomPage.tsx:360-363` | Empty state for rooms - GOOD | ⬜ OPEN |
 | 114 | Web | `JoinRoomPage.tsx:122-136` | Good error differentiation - GOOD | ⬜ OPEN |
 | 115 | Web | `style.css:148-192` | Dark mode CSS properly defined - GOOD | ⬜ OPEN |
-| 116 | Web | `JoinRoomPage.tsx:206` | Room code input no format validation feedback | ⬜ OPEN |
+| 116 | Web | `JoinRoomPage.tsx:206` | Room code input with validation - shows format hint and error states | ✅ FIXED 2026-01-25 |
 | 117 | Android | `ShimmerEffect.kt:246` | Chart placeholder comment | ⬜ OPEN |
 | 118 | Android | `ShimmerEffect.kt:259` | Simple text placeholder comment | ⬜ OPEN |
 | 119 | Android | `UnifiedStates.kt:194-299` | Multiple placeholder comments for shimmer | ⬜ OPEN |
@@ -217,11 +217,11 @@
 | 138 | Android | `FeatureFlagManager.kt:226,246` | fallback/disabled params have empty defaults - OK | ⬜ OPEN |
 | 139 | Android | `MemoryLeakPrevention.kt:102` | cleanup param has empty default - OK | ⬜ OPEN |
 | 140 | Android | `AnimatedComponents.kt:203` | pressClickable with empty onClick - preview | ⬜ OPEN |
-| 141 | Config | `.env.example` | Needs production URLs documented | ⬜ OPEN |
-| 142 | Config | `application-prod.properties` | May need CORS update for Hostinger | ⬜ OPEN |
+| 141 | Config | `.env.example` | Production URLs documented for GCP and Hostinger | ✅ FIXED 2026-01-25 |
+| 142 | Config | `application-prod.properties` | CORS configured with env var override for Hostinger | ✅ FIXED 2026-01-25 |
 | 143 | Infra | N/A | Docker Compose setup for GCP not documented | ⬜ OPEN |
 | 144 | Infra | N/A | Hostinger deployment steps not documented | ⬜ OPEN |
-| 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ⬜ OPEN |
+| 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ❌ WONTFIX (tests should use predictable URLs) |
 | 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ⬜ OPEN |
 | 147 | Android | Various | Multiple files have "In production" comments | ⬜ OPEN |
 | 148 | Android | `sync/README.md` | Large README could be split | ⬜ OPEN |
