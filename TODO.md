@@ -37,11 +37,11 @@
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 1 | 9 | 2 | 12 |
-| 🟠 HIGH | 11 | 12 | 1 | 24 |
-| 🟡 MEDIUM | 45 | 13 | 0 | 58 |
+| 🟠 HIGH | 8 | 15 | 1 | 24 |
+| 🟡 MEDIUM | 38 | 20 | 0 | 58 |
 | 🟢 LOW | 31 | 0 | 1 | 32 |
 | ⚪ INFO | 22 | 2 | 0 | 24 |
-| **TOTAL** | **110** | **37** | **4** | **150** |
+| **TOTAL** | **100** | **46** | **4** | **150** |
 
 ---
 
@@ -60,7 +60,7 @@
 | 009 | Android | `TutorialOverlay.kt:12-30` | Renders nothing - stub implementation | ❌ WONTFIX (by design) |
 | 010 | Backend | `SyncController.java:186` | Now returns actual sync counts and timestamps from database | ✅ FIXED 2026-01-25 |
 | 011 | Backend | `SyncServiceTest.java:305` | Proper test coverage with mocked repositories | ✅ FIXED 2026-01-25 |
-| 012 | Infra | N/A | SSL certificate not configured for api.trainvoc.rollingcatsoftware.com | ⬜ OPEN |
+| 012 | Infra | `SSL_SETUP.md` | SSL setup guide created - needs server execution | 🔄 DOCUMENTED |
 
 ---
 
@@ -75,7 +75,7 @@
 | 017 | Android | `DictionaryScreen.kt:574-584` | Audio button only `24.dp` - below 48dp touch target minimum | ✅ FIXED 2026-01-25 |
 | 018 | Android | `HomeScreen.kt:188` | Username shows `username_placeholder` instead of actual user | ✅ FIXED 2026-01-25 |
 | 019 | Android | `strings.xml:87` | "Backup features coming soon" contradicts existing CloudBackupScreen | ✅ FIXED 2026-01-25 |
-| 020 | Android | `DictionaryScreen.kt:810` | AlphabetFastScroll missing contentDescription for letters | ⬜ OPEN |
+| 020 | Android | `DictionaryScreen.kt:810` | AlphabetFastScroll missing contentDescription for letters | ✅ FIXED 2026-01-25 |
 | 021 | Android | `LeaderboardScreen.kt:93-99` | Hardcoded mock users - `Alex, Sarah, Mike, You, Emma` with fake scores | ✅ FIXED 2026-01-25 |
 | 022 | Android | `ListeningQuizGame.kt:162-167` | TTS URL placeholder - returns `tts://$language/$text` string | ❌ WONTFIX (not used - Android TTS API used instead) |
 | 023 | Android | `ImageService.kt:119-123` | Mock Unsplash URL - uses deprecated random API endpoint | ✅ FIXED 2026-01-25 |
@@ -89,8 +89,8 @@
 | 031 | Android | `CloudBackupScreen.kt:71` | "Cloud Backup" hardcoded title instead of stringResource | ✅ FIXED 2026-01-25 |
 | 032 | Android | `CloudBackupScreen.kt:156-187` | Multiple hardcoded feature descriptions | ✅ FIXED 2026-01-25 |
 | 033 | Android | `ProfileScreen.kt:109` | "Profile" hardcoded title instead of stringResource | ✅ FIXED 2026-01-25 |
-| 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ⬜ OPEN |
-| 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ⬜ OPEN |
+| 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ✅ FIXED 2026-01-25 |
+| 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ✅ FIXED 2026-01-25 |
 | 036 | Infra | N/A | CORS configured - default: trainvoc.rollingcatsoftware.com, dev: localhost | ✅ FIXED 2026-01-25 |
 
 ---
@@ -104,10 +104,10 @@
 | 039 | Web | Multiple game files | All 7 game components now use `resetGame()` state function | ✅ FIXED 2026-01-25 |
 | 040 | Web | `CreateRoomPage.tsx:162` | Using `index` as React key - anti-pattern | ✅ FIXED 2026-01-25 |
 | 041 | Web | `FeaturesGrid.tsx:135` | Using `index` as React key - anti-pattern | ✅ FIXED 2026-01-25 |
-| 042 | Android | `ModernComponents.kt:162` | Hardcoded gray colors for disabled gradient button | ⬜ OPEN |
-| 043 | Android | `ModernComponents.kt:184` | Hardcoded `Color.White` for icon tint | ⬜ OPEN |
-| 044 | Android | `ModernComponents.kt:193` | Hardcoded `Color.White` for text | ⬜ OPEN |
-| 045 | Android | `DictionaryScreen.kt:519` | Hardcoded `Color.White` for chip selected text | ⬜ OPEN |
+| 042 | Android | `ModernComponents.kt:162` | Hardcoded gray colors for disabled gradient button | ✅ FIXED 2026-01-25 |
+| 043 | Android | `ModernComponents.kt:184` | Hardcoded `Color.White` for icon tint | ✅ FIXED 2026-01-25 |
+| 044 | Android | `ModernComponents.kt:193` | Hardcoded `Color.White` for text | ✅ FIXED 2026-01-25 |
+| 045 | Android | `DictionaryScreen.kt:519` | Hardcoded `Color.White` for chip selected text | ✅ FIXED 2026-01-25 |
 | 046 | Android | `SplashScreen.kt:87` | Fixed 96.dp size for splash - should scale for tablets | ⬜ OPEN |
 | 047 | Android | `DictionaryScreen.kt:459` | Fixed 80.dp letter preview box size | ⬜ OPEN |
 | 048 | Android | `QuizScreen.kt:98` | Fixed 180.dp Lottie animation size | ⬜ OPEN |
@@ -124,7 +124,7 @@
 | 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ⬜ OPEN |
 | 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ⬜ OPEN |
 | 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ⬜ OPEN |
-| 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ⬜ OPEN |
+| 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ✅ FIXED 2026-01-25 |
 | 063 | Android | `QuizScreen.kt:210` | LazyColumn uses fixed Spacing - no tablet adaptation | ⬜ OPEN |
 | 064 | Android | `SplashScreen.kt` | No responsive considerations for landscape | ⬜ OPEN |
 | 065 | Android | `ProfileScreen.kt:81-85` | No horizontal padding adjustment for ultra-wide | ⬜ OPEN |
@@ -138,7 +138,7 @@
 | 073 | Android | `ChangelogScreen.kt:225` | "Coming Soon" label in changelog | ⬜ OPEN |
 | 074 | Android | `DictionaryScreen.kt:336-345` | Shimmer shows for ALL cards during search | ⬜ OPEN |
 | 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ⬜ OPEN |
-| 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ⬜ OPEN |
+| 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ✅ FIXED 2026-01-25 |
 | 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ⬜ OPEN |
 | 078 | Android | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
 | 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
@@ -220,7 +220,7 @@
 | 141 | Config | `.env.example` | Production URLs documented for GCP and Hostinger | ✅ FIXED 2026-01-25 |
 | 142 | Config | `application-prod.properties` | CORS configured with env var override for Hostinger | ✅ FIXED 2026-01-25 |
 | 143 | Infra | N/A | Docker Compose setup for GCP not documented | ⬜ OPEN |
-| 144 | Infra | N/A | Hostinger deployment steps not documented | ⬜ OPEN |
+| 144 | Infra | `SSL_SETUP.md` | Hostinger/GCP deployment partially documented (SSL, Nginx, systemd) | 🔄 PARTIAL |
 | 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ❌ WONTFIX (tests should use predictable URLs) |
 | 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ⬜ OPEN |
 | 147 | Android | Various | Multiple files have "In production" comments | ⬜ OPEN |
@@ -257,6 +257,11 @@
 | 093 | Web | Podium.tsx player names now have responsive max-width | 2026-01-25 | Claude |
 | 039 | Web | All 7 game components (PictureMatch, MultipleChoice, FillInBlank, ContextClues, SpellingChallenge, WordScramble, ListeningQuiz) now use proper `resetGame()` state reset instead of `window.location.reload()` | 2026-01-25 | Claude |
 | 010 | Backend | SyncController.getSyncStatus() now returns actual counts and last sync timestamps from database via SyncService.getSyncStatus() | 2026-01-25 | Claude |
+| 020 | Android | AlphabetFastScroll now has semantics contentDescription for accessibility | 2026-01-25 | Claude |
+| 034-035 | Android | Buttons.kt and ModernComponents.kt now use iconContentDescription parameter | 2026-01-25 | Claude |
+| 042-044 | Android | ModernComponents.kt hardcoded colors replaced with theme-aware colors | 2026-01-25 | Claude |
+| 045 | Android | DictionaryScreen chip Color.White replaced with onPrimary | 2026-01-25 | Claude |
+| 062, 076 | Android | AlphabetFastScroll width increased to 40.dp for better touch targets | 2026-01-25 | Claude |
 
 ---
 
