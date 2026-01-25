@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kover)
+    alias(libs.plugins.google.services)
     id("com.google.devtools.ksp")
 }
 
@@ -206,6 +207,10 @@ dependencies {
 
     // Security
     implementation(libs.androidx.security.crypto)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
 
     // Google Play Games Services
     implementation(libs.google.play.games)

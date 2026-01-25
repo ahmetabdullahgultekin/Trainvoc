@@ -11,10 +11,12 @@ import javax.inject.Singleton
 
 /**
  * Repository for authentication operations.
- * Handles login, registration, token management, and auth state.
+ * Uses Firebase as the primary authentication provider,
+ * with backend sync for user data.
  */
 @Singleton
 class AuthRepository @Inject constructor(
+    private val firebaseAuthRepository: FirebaseAuthRepository,
     private val authApiService: AuthApiService,
     private val preferencesRepository: IPreferencesRepository
 ) {
@@ -25,150 +27,207 @@ class AuthRepository @Inject constructor(
     val currentUser: StateFlow<UserInfo?> = _currentUser.asStateFlow()
 
     /**
-     * Check if user is currently authenticated.
-     * Validates stored token with the server.
+     * Check if user is currently authenticated via Firebase.
      */
     suspend fun checkAuthState() = withContext(Dispatchers.IO) {
-        val token = preferencesRepository.getAuthToken()
-        if (token == null) {
+        val firebaseUser = firebaseAuthRepository.getCurrentUser()
+
+        if (firebaseUser == null) {
             _authState.value = AuthState.NotAuthenticated
+            _currentUser.value = null
             return@withContext
         }
 
+        // User is authenticated with Firebase
+        _authState.value = AuthState.Authenticated
+
+        // Try to sync with backend
         try {
-            val response = authApiService.validateToken("Bearer $token")
-            if (response.isSuccessful && response.body() != null) {
-                _currentUser.value = response.body()
-                _authState.value = AuthState.Authenticated
-            } else {
-                // Token invalid, try to refresh
-                val refreshResult = refreshToken()
-                if (!refreshResult) {
-                    clearTokens()
-                    _authState.value = AuthState.NotAuthenticated
-                }
-            }
+            syncWithBackend()
         } catch (e: Exception) {
-            // Network error - keep current state but mark as offline
-            _authState.value = if (token.isNotEmpty()) {
-                AuthState.AuthenticatedOffline
-            } else {
-                AuthState.NotAuthenticated
-            }
+            // Backend sync failed, but user is still authenticated with Firebase
+            // Keep authenticated state but note we're offline from backend
+            _authState.value = AuthState.AuthenticatedOffline
         }
     }
 
     /**
-     * Login with username and password.
+     * Login with email and password using Firebase.
      */
-    suspend fun login(username: String, password: String): AuthResult = withContext(Dispatchers.IO) {
-        try {
-            _authState.value = AuthState.Loading
+    suspend fun login(email: String, password: String): AuthResult = withContext(Dispatchers.IO) {
+        _authState.value = AuthState.Loading
 
-            val response = authApiService.login(
-                LoginRequest(
-                    username = username,
-                    password = password,
-                    deviceId = preferencesRepository.getDeviceId()
-                )
-            )
-
-            if (response.isSuccessful && response.body()?.success == true) {
-                val body = response.body()!!
-                saveTokens(body.accessToken, body.refreshToken)
-                _currentUser.value = body.user
+        when (val result = firebaseAuthRepository.signInWithEmailAndPassword(email, password)) {
+            is FirebaseAuthResult.Success -> {
                 _authState.value = AuthState.Authenticated
-                AuthResult.Success(body.user)
-            } else {
-                _authState.value = AuthState.NotAuthenticated
-                AuthResult.Error(response.body()?.message ?: "Login failed")
+
+                // Try to sync with backend
+                try {
+                    syncWithBackend()
+                } catch (e: Exception) {
+                    // Backend sync failed, but login succeeded
+                    _authState.value = AuthState.AuthenticatedOffline
+                }
+
+                AuthResult.Success(_currentUser.value)
             }
-        } catch (e: Exception) {
-            _authState.value = AuthState.NotAuthenticated
-            AuthResult.Error("Network error: ${e.message}")
+            is FirebaseAuthResult.Error -> {
+                _authState.value = AuthState.NotAuthenticated
+                AuthResult.Error(result.message)
+            }
+            else -> {
+                _authState.value = AuthState.NotAuthenticated
+                AuthResult.Error("Unexpected error during login")
+            }
         }
     }
 
     /**
-     * Register a new user.
+     * Register a new user with email and password using Firebase.
+     * Note: Username is optional and will be synced to backend.
      */
     suspend fun register(
-        username: String,
         email: String,
-        password: String
+        password: String,
+        displayName: String? = null
     ): AuthResult = withContext(Dispatchers.IO) {
-        try {
-            _authState.value = AuthState.Loading
+        _authState.value = AuthState.Loading
 
-            val response = authApiService.register(
-                RegisterRequest(
-                    username = username,
-                    email = email,
-                    password = password,
-                    deviceId = preferencesRepository.getDeviceId()
-                )
-            )
+        when (val result = firebaseAuthRepository.createUserWithEmailAndPassword(email, password)) {
+            is FirebaseAuthResult.Success -> {
+                // Update display name if provided
+                if (!displayName.isNullOrBlank()) {
+                    firebaseAuthRepository.updateDisplayName(displayName)
+                }
 
-            if (response.isSuccessful && response.body()?.success == true) {
-                val body = response.body()!!
-                saveTokens(body.accessToken, body.refreshToken)
-                _currentUser.value = body.user
                 _authState.value = AuthState.Authenticated
-                AuthResult.Success(body.user)
-            } else {
-                _authState.value = AuthState.NotAuthenticated
-                AuthResult.Error(response.body()?.message ?: "Registration failed")
+
+                // Try to sync with backend
+                try {
+                    syncWithBackend()
+                } catch (e: Exception) {
+                    // Backend sync failed, but registration succeeded
+                    _authState.value = AuthState.AuthenticatedOffline
+                }
+
+                AuthResult.Success(_currentUser.value)
             }
-        } catch (e: Exception) {
-            _authState.value = AuthState.NotAuthenticated
-            AuthResult.Error("Network error: ${e.message}")
+            is FirebaseAuthResult.Error -> {
+                _authState.value = AuthState.NotAuthenticated
+                AuthResult.Error(result.message)
+            }
+            else -> {
+                _authState.value = AuthState.NotAuthenticated
+                AuthResult.Error("Unexpected error during registration")
+            }
         }
     }
 
     /**
-     * Logout and clear tokens.
+     * Send password reset email.
+     */
+    suspend fun sendPasswordResetEmail(email: String): AuthResult = withContext(Dispatchers.IO) {
+        when (val result = firebaseAuthRepository.sendPasswordResetEmail(email)) {
+            is FirebaseAuthResult.PasswordResetSent -> {
+                AuthResult.PasswordResetSent
+            }
+            is FirebaseAuthResult.Error -> {
+                AuthResult.Error(result.message)
+            }
+            else -> {
+                AuthResult.Error("Unexpected error sending reset email")
+            }
+        }
+    }
+
+    /**
+     * Logout and clear session.
      */
     suspend fun logout() = withContext(Dispatchers.IO) {
-        clearTokens()
+        firebaseAuthRepository.signOut()
+        clearLocalData()
         _currentUser.value = null
         _authState.value = AuthState.NotAuthenticated
     }
 
     /**
-     * Refresh the access token.
+     * Get the Firebase ID token for backend API calls.
      */
-    private suspend fun refreshToken(): Boolean {
-        val refreshToken = preferencesRepository.getRefreshToken() ?: return false
+    suspend fun getFirebaseIdToken(): String? = withContext(Dispatchers.IO) {
+        firebaseAuthRepository.getIdToken(forceRefresh = false)
+    }
 
-        return try {
-            val response = authApiService.refreshToken(RefreshTokenRequest(refreshToken))
-            if (response.isSuccessful && response.body()?.success == true) {
-                val body = response.body()!!
-                saveTokens(body.accessToken, body.refreshToken)
-                _currentUser.value = body.user
-                _authState.value = AuthState.Authenticated
-                true
-            } else {
-                false
+    /**
+     * Syncs the Firebase user with the backend.
+     * Creates or updates the user in the backend database.
+     */
+    private suspend fun syncWithBackend() {
+        val token = firebaseAuthRepository.getIdToken() ?: return
+
+        try {
+            val response = authApiService.firebaseSync("Bearer $token")
+            if (response.isSuccessful && response.body() != null) {
+                val syncResponse = response.body()!!
+                _currentUser.value = UserInfo(
+                    id = syncResponse.id,
+                    username = syncResponse.username,
+                    email = syncResponse.email,
+                    createdAt = null
+                )
+
+                // Save username locally for offline access
+                preferencesRepository.setUsername(syncResponse.username)
             }
         } catch (e: Exception) {
-            false
+            // Log error but don't fail - user is still authenticated with Firebase
+            throw e
         }
     }
 
     /**
-     * Get the current access token for API calls.
+     * Clears local authentication data.
      */
-    fun getAccessToken(): String? = preferencesRepository.getAuthToken()
-
-    private fun saveTokens(accessToken: String?, refreshToken: String?) {
-        accessToken?.let { preferencesRepository.setAuthToken(it) }
-        refreshToken?.let { preferencesRepository.setRefreshToken(it) }
-    }
-
-    private fun clearTokens() {
+    private fun clearLocalData() {
         preferencesRepository.clearAuthToken()
         preferencesRepository.clearRefreshToken()
+    }
+
+    /**
+     * Gets the current Firebase user's email.
+     */
+    fun getCurrentEmail(): String? {
+        return firebaseAuthRepository.getCurrentUser()?.email
+    }
+
+    /**
+     * Gets the current Firebase user's display name.
+     */
+    fun getDisplayName(): String? {
+        return firebaseAuthRepository.getCurrentUser()?.displayName
+    }
+
+    /**
+     * Checks if the current user's email is verified.
+     */
+    fun isEmailVerified(): Boolean {
+        return firebaseAuthRepository.getCurrentUser()?.isEmailVerified ?: false
+    }
+
+    /**
+     * Sends email verification to current user.
+     */
+    suspend fun sendEmailVerification(): AuthResult = withContext(Dispatchers.IO) {
+        when (val result = firebaseAuthRepository.sendEmailVerification()) {
+            is FirebaseAuthResult.EmailVerificationSent -> {
+                AuthResult.EmailVerificationSent
+            }
+            is FirebaseAuthResult.Error -> {
+                AuthResult.Error(result.message)
+            }
+            else -> {
+                AuthResult.Error("Unexpected error sending verification email")
+            }
+        }
     }
 }
 
@@ -176,11 +235,11 @@ class AuthRepository @Inject constructor(
  * Authentication state.
  */
 sealed class AuthState {
-    object Unknown : AuthState()
-    object Loading : AuthState()
-    object Authenticated : AuthState()
-    object AuthenticatedOffline : AuthState()
-    object NotAuthenticated : AuthState()
+    data object Unknown : AuthState()
+    data object Loading : AuthState()
+    data object Authenticated : AuthState()
+    data object AuthenticatedOffline : AuthState()
+    data object NotAuthenticated : AuthState()
 }
 
 /**
@@ -189,4 +248,6 @@ sealed class AuthState {
 sealed class AuthResult {
     data class Success(val user: UserInfo?) : AuthResult()
     data class Error(val message: String) : AuthResult()
+    data object PasswordResetSent : AuthResult()
+    data object EmailVerificationSent : AuthResult()
 }

@@ -54,6 +54,8 @@ import com.gultekinahmetabdullah.trainvoc.viewmodel.AuthViewModel
 
 /**
  * Registration screen for new users.
+ * Uses Firebase Authentication with email/password.
+ * Display name is optional.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +68,7 @@ fun RegisterScreen(
     val registerError by viewModel.registerError.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    var username by remember { mutableStateOf("") }
+    var displayName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -77,7 +79,7 @@ fun RegisterScreen(
 
     // Navigate on successful registration
     LaunchedEffect(authState) {
-        if (authState is AuthState.Authenticated) {
+        if (authState is AuthState.Authenticated || authState is AuthState.AuthenticatedOffline) {
             onRegisterSuccess()
         }
     }
@@ -125,14 +127,14 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(Spacing.large))
 
-            // Username field
+            // Display Name field (optional)
             OutlinedTextField(
-                value = username,
+                value = displayName,
                 onValueChange = {
-                    username = it
+                    displayName = it
                     viewModel.clearRegisterError()
                 },
-                label = { Text(stringResource(R.string.username)) },
+                label = { Text(stringResource(R.string.display_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
@@ -145,7 +147,7 @@ fun RegisterScreen(
                 ),
                 enabled = !isLoading,
                 supportingText = {
-                    Text(stringResource(R.string.username_hint))
+                    Text(stringResource(R.string.display_name_hint))
                 }
             )
 
@@ -244,7 +246,7 @@ fun RegisterScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        viewModel.register(username, email, password, confirmPassword)
+                        viewModel.register(email, password, confirmPassword, displayName)
                     }
                 ),
                 trailingIcon = {
@@ -281,11 +283,10 @@ fun RegisterScreen(
 
             // Register button
             Button(
-                onClick = { viewModel.register(username, email, password, confirmPassword) },
+                onClick = { viewModel.register(email, password, confirmPassword, displayName) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
                 enabled = !isLoading &&
-                        username.isNotBlank() &&
                         email.isNotBlank() &&
                         password.isNotBlank() &&
                         confirmPassword.isNotBlank()
