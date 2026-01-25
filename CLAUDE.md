@@ -204,16 +204,18 @@ cd TrainvocBackend
 
 ### Known Issues
 
-1. **TrainvocClient**
+1. **TrainvocClient** (117 open issues in TODO.md)
    - Game UI screens were deleted (recoverable from git)
-   - TTS service exists but not connected to UI
    - Backend sync is placeholder implementation
-   - Cloud backup UI-only (no provider)
+   - Cloud backup shows "Coming Soon" (no provider yet)
+   - ~~Password hashing~~ ✅ FIXED - Uses SHA-256
+   - ~~Mock leaderboard data~~ ✅ FIXED - Shows "Coming Soon"
+   - ~~Hardcoded UI strings~~ ✅ FIXED - Uses stringResource
 
 2. **TrainvocWeb**
-   - Hard-coded backend URL (localhost:8080)
+   - ~~Hard-coded backend URL~~ ✅ FIXED - Uses VITE_API_URL
    - No authentication implementation
-   - Limited error handling
+   - ~~Limited error handling~~ ✅ FIXED - Error utilities added
 
 3. **TrainvocBackend**
    - SSL disabled for development
@@ -361,7 +363,36 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: January 25, 2026 (Continued)
+### Latest Session: January 25, 2026 (Android Pre-Deployment Fixes)
+
+**Branch:** `master`
+**Focus:** Android App Pre-Deployment Bug Fixes
+
+**Critical Android Fixes Completed (18 issues):**
+- [x] #004: Password hashing - Now uses SHA-256 instead of hashCode()
+- [x] #005: Play Games achievements - Gracefully skipped when not configured
+- [x] #006-007: Cloud backup - UI updated to show "Coming Soon" honestly
+- [x] #008-009: Tutorial stubs - Marked WONTFIX (working as designed)
+- [x] #016-017: DictionaryScreen - Fixed hardcoded color, increased touch targets
+- [x] #018: HomeScreen - Now shows actual username from SharedPreferences
+- [x] #019: FAQ backup description - Updated to mention local backup
+- [x] #021: Leaderboard - Removed fake mock users, shows "Coming Soon"
+- [x] #022: TTS placeholder - Marked WONTFIX (Android TTS API used)
+- [x] #023: ImageService - Now uses Lorem Picsum for reliable images
+- [x] #027: ProfileScreen accuracy - Now shows real mastery rate
+- [x] #028-033: Hardcoded strings - Replaced with stringResource for i18n
+
+**Build Status:** ✅ Debug build succeeds
+
+**Issue Tracker Progress:**
+- Total: 150 issues
+- Fixed: 30 issues
+- WONTFIX: 3 issues
+- Remaining: 117 issues (mostly non-critical)
+
+---
+
+### Previous Session: January 25, 2026 (Branding & Play Store)
 
 **Branch:** `master`
 **Focus:** Branding Consistency & Play Store Preparation
@@ -382,11 +413,6 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 - [x] Added store listing content (EN/TR) in `store-listing.md`
 - [x] Created standalone `privacy-policy.html` for hosting
 - [x] Created comprehensive `PLAY_STORE_SUBMISSION_CHECKLIST.md`
-
-**Key Documents Updated:**
-- `BRANDING.md` - Complete branding reference
-- `TrainvocClient/store-listing/README.md` - Screenshot specs
-- `docs/PLAY_STORE_SUBMISSION_CHECKLIST.md` - 21-section checklist
 
 ---
 
