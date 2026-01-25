@@ -15,7 +15,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users", indexes = {
     @Index(name = "idx_user_email", columnList = "email", unique = true),
-    @Index(name = "idx_user_username", columnList = "username", unique = true)
+    @Index(name = "idx_user_username", columnList = "username", unique = true),
+    @Index(name = "idx_user_firebase_uid", columnList = "firebaseUid", unique = true)
 })
 public class User {
 
@@ -40,6 +41,26 @@ public class User {
 
     @Column(length = 100)
     private String displayName;
+
+    /**
+     * Firebase UID for users authenticated via Firebase.
+     * Null for users authenticated via local (email/password).
+     */
+    @Column(unique = true, length = 128)
+    private String firebaseUid;
+
+    /**
+     * Authentication provider used by this user.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private AuthProvider authProvider = AuthProvider.LOCAL;
+
+    /**
+     * Whether the user's email has been verified.
+     */
+    @Column(nullable = false)
+    private boolean emailVerified = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
@@ -141,6 +162,30 @@ public class User {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getFirebaseUid() {
+        return firebaseUid;
+    }
+
+    public void setFirebaseUid(String firebaseUid) {
+        this.firebaseUid = firebaseUid;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 
     public Set<Role> getRoles() {
