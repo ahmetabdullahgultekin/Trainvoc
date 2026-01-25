@@ -127,6 +127,18 @@ export function FillInTheBlankGame({
     }
   }
 
+  const resetGame = () => {
+    setCurrentIndex(0)
+    setScore(0)
+    setCorrectCount(0)
+    setSelectedIndex(null)
+    setShowResult(false)
+    setIsCorrect(false)
+    setShowCelebration(false)
+    setTimeLeft(questionDuration)
+    setGameComplete(false)
+  }
+
   // Highlight the blank in the sentence
   const renderSentence = () => {
     const parts = currentQuestion.sentence.split('_____')
@@ -170,7 +182,7 @@ export function FillInTheBlankGame({
             <p className="text-gray-600 dark:text-gray-400 mt-4 mb-6">
               {correctCount} / {questions.length} {t.correct}
             </p>
-            <Button onClick={() => window.location.reload()} className="w-full gap-2">
+            <Button onClick={resetGame} className="w-full gap-2">
               <RotateCcw className="h-4 w-4" />
               {t.playAgain}
             </Button>

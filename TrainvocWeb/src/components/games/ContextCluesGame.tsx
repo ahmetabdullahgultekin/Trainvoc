@@ -135,6 +135,19 @@ export function ContextCluesGame({
     }
   }
 
+  const resetGame = () => {
+    setCurrentIndex(0)
+    setUserGuess('')
+    setScore(0)
+    setCorrectCount(0)
+    setRevealedClues([0])
+    setShowResult(false)
+    setIsCorrect(false)
+    setShowCelebration(false)
+    setGameComplete(false)
+    setAttempts(0)
+  }
+
   if (gameComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-500 to-purple-600">
@@ -153,7 +166,7 @@ export function ContextCluesGame({
             <p className="text-gray-600 dark:text-gray-400 mt-4 mb-6">
               {correctCount} / {questions.length} {t.correct}
             </p>
-            <Button onClick={() => window.location.reload()} className="w-full gap-2">
+            <Button onClick={resetGame} className="w-full gap-2">
               <RotateCcw className="h-4 w-4" />
               {t.playAgain}
             </Button>

@@ -497,4 +497,54 @@ public class SyncService {
         }
         return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
+
+    /**
+     * Get sync status for all entity types for a user.
+     *
+     * @param user The authenticated user
+     * @return Map containing sync status for each entity type
+     */
+    public Map<String, Object> getSyncStatus(User user) {
+        log.info("Getting sync status for user {}", user.getId());
+
+        Map<String, Map<String, Object>> entityStatus = new HashMap<>();
+
+        // Words status
+        long wordsCount = wordProgressRepository.countByUser(user);
+        LocalDateTime wordsLastSync = wordProgressRepository.findLatestUpdatedAtByUser(user);
+        entityStatus.put("words", Map.of(
+            "lastSync", toTimestamp(wordsLastSync),
+            "count", wordsCount
+        ));
+
+        // Statistics status
+        long statisticsCount = wordStatisticRepository.countByUser(user);
+        LocalDateTime statsLastSync = wordStatisticRepository.findLatestUpdatedAtByUser(user);
+        entityStatus.put("statistics", Map.of(
+            "lastSync", toTimestamp(statsLastSync),
+            "count", statisticsCount
+        ));
+
+        // Achievements status
+        long achievementsCount = achievementRepository.countByUser(user);
+        LocalDateTime achievementsLastSync = achievementRepository.findLatestUpdatedAtByUser(user);
+        entityStatus.put("achievements", Map.of(
+            "lastSync", toTimestamp(achievementsLastSync),
+            "count", achievementsCount
+        ));
+
+        // Exams status
+        long examsCount = examHistoryRepository.countByUser(user);
+        LocalDateTime examsLastSync = examHistoryRepository.findLatestUpdatedAtByUser(user);
+        entityStatus.put("exams", Map.of(
+            "lastSync", toTimestamp(examsLastSync),
+            "count", examsCount
+        ));
+
+        return Map.of(
+            "userId", user.getId(),
+            "lastSyncTime", System.currentTimeMillis(),
+            "entityStatus", entityStatus
+        );
+    }
 }

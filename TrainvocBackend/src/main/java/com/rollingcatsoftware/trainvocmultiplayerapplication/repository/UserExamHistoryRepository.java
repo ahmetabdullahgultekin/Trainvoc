@@ -34,4 +34,9 @@ public interface UserExamHistoryRepository extends JpaRepository<UserExamHistory
     Integer maxScore(@Param("user") User user);
 
     List<UserExamHistory> findByUserAndUpdatedAtAfter(User user, LocalDateTime since);
+
+    long countByUser(User user);
+
+    @Query("SELECT MAX(ueh.updatedAt) FROM UserExamHistory ueh WHERE ueh.user = :user")
+    LocalDateTime findLatestUpdatedAtByUser(@Param("user") User user);
 }
