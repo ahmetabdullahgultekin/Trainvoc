@@ -1,4 +1,13 @@
 {
+  "game": {
+    "playAudio": "Sesi Çal",
+    "stopAudio": "Durdur"
+  },
+  "errorBoundary": {
+    "title": "Bir şeyler yanlış gitti",
+    "retry": "Tekrar Dene",
+    "goHome": "Ana Sayfaya Dön"
+  },
   "welcome": "Trainvoc'a Hoş Geldin!",
   "createRoom": "Oda Oluştur",
   "joinRoom": "Odaya Katıl",

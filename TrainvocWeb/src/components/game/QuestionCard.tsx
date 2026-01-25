@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Volume2, VolumeX } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { scaleVariants } from '@/lib/animations'
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,8 @@ export function QuestionCard({
   audioPlaying,
   className,
 }: QuestionCardProps) {
+  const { t } = useTranslation()
+
   return (
     <motion.div
       variants={scaleVariants}
@@ -69,12 +72,12 @@ export function QuestionCard({
             {audioPlaying ? (
               <>
                 <VolumeX className="mr-2 h-5 w-5" />
-                Stop
+                {t('game.stopAudio', 'Stop')}
               </>
             ) : (
               <>
                 <Volume2 className="mr-2 h-5 w-5" />
-                Play Audio
+                {t('game.playAudio', 'Play Audio')}
               </>
             )}
           </Button>

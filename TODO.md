@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | Total |
 |----------|------|-------|-------|
-| 🔴 CRITICAL | 12 | 0 | 12 |
-| 🟠 HIGH | 24 | 0 | 24 |
+| 🔴 CRITICAL | 9 | 3 | 12 |
+| 🟠 HIGH | 22 | 2 | 24 |
 | 🟡 MEDIUM | 58 | 0 | 58 |
 | 🟢 LOW | 32 | 0 | 32 |
 | ⚪ INFO | 24 | 0 | 24 |
-| **TOTAL** | **150** | **0** | **150** |
+| **TOTAL** | **145** | **5** | **150** |
 
 ---
 
@@ -49,9 +49,9 @@
 
 | # | Component | File:Line | Description | Status |
 |---|-----------|-----------|-------------|--------|
-| 001 | Web | `WebSocketService.ts:87` | WebSocket URL fallback uses `localhost:8080` - will fail in production | ⬜ OPEN |
-| 002 | Web | `ContactPage.tsx:79` | Contact form just logs to console - form is completely broken | ⬜ OPEN |
-| 003 | Web | `api.ts:4` | HTTP fallback (`http://localhost:8080`) - insecure if env not set | ⬜ OPEN |
+| 001 | Web | `WebSocketService.ts:87` | WebSocket URL fallback uses `localhost:8080` - will fail in production | ✅ FIXED 2026-01-25 |
+| 002 | Web | `ContactPage.tsx:79` | Contact form just logs to console - form is completely broken | ✅ FIXED 2026-01-25 |
+| 003 | Web | `api.ts:4` | HTTP fallback (`http://localhost:8080`) - insecure if env not set | ✅ FIXED 2026-01-25 |
 | 004 | Android | `MultiplayerRepository.kt:299` | Password hashing uses `hashCode()` instead of cryptographic hash - SECURITY | ⬜ OPEN |
 | 005 | Android | `PlayGamesAchievementMapper.kt:15` | Placeholder achievement IDs - not real Play Console IDs | ⬜ OPEN |
 | 006 | Android | `CloudBackupManager.kt:437` | Cloud backup upload not implemented - returns "Coming Soon" exception | ⬜ OPEN |
@@ -68,8 +68,8 @@
 
 | # | Component | File:Line | Description | Status |
 |---|-----------|-----------|-------------|--------|
-| 013 | Web | `QuestionCard.tsx:75-78` | "Play Audio"/"Stop" hardcoded in English - breaks Turkish UI | ⬜ OPEN |
-| 014 | Web | `ErrorBoundary.tsx:77-82` | Button labels hardcoded in Turkish ("Tekrar Dene") | ⬜ OPEN |
+| 013 | Web | `QuestionCard.tsx:75-78` | "Play Audio"/"Stop" hardcoded in English - breaks Turkish UI | ✅ FIXED 2026-01-25 |
+| 014 | Web | `ErrorBoundary.tsx:77-82` | Button labels hardcoded in Turkish ("Tekrar Dene") | ✅ FIXED 2026-01-25 |
 | 015 | Web | `PictureMatchGame.tsx:237` | Image `<img>` missing `alt` attribute - WCAG failure | ⬜ OPEN |
 | 016 | Android | `DictionaryScreen.kt:628` | Hardcoded pink `Color(0xFFE91E63)` for favorites heart | ⬜ OPEN |
 | 017 | Android | `DictionaryScreen.kt:574-584` | Audio button only `24.dp` - below 48dp touch target minimum | ⬜ OPEN |
@@ -234,7 +234,11 @@
 
 | # | Component | Description | Fixed Date | Fixed By |
 |---|-----------|-------------|------------|----------|
-| - | - | - | - | - |
+| 001 | Web | WebSocket URL now uses VITE_WS_URL or derives from VITE_API_URL | 2026-01-25 | Claude |
+| 002 | Web | Contact form now opens email client with mailto: link | 2026-01-25 | Claude |
+| 003 | Web | API URL now warns in dev, uses origin in prod if env not set | 2026-01-25 | Claude |
+| 013 | Web | QuestionCard audio buttons now use i18n translations | 2026-01-25 | Claude |
+| 014 | Web | ErrorBoundary buttons now use i18n translations | 2026-01-25 | Claude |
 
 ---
 
