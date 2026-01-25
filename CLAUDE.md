@@ -318,55 +318,72 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: January 25, 2026
+### Latest Session: January 25, 2026 (Continued)
 
 **Branch:** `master`
-**Focus:** Fix WebSocket Database Persistence & Manual Testing
+**Focus:** Branding Consistency & Play Store Preparation
 
-**Critical Bug Fixed:**
-- **WebSocket Room Creation Not Persisting to Database**
-  - **Root Cause:** Spring's thread-bound EntityManager wasn't available in WebSocket threads
-  - **Solution:** Direct EntityManager management with explicit transaction control
-  - **Files Modified:**
-    - `RoomService.java` - Direct EntityManager with begin/commit/rollback
-    - `GameRoomRepository.java` - Added `@Modifying(clearAutomatically=true, flushAutomatically=true)`
-    - `application-dev.properties` - Added transaction logging at TRACE level
+**Branding Fixes Completed:**
+- [x] Unified brand name to "Trainvoc" (fixed "TrainVoc" inconsistencies)
+- [x] Updated copyright to "© 2024-2026"
+- [x] Updated support email to `rollingcat.help@gmail.com`
+- [x] Updated website URL to `trainvoc.rollingcatsoftware.com`
+- [x] Created Privacy Policy page (`/privacy`) - bilingual EN/TR
+- [x] Created Terms of Service page (`/terms`) - bilingual EN/TR
+- [x] Added routes for legal pages in App.tsx
+- [x] Removed incomplete translations (ES, DE, FR, AR)
+- [x] Updated BRANDING.md with all decisions
 
-**Manual Testing Completed:**
-- [x] Room Creation via WebSocket ✅
-- [x] Join Room via WebSocket ✅
-- [x] Start Game via WebSocket ✅
-- [x] Answer Submission via WebSocket ✅
-- [x] Score Calculation ✅
-- [x] Rankings Broadcast ✅
-- [x] Game Timer State Transitions ✅
+**Play Store Preparation:**
+- [x] Created `TrainvocClient/store-listing/` folder structure
+- [x] Added store listing content (EN/TR) in `store-listing.md`
+- [x] Created standalone `privacy-policy.html` for hosting
+- [x] Created comprehensive `PLAY_STORE_SUBMISSION_CHECKLIST.md`
 
-**All WebSocket flows verified working:**
-1. Create room → persisted to database
-2. Join room → player added, broadcasts sent
-3. Start game → COUNTDOWN state, questions generated
-4. Submit answers → scores calculated, rankings broadcast
-5. State transitions → LOBBY → COUNTDOWN → QUESTION → ANSWER_REVEAL → RANKING → FINAL
+**Key Documents Updated:**
+- `BRANDING.md` - Complete branding reference
+- `TrainvocClient/store-listing/README.md` - Screenshot specs
+- `docs/PLAY_STORE_SUBMISSION_CHECKLIST.md` - 21-section checklist
 
 ---
 
 ### Remaining Work
 
-**High Priority:**
+**High Priority (Play Store):**
+- [ ] Create feature graphic (1024x500 px)
+- [ ] Capture 2-8 app screenshots
+- [ ] Host privacy policy at public URL
+- [ ] Generate upload keystore
+- [ ] Complete Play Console forms (Data Safety, Content Rating)
+
+**High Priority (Deployment):**
 - [ ] Deploy to GCP Compute Engine VM
 - [ ] Configure SSL certificates for production
 - [ ] Verify production WebSocket connections (wss://)
 
 **Medium Priority:**
+- [ ] Migrate Android package ID to `com.rollingcatsoftware.trainvoc`
 - [ ] Phase 4: DRY & Code Deduplication (from Master Fix Plan)
 - [ ] Phase 5: Architecture Improvements
-- [ ] Phase 6: Testing Infrastructure
 - [ ] Add automated integration tests for WebSocket flows
 
 **Low Priority:**
 - [ ] Add WebSocket reconnection logic in frontend
 - [ ] Implement proper authentication (JWT)
 - [ ] Add comprehensive error handling for edge cases
+
+---
+
+### Previous Session: January 25, 2026 (Earlier)
+
+**Branch:** `master`
+**Focus:** Fix WebSocket Database Persistence & Manual Testing
+
+**Critical Bug Fixed:**
+- WebSocket Room Creation Not Persisting to Database
+- Solution: Direct EntityManager management with explicit transaction control
+
+**All WebSocket flows verified working.**
 
 ---
 
