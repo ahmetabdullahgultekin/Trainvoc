@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 14 | 44 | 3 | 61 |
+| 🟡 MEDIUM | 13 | 45 | 3 | 61 |
 | 🟢 LOW | 17 | 15 | 2 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **57** | **104** | **6** | **167** |
+| **TOTAL** | **56** | **105** | **6** | **167** |
 
 ---
 
@@ -129,7 +129,7 @@
 | 052 | Android | `CloudBackupScreen.kt` | No error state UI when backup operations fail | ✅ FIXED 2026-01-26 |
 | 053 | Android | `QuizScreen.kt:288-293` | Shows loading but no error state if questions fail | ✅ FIXED 2026-01-26 |
 | 054 | Android | `DictionaryScreen.kt:336-345` | Shimmer loading shown but no error message if search fails | ⬜ OPEN |
-| 055 | Android | `CloudBackupScreen.kt:108` | SignedInContent doesn't show clear loading state | ⬜ OPEN |
+| 055 | Android | `CloudBackupScreen.kt:108` | SignedInContent doesn't show clear loading state | ✅ VERIFIED (has ButtonLoader + RollingCatLoader) |
 | 056 | Android | `ProfileScreen.kt` | No loading skeleton for stats before they load | ✅ FIXED 2026-01-26 |
 | 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ⬜ OPEN |
 | 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
