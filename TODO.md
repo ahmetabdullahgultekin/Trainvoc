@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 25 | 34 | 2 | 61 |
-| 🟢 LOW | 20 | 13 | 1 | 34 |
+| 🟡 MEDIUM | 23 | 36 | 2 | 61 |
+| 🟢 LOW | 18 | 15 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **71** | **92** | **4** | **167** |
+| **TOTAL** | **67** | **96** | **4** | **167** |
 
 ---
 
@@ -133,7 +133,7 @@
 | 056 | Android | `ProfileScreen.kt` | No loading skeleton for stats before they load | ⬜ OPEN |
 | 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ⬜ OPEN |
 | 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
-| 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ⬜ OPEN |
+| 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ✅ FIXED 2026-01-26 |
 | 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ✅ FIXED (uses stringResource) |
 | 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ✅ FIXED 2026-01-26 |
 | 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ✅ FIXED 2026-01-25 |
@@ -154,7 +154,7 @@
 | 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ❌ WONTFIX (button is 48dp, icon visual only) |
 | 078 | Android | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
 | 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
-| 080 | Android | `strings.xml` | Email placeholder uses old branding | ⬜ OPEN |
+| 080 | Android | `strings.xml` | Email placeholder uses old branding | ✅ VERIFIED (uses rollingcat.help@gmail.com) |
 | 081 | Android | Various | Inconsistent MaterialTheme vs hardcoded colors throughout | ⬜ OPEN |
 | 082 | Android | `FavoritesScreen.kt:237` | Level chip onClick empty | ⬜ OPEN |
 | 083 | Android | `WordDetailScreen.kt:499` | Exam chips onClick empty | ⬜ OPEN |
@@ -182,9 +182,9 @@
 | 095 | Android | `QuizScreen.kt:98` | Fixed Lottie size could adapt | ⬜ OPEN |
 | 096 | Android | `AnswerOptionCard.kt:148-150` | ContentDescription could be more specific | ✅ VERIFIED (already has state-aware descriptions) |
 | 097 | Android | `DictionaryScreen.kt:336-345` | Loading text during search basic | ⬜ OPEN |
-| 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ⬜ OPEN |
+| 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ✅ VERIFIED (NoQuizState exists) |
 | 099 | Android | `strings.xml:79` | "Theme selection coming soon" - outdated | ✅ FIXED 2026-01-26 |
-| 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ⬜ OPEN |
+| 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ✅ FIXED 2026-01-26 |
 | 101 | Web | `Header.tsx:94-95` | Language button correctly uses sr-only | ✅ NOTED (good pattern) |
 | 102 | Android | `ProfileScreen.kt:112` | "Back" hardcoded contentDescription | ✅ FIXED 2026-01-26 |
 | 103 | Android | Various | Test files contain hardcoded localhost references | ⬜ OPEN |
@@ -292,6 +292,8 @@
 | 092 | Android | Removed outdated "Phase 7 Complete" comment from WordDetailScreen | 2026-01-26 | Claude |
 | 099 | Android | Updated theme_coming_soon to theme_changed (theme feature works) | 2026-01-26 | Claude |
 | 102 | Android | ProfileScreen Back button uses specific contentDescription | 2026-01-26 | Claude |
+| 059 | Android | CloudBackupScreen uses consistent bullet formatting instead of emoji | 2026-01-26 | Claude |
+| 100 | Android | CloudBackupScreen uses generic "Secure cloud backup" instead of Google Drive | 2026-01-26 | Claude |
 
 ---
 
