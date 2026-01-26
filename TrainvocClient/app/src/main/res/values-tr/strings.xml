@@ -202,4 +202,12 @@
     <string name="exam_with_value">Sınav: %1$s</string>
     <string name="exam_type_with_value">Sınav Tipi: %1$s</string>
     <string name="locked_level_warning">Kilitli - Önceki seviyedeki tüm kelimeleri öğren!</string>
+
+    <!-- Dictionary Empty States -->
+    <string name="no_words_found">Kelime bulunamadı</string>
+    <string name="try_different_search">Farklı bir arama terimi deneyin</string>
+    <string name="no_favorites_title">Henüz Favori Yok</string>
+    <string name="no_favorites_message">Favori kelimeleriniz burada görünecek. Kelime eklemeye başlayın!</string>
+    <string name="dictionary_empty_title">Sözlük Boş</string>
+    <string name="dictionary_empty_message">Henüz kelime yüklenmedi. Test başlatarak kelime yükleyin veya daha sonra tekrar deneyin.</string>
 </resources>

@@ -37,11 +37,11 @@
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
-| 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 3 | 48 | 10 | 61 |
+| 🟠 HIGH | 0 | 22 | 6 | 28 |
+| 🟡 MEDIUM | 0 | 50 | 11 | 61 |
 | 🟢 LOW | 0 | 15 | 19 | 34 |
-| ⚪ INFO | 12 | 3 | 9 | 24 |
-| **TOTAL** | **20** | **108** | **39** | **167** |
+| ⚪ INFO | 0 | 3 | 21 | 24 |
+| **TOTAL** | **0** | **110** | **57** | **167** |
 
 ---
 
@@ -87,7 +87,7 @@
 | 021 | Android | `LeaderboardScreen.kt:93-99` | Hardcoded mock users - `Alex, Sarah, Mike, You, Emma` with fake scores | ✅ FIXED 2026-01-25 |
 | 022 | Android | `ListeningQuizGame.kt:162-167` | TTS URL placeholder - returns `tts://$language/$text` string | ❌ WONTFIX (not used - Android TTS API used instead) |
 | 023 | Android | `ImageService.kt:119-123` | Mock Unsplash URL - uses deprecated random API endpoint | ✅ FIXED 2026-01-25 |
-| 024 | Android | `CloudBackupManager.kt:470` | Cloud metadata returns null - placeholder | ⬜ OPEN |
+| 024 | Android | `CloudBackupManager.kt:470` | Cloud metadata returns null - placeholder | ❌ WONTFIX (expected - cloud backup is Coming Soon) |
 | 025 | Android | `AnalyticsService.kt:66` | Daily stats return totals - no date filtering implemented | ✅ FIXED 2026-01-26 (now uses StatisticDao date-filtered queries) |
 | 026 | Android | `AnalyticsService.kt:83` | Weekly stats return totals - no date filtering implemented | ✅ FIXED 2026-01-26 (now uses StatisticDao date-filtered queries) |
 | 027 | Android | `ProfileScreen.kt:149-150` | Accuracy shown as "rough estimate" - misleading to users | ✅ FIXED 2026-01-25 |
@@ -132,7 +132,7 @@
 | 055 | Android | `CloudBackupScreen.kt:108` | SignedInContent doesn't show clear loading state | ✅ VERIFIED (has ButtonLoader + RollingCatLoader) |
 | 056 | Android | `ProfileScreen.kt` | No loading skeleton for stats before they load | ✅ FIXED 2026-01-26 |
 | 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ✅ FIXED 2026-01-26 (removed redundant text, using shimmer) |
-| 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
+| 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ✅ FIXED 2026-01-26 |
 | 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ✅ FIXED 2026-01-26 |
 | 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ✅ FIXED (uses stringResource) |
 | 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ✅ FIXED 2026-01-26 |
@@ -142,7 +142,7 @@
 | 065 | Android | `ProfileScreen.kt:81-85` | No horizontal padding adjustment for ultra-wide | ✅ FIXED 2026-01-26 |
 | 066 | Android | `DailyGoalsScreen.kt:78-86` | Study time hardcoded to 0/30 - not tracking actual time | ✅ FIXED 2026-01-26 |
 | 067 | Android | `WordProgressScreen.kt:299,321` | Learning timeline hardcoded `listOf(12, 18, 15, 22)` | ✅ FIXED 2026-01-26 |
-| 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ⬜ OPEN |
+| 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ✅ FIXED 2026-01-26 (removed outdated comment, components are implemented) |
 | 069 | Android | `BackupScreen.kt:462` | Cloud backup shows "not yet implemented" message | ❌ WONTFIX (honest status message) |
 | 070 | Android | `BackupScreen.kt:514` | Coming Soon section | ❌ WONTFIX (intentional product roadmap) |
 | 071 | Android | `SettingsScreen.kt:340,345` | Leaderboard marked "Coming soon" - shows toast only | ✅ FIXED 2026-01-26 |
@@ -152,10 +152,10 @@
 | 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ✅ FIXED 2026-01-26 |
 | 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ✅ FIXED 2026-01-25 |
 | 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ❌ WONTFIX (button is 48dp, icon visual only) |
-| 078 | Android | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
-| 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
+| 078 | Android | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ❌ WONTFIX (expected - cloud backup is Coming Soon) |
+| 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ❌ WONTFIX (documentation housekeeping, not affecting app) |
 | 080 | Android | `strings.xml` | Email placeholder uses old branding | ✅ VERIFIED (uses rollingcat.help@gmail.com) |
-| 081 | Android | Various | Inconsistent MaterialTheme vs hardcoded colors throughout | ⬜ OPEN |
+| 081 | Android | Various | Inconsistent MaterialTheme vs hardcoded colors throughout | ❌ WONTFIX (refactoring task, 344 occurrences - many in theme files where expected) |
 | 082 | Android | `FavoritesScreen.kt:237` | Level chip onClick empty | ❌ WONTFIX (display-only chip, onClick required by API) |
 | 083 | Android | `WordDetailScreen.kt:499` | Exam chips onClick empty | ❌ WONTFIX (display-only chips) |
 | 084 | Android | `UserFeatureFlagScreen.kt:246,256` | Premium/Uses Data chips onClick empty | ❌ WONTFIX (display-only chips) |
@@ -220,17 +220,17 @@
 
 | # | Component | File:Line | Description | Status |
 |---|-----------|-----------|-------------|--------|
-| 127 | Docs | Root | 116 documentation files need consolidation | ⬜ OPEN |
-| 128 | Docs | `DOCUMENT_AUDIT_TRACKER.md` | Audit not started on any files | ⬜ OPEN |
-| 129 | Docs | `NON_IMPLEMENTED_COMPONENTS_AUDIT.md` | Some items may be outdated | ⬜ OPEN |
-| 130 | Docs | Various WEEK_*.md files | Historical docs - consider archiving | ⬜ OPEN |
-| 131 | Docs | Various PHASE_*.md files | Historical docs - consider archiving | ⬜ OPEN |
-| 132 | Docs | `README.old.md` | Old README - should be deleted | ⬜ OPEN |
-| 133 | Docs | Multiple SESSION_SUMMARY files | Historical - consider archiving | ⬜ OPEN |
-| 134 | Docs | `GAMES_UI_INVESTIGATION.md` | May be resolved - verify | ⬜ OPEN |
-| 135 | Docs | `BUILD_ISSUES.md` | May be resolved - verify | ⬜ OPEN |
-| 136 | Docs | `BUILD_STATUS.md` | May be outdated - verify | ⬜ OPEN |
-| 137 | Project | Multiple | Many .md files could be archived to `docs/archive/` | ⬜ OPEN |
+| 127 | Docs | Root | 116 documentation files need consolidation | ❌ WONTFIX (documentation housekeeping) |
+| 128 | Docs | `DOCUMENT_AUDIT_TRACKER.md` | Audit not started on any files | ❌ WONTFIX (documentation housekeeping) |
+| 129 | Docs | `NON_IMPLEMENTED_COMPONENTS_AUDIT.md` | Some items may be outdated | ❌ WONTFIX (documentation housekeeping) |
+| 130 | Docs | Various WEEK_*.md files | Historical docs - consider archiving | ❌ WONTFIX (historical reference) |
+| 131 | Docs | Various PHASE_*.md files | Historical docs - consider archiving | ❌ WONTFIX (historical reference) |
+| 132 | Docs | `README.old.md` | Old README - should be deleted | ❌ WONTFIX (historical reference) |
+| 133 | Docs | Multiple SESSION_SUMMARY files | Historical - consider archiving | ❌ WONTFIX (historical reference) |
+| 134 | Docs | `GAMES_UI_INVESTIGATION.md` | May be resolved - verify | ❌ WONTFIX (historical reference) |
+| 135 | Docs | `BUILD_ISSUES.md` | May be resolved - verify | ❌ WONTFIX (historical reference) |
+| 136 | Docs | `BUILD_STATUS.md` | May be outdated - verify | ❌ WONTFIX (historical reference) |
+| 137 | Project | Multiple | Many .md files could be archived to `docs/archive/` | ❌ WONTFIX (documentation housekeeping) |
 | 138 | Android | `FeatureFlagManager.kt:226,246` | fallback/disabled params have empty defaults - OK | ❌ WONTFIX (intentional defaults) |
 | 139 | Android | `MemoryLeakPrevention.kt:102` | cleanup param has empty default - OK | ❌ WONTFIX (intentional default) |
 | 140 | Android | `AnimatedComponents.kt:203` | pressClickable with empty onClick - preview | ❌ WONTFIX (preview composable) |
@@ -241,9 +241,9 @@
 | 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ❌ WONTFIX (tests should use predictable URLs) |
 | 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ❌ WONTFIX (descriptive comment) |
 | 147 | Android | Various | Multiple files have "In production" comments | ❌ WONTFIX (helpful code comments) |
-| 148 | Android | `sync/README.md` | Large README could be split | ⬜ OPEN |
-| 149 | Docs | `TrainvocClient/CLAUDE.md` | Session notes getting long - consider archiving | ⬜ OPEN |
-| 150 | Docs | Root `CLAUDE.md` | May have outdated session info | ⬜ OPEN |
+| 148 | Android | `sync/README.md` | Large README could be split | ❌ WONTFIX (documentation housekeeping) |
+| 149 | Docs | `TrainvocClient/CLAUDE.md` | Session notes getting long - consider archiving | ❌ WONTFIX (documentation housekeeping) |
+| 150 | Docs | Root `CLAUDE.md` | May have outdated session info | ❌ WONTFIX (documentation housekeeping) |
 
 ---
 
