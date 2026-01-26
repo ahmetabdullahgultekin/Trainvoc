@@ -82,6 +82,21 @@
     <string name="more_options">Daha Fazla Seçenek</string>
     <string name="close">Kapat</string>
     <string name="about">Hakkında</string>
+
+    <!-- Navigation Drawer Section Headers -->
+    <string name="app_tagline">Kelime haznenizi geliştirin</string>
+    <string name="learning">Öğrenme</string>
+    <string name="progress">İlerleme</string>
+    <string name="social">Sosyal</string>
+    <string name="support">Destek</string>
+    <string name="management">Yönetim</string>
+
+    <!-- Navigation Drawer Items -->
+    <string name="daily_goals">Günlük Hedefler</string>
+    <string name="leaderboard">Liderlik Tablosu</string>
+    <string name="multiplayer">Çok Oyunculu</string>
+    <string name="streak_days">%1$d günlük seri</string>
+
     <string name="level_a1">A1</string>
     <string name="level_a2">A2</string>
     <string name="level_b1">B1</string>

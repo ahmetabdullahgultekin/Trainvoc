@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -76,19 +77,17 @@ fun AppTopBar(
         navigationIcon = {
             val currentRoute = navBackStackEntry?.destination?.route
 
-            if (currentRoute == Route.HOME) {
-                return@TopAppBar
-            }
-
-            val isSpecialRoute = currentRoute in listOf(
+            // Routes that need back navigation instead of menu
+            val needsBackNavigation = currentRoute in listOf(
                 Route.QUIZ,
                 Route.QUIZ_MENU,
                 Route.QUIZ_EXAM_MENU,
                 Route.STORY,
                 Route.WORD_DETAIL
-            )
+            ) || currentRoute?.startsWith("word_detail/") == true
 
-            if (isSpecialRoute) {
+            if (needsBackNavigation) {
+                // Show back arrow for nested screens
                 IconButton(onClick = {
                     if (currentRoute == Route.QUIZ) {
                         QuizScreenExitHandler.triggerExit()
@@ -103,32 +102,18 @@ fun AppTopBar(
                     )
                 }
             } else {
-                IconButton(onClick = { navController.navigate(Route.HOME) }) {
+                // Show hamburger menu for drawer access (standard Material Design)
+                IconButton(onClick = onMenuClick) {
                     Icon(
-                        Icons.Default.Home,
-                        contentDescription = "Home",
+                        Icons.Default.Menu,
+                        contentDescription = "Open menu",
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         },
         actions = {
-            val coroutineScope = rememberCoroutineScope()
-            IconButton(onClick = {
-                coroutineScope.launch {
-                    if (navController.currentBackStackEntry?.destination?.route == Route.QUIZ) {
-                        QuizScreenExitHandler.triggerExit()
-                    } else {
-                        onMenuClick()
-                    }
-                }
-            }) {
-                Icon(
-                    Icons.Default.MoreVert,
-                    contentDescription = "More",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+            // Keep actions area clean - can add search/notifications later
         }
     )
 }

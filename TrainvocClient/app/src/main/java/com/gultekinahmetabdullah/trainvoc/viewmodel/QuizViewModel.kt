@@ -16,6 +16,7 @@ import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -39,6 +40,7 @@ class QuizViewModel @Inject constructor(
     private val wordStatisticsService: IWordStatisticsService,
     private val progressService: IProgressService,
     private val quizHistoryDao: QuizHistoryDao,
+    private val gamificationManager: GamificationManager,
     private val savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
@@ -403,10 +405,23 @@ class QuizViewModel @Inject constructor(
 
     /**
      * Save quiz results to history database.
+     * Also records activity for daily streak tracking.
      */
     private fun saveQuizHistory() {
         if (quizStartTime == 0L || (correctCount + wrongCount + skippedCount) == 0) {
             return // No quiz to save
+        }
+
+        // Record activity for daily streak tracking
+        viewModelScope.launch(dispatchers.io) {
+            try {
+                gamificationManager.recordActivity()
+                // Also record quiz completion for daily goals
+                val isPerfect = wrongCount == 0 && skippedCount == 0 && correctCount > 0
+                gamificationManager.recordQuizCompleted(isPerfect)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error recording gamification activity: ${e.message}", e)
+            }
         }
 
         val totalQuestions = correctCount + wrongCount + skippedCount
