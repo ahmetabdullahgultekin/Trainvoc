@@ -24,9 +24,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 /**
  * Multiplayer Home Screen - Entry point for multiplayer games.
  *
- * Shows connection status and options to:
- * - Create a new game room
- * - Join an existing game room
+ * Currently showing "Coming Soon" status while feature is in development.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,12 +36,8 @@ fun MultiplayerHomeScreen(
     onConnect: () -> Unit,
     onDisconnect: () -> Unit
 ) {
-    // Auto-connect when screen loads
-    LaunchedEffect(Unit) {
-        if (connectionState is ConnectionState.Disconnected) {
-            onConnect()
-        }
-    }
+    // Feature is currently disabled - Coming Soon
+    val isFeatureEnabled = false
 
     Scaffold(
         topBar = {
@@ -65,64 +59,124 @@ fun MultiplayerHomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            // Connection Status Card
-            ConnectionStatusCard(
-                connectionState = connectionState,
-                onConnect = onConnect,
-                onDisconnect = onDisconnect
-            )
+            // Coming Soon Banner
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "🎮",
+                        style = MaterialTheme.typography.displayLarge
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Coming Soon!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Multiplayer vocabulary battles are on the way!",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Title
+            // Feature Preview
             Text(
-                text = "Play with Friends",
-                style = MaterialTheme.typography.headlineMedium,
+                text = "What to expect:",
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = "Challenge your friends in real-time vocabulary battles!",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Action Buttons
-            val isConnected = connectionState is ConnectionState.Connected
-
-            MultiplayerActionButton(
-                icon = Icons.Default.Add,
-                title = "Create Room",
-                subtitle = "Host a new game",
-                enabled = isConnected,
-                onClick = onCreateRoom
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            MultiplayerActionButton(
+            FeaturePreviewItem(
                 icon = Icons.Default.Group,
-                title = "Join Room",
-                subtitle = "Enter a room code",
-                enabled = isConnected,
-                onClick = onJoinRoom
+                title = "Play with Friends",
+                description = "Challenge friends in real-time vocabulary battles"
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FeaturePreviewItem(
+                icon = Icons.Default.Add,
+                title = "Create & Join Rooms",
+                description = "Host games or join others with room codes"
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            FeaturePreviewItem(
+                icon = Icons.Default.Wifi,
+                title = "Real-time Competition",
+                description = "Compete with up to 8 players simultaneously"
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Info text
+            // Stay tuned message
             Text(
-                text = "Compete against up to 8 players in fast-paced vocabulary quizzes. Answer correctly and quickly to earn more points!",
+                text = "We're working hard to bring you an amazing multiplayer experience. Stay tuned for updates!",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun FeaturePreviewItem(
+    icon: ImageVector,
+    title: String,
+    description: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

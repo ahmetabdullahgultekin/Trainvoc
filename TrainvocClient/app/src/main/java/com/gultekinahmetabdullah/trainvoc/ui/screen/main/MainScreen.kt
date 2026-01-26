@@ -72,10 +72,19 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
-    // Hide TopAppBar on HOME route - HomeScreen has its own unified header
+    // Determine which routes should be fullscreen (no bars)
     val currentRoute = navBackStackEntry.value?.destination?.route
-    val isTopAppBarVisible = currentRoute != Route.HOME
-    val isBottomBarVisible = remember { mutableStateOf(true) } // Always show bottom bar
+    val isFullscreenRoute = currentRoute?.let { route ->
+        route == Route.QUIZ ||
+        route == Route.QUIZ_MENU ||
+        route.startsWith("multiplayer_game") ||
+        route.startsWith("game_") // For individual game screens
+    } ?: false
+
+    // Hide TopAppBar on HOME route (has unified header) and fullscreen routes
+    val isTopAppBarVisible = currentRoute != Route.HOME && !isFullscreenRoute
+    // Hide bottom bar on fullscreen routes (quiz, games)
+    val isBottomBarVisible = !isFullscreenRoute
 
     val parameter = remember { mutableStateOf<QuizParameter?>(null) }
 
@@ -105,7 +114,7 @@ fun MainScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
         bottomBar = {
-            if (isBottomBarVisible.value) {
+            if (isBottomBarVisible) {
                 AppBottomBar(navController)
             }
         },

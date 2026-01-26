@@ -129,6 +129,21 @@
     <string name="more_options">More Options</string>
     <string name="close">Close</string>
     <string name="about">About</string>
+
+    <!-- Navigation Drawer Section Headers -->
+    <string name="app_tagline">Master your vocabulary</string>
+    <string name="learning">Learning</string>
+    <string name="progress">Progress</string>
+    <string name="social">Social</string>
+    <string name="support">Support</string>
+    <string name="management">Management</string>
+
+    <!-- Navigation Drawer Items -->
+    <string name="daily_goals">Daily Goals</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="streak_days">%1$d day streak</string>
+
     <string name="level_a1">A1</string>
     <string name="level_a2">A2</string>
     <string name="level_b1">B1</string>
