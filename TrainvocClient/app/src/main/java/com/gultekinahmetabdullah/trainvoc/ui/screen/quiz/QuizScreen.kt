@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -92,6 +93,16 @@ fun QuizScreen(
     var currentStreak by remember { mutableStateOf(0) }
     var triggerConfetti by remember { mutableStateOf(false) }
     var loadingTimeoutReached by remember { mutableStateOf(false) }
+
+    // Responsive horizontal padding for tablets
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val horizontalPadding = when {
+        screenWidthDp >= 1200 -> 120.dp  // Ultra-wide desktops
+        screenWidthDp >= 840 -> 64.dp    // Large tablets
+        screenWidthDp >= 600 -> 32.dp    // Small tablets
+        else -> Spacing.mediumLarge      // Phones
+    }
 
     // Loading timeout - show error state if questions don't load within 15 seconds
     LaunchedEffect(question) {
@@ -221,7 +232,8 @@ fun QuizScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(Spacing.mediumLarge),
+                    .padding(horizontal = horizontalPadding)
+                    .padding(vertical = Spacing.mediumLarge),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
