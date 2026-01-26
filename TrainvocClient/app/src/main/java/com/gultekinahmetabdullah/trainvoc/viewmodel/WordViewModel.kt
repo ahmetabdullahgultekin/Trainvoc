@@ -67,6 +67,18 @@ class WordViewModel @Inject constructor(
 
     private val _searchQuery = MutableStateFlow("")
 
+    private val _isLoading = MutableStateFlow(true)
+    /**
+     * StateFlow indicating if words are being loaded from database
+     */
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _loadError = MutableStateFlow<String?>(null)
+    /**
+     * StateFlow containing error message if word loading failed, null otherwise
+     */
+    val loadError: StateFlow<String?> = _loadError
+
     init {
         fetchWords()
         setupSearchDebounce()
@@ -104,8 +116,24 @@ class WordViewModel @Inject constructor(
 
     private fun fetchWords() {
         viewModelScope.launch(dispatchers.io) {
-            _words.value = repository.getAllWordsAskedInExams()
+            _isLoading.value = true
+            _loadError.value = null
+            try {
+                _words.value = repository.getAllWordsAskedInExams()
+            } catch (e: Exception) {
+                android.util.Log.e("WordViewModel", "Failed to load words: ${e.message}")
+                _loadError.value = e.message ?: "Failed to load vocabulary"
+            } finally {
+                _isLoading.value = false
+            }
         }
+    }
+
+    /**
+     * Retry loading words after an error
+     */
+    fun retryLoadWords() {
+        fetchWords()
     }
 
     /**

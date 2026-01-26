@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 23 | 36 | 2 | 61 |
+| 🟡 MEDIUM | 21 | 38 | 2 | 61 |
 | 🟢 LOW | 18 | 15 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **67** | **96** | **4** | **167** |
+| **TOTAL** | **65** | **98** | **4** | **167** |
 
 ---
 
@@ -120,12 +120,12 @@
 | 043 | Android | `ModernComponents.kt:184` | Hardcoded `Color.White` for icon tint | ✅ FIXED 2026-01-25 |
 | 044 | Android | `ModernComponents.kt:193` | Hardcoded `Color.White` for text | ✅ FIXED 2026-01-25 |
 | 045 | Android | `DictionaryScreen.kt:519` | Hardcoded `Color.White` for chip selected text | ✅ FIXED 2026-01-25 |
-| 046 | Android | `SplashScreen.kt:87` | Fixed 96.dp size for splash - should scale for tablets | ⬜ OPEN |
+| 046 | Android | `SplashScreen.kt:87` | Fixed 96.dp size for splash - should scale for tablets | ✅ FIXED 2026-01-26 |
 | 047 | Android | `DictionaryScreen.kt:459` | Fixed 80.dp letter preview box size | ⬜ OPEN |
 | 048 | Android | `QuizScreen.kt:98` | Fixed 180.dp Lottie animation size | ⬜ OPEN |
 | 049 | Android | `AnswerOptionCard.kt:181-182` | Fixed 32.dp checkmark icon - below 48dp minimum | ❌ WONTFIX (visual indicator, not touch target) |
-| 050 | Android | `CloudBackupScreen.kt:149` | Fixed 80.dp CloudOff icon size | ⬜ OPEN |
-| 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ⬜ OPEN |
+| 050 | Android | `CloudBackupScreen.kt:149` | Fixed 80.dp CloudOff icon size | ✅ FIXED 2026-01-26 |
+| 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ✅ FIXED 2026-01-26 |
 | 052 | Android | `CloudBackupScreen.kt` | No error state UI when backup operations fail | ⬜ OPEN |
 | 053 | Android | `QuizScreen.kt:288-293` | Shows loading but no error state if questions fail | ✅ FIXED 2026-01-26 |
 | 054 | Android | `DictionaryScreen.kt:336-345` | Shimmer loading shown but no error message if search fails | ⬜ OPEN |
@@ -294,6 +294,9 @@
 | 102 | Android | ProfileScreen Back button uses specific contentDescription | 2026-01-26 | Claude |
 | 059 | Android | CloudBackupScreen uses consistent bullet formatting instead of emoji | 2026-01-26 | Claude |
 | 100 | Android | CloudBackupScreen uses generic "Secure cloud backup" instead of Google Drive | 2026-01-26 | Claude |
+| 046 | Android | SplashScreen Lottie animation now responsive for tablets (80dp-160dp) | 2026-01-26 | Claude |
+| 050 | Android | CloudBackupScreen CloudOff icon now responsive for tablets (64dp-96dp) | 2026-01-26 | Claude |
+| 051 | Android | DictionaryScreen now shows error state with retry when words fail to load | 2026-01-26 | Claude |
 
 ---
 
