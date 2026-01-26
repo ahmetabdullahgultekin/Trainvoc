@@ -188,7 +188,7 @@ private fun SignedOutContent(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                FeatureItem("• Cloud backup to Google Drive")
+                FeatureItem("• Secure cloud backup")
                 FeatureItem("• Cross-device sync")
                 FeatureItem("• Automatic daily backups")
 
@@ -201,7 +201,7 @@ private fun SignedOutContent(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                FeatureItem("✓ Local backup (Settings > Backup)")
+                FeatureItem("• Local backup (Settings > Backup)")
             }
         }
 
