@@ -23,8 +23,10 @@
     <string name="search_history">Search history</string>
     <string name="cloud_backup">Cloud Backup</string>
     <string name="back">Back</string>
+    <string name="back_to_previous_screen">Go back to previous screen</string>
     <string name="menu">Menu</string>
     <string name="refresh">Refresh</string>
+    <string name="refresh_backup_list">Refresh backup list</string>
     <string name="profile">Profile</string>
     <string name="add_new_word">Add New Word</string>
     <string name="add_word">Add Word</string>
@@ -116,7 +118,7 @@
     <string name="system_default">System Default</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
-    <string name="theme_coming_soon">Theme changing will be available soon</string>
+    <string name="theme_changed">Theme updated successfully</string>
     <string name="enable_notifications">Enable Notifications</string>
     <string name="notifications_coming_soon">Notification feature will be available soon</string>
     <string name="language">Language</string>

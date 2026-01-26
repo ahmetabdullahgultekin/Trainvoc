@@ -169,10 +169,10 @@ fun HomeScreen(
             .fillMaxSize()
             .testTag("HomeScreenRoot")
     ) {
-        // Background
+        // Background - purely decorative, null contentDescription for accessibility
         Image(
             painter = bgPainter,
-            contentDescription = "Background decoration",
+            contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
             alpha = 0.15f
