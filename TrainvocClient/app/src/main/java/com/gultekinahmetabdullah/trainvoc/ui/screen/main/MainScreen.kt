@@ -71,7 +71,9 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
-    val isTopAppBarVisible = remember { mutableStateOf(true) }
+    // Hide TopAppBar on HOME route - HomeScreen has its own unified header
+    val currentRoute = navBackStackEntry.value?.destination?.route
+    val isTopAppBarVisible = currentRoute != Route.HOME
     val isBottomBarVisible = remember { mutableStateOf(true) } // Always show bottom bar
 
     val parameter = remember { mutableStateOf<QuizParameter?>(null) }
@@ -95,7 +97,7 @@ fun MainScreen(
                 currentRoute = navBackStackEntry.value?.destination?.route
             )
         },
-        gesturesEnabled = drawerState.isOpen
+        gesturesEnabled = true // Allow swipe from left edge to open drawer
     ) {
         Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -106,7 +108,7 @@ fun MainScreen(
             }
         },
         topBar = {
-            if (isTopAppBarVisible.value) {
+            if (isTopAppBarVisible) {
                 AppTopBar(
                     navBackStackEntry = navBackStackEntry.value,
                     navController = navController,
@@ -149,6 +151,8 @@ fun MainScreen(
                         onNavigateToMultiplayer = { navController.navigate(Route.MULTIPLAYER_HOME) },
                         // Phase 5 - Update Notes & Changelog
                         onNavigateToChangelog = { navController.navigate(Route.CHANGELOG) },
+                        // Menu access for unified header
+                        onOpenMenu = { coroutineScope.launch { drawerState.open() } }
                     )
                 }
                 composable(Route.STORY) {

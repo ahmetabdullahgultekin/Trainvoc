@@ -46,6 +46,8 @@ import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -138,6 +140,7 @@ fun HomeScreen(
     onNavigateToGames: () -> Unit = {},
     onNavigateToMultiplayer: () -> Unit = {},
     onNavigateToChangelog: () -> Unit = {},
+    onOpenMenu: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
     viewModel: HomeViewModel = hiltViewModel()
@@ -186,14 +189,15 @@ fun HomeScreen(
             // Top spacing
             item { Spacer(modifier = Modifier.height(Spacing.sm)) }
 
-            // 1. PROFILE SUMMARY
+            // 1. UNIFIED HOME HEADER (App branding + Profile + Menu)
             item {
-                ProfileSummaryCard(
+                HomeHeader(
                     username = username,
                     level = uiState.level,
                     currentXP = uiState.xpCurrent,
                     maxXP = uiState.xpForNextLevel,
-                    onClick = onNavigateToProfile
+                    onProfileClick = onNavigateToProfile,
+                    onMenuClick = onOpenMenu
                 )
             }
 
@@ -676,51 +680,105 @@ fun AnimatedBackground(
 
 // Stub implementations for missing components
 
+/**
+ * Unified Home Header - combines app branding, user profile, and menu access
+ * This replaces both the AppTopBar and ProfileSummaryCard on the home screen
+ * to eliminate the duplicate header issue.
+ */
 @Composable
-private fun ProfileSummaryCard(
+private fun HomeHeader(
     username: String,
     level: Int,
     currentXP: Int,
     maxXP: Int,
-    onClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onMenuClick: () -> Unit
 ) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // App branding row with menu button
         Row(
-            modifier = Modifier.padding(Spacing.md),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Spacing.xs),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
+            // App logo and name
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_generating_tokens_24),
+                    contentDescription = stringResource(id = R.string.app_name) + " logo",
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                        MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(end = Spacing.xs)
+                )
                 Text(
-                    text = username.take(1).uppercase(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 1.sp
                 )
             }
-            Spacer(modifier = Modifier.width(Spacing.md))
-            Column {
-                Text(
-                    text = username,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+
+            // Menu button
+            IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = stringResource(id = R.string.menu),
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Text(
-                    text = "Level $level",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "$currentXP / $maxXP XP",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Spacing.sm))
+
+        // Profile card
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onProfileClick
+        ) {
+            Row(
+                modifier = Modifier.padding(Spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = username.take(1).uppercase(),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                Spacer(modifier = Modifier.width(Spacing.md))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = username,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Level $level • $currentXP / $maxXP XP",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                // Arrow indicator for navigation
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }
