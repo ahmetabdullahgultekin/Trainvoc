@@ -1,7 +1,7 @@
 # Trainvoc - Unified Issue Tracker
 
 > **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
-> **Last Updated**: 2026-01-25
+> **Last Updated**: 2026-01-26
 > **Total Issues**: 167
 
 ## How This Document Works
@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 2 | 18 | 0 | 20 |
-| 🟠 HIGH | 8 | 19 | 1 | 28 |
-| 🟡 MEDIUM | 36 | 24 | 1 | 61 |
-| 🟢 LOW | 24 | 9 | 1 | 34 |
+| 🔴 CRITICAL | 0 | 20 | 0 | 20 |
+| 🟠 HIGH | 7 | 20 | 1 | 28 |
+| 🟡 MEDIUM | 35 | 25 | 1 | 61 |
+| 🟢 LOW | 22 | 11 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **91** | **73** | **3** | **167** |
+| **TOTAL** | **85** | **79** | **3** | **167** |
 
 ---
 
