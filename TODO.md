@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 32 | 28 | 1 | 61 |
-| 🟢 LOW | 22 | 11 | 1 | 34 |
+| 🟡 MEDIUM | 25 | 34 | 2 | 61 |
+| 🟢 LOW | 20 | 13 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **80** | **84** | **3** | **167** |
+| **TOTAL** | **71** | **92** | **4** | **167** |
 
 ---
 
@@ -135,7 +135,7 @@
 | 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
 | 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ⬜ OPEN |
 | 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ✅ FIXED (uses stringResource) |
-| 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ⬜ OPEN |
+| 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ✅ FIXED 2026-01-26 |
 | 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ✅ FIXED 2026-01-25 |
 | 063 | Android | `QuizScreen.kt:210` | LazyColumn uses fixed Spacing - no tablet adaptation | ⬜ OPEN |
 | 064 | Android | `SplashScreen.kt` | No responsive considerations for landscape | ⬜ OPEN |
@@ -145,13 +145,13 @@
 | 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ⬜ OPEN |
 | 069 | Android | `BackupScreen.kt:462` | Cloud backup shows "not yet implemented" message | ⬜ OPEN |
 | 070 | Android | `BackupScreen.kt:514` | Coming Soon section | ⬜ OPEN |
-| 071 | Android | `SettingsScreen.kt:340,345` | Leaderboard marked "Coming soon" - shows toast only | ⬜ OPEN |
+| 071 | Android | `SettingsScreen.kt:340,345` | Leaderboard marked "Coming soon" - shows toast only | ✅ FIXED 2026-01-26 |
 | 072 | Android | `UpdateNotesCard.kt:162-164` | "Coming Soon" section for features | ⬜ OPEN |
 | 073 | Android | `ChangelogScreen.kt:225` | "Coming Soon" label in changelog | ⬜ OPEN |
 | 074 | Android | `DictionaryScreen.kt:336-345` | Shimmer shows for ALL cards during search | ⬜ OPEN |
 | 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ✅ FIXED 2026-01-26 |
 | 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ✅ FIXED 2026-01-25 |
-| 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ⬜ OPEN |
+| 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ❌ WONTFIX (button is 48dp, icon visual only) |
 | 078 | Android | `CloudBackupManager.kt:565` | Placeholder for cloud metadata | ⬜ OPEN |
 | 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
 | 080 | Android | `strings.xml` | Email placeholder uses old branding | ⬜ OPEN |
@@ -163,10 +163,10 @@
 | 086 | Android | `SubscriptionScreen.kt:321` | Disabled "Current Plan" button onClick empty | ⬜ OPEN |
 | 087 | Android | `NavigationCard.kt:132,137,151` | Preview defaults with empty onClick | ⬜ OPEN |
 | 088 | Android | `ExampleSentenceCard.kt:117,130` | Preview defaults with empty onClick | ⬜ OPEN |
-| 089 | Android | `CloudBackupScreen.kt:197` | "Sign in" contentDescription should be "Sign in with Google" | ⬜ OPEN |
-| 090 | Android | `CloudBackupScreen.kt:74` | "Back" contentDescription too generic | ⬜ OPEN |
-| 091 | Android | `CloudBackupScreen.kt:80` | "Refresh" should be "Refresh backup list" | ⬜ OPEN |
-| 092 | Android | `WordDetailScreen.kt:1031` | Comment says "Phase 7 Complete" - outdated | ⬜ OPEN |
+| 089 | Android | `CloudBackupScreen.kt:197` | "Sign in" contentDescription should be "Sign in with Google" | ✅ FIXED (already correct) |
+| 090 | Android | `CloudBackupScreen.kt:74` | "Back" contentDescription too generic | ✅ FIXED 2026-01-26 |
+| 091 | Android | `CloudBackupScreen.kt:80` | "Refresh" should be "Refresh backup list" | ✅ FIXED 2026-01-26 |
+| 092 | Android | `WordDetailScreen.kt:1031` | Comment says "Phase 7 Complete" - outdated | ✅ FIXED 2026-01-26 |
 | 093 | Web | `Podium.tsx:63` | Fixed max-width truncation 100px for player names | ✅ FIXED 2026-01-25 |
 | 094 | Web | `ListeningQuizGame.tsx:263` | Custom motion.button for audio player - intentional design | ❌ WONTFIX |
 | 163 | Android | `HelpScreen.kt` | Placeholder phone number "+1 234 567 890" in Contact Support section | ✅ FIXED 2026-01-25 (removed fake phone support) |
@@ -180,13 +180,13 @@
 | # | Component | File:Line | Description | Status |
 |---|-----------|-----------|-------------|--------|
 | 095 | Android | `QuizScreen.kt:98` | Fixed Lottie size could adapt | ⬜ OPEN |
-| 096 | Android | `AnswerOptionCard.kt:148-150` | ContentDescription could be more specific | ⬜ OPEN |
+| 096 | Android | `AnswerOptionCard.kt:148-150` | ContentDescription could be more specific | ✅ VERIFIED (already has state-aware descriptions) |
 | 097 | Android | `DictionaryScreen.kt:336-345` | Loading text during search basic | ⬜ OPEN |
 | 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ⬜ OPEN |
-| 099 | Android | `strings.xml:79` | "Theme selection coming soon" - outdated | ⬜ OPEN |
+| 099 | Android | `strings.xml:79` | "Theme selection coming soon" - outdated | ✅ FIXED 2026-01-26 |
 | 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ⬜ OPEN |
 | 101 | Web | `Header.tsx:94-95` | Language button correctly uses sr-only | ✅ NOTED (good pattern) |
-| 102 | Android | `ProfileScreen.kt:112` | "Back" hardcoded contentDescription | ⬜ OPEN |
+| 102 | Android | `ProfileScreen.kt:112` | "Back" hardcoded contentDescription | ✅ FIXED 2026-01-26 |
 | 103 | Android | Various | Test files contain hardcoded localhost references | ⬜ OPEN |
 | 104 | Docs | `sync/README.md:730` | TODO: Add encryption for backups | ⬜ OPEN |
 | 105 | Docs | `sync/README.md:294` | Cloud provider implementation is placeholder | ⬜ OPEN |
@@ -286,6 +286,12 @@
 | 053 | Android | QuizScreen now shows error state with timeout if questions fail to load | 2026-01-26 | Claude |
 | 066 | Android | DailyGoalsScreen now shows real study time and reviews from gamification data | 2026-01-26 | Claude |
 | 067 | Android | WordProgressScreen shows real learning summary instead of hardcoded timeline | 2026-01-26 | Claude |
+| 061 | Android | HomeScreen background image contentDescription set to null (decorative) | 2026-01-26 | Claude |
+| 071 | Android | SettingsScreen Leaderboard now navigates to LeaderboardScreen instead of toast | 2026-01-26 | Claude |
+| 090-091 | Android | CloudBackupScreen uses specific contentDescriptions for Back and Refresh | 2026-01-26 | Claude |
+| 092 | Android | Removed outdated "Phase 7 Complete" comment from WordDetailScreen | 2026-01-26 | Claude |
+| 099 | Android | Updated theme_coming_soon to theme_changed (theme feature works) | 2026-01-26 | Claude |
+| 102 | Android | ProfileScreen Back button uses specific contentDescription | 2026-01-26 | Claude |
 
 ---
 
