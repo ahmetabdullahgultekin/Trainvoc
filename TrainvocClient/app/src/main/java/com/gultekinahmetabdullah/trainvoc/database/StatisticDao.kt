@@ -71,6 +71,7 @@ interface StatisticDao {
     ): Statistic?
 
     // Number of correct answers today (based on last_reviewed in Word table)
+    // Returns null if no words were reviewed today (SUM over empty set)
     @Query(
         """
         SELECT SUM(s.correct_count) FROM words w
@@ -78,9 +79,10 @@ interface StatisticDao {
         WHERE date(w.last_reviewed/1000, 'unixepoch') = date('now', 'localtime')
     """
     )
-    suspend fun getDailyCorrectAnswers(): Int
+    suspend fun getDailyCorrectAnswers(): Int?
 
     // Number of correct answers this week (based on last_reviewed in Word table)
+    // Returns null if no words were reviewed this week (SUM over empty set)
     @Query(
         """
         SELECT SUM(s.correct_count) FROM words w
@@ -89,7 +91,7 @@ interface StatisticDao {
         AND strftime('%Y', w.last_reviewed/1000, 'unixepoch') = strftime('%Y', 'now', 'localtime')
     """
     )
-    suspend fun getWeeklyCorrectAnswers(): Int
+    suspend fun getWeeklyCorrectAnswers(): Int?
 
     // Total number of answered questions
     @Query("SELECT SUM(correct_count + wrong_count + skipped_count) FROM statistics")

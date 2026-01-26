@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.repository
 
+import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,10 +12,12 @@ import javax.inject.Singleton
  * Provides overall statistics for the user's learning journey.
  *
  * @property wordDao Database access object for analytics queries
+ * @property statisticDao Database access object for date-filtered statistics
  */
 @Singleton
 class AnalyticsService @Inject constructor(
-    private val wordDao: WordDao
+    private val wordDao: WordDao,
+    private val statisticDao: StatisticDao
 ) : IAnalyticsService {
 
     /**
@@ -53,35 +56,27 @@ class AnalyticsService @Inject constructor(
     /**
      * Get correct answers count for today
      *
-     * NOTE: Current schema limitation - statistics are cumulative without
-     * per-answer timestamps. Returns total correct answers.
+     * NOTE: Uses last_reviewed timestamp to filter words reviewed today.
+     * Returns cumulative correct count for those words (approximate metric).
+     * For exact per-answer tracking, a QuizHistory table would be needed.
      *
-     * To implement true daily tracking:
-     * - Add QuizHistory table with (word_id, timestamp, is_correct)
-     * - Query: SELECT COUNT(*) WHERE is_correct AND timestamp >= today_start
-     *
-     * @return Number of correct answers (total, not filtered by date)
+     * @return Sum of correct answers for words reviewed today
      */
     override suspend fun getDailyCorrectAnswers(): Int {
-        // Returns total as placeholder until QuizHistory table is implemented
-        return getCorrectAnswers()
+        return statisticDao.getDailyCorrectAnswers() ?: 0
     }
 
     /**
      * Get correct answers count for this week
      *
-     * NOTE: Current schema limitation - statistics are cumulative without
-     * per-answer timestamps. Returns total correct answers.
+     * NOTE: Uses last_reviewed timestamp to filter words reviewed this week.
+     * Returns cumulative correct count for those words (approximate metric).
+     * For exact per-answer tracking, a QuizHistory table would be needed.
      *
-     * To implement true weekly tracking:
-     * - Add QuizHistory table with (word_id, timestamp, is_correct)
-     * - Query: SELECT COUNT(*) WHERE is_correct AND timestamp >= week_start
-     *
-     * @return Number of correct answers (total, not filtered by date)
+     * @return Sum of correct answers for words reviewed this week
      */
     override suspend fun getWeeklyCorrectAnswers(): Int {
-        // Returns total as placeholder until QuizHistory table is implemented
-        return getCorrectAnswers()
+        return statisticDao.getWeeklyCorrectAnswers() ?: 0
     }
 
     /**

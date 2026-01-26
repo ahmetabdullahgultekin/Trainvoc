@@ -37,11 +37,11 @@
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
-| 🟠 HIGH | 7 | 20 | 1 | 28 |
+| 🟠 HIGH | 5 | 22 | 1 | 28 |
 | 🟡 MEDIUM | 35 | 25 | 1 | 61 |
 | 🟢 LOW | 22 | 11 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **85** | **79** | **3** | **167** |
+| **TOTAL** | **83** | **81** | **3** | **167** |
 
 ---
 
@@ -88,8 +88,8 @@
 | 022 | Android | `ListeningQuizGame.kt:162-167` | TTS URL placeholder - returns `tts://$language/$text` string | ❌ WONTFIX (not used - Android TTS API used instead) |
 | 023 | Android | `ImageService.kt:119-123` | Mock Unsplash URL - uses deprecated random API endpoint | ✅ FIXED 2026-01-25 |
 | 024 | Android | `CloudBackupManager.kt:470` | Cloud metadata returns null - placeholder | ⬜ OPEN |
-| 025 | Android | `AnalyticsService.kt:66` | Daily stats return totals - no date filtering implemented | ⬜ OPEN |
-| 026 | Android | `AnalyticsService.kt:83` | Weekly stats return totals - no date filtering implemented | ⬜ OPEN |
+| 025 | Android | `AnalyticsService.kt:66` | Daily stats return totals - no date filtering implemented | ✅ FIXED 2026-01-26 (now uses StatisticDao date-filtered queries) |
+| 026 | Android | `AnalyticsService.kt:83` | Weekly stats return totals - no date filtering implemented | ✅ FIXED 2026-01-26 (now uses StatisticDao date-filtered queries) |
 | 027 | Android | `ProfileScreen.kt:149-150` | Accuracy shown as "rough estimate" - misleading to users | ✅ FIXED 2026-01-25 |
 | 028 | Android | `DictionaryScreen.kt:247` | "Recent Searches" hardcoded instead of stringResource | ✅ FIXED 2026-01-25 |
 | 029 | Android | `DictionaryScreen.kt:235` | "Clear search" hardcoded contentDescription | ✅ FIXED 2026-01-25 |

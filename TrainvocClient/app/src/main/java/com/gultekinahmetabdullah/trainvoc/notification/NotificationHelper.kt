@@ -322,20 +322,22 @@ object NotificationHelper {
                     NotificationCompat.BigTextStyle()
                         .bigText(context.getString(R.string.word_quiz_question) + "\n\n\"${word.word.uppercase()}\"")
                 )
+                // Use unique request codes per notification to avoid PendingIntent collisions
+                // when multiple notifications are shown simultaneously
                 .addAction(
                     R.drawable.ic_launcher_foreground,
                     context.getString(R.string.i_know_it),
-                    PendingIntent.getBroadcast(context, 0, iKnowIntent, FLAGS)
+                    PendingIntent.getBroadcast(context, notificationId * 10 + 0, iKnowIntent, FLAGS)
                 )
                 .addAction(
                     R.drawable.ic_launcher_foreground,
                     context.getString(R.string.show_answer),
-                    PendingIntent.getBroadcast(context, 1, showAnswerIntent, FLAGS)
+                    PendingIntent.getBroadcast(context, notificationId * 10 + 1, showAnswerIntent, FLAGS)
                 )
                 .addAction(
                     R.drawable.ic_launcher_foreground,
                     context.getString(R.string.skip),
-                    PendingIntent.getBroadcast(context, 2, skipIntent, FLAGS)
+                    PendingIntent.getBroadcast(context, notificationId * 10 + 2, skipIntent, FLAGS)
                 )
                 .setAutoCancel(false)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

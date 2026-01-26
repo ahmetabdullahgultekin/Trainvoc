@@ -64,7 +64,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    startWordId: String? = null
+    startWordId: String? = null,
+    settingsViewModel: SettingsViewModel? = null
 ) {
     val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
@@ -84,7 +85,8 @@ fun MainScreen(
     val quizViewModel: QuizViewModel = hiltViewModel()
     val wordViewModel: WordViewModel = hiltViewModel()
     val statsViewModel: StatsViewModel = hiltViewModel()
-    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    // Use passed settingsViewModel for theme consistency, or create new one if not passed
+    val actualSettingsViewModel: SettingsViewModel = settingsViewModel ?: hiltViewModel()
     val storyViewModel: StoryViewModel = hiltViewModel()
 
     ModalNavigationDrawer(
@@ -227,7 +229,7 @@ fun MainScreen(
                     )
                 }
                 composable(Route.SETTINGS) {
-                    SettingsScreen(navController, settingsViewModel)
+                    SettingsScreen(navController, actualSettingsViewModel)
                 }
                 composable(Route.BACKUP) {
                     com.gultekinahmetabdullah.trainvoc.ui.backup.BackupScreen(
