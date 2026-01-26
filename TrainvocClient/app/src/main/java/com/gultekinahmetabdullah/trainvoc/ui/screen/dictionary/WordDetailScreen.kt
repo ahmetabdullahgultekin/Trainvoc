@@ -1021,7 +1021,3 @@ fun getUsageFrequency(level: Int): UsageFrequency {
         )
     }
 }
-
-// Phase 7 Complete: All placeholder functions replaced with real API integration
-// IPA, part of speech, examples, and synonyms now come from Free Dictionary API
-// with offline caching for performance and graceful fallbacks

@@ -340,12 +340,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                         subtitle = "Coming soon - Compete worldwide",
                         onClick = {
                             haptic.click()
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = "Leaderboard coming soon! Compete with learners worldwide in a future update.",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
+                            navController.navigate(Route.LEADERBOARD)
                         }
                     )
                 }
