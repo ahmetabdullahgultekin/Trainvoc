@@ -350,11 +350,17 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                             }
                         }
                     }
-                    displayedWords.isEmpty() && (searchQuery.isNotEmpty() || selectedFilters.isNotEmpty() || showFavoritesOnly) -> {
-                        // Empty State
+                    displayedWords.isEmpty() -> {
+                        // Empty State - handle all empty scenarios
+                        val hasActiveFilters = searchQuery.isNotEmpty() || selectedFilters.isNotEmpty() || showFavoritesOnly
                         EmptyState(
                             showFavoritesOnly = showFavoritesOnly,
-                            onBrowseClick = { showFavoritesOnly = false }
+                            hasActiveFilters = hasActiveFilters,
+                            onBrowseClick = {
+                                showFavoritesOnly = false
+                                selectedFilters.clear()
+                                searchQuery = ""
+                            }
                         )
                     }
                     else -> {
@@ -763,44 +769,49 @@ fun ShimmerWordCard(modifier: Modifier = Modifier) {
 }
 
 /**
- * Empty state for no results or no favorites
+ * Empty state for no results, no favorites, or empty database
  */
 @Composable
 fun EmptyState(
     showFavoritesOnly: Boolean,
+    hasActiveFilters: Boolean,
     onBrowseClick: () -> Unit
 ) {
-    if (showFavoritesOnly) {
-        // No favorites empty state
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Spacing.lg),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            InfoCard(
-                icon = Icons.Outlined.FavoriteBorder,
-                title = "No Favorites Yet",
-                message = "Your favorite words will appear here. Start adding words to your favorites to see them here!",
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    } else {
-        // No search results empty state
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(Spacing.lg),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            InfoCard(
-                icon = Icons.Default.Search,
-                title = stringResource(id = R.string.no_words_found),
-                message = stringResource(id = R.string.try_different_search),
-                modifier = Modifier.fillMaxWidth()
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Spacing.lg),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        when {
+            showFavoritesOnly -> {
+                // No favorites empty state
+                InfoCard(
+                    icon = Icons.Outlined.FavoriteBorder,
+                    title = stringResource(id = R.string.no_favorites_title),
+                    message = stringResource(id = R.string.no_favorites_message),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            hasActiveFilters -> {
+                // No search/filter results empty state
+                InfoCard(
+                    icon = Icons.Default.Search,
+                    title = stringResource(id = R.string.no_words_found),
+                    message = stringResource(id = R.string.try_different_search),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            else -> {
+                // Database is empty - no words at all
+                InfoCard(
+                    icon = Icons.Default.Info,
+                    title = stringResource(id = R.string.dictionary_empty_title),
+                    message = stringResource(id = R.string.dictionary_empty_message),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

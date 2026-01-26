@@ -330,6 +330,10 @@
     <!-- Dictionary & Word Detail Screen -->
     <string name="no_words_found">No words found</string>
     <string name="try_different_search">Try a different search term</string>
+    <string name="no_favorites_title">No Favorites Yet</string>
+    <string name="no_favorites_message">Your favorite words will appear here. Start adding words to your favorites to see them here!</string>
+    <string name="dictionary_empty_title">Dictionary Empty</string>
+    <string name="dictionary_empty_message">No words have been loaded yet. Start a quiz to import vocabulary or check back later.</string>
     <string name="statistics">Statistics</string>
     <string name="success_rate_percent">Success Rate: %1$d%%</string>
 

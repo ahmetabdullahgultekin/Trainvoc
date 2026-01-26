@@ -678,7 +678,7 @@ fun AnimatedBackground(
     )
 }
 
-// Stub implementations for missing components
+// Private composable components
 
 /**
  * Unified Home Header - combines app branding, user profile, and menu access
