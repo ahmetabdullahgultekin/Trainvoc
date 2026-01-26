@@ -78,13 +78,21 @@ fun ProfileScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // Responsive design: Determine grid columns based on screen width
+    // Responsive design: Determine grid columns and padding based on screen width
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val gridColumns = when {
         screenWidthDp >= 840 -> 4  // Large tablets/desktops
         screenWidthDp >= 600 -> 3  // Small tablets/landscape
         else -> 2                  // Phones
+    }
+
+    // Responsive horizontal padding for ultra-wide displays
+    val horizontalPadding = when {
+        screenWidthDp >= 1200 -> 120.dp  // Ultra-wide desktops
+        screenWidthDp >= 840 -> 64.dp    // Large tablets
+        screenWidthDp >= 600 -> 32.dp    // Small tablets
+        else -> 0.dp                     // Phones (sections have their own padding)
     }
 
     // Get username and avatar from SharedPreferences
@@ -131,7 +139,9 @@ fun ProfileScreen(
                 .padding(paddingValues)
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = horizontalPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Hero Section
