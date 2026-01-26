@@ -95,6 +95,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.components.CEFRLevelChip
+import com.gultekinahmetabdullah.trainvoc.ui.components.ErrorState
 import com.gultekinahmetabdullah.trainvoc.ui.components.InfoCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDelay
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AppAnimationDuration
@@ -128,6 +129,8 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
     var isSearchBarActive by remember { mutableStateOf(false) }
     val allWords by wordViewModel.words.collectAsState()
     val filteredWords by wordViewModel.filteredWords.collectAsState()
+    val isLoadingWords by wordViewModel.isLoading.collectAsState()
+    val loadError by wordViewModel.loadError.collectAsState()
     var isSearching by remember { mutableStateOf(false) }
 
     // Filter state
@@ -332,11 +335,29 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                 }
             }
 
-            // Word List, Empty State, or Shimmer Loading
+            // Word List, Empty State, Error State, or Shimmer Loading
             Box(modifier = Modifier.weight(1f)) {
                 when {
+                    loadError != null -> {
+                        // Error state - failed to load words
+                        ErrorState(
+                            message = loadError ?: stringResource(id = R.string.error_loading_dictionary),
+                            onRetry = { wordViewModel.retryLoadWords() }
+                        )
+                    }
+                    isLoadingWords && allWords.isEmpty() -> {
+                        // Initial loading state
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(vertical = Spacing.sm)
+                        ) {
+                            items(10) {
+                                ShimmerWordCard()
+                            }
+                        }
+                    }
                     isSearching -> {
-                        // Shimmer loading state
+                        // Shimmer loading state during search
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(vertical = Spacing.sm)

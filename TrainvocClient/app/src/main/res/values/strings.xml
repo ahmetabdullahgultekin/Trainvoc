@@ -48,6 +48,7 @@
     <string name="select_quiz_type">Select Quiz Type</string>
     <string name="loading_questions">Loading Questions…</string>
     <string name="error_loading_questions">Unable to load questions</string>
+    <string name="error_loading_dictionary">Unable to load dictionary</string>
     <string name="check_connection_try_again">Please check your connection and try again.</string>
     <string name="go_back">Go Back</string>
     <string name="which_one_is_the_correct_meaning">Which one is the correct meaning of:</string>
