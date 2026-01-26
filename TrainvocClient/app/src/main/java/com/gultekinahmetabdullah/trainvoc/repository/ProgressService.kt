@@ -77,22 +77,32 @@ class ProgressService @Inject constructor(
 
     /**
      * Get total word count for an exam
+     * Note: "Mixed" exam returns total words in database (no exam filter)
      *
-     * @param exam The exam abbreviation (YDS, YKS, etc.)
+     * @param exam The exam abbreviation (YDS, YKS, etc.) or "Mixed" for all
      * @return Total number of words for this exam
      */
     override suspend fun getWordCountByExam(exam: String): Int {
-        return wordDao.getWordCountByExam(exam)
+        return if (exam == "Mixed") {
+            wordDao.getWordCount()
+        } else {
+            wordDao.getWordCountByExam(exam)
+        }
     }
 
     /**
      * Get learned word count for an exam
+     * Note: "Mixed" exam returns total learned words (no exam filter)
      *
-     * @param exam The exam abbreviation (YDS, YKS, etc.)
+     * @param exam The exam abbreviation (YDS, YKS, etc.) or "Mixed" for all
      * @return Number of learned words for this exam
      */
     override suspend fun getLearnedWordCountByExam(exam: String): Int {
-        return wordDao.getLearnedWordCountByExam(exam)
+        return if (exam == "Mixed") {
+            wordDao.getLearnedWordCount()
+        } else {
+            wordDao.getLearnedWordCountByExam(exam)
+        }
     }
 
     /**

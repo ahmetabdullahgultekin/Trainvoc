@@ -322,8 +322,11 @@ fun QuizScreen(
                                             currentStreak++
                                             haptic.success()
 
-                                            // Trigger confetti if streak >= 3
-                                            if (currentStreak >= 3) {
+                                            // Trigger confetti only at streak milestones (3, 5, 10, 15, 20, 25...)
+                                            val isMilestone = currentStreak == 3 ||
+                                                              currentStreak == 5 ||
+                                                              (currentStreak >= 10 && currentStreak % 5 == 0)
+                                            if (isMilestone) {
                                                 triggerConfetti = true
                                                 // Reset confetti trigger after animation
                                                 coroutineScope.launch {

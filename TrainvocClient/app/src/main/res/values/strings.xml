@@ -255,6 +255,8 @@
     <string name="difficulty_proficient">★★★★★★</string>
     <string name="toefl_description">Test of English as a Foreign Language</string>
     <string name="ielts_description">International English Language Testing System</string>
+    <string name="yds_description">Yabancı Dil Sınavı - Turkish Foreign Language Exam</string>
+    <string name="yokdil_description">YÖK Yabancı Dil Sınavı - Academic Foreign Language Exam</string>
     <string name="general_vocab_title">General Vocabulary</string>
     <string name="general_vocab_description">All-purpose word practice</string>
     <string name="complete_level_first">Complete %1$s first</string>

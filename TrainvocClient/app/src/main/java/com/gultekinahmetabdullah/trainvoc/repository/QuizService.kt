@@ -61,15 +61,18 @@ class QuizService @Inject constructor(
 
     /**
      * Generate questions for a specific exam type using dynamic query builder
+     * Note: "Mixed" exam returns all words (null exam filter)
      */
     private suspend fun generateQuestionsByExam(
         quizType: QuizType,
         exam: Exam
     ): MutableList<Question> {
+        // "Mixed" exam means all words (no exam filter)
+        val examFilter = if (exam.exam == "Mixed") null else exam.exam
         val query = WordQueryBuilder.buildQuery(
             quizType = quizType,
             level = null,
-            exam = exam.exam,
+            exam = examFilter,
             limit = 10
         )
         val words = wordDao.getWordsByQuery(query)
