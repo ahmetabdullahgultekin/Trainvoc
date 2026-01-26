@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 35 | 25 | 1 | 61 |
+| 🟡 MEDIUM | 32 | 28 | 1 | 61 |
 | 🟢 LOW | 22 | 11 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **83** | **81** | **3** | **167** |
+| **TOTAL** | **80** | **84** | **3** | **167** |
 
 ---
 
@@ -127,7 +127,7 @@
 | 050 | Android | `CloudBackupScreen.kt:149` | Fixed 80.dp CloudOff icon size | ⬜ OPEN |
 | 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ⬜ OPEN |
 | 052 | Android | `CloudBackupScreen.kt` | No error state UI when backup operations fail | ⬜ OPEN |
-| 053 | Android | `QuizScreen.kt:288-293` | Shows loading but no error state if questions fail | ⬜ OPEN |
+| 053 | Android | `QuizScreen.kt:288-293` | Shows loading but no error state if questions fail | ✅ FIXED 2026-01-26 |
 | 054 | Android | `DictionaryScreen.kt:336-345` | Shimmer loading shown but no error message if search fails | ⬜ OPEN |
 | 055 | Android | `CloudBackupScreen.kt:108` | SignedInContent doesn't show clear loading state | ⬜ OPEN |
 | 056 | Android | `ProfileScreen.kt` | No loading skeleton for stats before they load | ⬜ OPEN |
@@ -140,8 +140,8 @@
 | 063 | Android | `QuizScreen.kt:210` | LazyColumn uses fixed Spacing - no tablet adaptation | ⬜ OPEN |
 | 064 | Android | `SplashScreen.kt` | No responsive considerations for landscape | ⬜ OPEN |
 | 065 | Android | `ProfileScreen.kt:81-85` | No horizontal padding adjustment for ultra-wide | ⬜ OPEN |
-| 066 | Android | `DailyGoalsScreen.kt:78-86` | Study time hardcoded to 0/30 - not tracking actual time | ⬜ OPEN |
-| 067 | Android | `WordProgressScreen.kt:299,321` | Learning timeline hardcoded `listOf(12, 18, 15, 22)` | ⬜ OPEN |
+| 066 | Android | `DailyGoalsScreen.kt:78-86` | Study time hardcoded to 0/30 - not tracking actual time | ✅ FIXED 2026-01-26 |
+| 067 | Android | `WordProgressScreen.kt:299,321` | Learning timeline hardcoded `listOf(12, 18, 15, 22)` | ✅ FIXED 2026-01-26 |
 | 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ⬜ OPEN |
 | 069 | Android | `BackupScreen.kt:462` | Cloud backup shows "not yet implemented" message | ⬜ OPEN |
 | 070 | Android | `BackupScreen.kt:514` | Coming Soon section | ⬜ OPEN |
@@ -283,6 +283,9 @@
 | 159 | Android | HomeScreen duplicate header merged - AppTopBar hidden on HOME, unified HomeHeader with app branding + user info + menu | 2026-01-26 | Claude |
 | 166 | Android | Edit Profile dialog enhanced with inline avatar picker and improved UX | 2026-01-26 | Claude |
 | 167 | Android | Splash screen duration reduced from 3s to 1.2s for returning users | 2026-01-26 | Claude |
+| 053 | Android | QuizScreen now shows error state with timeout if questions fail to load | 2026-01-26 | Claude |
+| 066 | Android | DailyGoalsScreen now shows real study time and reviews from gamification data | 2026-01-26 | Claude |
+| 067 | Android | WordProgressScreen shows real learning summary instead of hardcoded timeline | 2026-01-26 | Claude |
 
 ---
 
