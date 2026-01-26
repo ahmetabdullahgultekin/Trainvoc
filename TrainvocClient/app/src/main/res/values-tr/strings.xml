@@ -30,6 +30,9 @@
     <string name="select_quiz_category">Test Kategorisi Seç</string>
     <string name="select_quiz_type">Test Türü Seç</string>
     <string name="loading_questions">Sorular Yükleniyor…</string>
+    <string name="error_loading_questions">Sorular yüklenemedi</string>
+    <string name="check_connection_try_again">Lütfen bağlantınızı kontrol edip tekrar deneyin.</string>
+    <string name="go_back">Geri Dön</string>
     <string name="which_one_is_the_correct_meaning">Doğru anlam hangisi?</string>
     <string name="next_question">Sonraki Soru</string>
     <string name="score">Puan</string>

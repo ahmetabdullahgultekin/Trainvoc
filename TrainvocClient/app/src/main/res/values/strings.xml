@@ -45,6 +45,9 @@
     <string name="test_your_knowledge_with">Test your knowledge with %1$s level words</string>
     <string name="select_quiz_type">Select Quiz Type</string>
     <string name="loading_questions">Loading Questions…</string>
+    <string name="error_loading_questions">Unable to load questions</string>
+    <string name="check_connection_try_again">Please check your connection and try again.</string>
+    <string name="go_back">Go Back</string>
     <string name="which_one_is_the_correct_meaning">Which one is the correct meaning of:</string>
     <string name="next_question">Next Question</string>
     <string name="question_number">Question %1$d</string>

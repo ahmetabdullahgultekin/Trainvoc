@@ -296,9 +296,9 @@ fun WordProgressScreen(
                 }
             }
 
-            // Learning Timeline (Placeholder)
+            // Learning Summary
             Text(
-                text = "Learning Timeline",
+                text = "Learning Summary",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -309,48 +309,94 @@ fun WordProgressScreen(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(
-                        text = "Last 4 Weeks",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    // Show actual learning summary based on real data
+                    val hasActivity = uiState.learnedWords > 0 || uiState.totalCorrectAnswers > 0
 
-                    Spacer(Modifier.height(12.dp))
-
-                    // Simple bar chart representation
-                    val weeklyData = listOf(12, 18, 15, 22) // words learned per week
-
-                    weeklyData.forEachIndexed { index, count ->
+                    if (hasActivity) {
+                        // Summary stats row
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Text(
-                                text = "Week ${index + 1}",
-                                modifier = Modifier.width(60.dp),
-                                style = MaterialTheme.typography.bodyMedium
+                            SummaryStatItem(
+                                value = "${uiState.totalStudyTimeMinutes}",
+                                label = "Minutes\nStudied",
+                                icon = Icons.Default.Timer
                             )
-
-                            LinearProgressIndicator(
-                                progress = { (count / 30f).coerceIn(0f, 1f) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(24.dp)
-                                    .clip(RoundedCornerShape(4.dp)),
+                            SummaryStatItem(
+                                value = "${uiState.totalCorrectAnswers}",
+                                label = "Correct\nAnswers",
+                                icon = Icons.Default.CheckCircle
                             )
-
-                            Spacer(Modifier.width(8.dp))
-
-                            Text(
-                                text = "$count",
-                                modifier = Modifier.width(30.dp),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold
+                            SummaryStatItem(
+                                value = "${uiState.learnedWords}",
+                                label = "Words\nLearned",
+                                icon = Icons.Default.School
                             )
                         }
 
-                        if (index < weeklyData.size - 1) {
-                            Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(16.dp))
+
+                        // Motivational message based on progress
+                        val progressPercent = if (uiState.totalWords > 0) {
+                            ((uiState.learnedWords.toFloat() / uiState.totalWords) * 100).toInt()
+                        } else 0
+
+                        val message = when {
+                            progressPercent >= 75 -> "Amazing progress! You're almost there!"
+                            progressPercent >= 50 -> "Halfway there! Keep up the great work!"
+                            progressPercent >= 25 -> "Good progress! Consistency is key!"
+                            progressPercent >= 10 -> "Great start! Every word counts!"
+                            else -> "Begin your journey to fluency!"
+                        }
+
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.EmojiEvents,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(Modifier.width(12.dp))
+                                Text(
+                                    text = message,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                    } else {
+                        // Empty state
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                Icons.Default.Timeline,
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                            Spacer(Modifier.height(12.dp))
+                            Text(
+                                text = "Start learning to see your progress!",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Complete quizzes and learn new words to track your journey.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            )
                         }
                     }
                 }
@@ -550,6 +596,38 @@ val WordLevel.color: Color
         WordLevel.C1 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.C1
         WordLevel.C2 -> com.gultekinahmetabdullah.trainvoc.ui.theme.CEFRColors.C2
     }
+
+@Composable
+private fun SummaryStatItem(
+    value: String,
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            modifier = Modifier.size(28.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            lineHeight = MaterialTheme.typography.bodySmall.lineHeight
+        )
+    }
+}
 
 // Real data converter
 private fun generateWordStatusList(counts: WordStatusCounts?): List<WordStatus> {
