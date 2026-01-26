@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 18 | 40 | 3 | 61 |
+| 🟡 MEDIUM | 16 | 42 | 3 | 61 |
 | 🟢 LOW | 17 | 15 | 2 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **61** | **100** | **6** | **167** |
+| **TOTAL** | **59** | **102** | **6** | **167** |
 
 ---
 
@@ -138,8 +138,8 @@
 | 061 | Android | `HomeScreen.kt:166-172` | Background image contentDescription is "Background decoration" | ✅ FIXED 2026-01-26 |
 | 062 | Android | `DictionaryScreen.kt:809` | AlphabetFastScroll fixed 32.dp width | ✅ FIXED 2026-01-25 |
 | 063 | Android | `QuizScreen.kt:210` | LazyColumn uses fixed Spacing - no tablet adaptation | ⬜ OPEN |
-| 064 | Android | `SplashScreen.kt` | No responsive considerations for landscape | ⬜ OPEN |
-| 065 | Android | `ProfileScreen.kt:81-85` | No horizontal padding adjustment for ultra-wide | ⬜ OPEN |
+| 064 | Android | `SplashScreen.kt` | No responsive considerations for landscape | ✅ FIXED 2026-01-26 (uses minOf for responsive) |
+| 065 | Android | `ProfileScreen.kt:81-85` | No horizontal padding adjustment for ultra-wide | ✅ FIXED 2026-01-26 |
 | 066 | Android | `DailyGoalsScreen.kt:78-86` | Study time hardcoded to 0/30 - not tracking actual time | ✅ FIXED 2026-01-26 |
 | 067 | Android | `WordProgressScreen.kt:299,321` | Learning timeline hardcoded `listOf(12, 18, 15, 22)` | ✅ FIXED 2026-01-26 |
 | 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ⬜ OPEN |
@@ -299,6 +299,8 @@
 | 051 | Android | DictionaryScreen now shows error state with retry when words fail to load | 2026-01-26 | Claude |
 | 056 | Android | ProfileScreen stats now show shimmer skeleton while loading | 2026-01-26 | Claude |
 | 047 | Android | DictionaryScreen letter preview now responsive for tablets (60dp-100dp) | 2026-01-26 | Claude |
+| 064 | Android | SplashScreen already uses responsive sizing (minOf for landscape) | 2026-01-26 | Claude |
+| 065 | Android | ProfileScreen now has responsive horizontal padding for ultra-wide displays | 2026-01-26 | Claude |
 
 ---
 
