@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.animations.ConfettiAnimation
 import com.gultekinahmetabdullah.trainvoc.ui.animations.StaggeredListItem
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoadingScreenContent
 import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.*
 import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizHistoryViewModel
@@ -83,10 +84,9 @@ fun LastQuizResultsScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                        .padding(paddingValues)
                 ) {
-                    CircularProgressIndicator()
+                    LoadingScreenContent(message = "Loading quiz results...")
                 }
             }
             error != null -> {
