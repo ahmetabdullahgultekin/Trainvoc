@@ -318,24 +318,6 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
 
             Spacer(modifier = Modifier.height(Spacing.md))
 
-            // Loading indicator
-            AnimatedVisibility(
-                visible = isSearching,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.loading),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
             // Word List, Empty State, Error State, or Shimmer Loading
             Box(modifier = Modifier.weight(1f)) {
                 when {
