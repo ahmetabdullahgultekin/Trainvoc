@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -43,6 +44,7 @@ import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
 import com.gultekinahmetabdullah.trainvoc.ui.components.AchievementBadge
 import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressIndicator
+import com.gultekinahmetabdullah.trainvoc.ui.animations.ShimmerBox
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.theme.*
 import java.text.SimpleDateFormat
@@ -163,6 +165,7 @@ fun ProfileScreen(
                         studyTimeMinutes = studyTime,
                         correctAnswers = uiState.learnedWords,  // Words learned = mastery progress
                         totalAnswers = if (uiState.totalWords > 0) uiState.totalWords else 1,  // Total words in dictionary
+                        isLoading = uiState.isLoading,
                         modifier = Modifier.padding(horizontal = Spacing.md)
                     )
                 }
@@ -405,6 +408,7 @@ fun StatsGridSection(
     studyTimeMinutes: Int,
     correctAnswers: Int,
     totalAnswers: Int,
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     // Calculate responsive grid columns based on screen width
@@ -424,6 +428,22 @@ fun StatsGridSection(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = Spacing.md)
         )
+
+        // Show loading skeleton when data is being fetched
+        if (isLoading) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(gridColumns),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.height(if (gridColumns == 4) 200.dp else 350.dp),
+                userScrollEnabled = false
+            ) {
+                items(4) {
+                    StatCardSkeleton()
+                }
+            }
+            return@Column
+        }
 
         // Get colors in composable context
         val statsCorrectColor = MaterialTheme.colorScheme.statsCorrect
@@ -1121,4 +1141,53 @@ fun AvatarSelectionDialog(
             }
         }
     )
+}
+
+/**
+ * Skeleton placeholder for stat cards during loading
+ */
+@Composable
+private fun StatCardSkeleton(
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(150.dp),
+        shape = RoundedCornerShape(CornerRadius.medium)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Spacing.md),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Icon placeholder
+            ShimmerBox(
+                modifier = Modifier.size(40.dp),
+                shape = CircleShape
+            )
+
+            Spacer(modifier = Modifier.height(Spacing.md))
+
+            // Value placeholder
+            ShimmerBox(
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(28.dp),
+                shape = RoundedCornerShape(4.dp)
+            )
+
+            Spacer(modifier = Modifier.height(Spacing.sm))
+
+            // Label placeholder
+            ShimmerBox(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(14.dp),
+                shape = RoundedCornerShape(4.dp)
+            )
+        }
+    }
 }
