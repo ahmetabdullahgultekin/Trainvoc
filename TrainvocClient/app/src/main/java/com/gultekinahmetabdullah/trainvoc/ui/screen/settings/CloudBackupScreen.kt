@@ -53,6 +53,7 @@ fun CloudBackupScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val autoBackupEnabled by viewModel.autoBackupEnabled.collectAsState()
     val message by viewModel.message.collectAsState()
+    val operationError by viewModel.operationError.collectAsState()
 
     // Sign-in launcher
     val signInLauncher = rememberLauncherForActivityResult(
@@ -118,6 +119,7 @@ fun CloudBackupScreen(
                         backups = backups,
                         isLoading = isLoading,
                         autoBackupEnabled = autoBackupEnabled,
+                        operationError = operationError,
                         onSignOut = { viewModel.signOut() },
                         onBackupNow = { viewModel.uploadBackup() },
                         onRestoreBackup = { fileId ->
@@ -128,7 +130,8 @@ fun CloudBackupScreen(
                         },
                         onAutoBackupToggle = { enabled ->
                             viewModel.setAutoBackup(enabled)
-                        }
+                        },
+                        onRetry = { viewModel.retryOperation() }
                     )
                 }
             }
@@ -248,11 +251,13 @@ private fun SignedInContent(
     backups: List<DriveBackup>,
     isLoading: Boolean,
     autoBackupEnabled: Boolean,
+    operationError: String? = null,
     onSignOut: () -> Unit,
     onBackupNow: () -> Unit,
     onRestoreBackup: (String) -> Unit,
     onDeleteBackup: (String) -> Unit,
-    onAutoBackupToggle: (Boolean) -> Unit
+    onAutoBackupToggle: (Boolean) -> Unit,
+    onRetry: () -> Unit = {}
 ) {
     var showSignOutDialog by remember { mutableStateOf(false) }
 
@@ -261,6 +266,47 @@ private fun SignedInContent(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Show error state if there's an operation error
+        if (operationError != null && !isLoading) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Error,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = operationError,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = onRetry,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Icon(Icons.Default.Refresh, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Retry")
+                    }
+                }
+            }
+        }
+
         // Account info card
         Card(
             modifier = Modifier.fillMaxWidth()

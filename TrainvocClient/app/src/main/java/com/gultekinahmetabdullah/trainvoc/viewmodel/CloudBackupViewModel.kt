@@ -95,6 +95,10 @@ class CloudBackupViewModel @Inject constructor(
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message.asStateFlow()
 
+    // Operation error state (for persistent error UI)
+    private val _operationError = MutableStateFlow<String?>(null)
+    val operationError: StateFlow<String?> = _operationError.asStateFlow()
+
     init {
         checkAuthState()
         // Load auto-backup preference from SharedPreferences
@@ -217,12 +221,18 @@ class CloudBackupViewModel @Inject constructor(
     fun refreshBackups() {
         viewModelScope.launch {
             _isLoading.value = true
+            _operationError.value = null
 
-            val fetchedBackups = backupService.listBackups()
-            _backups.value = fetchedBackups
-
-            Log.d(TAG, "Loaded ${fetchedBackups.size} backup(s)")
-            _isLoading.value = false
+            try {
+                val fetchedBackups = backupService.listBackups()
+                _backups.value = fetchedBackups
+                Log.d(TAG, "Loaded ${fetchedBackups.size} backup(s)")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to refresh backups: ${e.message}")
+                _operationError.value = e.message ?: "Failed to load backups"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -340,6 +350,21 @@ class CloudBackupViewModel @Inject constructor(
      */
     fun clearMessage() {
         _message.value = null
+    }
+
+    /**
+     * Clear operation error state
+     */
+    fun clearOperationError() {
+        _operationError.value = null
+    }
+
+    /**
+     * Retry last failed operation (refresh backups)
+     */
+    fun retryOperation() {
+        _operationError.value = null
+        refreshBackups()
     }
 }
 
