@@ -65,11 +65,14 @@ fun SplashScreen(
 
     // Launch effect to navigate after animation
     LaunchedEffect(true) {
-        // Spiral ve kedi animasyonu aynı anda başlasın diye gecikmeyi en başa aldık
-        delay(3000) // Wait for animation to finish
         val username = sharedPreferences.getString("username", null)
-        val destination =
-            if (username.isNullOrEmpty()) Route.WELCOME else Route.MAIN
+        val isReturningUser = !username.isNullOrEmpty()
+
+        // Shorter splash for returning users, full animation for new users
+        val splashDuration = if (isReturningUser) 1200L else 3000L
+        delay(splashDuration)
+
+        val destination = if (isReturningUser) Route.MAIN else Route.WELCOME
         navController.navigate(destination)
     }
 

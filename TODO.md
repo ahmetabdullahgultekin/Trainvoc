@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 4 | 16 | 0 | 20 |
-| 🟠 HIGH | 9 | 18 | 1 | 28 |
+| 🔴 CRITICAL | 2 | 18 | 0 | 20 |
+| 🟠 HIGH | 8 | 19 | 1 | 28 |
 | 🟡 MEDIUM | 36 | 24 | 1 | 61 |
-| 🟢 LOW | 26 | 7 | 1 | 34 |
+| 🟢 LOW | 24 | 9 | 1 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **96** | **68** | **3** | **167** |
+| **TOTAL** | **91** | **73** | **3** | **167** |
 
 ---
 
@@ -56,8 +56,8 @@
 | 005 | Android | `PlayGamesAchievementMapper.kt:15` | Placeholder achievement IDs - not real Play Console IDs | ✅ FIXED 2026-01-25 |
 | 006 | Android | `CloudBackupManager.kt:437` | Cloud backup upload not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
 | 007 | Android | `CloudBackupManager.kt:459` | Cloud backup download not implemented - returns "Coming Soon" exception | ✅ FIXED 2026-01-25 |
-| 008 | Android | `TutorialViewModel.kt:12-65` | Stub implementation - needs real tutorial logic | ⬜ OPEN |
-| 009 | Android | `TutorialOverlay.kt:12-30` | Stub implementation - needs actual overlay UI | ⬜ OPEN |
+| 008 | Android | `TutorialViewModel.kt:12-65` | Stub implementation - needs real tutorial logic | ✅ FIXED 2026-01-26 |
+| 009 | Android | `TutorialOverlay.kt:12-30` | Stub implementation - needs actual overlay UI | ✅ FIXED 2026-01-26 |
 | 010 | Backend | `SyncController.java:186` | Now returns actual sync counts and timestamps from database | ✅ FIXED 2026-01-25 |
 | 011 | Backend | `SyncServiceTest.java:305` | Proper test coverage with mocked repositories | ✅ FIXED 2026-01-25 |
 | 012 | Infra | `SSL_SETUP.md` | SSL setup guide created - needs server execution | 🔄 DOCUMENTED |
@@ -100,7 +100,7 @@
 | 034 | Android | `Buttons.kt:80,127` | Generic "Button icon" contentDescriptions | ✅ FIXED 2026-01-25 |
 | 035 | Android | `ModernComponents.kt:183` | Generic "Icon" contentDescription | ✅ FIXED 2026-01-25 |
 | 036 | Infra | N/A | CORS configured - default: trainvoc.rollingcatsoftware.com, dev: localhost | ✅ FIXED 2026-01-25 |
-| 159 | Android | `HomeScreen.kt` | Duplicate top bar/header visible - should have exactly one | ⬜ OPEN |
+| 159 | Android | `HomeScreen.kt` | Duplicate top bar/header visible - should have exactly one | ✅ FIXED 2026-01-26 |
 | 160 | Android | `HomeScreen.kt:360-362` | "Perfect Start" achievement appears twice - added distinctBy filter | ✅ FIXED 2026-01-25 |
 | 161 | Android | `StoryScreen.kt:75-83` | Missing level names - now shows both A1/A2 code AND Beginner/Elementary | ✅ FIXED 2026-01-25 |
 | 162 | Android | `StoryScreen.kt:147-162` | Progress bar added per level showing learned/total words | ✅ FIXED 2026-01-25 |
@@ -211,8 +211,8 @@
 | 124 | Android | `FavoritesScreen.kt:87` | placeholder prop for TextField | ⬜ OPEN |
 | 125 | Android | `DictionaryScreen.kt:219` | placeholder prop for TextField | ⬜ OPEN |
 | 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ⬜ OPEN |
-| 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ⬜ OPEN |
-| 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ⬜ OPEN |
+| 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ✅ FIXED 2026-01-26 |
+| 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ✅ FIXED 2026-01-26 |
 
 ---
 
@@ -279,6 +279,10 @@
 | 042-044 | Android | ModernComponents.kt hardcoded colors replaced with theme-aware colors | 2026-01-25 | Claude |
 | 045 | Android | DictionaryScreen chip Color.White replaced with onPrimary | 2026-01-25 | Claude |
 | 062, 076 | Android | AlphabetFastScroll width increased to 40.dp for better touch targets | 2026-01-25 | Claude |
+| 008-009 | Android | Tutorial system implemented with step-by-step dialogs, first-play detection, and game-specific content | 2026-01-26 | Claude |
+| 159 | Android | HomeScreen duplicate header merged - AppTopBar hidden on HOME, unified HomeHeader with app branding + user info + menu | 2026-01-26 | Claude |
+| 166 | Android | Edit Profile dialog enhanced with inline avatar picker and improved UX | 2026-01-26 | Claude |
+| 167 | Android | Splash screen duration reduced from 3s to 1.2s for returning users | 2026-01-26 | Claude |
 
 ---
 

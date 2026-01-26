@@ -215,10 +215,15 @@ fun ProfileScreen(
     if (showEditDialog.value) {
         EditProfileDialog(
             currentUsername = username,
+            currentAvatar = currentAvatar,
             onDismiss = { showEditDialog.value = false },
-            onSave = { newUsername ->
-                // Save new username to SharedPreferences
-                prefs.edit().putString("username", newUsername).apply()
+            onSave = { newUsername, newAvatar ->
+                // Save new username and avatar to SharedPreferences
+                prefs.edit()
+                    .putString("username", newUsername)
+                    .putString("avatar", newAvatar)
+                    .apply()
+                currentAvatar = newAvatar
                 showEditDialog.value = false
                 onEditProfile()
             }
@@ -919,17 +924,96 @@ private fun getAchievementIcon(category: String): ImageVector {
 @Composable
 fun EditProfileDialog(
     currentUsername: String,
+    currentAvatar: String = "\uD83E\uDD8A",
     onDismiss: () -> Unit,
-    onSave: (String) -> Unit
+    onSave: (username: String, avatar: String) -> Unit
 ) {
     var newUsername by remember { mutableStateOf(currentUsername) }
+    var newAvatar by remember { mutableStateOf(currentAvatar) }
     var error by remember { mutableStateOf<String?>(null) }
+    var showAvatarPicker by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Edit Profile") },
         text = {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Spacing.md),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Avatar Section
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .clickable { showAvatarPicker = !showAvatarPicker },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = newAvatar,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    // Edit indicator
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.secondary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Change avatar",
+                            tint = MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Tap to change avatar",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                // Avatar picker grid (collapsible)
+                if (showAvatarPicker) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(5),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.height(180.dp)
+                    ) {
+                        items(com.gultekinahmetabdullah.trainvoc.constants.Avatars.AVATAR_LIST.size) { index ->
+                            val avatar = com.gultekinahmetabdullah.trainvoc.constants.Avatars.AVATAR_LIST[index]
+                            val isSelected = avatar == newAvatar
+
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                                        else MaterialTheme.colorScheme.surfaceVariant
+                                    )
+                                    .clickable {
+                                        newAvatar = avatar
+                                        showAvatarPicker = false
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = avatar,
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Username Field
                 OutlinedTextField(
                     value = newUsername,
                     onValueChange = {
@@ -942,8 +1026,12 @@ fun EditProfileDialog(
                         }
                     },
                     label = { Text("Username") },
+                    leadingIcon = {
+                        Icon(Icons.Default.Person, contentDescription = null)
+                    },
                     isError = error != null,
                     supportingText = error?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
+                    singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -952,7 +1040,7 @@ fun EditProfileDialog(
             TextButton(
                 onClick = {
                     if (error == null && newUsername.isNotBlank()) {
-                        onSave(newUsername)
+                        onSave(newUsername, newAvatar)
                     }
                 },
                 enabled = error == null && newUsername.isNotBlank()
