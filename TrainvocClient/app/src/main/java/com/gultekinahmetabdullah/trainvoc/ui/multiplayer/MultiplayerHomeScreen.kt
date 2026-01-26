@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.ConnectionState
+import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 
 /**
  * Multiplayer Home Screen - Entry point for multiplayer games.
@@ -201,9 +203,9 @@ private fun ConnectionStatusCard(
                     }
                 }
                 is ConnectionState.Connecting -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
+                    InlineLoader(
+                        size = LoaderSize.tiny,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 else -> {}

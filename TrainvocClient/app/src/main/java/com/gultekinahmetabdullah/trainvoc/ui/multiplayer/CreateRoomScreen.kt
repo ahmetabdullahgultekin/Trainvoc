@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.RoomSettings
+import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 import com.gultekinahmetabdullah.trainvoc.viewmodel.RoomState
 
 /**
@@ -217,11 +218,7 @@ fun CreateRoomScreen(
                     .height(56.dp)
             ) {
                 if (isCreating) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    ButtonLoader(modifier = Modifier.size(24.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Creating Room...")
                 } else {

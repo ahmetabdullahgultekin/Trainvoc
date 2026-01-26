@@ -13,6 +13,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
+import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import kotlinx.coroutines.launch
 
@@ -68,7 +70,7 @@ fun WordImageCard(
         ) {
             when {
                 isLoading -> {
-                    CircularProgressIndicator()
+                    InlineLoader(size = LoaderSize.small)
                 }
                 error != null -> {
                     Text(

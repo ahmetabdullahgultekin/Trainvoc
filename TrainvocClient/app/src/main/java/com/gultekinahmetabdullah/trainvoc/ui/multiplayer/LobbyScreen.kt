@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.PlayerInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.GameState
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.viewmodel.RoomState
 
 /**
@@ -184,15 +186,10 @@ fun LobbyScreen(
                         .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator()
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Waiting for players...",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    RollingCatLoaderWithText(
+                        message = "Waiting for players...",
+                        size = LoaderSize.medium
+                    )
                 }
             } else {
                 LazyColumn(

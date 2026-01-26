@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.ui.components.SwipeToDeleteCard
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.FavoritesViewModel
@@ -103,7 +105,10 @@ fun FavoritesScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        RollingCatLoaderWithText(
+                            message = "Loading favorites...",
+                            size = LoaderSize.medium
+                        )
                     }
                 }
                 favoriteWords.isEmpty() -> {

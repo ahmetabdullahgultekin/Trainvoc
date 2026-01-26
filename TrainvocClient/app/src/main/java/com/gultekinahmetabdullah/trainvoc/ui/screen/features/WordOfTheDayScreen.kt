@@ -30,6 +30,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.components.LargeButton
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.ui.components.SecondaryButton
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AppAnimationSpec
@@ -87,7 +89,10 @@ fun WordOfTheDayScreen(
                         .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    RollingCatLoaderWithText(
+                        message = "Loading word of the day...",
+                        size = LoaderSize.large
+                    )
                 }
             }
             error != null -> {

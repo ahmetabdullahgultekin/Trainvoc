@@ -41,7 +41,6 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,6 +72,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.components.CEFRLevelChip
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.ui.components.ElevatedCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.PrimaryButton
 import com.gultekinahmetabdullah.trainvoc.ui.components.SecondaryButton
@@ -163,22 +164,15 @@ fun WordDetailScreen(
 
     // Loading State
     if (isLoading) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(Spacing.lg),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(48.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(Spacing.md))
-            Text(
-                text = stringResource(id = R.string.loading),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            RollingCatLoaderWithText(
+                message = stringResource(id = R.string.loading),
+                size = LoaderSize.large
             )
         }
         return

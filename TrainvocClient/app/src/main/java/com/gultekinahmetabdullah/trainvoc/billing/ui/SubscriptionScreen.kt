@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.billing.SubscriptionPeriod
 import com.gultekinahmetabdullah.trainvoc.billing.SubscriptionTier
+import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 
 /**
  * Main subscription/pricing screen
@@ -336,10 +337,7 @@ fun SubscriptionCard(
                     enabled = !isLoading
                 ) {
                     if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                        ButtonLoader(modifier = Modifier.size(20.dp))
                     } else {
                         Text("Subscribe")
                     }

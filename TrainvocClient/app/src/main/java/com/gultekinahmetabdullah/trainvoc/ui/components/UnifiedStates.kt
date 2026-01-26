@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
  * Unified Loading State Component
  *
  * Provides consistent loading UI across the app with optional message.
- * Includes smooth animation for better UX.
+ * Uses the branded RollingCat animation for better UX.
  */
 @Composable
 fun LoadingState(
@@ -33,33 +33,10 @@ fun LoadingState(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Animated progress indicator
-            val infiniteTransition = rememberInfiniteTransition(label = "loading")
-            val alpha by infiniteTransition.animateFloat(
-                initialValue = 0.3f,
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1000, easing = EaseInOut),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "alpha"
-            )
-
-            CircularProgressIndicator(
-                modifier = Modifier.size(48.dp),
-                color = MaterialTheme.colorScheme.primary.copy(alpha = alpha)
-            )
-
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
+        RollingCatLoaderWithText(
+            message = message,
+            size = LoaderSize.large
+        )
     }
 }
 
@@ -176,15 +153,15 @@ fun EmptyState(
  * Inline Loading Indicator
  *
  * Small loading indicator for inline use (e.g., in buttons or small sections)
+ * Uses the branded RollingCat animation
  */
 @Composable
 fun InlineLoadingIndicator(
     modifier: Modifier = Modifier
 ) {
-    CircularProgressIndicator(
-        modifier = modifier.size(16.dp),
-        strokeWidth = 2.dp,
-        color = MaterialTheme.colorScheme.primary
+    InlineLoader(
+        size = LoaderSize.tiny,
+        modifier = modifier
     )
 }
 
