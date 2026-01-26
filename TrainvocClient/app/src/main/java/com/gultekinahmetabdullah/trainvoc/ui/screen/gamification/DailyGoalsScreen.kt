@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -75,14 +76,25 @@ fun DailyGoalsScreen(
                 )
             }
 
-            // Study Time Goal (placeholder)
+            // Study Time Goal
             item {
                 GoalCard(
                     title = "Study Time (minutes)",
                     icon = Icons.Default.Timer,
-                    current = 0,
-                    goal = 30,
-                    progress = 0f
+                    current = uiState.studyTimeToday,
+                    goal = uiState.studyTimeGoal,
+                    progress = uiState.studyTimeProgress
+                )
+            }
+
+            // Reviews Goal
+            item {
+                GoalCard(
+                    title = "Reviews Completed",
+                    icon = Icons.Default.Refresh,
+                    current = uiState.reviewsToday,
+                    goal = uiState.reviewsGoal,
+                    progress = uiState.reviewsProgress
                 )
             }
 

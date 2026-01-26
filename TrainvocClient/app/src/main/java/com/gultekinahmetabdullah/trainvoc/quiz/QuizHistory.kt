@@ -165,4 +165,26 @@ interface QuizHistoryDao {
      */
     @Query("DELETE FROM quiz_history WHERE timestamp < :cutoffTimestamp")
     suspend fun deleteOldQuizzes(cutoffTimestamp: Long)
+
+    /**
+     * Get correct answers count for a date range
+     * Used for weekly timeline charts
+     */
+    @Query("""
+        SELECT COALESCE(SUM(correctAnswers), 0)
+        FROM quiz_history
+        WHERE timestamp >= :startTime AND timestamp < :endTime
+    """)
+    suspend fun getCorrectAnswersInRange(startTime: Long, endTime: Long): Int
+
+    /**
+     * Get total questions count for a date range
+     * Used for weekly timeline charts
+     */
+    @Query("""
+        SELECT COALESCE(SUM(totalQuestions), 0)
+        FROM quiz_history
+        WHERE timestamp >= :startTime AND timestamp < :endTime
+    """)
+    suspend fun getTotalQuestionsInRange(startTime: Long, endTime: Long): Int
 }

@@ -91,6 +91,19 @@ fun QuizScreen(
     var showStats by rememberSaveable { mutableStateOf(false) }
     var currentStreak by remember { mutableStateOf(0) }
     var triggerConfetti by remember { mutableStateOf(false) }
+    var loadingTimeoutReached by remember { mutableStateOf(false) }
+
+    // Loading timeout - show error state if questions don't load within 15 seconds
+    LaunchedEffect(question) {
+        if (question == null && !loadingTimeoutReached) {
+            delay(15000) // 15 second timeout
+            if (question == null) {
+                loadingTimeoutReached = true
+            }
+        } else if (question != null) {
+            loadingTimeoutReached = false
+        }
+    }
 
     // Coroutine scope for confetti animation
     val coroutineScope = rememberCoroutineScope()
@@ -293,10 +306,43 @@ fun QuizScreen(
                                 .padding(vertical = Spacing.xl),
                             contentAlignment = Alignment.Center
                         ) {
-                            RollingCatLoaderWithText(
-                                message = stringResource(id = R.string.loading_questions),
-                                size = LoaderSize.large
-                            )
+                            if (loadingTimeoutReached) {
+                                // Error state - questions failed to load
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(Spacing.medium)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = null,
+                                        modifier = Modifier.height(48.dp).width(48.dp),
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.error_loading_questions),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.check_connection_try_again),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Button(
+                                        onClick = { onQuit.invoke() },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.error
+                                        )
+                                    ) {
+                                        Text(stringResource(id = R.string.go_back))
+                                    }
+                                }
+                            } else {
+                                RollingCatLoaderWithText(
+                                    message = stringResource(id = R.string.loading_questions),
+                                    size = LoaderSize.large
+                                )
+                            }
                         }
                     } else {
                         val currentQuestion = question!!

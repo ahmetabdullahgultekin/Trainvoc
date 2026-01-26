@@ -213,5 +213,15 @@ data class HomeUiState(
     val wordsGoalToday: Int get() = dailyGoal?.wordsGoal ?: 10
     val wordsTodayProgress: Float get() = if (wordsGoalToday > 0) (wordsLearnedToday.toFloat() / wordsGoalToday).coerceIn(0f, 1f) else 0f
 
+    // Study time goals
+    val studyTimeToday: Int get() = dailyGoal?.timeTodayMinutes ?: 0
+    val studyTimeGoal: Int get() = dailyGoal?.timeGoalMinutes ?: 30
+    val studyTimeProgress: Float get() = if (studyTimeGoal > 0) (studyTimeToday.toFloat() / studyTimeGoal).coerceIn(0f, 1f) else 0f
+
+    // Reviews goals
+    val reviewsToday: Int get() = dailyGoal?.reviewsToday ?: 0
+    val reviewsGoal: Int get() = dailyGoal?.reviewsGoal ?: 20
+    val reviewsProgress: Float get() = if (reviewsGoal > 0) (reviewsToday.toFloat() / reviewsGoal).coerceIn(0f, 1f) else 0f
+
     val achievementsUnlocked: Int get() = unlockedAchievements.size
 }
