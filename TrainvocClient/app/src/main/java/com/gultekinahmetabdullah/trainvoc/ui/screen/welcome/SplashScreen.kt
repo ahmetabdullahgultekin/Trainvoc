@@ -11,6 +11,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -81,13 +82,17 @@ fun SplashScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         SplashAnimatedBackground()
-        Box(
+        BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
+            // Responsive size: 20% of min dimension, clamped between 80dp and 160dp
+            val minDimension = minOf(maxWidth, maxHeight)
+            val animationSize = (minDimension * 0.2f).coerceIn(80.dp, 160.dp)
+
             LottieAnimation(
                 composition = splashComposition,
-                modifier = Modifier.size(96.dp),
+                modifier = Modifier.size(animationSize),
                 progress = { splashProgress }
             )
         }

@@ -143,19 +143,25 @@ fun CloudBackupScreen(
 private fun SignedOutContent(
     onSignIn: () -> Unit
 ) {
-    Column(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            imageVector = Icons.Default.CloudOff,
-            contentDescription = "Cloud backup disabled",
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary
-        )
+        // Responsive icon size: scales with screen but clamped
+        val iconSize = (minOf(maxWidth, maxHeight) * 0.15f).coerceIn(64.dp, 96.dp)
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.CloudOff,
+                contentDescription = "Cloud backup disabled",
+                modifier = Modifier.size(iconSize),
+                tint = MaterialTheme.colorScheme.primary
+            )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -215,6 +221,7 @@ private fun SignedOutContent(
             Icon(Icons.AutoMirrored.Filled.Login, contentDescription = "Sign in with Google")
             Spacer(modifier = Modifier.width(8.dp))
             Text("Sign in with Google (Coming Soon)")
+        }
         }
     }
 }
