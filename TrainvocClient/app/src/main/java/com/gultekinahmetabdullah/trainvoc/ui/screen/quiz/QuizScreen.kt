@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -61,6 +60,8 @@ import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizExitDial
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizQuestionCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizScoreCard
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.components.QuizStatsCard
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.ComponentSize
@@ -286,11 +287,17 @@ fun QuizScreen(
                 }
                 item {
                     if (question == null) {
-                        CircularProgressIndicator()
-                        Text(
-                            text = stringResource(id = R.string.loading_questions),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Spacing.xl),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            RollingCatLoaderWithText(
+                                message = stringResource(id = R.string.loading_questions),
+                                size = LoaderSize.large
+                            )
+                        }
                     } else {
                         val currentQuestion = question!!
                         QuizQuestionCard(word = currentQuestion.correctWord.word)
