@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 13 | 45 | 3 | 61 |
-| 🟢 LOW | 17 | 15 | 2 | 34 |
+| 🟡 MEDIUM | 9 | 45 | 7 | 61 |
+| 🟢 LOW | 10 | 15 | 9 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **56** | **105** | **6** | **167** |
+| **TOTAL** | **45** | **105** | **17** | **167** |
 
 ---
 
@@ -143,11 +143,11 @@
 | 066 | Android | `DailyGoalsScreen.kt:78-86` | Study time hardcoded to 0/30 - not tracking actual time | ✅ FIXED 2026-01-26 |
 | 067 | Android | `WordProgressScreen.kt:299,321` | Learning timeline hardcoded `listOf(12, 18, 15, 22)` | ✅ FIXED 2026-01-26 |
 | 068 | Android | `HomeScreen.kt:671` | Missing components marked as stubs | ⬜ OPEN |
-| 069 | Android | `BackupScreen.kt:462` | Cloud backup shows "not yet implemented" message | ⬜ OPEN |
-| 070 | Android | `BackupScreen.kt:514` | Coming Soon section | ⬜ OPEN |
+| 069 | Android | `BackupScreen.kt:462` | Cloud backup shows "not yet implemented" message | ❌ WONTFIX (honest status message) |
+| 070 | Android | `BackupScreen.kt:514` | Coming Soon section | ❌ WONTFIX (intentional product roadmap) |
 | 071 | Android | `SettingsScreen.kt:340,345` | Leaderboard marked "Coming soon" - shows toast only | ✅ FIXED 2026-01-26 |
-| 072 | Android | `UpdateNotesCard.kt:162-164` | "Coming Soon" section for features | ⬜ OPEN |
-| 073 | Android | `ChangelogScreen.kt:225` | "Coming Soon" label in changelog | ⬜ OPEN |
+| 072 | Android | `UpdateNotesCard.kt:162-164` | "Coming Soon" section for features | ❌ WONTFIX (intentional upcoming features list) |
+| 073 | Android | `ChangelogScreen.kt:225` | "Coming Soon" label in changelog | ❌ WONTFIX (intentional product roadmap) |
 | 074 | Android | `DictionaryScreen.kt:336-345` | Shimmer shows for ALL cards during search | ⬜ OPEN |
 | 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ✅ FIXED 2026-01-26 |
 | 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ✅ FIXED 2026-01-25 |
@@ -156,13 +156,13 @@
 | 079 | Docs | Multiple | 116 documentation files need audit (see DOCUMENT_AUDIT_TRACKER.md) | ⬜ OPEN |
 | 080 | Android | `strings.xml` | Email placeholder uses old branding | ✅ VERIFIED (uses rollingcat.help@gmail.com) |
 | 081 | Android | Various | Inconsistent MaterialTheme vs hardcoded colors throughout | ⬜ OPEN |
-| 082 | Android | `FavoritesScreen.kt:237` | Level chip onClick empty | ⬜ OPEN |
-| 083 | Android | `WordDetailScreen.kt:499` | Exam chips onClick empty | ⬜ OPEN |
-| 084 | Android | `UserFeatureFlagScreen.kt:246,256` | Premium/Uses Data chips onClick empty | ⬜ OPEN |
-| 085 | Android | `AdminFeatureFlagScreen.kt:303,310,320` | Filter chips onClick empty | ⬜ OPEN |
-| 086 | Android | `SubscriptionScreen.kt:321` | Disabled "Current Plan" button onClick empty | ⬜ OPEN |
-| 087 | Android | `NavigationCard.kt:132,137,151` | Preview defaults with empty onClick | ⬜ OPEN |
-| 088 | Android | `ExampleSentenceCard.kt:117,130` | Preview defaults with empty onClick | ⬜ OPEN |
+| 082 | Android | `FavoritesScreen.kt:237` | Level chip onClick empty | ❌ WONTFIX (display-only chip, onClick required by API) |
+| 083 | Android | `WordDetailScreen.kt:499` | Exam chips onClick empty | ❌ WONTFIX (display-only chips) |
+| 084 | Android | `UserFeatureFlagScreen.kt:246,256` | Premium/Uses Data chips onClick empty | ❌ WONTFIX (display-only chips) |
+| 085 | Android | `AdminFeatureFlagScreen.kt:303,310,320` | Filter chips onClick empty | ❌ WONTFIX (display-only chips) |
+| 086 | Android | `SubscriptionScreen.kt:321` | Disabled "Current Plan" button onClick empty | ❌ WONTFIX (disabled button, onClick ignored) |
+| 087 | Android | `NavigationCard.kt:132,137,151` | Preview defaults with empty onClick | ❌ WONTFIX (preview composables) |
+| 088 | Android | `ExampleSentenceCard.kt:117,130` | Preview defaults with empty onClick | ❌ WONTFIX (preview composables) |
 | 089 | Android | `CloudBackupScreen.kt:197` | "Sign in" contentDescription should be "Sign in with Google" | ✅ FIXED (already correct) |
 | 090 | Android | `CloudBackupScreen.kt:74` | "Back" contentDescription too generic | ✅ FIXED 2026-01-26 |
 | 091 | Android | `CloudBackupScreen.kt:80` | "Refresh" should be "Refresh backup list" | ✅ FIXED 2026-01-26 |
