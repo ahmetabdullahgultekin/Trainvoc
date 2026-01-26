@@ -18,6 +18,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -479,12 +480,15 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
 
                         // Large letter preview when scrolling (overlay on top)
                         if (currentScrollLetter.isNotEmpty()) {
-                            Box(
+                            BoxWithConstraints(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
+                                // Responsive size: 15% of min dimension, clamped between 60dp and 100dp
+                                val previewSize = (minOf(maxWidth, maxHeight) * 0.15f).coerceIn(60.dp, 100.dp)
+
                                 Surface(
-                                    modifier = Modifier.size(80.dp),
+                                    modifier = Modifier.size(previewSize),
                                     shape = RoundedCornerShape(CornerRadius.large),
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shadowElevation = Elevation.level3

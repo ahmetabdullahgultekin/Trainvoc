@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
-| 🟡 MEDIUM | 20 | 39 | 2 | 61 |
-| 🟢 LOW | 18 | 15 | 1 | 34 |
+| 🟡 MEDIUM | 18 | 40 | 3 | 61 |
+| 🟢 LOW | 17 | 15 | 2 | 34 |
 | ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **64** | **99** | **4** | **167** |
+| **TOTAL** | **61** | **100** | **6** | **167** |
 
 ---
 
@@ -121,8 +121,8 @@
 | 044 | Android | `ModernComponents.kt:193` | Hardcoded `Color.White` for text | ✅ FIXED 2026-01-25 |
 | 045 | Android | `DictionaryScreen.kt:519` | Hardcoded `Color.White` for chip selected text | ✅ FIXED 2026-01-25 |
 | 046 | Android | `SplashScreen.kt:87` | Fixed 96.dp size for splash - should scale for tablets | ✅ FIXED 2026-01-26 |
-| 047 | Android | `DictionaryScreen.kt:459` | Fixed 80.dp letter preview box size | ⬜ OPEN |
-| 048 | Android | `QuizScreen.kt:98` | Fixed 180.dp Lottie animation size | ⬜ OPEN |
+| 047 | Android | `DictionaryScreen.kt:459` | Fixed 80.dp letter preview box size | ✅ FIXED 2026-01-26 |
+| 048 | Android | `QuizScreen.kt:98` | Fixed 180.dp Lottie animation size | ❌ WONTFIX (no Lottie in QuizScreen) |
 | 049 | Android | `AnswerOptionCard.kt:181-182` | Fixed 32.dp checkmark icon - below 48dp minimum | ❌ WONTFIX (visual indicator, not touch target) |
 | 050 | Android | `CloudBackupScreen.kt:149` | Fixed 80.dp CloudOff icon size | ✅ FIXED 2026-01-26 |
 | 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ✅ FIXED 2026-01-26 |
@@ -179,7 +179,7 @@
 
 | # | Component | File:Line | Description | Status |
 |---|-----------|-----------|-------------|--------|
-| 095 | Android | `QuizScreen.kt:98` | Fixed Lottie size could adapt | ⬜ OPEN |
+| 095 | Android | `QuizScreen.kt:98` | Fixed Lottie size could adapt | ❌ WONTFIX (no Lottie in QuizScreen) |
 | 096 | Android | `AnswerOptionCard.kt:148-150` | ContentDescription could be more specific | ✅ VERIFIED (already has state-aware descriptions) |
 | 097 | Android | `DictionaryScreen.kt:336-345` | Loading text during search basic | ⬜ OPEN |
 | 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ✅ VERIFIED (NoQuizState exists) |
@@ -298,6 +298,7 @@
 | 050 | Android | CloudBackupScreen CloudOff icon now responsive for tablets (64dp-96dp) | 2026-01-26 | Claude |
 | 051 | Android | DictionaryScreen now shows error state with retry when words fail to load | 2026-01-26 | Claude |
 | 056 | Android | ProfileScreen stats now show shimmer skeleton while loading | 2026-01-26 | Claude |
+| 047 | Android | DictionaryScreen letter preview now responsive for tablets (60dp-100dp) | 2026-01-26 | Claude |
 
 ---
 
