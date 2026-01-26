@@ -102,12 +102,12 @@ enum class AchievementCategory(val displayName: String) {
 /**
  * Achievement tiers (rarity)
  */
-enum class AchievementTier(val displayName: String, val color: String) {
-    BRONZE("Bronze", "#CD7F32"),
-    SILVER("Silver", "#C0C0C0"),
-    GOLD("Gold", "#FFD700"),
-    PLATINUM("Platinum", "#E5E4E2"),
-    DIAMOND("Diamond", "#B9F2FF")
+enum class AchievementTier(val displayName: String, val color: String, val xpReward: Int) {
+    BRONZE("Bronze", "#CD7F32", 50),
+    SILVER("Silver", "#C0C0C0", 100),
+    GOLD("Gold", "#FFD700", 250),
+    PLATINUM("Platinum", "#E5E4E2", 500),
+    DIAMOND("Diamond", "#B9F2FF", 1000)
 }
 
 /**

@@ -183,7 +183,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Route.MAIN) {
                             MainScreen(
-                                startWordId = wordIdFromNotification
+                                startWordId = wordIdFromNotification,
+                                settingsViewModel = settingsViewModel
                             )
                         }
                     }

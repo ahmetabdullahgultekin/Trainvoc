@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -49,6 +50,7 @@ fun AchievementsScreen(
 ) {
     var selectedCategory by remember { mutableStateOf<AchievementCategory?>(null) }
     var selectedTier by remember { mutableStateOf<AchievementTier?>(null) }
+    var selectedAchievement by remember { mutableStateOf<AchievementProgress?>(null) }
 
     val filteredAchievements = achievements.filter { progress ->
         (selectedCategory == null || progress.achievement.category == selectedCategory) &&
@@ -147,7 +149,8 @@ fun AchievementsScreen(
                     ) { progress ->
                         AchievementCard(
                             achievement = progress,
-                            isCompact = true
+                            isCompact = true,
+                            onClick = { selectedAchievement = progress }
                         )
                     }
                 }
@@ -157,6 +160,14 @@ fun AchievementsScreen(
                 Spacer(Modifier.height(16.dp))
             }
         }
+    }
+
+    // Achievement Detail Dialog
+    selectedAchievement?.let { achievement ->
+        AchievementDetailDialog(
+            achievement = achievement,
+            onDismiss = { selectedAchievement = null }
+        )
     }
 }
 
@@ -316,7 +327,8 @@ fun TierFilterChips(
 fun AchievementCard(
     achievement: AchievementProgress,
     modifier: Modifier = Modifier,
-    isCompact: Boolean = false
+    isCompact: Boolean = false,
+    onClick: (() -> Unit)? = null
 ) {
     val isUnlocked = achievement.isUnlocked
 
@@ -325,7 +337,8 @@ fun AchievementCard(
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .height(130.dp),
+                .height(130.dp)
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
             colors = CardDefaults.cardColors(
                 containerColor = if (isUnlocked) MaterialTheme.colorScheme.secondaryContainer
                                 else MaterialTheme.colorScheme.surfaceVariant
@@ -392,7 +405,9 @@ fun AchievementCard(
     } else {
         // Full-width card layout
         Card(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
             colors = CardDefaults.cardColors(
                 containerColor = if (isUnlocked) MaterialTheme.colorScheme.secondaryContainer
                                 else MaterialTheme.colorScheme.surfaceVariant
@@ -616,4 +631,187 @@ private fun formatDate(timestamp: Long): String {
         days < 365 -> "${days / 30} months ago"
         else -> "${days / 365} years ago"
     }
+}
+
+/**
+ * Achievement Detail Dialog
+ * Shows full details of an achievement when tapped
+ */
+@Composable
+fun AchievementDetailDialog(
+    achievement: AchievementProgress,
+    onDismiss: () -> Unit
+) {
+    val isUnlocked = achievement.isUnlocked
+    val tierColor = getTierColor(achievement.achievement.tier)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isUnlocked) tierColor
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    .alpha(if (isUnlocked) 1f else 0.5f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = achievement.achievement.icon,
+                    fontSize = 48.sp
+                )
+            }
+        },
+        title = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = achievement.achievement.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(8.dp))
+                // Tier badge
+                Surface(
+                    color = tierColor,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = achievement.achievement.tier.displayName,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Description
+                Text(
+                    text = achievement.achievement.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                // Category chip
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = "Category: ${achievement.achievement.category.displayName}",
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+
+                // Progress section
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (isUnlocked) {
+                            // Unlocked status
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = "Unlocked",
+                                    tint = tierColor,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Text(
+                                    text = "Unlocked!",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = tierColor
+                                )
+                            }
+
+                            achievement.unlockedAt?.let { timestamp ->
+                                Text(
+                                    text = "Achieved ${formatDate(timestamp)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        } else {
+                            // Progress bar for locked achievements
+                            Text(
+                                text = "Progress",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            LinearProgressIndicator(
+                                progress = { achievement.progressPercentage / 100f },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                            )
+
+                            Text(
+                                text = "${achievement.currentProgress} / ${achievement.achievement.requirement}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                text = "${achievement.progressPercentage}% complete",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                // XP reward info
+                if (isUnlocked) {
+                    Text(
+                        text = "+${achievement.achievement.tier.xpReward} XP earned",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                } else {
+                    Text(
+                        text = "Reward: +${achievement.achievement.tier.xpReward} XP",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
 }
