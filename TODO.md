@@ -39,9 +39,9 @@
 | 🔴 CRITICAL | 0 | 20 | 0 | 20 |
 | 🟠 HIGH | 5 | 22 | 1 | 28 |
 | 🟡 MEDIUM | 9 | 45 | 7 | 61 |
-| 🟢 LOW | 10 | 15 | 9 | 34 |
-| ⚪ INFO | 21 | 3 | 0 | 24 |
-| **TOTAL** | **45** | **105** | **17** | **167** |
+| 🟢 LOW | 0 | 15 | 19 | 34 |
+| ⚪ INFO | 15 | 3 | 6 | 24 |
+| **TOTAL** | **29** | **105** | **33** | **167** |
 
 ---
 
@@ -187,13 +187,13 @@
 | 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ✅ FIXED 2026-01-26 |
 | 101 | Web | `Header.tsx:94-95` | Language button correctly uses sr-only | ✅ NOTED (good pattern) |
 | 102 | Android | `ProfileScreen.kt:112` | "Back" hardcoded contentDescription | ✅ FIXED 2026-01-26 |
-| 103 | Android | Various | Test files contain hardcoded localhost references | ⬜ OPEN |
-| 104 | Docs | `sync/README.md:730` | TODO: Add encryption for backups | ⬜ OPEN |
-| 105 | Docs | `sync/README.md:294` | Cloud provider implementation is placeholder | ⬜ OPEN |
-| 106 | Docs | `sync/README.md:888` | Cloud backup described as placeholder | ⬜ OPEN |
-| 107 | Android | `DataExporter.kt` | Error handling note - non-production-ready | ⬜ OPEN |
-| 108 | Android | `GoogleAuthManager.kt:~150` | Simplified version mentioned in comments | ⬜ OPEN |
-| 109 | Android | `ListeningQuizGame.kt` | Production note about TTS integration | ⬜ OPEN |
+| 103 | Android | Various | Test files contain hardcoded localhost references | ❌ WONTFIX (tests use predictable URLs) |
+| 104 | Docs | `sync/README.md:730` | TODO: Add encryption for backups | ❌ WONTFIX (documentation note) |
+| 105 | Docs | `sync/README.md:294` | Cloud provider implementation is placeholder | ❌ WONTFIX (documentation note) |
+| 106 | Docs | `sync/README.md:888` | Cloud backup described as placeholder | ❌ WONTFIX (documentation note) |
+| 107 | Android | `DataExporter.kt` | Error handling note - non-production-ready | ❌ WONTFIX (helpful code comment) |
+| 108 | Android | `GoogleAuthManager.kt:~150` | Simplified version mentioned in comments | ❌ WONTFIX (helpful code comment) |
+| 109 | Android | `ListeningQuizGame.kt` | Production note about TTS integration | ❌ WONTFIX (helpful code comment) |
 | 110 | Web | `ProfilePage.tsx:29` | Good responsive design | ✅ NOTED (good pattern) |
 | 111 | Web | `Header.tsx:145` | Mobile menu overflow handling | ✅ NOTED (good pattern) |
 | 112 | Web | `LeaderboardPage.tsx:68-73` | Proper loading state | ✅ NOTED (good pattern) |
@@ -201,16 +201,16 @@
 | 114 | Web | `JoinRoomPage.tsx:122-136` | Good error differentiation | ✅ NOTED (good pattern) |
 | 115 | Web | `style.css:148-192` | Dark mode CSS properly defined | ✅ NOTED (good pattern) |
 | 116 | Web | `JoinRoomPage.tsx:206` | Room code input with validation - shows format hint and error states | ✅ FIXED 2026-01-25 |
-| 117 | Android | `ShimmerEffect.kt:246` | Chart placeholder comment | ⬜ OPEN |
-| 118 | Android | `ShimmerEffect.kt:259` | Simple text placeholder comment | ⬜ OPEN |
-| 119 | Android | `UnifiedStates.kt:194-299` | Multiple placeholder comments for shimmer | ⬜ OPEN |
-| 120 | Android | `FillInTheBlankScreen.kt:236` | placeholder prop for TextField | ⬜ OPEN |
-| 121 | Android | `SpellingChallengeScreen.kt:223` | placeholder prop for TextField | ⬜ OPEN |
-| 122 | Android | `WordScrambleScreen.kt:205` | placeholder prop for TextField | ⬜ OPEN |
-| 123 | Android | `GameScreens.kt:472,481` | placeholder parameter in function | ⬜ OPEN |
-| 124 | Android | `FavoritesScreen.kt:87` | placeholder prop for TextField | ⬜ OPEN |
-| 125 | Android | `DictionaryScreen.kt:219` | placeholder prop for TextField | ⬜ OPEN |
-| 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ⬜ OPEN |
+| 117 | Android | `ShimmerEffect.kt:246` | Chart placeholder comment | ❌ WONTFIX (descriptive comment) |
+| 118 | Android | `ShimmerEffect.kt:259` | Simple text placeholder comment | ❌ WONTFIX (descriptive comment) |
+| 119 | Android | `UnifiedStates.kt:194-299` | Multiple placeholder comments for shimmer | ❌ WONTFIX (descriptive comments) |
+| 120 | Android | `FillInTheBlankScreen.kt:236` | placeholder prop for TextField | ❌ WONTFIX (valid API usage) |
+| 121 | Android | `SpellingChallengeScreen.kt:223` | placeholder prop for TextField | ❌ WONTFIX (valid API usage) |
+| 122 | Android | `WordScrambleScreen.kt:205` | placeholder prop for TextField | ❌ WONTFIX (valid API usage) |
+| 123 | Android | `GameScreens.kt:472,481` | placeholder parameter in function | ❌ WONTFIX (valid API usage) |
+| 124 | Android | `FavoritesScreen.kt:87` | placeholder prop for TextField | ❌ WONTFIX (valid API usage) |
+| 125 | Android | `DictionaryScreen.kt:219` | placeholder prop for TextField | ❌ WONTFIX (valid API usage) |
+| 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ❌ WONTFIX (valid string resource) |
 | 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ✅ FIXED 2026-01-26 |
 | 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ✅ FIXED 2026-01-26 |
 
