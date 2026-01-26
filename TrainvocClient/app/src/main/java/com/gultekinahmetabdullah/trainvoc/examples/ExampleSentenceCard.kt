@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
+import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import kotlinx.coroutines.launch
 
 /**
@@ -55,7 +57,8 @@ fun ExampleSentencesList(
 
         when {
             isLoading -> {
-                CircularProgressIndicator(
+                InlineLoader(
+                    size = LoaderSize.small,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(16.dp)

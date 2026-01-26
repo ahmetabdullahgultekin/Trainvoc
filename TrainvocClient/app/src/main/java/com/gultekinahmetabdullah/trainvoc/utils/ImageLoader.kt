@@ -7,8 +7,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
+import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -87,7 +88,7 @@ object ImageLoader {
 
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             if (isLoading) {
-                CircularProgressIndicator()
+                InlineLoader(size = LoaderSize.small)
             } else {
                 Image(
                     painter = painterResource(imageRes),

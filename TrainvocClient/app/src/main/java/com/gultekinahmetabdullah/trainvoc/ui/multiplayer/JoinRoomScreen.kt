@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.RoomListItem
+import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 import com.gultekinahmetabdullah.trainvoc.viewmodel.RoomState
 
 /**
@@ -118,10 +119,7 @@ fun JoinRoomScreen(
                     enabled = canJoin && !isJoining
                 ) {
                     if (isJoining) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp
-                        )
+                        ButtonLoader(modifier = Modifier.size(20.dp))
                     } else {
                         Text("Join")
                     }

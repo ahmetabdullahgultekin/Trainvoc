@@ -18,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.auth.AuthState
+import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.AuthViewModel
 
@@ -292,11 +292,7 @@ fun RegisterScreen(
                         confirmPassword.isNotBlank()
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
-                    )
+                    ButtonLoader(modifier = Modifier.size(20.dp))
                 } else {
                     Text(
                         stringResource(R.string.create_account),

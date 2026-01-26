@@ -19,6 +19,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.cloud.DriveBackup
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
+import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 import com.gultekinahmetabdullah.trainvoc.sync.ConflictStrategy
 import com.gultekinahmetabdullah.trainvoc.viewmodel.CloudAuthState
 import com.gultekinahmetabdullah.trainvoc.viewmodel.CloudBackupViewModel
@@ -94,7 +97,9 @@ fun CloudBackupScreen(
         ) {
             when (val state = authState) {
                 is CloudAuthState.Loading -> {
-                    CircularProgressIndicator(
+                    RollingCatLoaderWithText(
+                        message = "Loading...",
+                        size = LoaderSize.medium,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -321,10 +326,7 @@ private fun SignedInContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+                ButtonLoader(modifier = Modifier.size(20.dp))
             } else {
                 Icon(Icons.Default.CloudUpload, contentDescription = "Upload backup")
             }
@@ -349,7 +351,10 @@ private fun SignedInContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                RollingCatLoaderWithText(
+                    message = "Loading backups...",
+                    size = LoaderSize.medium
+                )
             }
         } else if (backups.isEmpty()) {
             Card(

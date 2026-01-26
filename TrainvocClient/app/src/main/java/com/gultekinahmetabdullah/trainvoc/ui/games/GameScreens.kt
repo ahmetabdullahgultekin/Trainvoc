@@ -35,6 +35,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialHelpButton
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 
 /**
  * Common Game Screen Template
@@ -600,6 +602,7 @@ fun AchievementPopup(
 
 /**
  * Loading State
+ * Uses the branded RollingCat animation for consistent UX
  */
 @Composable
 fun GameLoadingState() {
@@ -607,16 +610,10 @@ fun GameLoadingState() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            CircularProgressIndicator()
-            Text(
-                text = "Loading game...",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
+        RollingCatLoaderWithText(
+            message = "Loading game...",
+            size = LoaderSize.large
+        )
     }
 }
 

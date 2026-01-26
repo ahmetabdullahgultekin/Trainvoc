@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.PlayerInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.QuestionInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.GameState
+import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 
 /**
  * Game Screen - Active multiplayer quiz gameplay.
@@ -99,7 +101,10 @@ fun GameScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        RollingCatLoaderWithText(
+                            message = "Loading...",
+                            size = LoaderSize.medium
+                        )
                     }
                 }
             }
@@ -149,7 +154,10 @@ private fun QuestionScreen(
 ) {
     if (question == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            RollingCatLoaderWithText(
+                message = "Loading question...",
+                size = LoaderSize.medium
+            )
         }
         return
     }
@@ -325,11 +333,9 @@ private fun AnswerRevealScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            CircularProgressIndicator()
-            Text(
-                text = "Loading rankings...",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            RollingCatLoaderWithText(
+                message = "Loading rankings...",
+                size = LoaderSize.small
             )
         }
     }

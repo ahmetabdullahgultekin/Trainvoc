@@ -17,13 +17,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,9 +39,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -47,9 +52,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.components.cards.InfoCard
+import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +88,17 @@ fun AboutScreen(navController: NavController) {
             )
         }
     ) { paddingValues ->
+        // Rolling cat animation
+        val composition by rememberLottieComposition(
+            LottieCompositionSpec.Asset("animations/anime_rolling_cat.json")
+        )
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            isPlaying = true,
+            speed = 0.8f
+        )
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -86,54 +109,116 @@ fun AboutScreen(navController: NavController) {
         ) {
             item { Spacer(modifier = Modifier.height(Spacing.small)) }
 
-            // App Info Card
+            // Hero Section with Rolling Cat
             item {
-                InfoCard(
-                    icon = Icons.Default.Info,
-                    title = stringResource(id = R.string.app_name),
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(CornerRadius.large),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // App Icon with proper theme colors
-                        Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                contentDescription = stringResource(id = R.string.app_icon_desc),
-                                modifier = Modifier.size(80.dp),
-                                contentScale = ContentScale.Crop
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    )
+                                )
                             )
+                            .padding(Spacing.large),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Rolling Cat Animation
+                            LottieAnimation(
+                                composition = composition,
+                                progress = { progress },
+                                modifier = Modifier.size(120.dp)
+                            )
+
+                            Spacer(modifier = Modifier.height(Spacing.medium))
+
+                            // App Name with style
+                            Text(
+                                text = stringResource(id = R.string.app_name),
+                                style = MaterialTheme.typography.headlineLarge.copy(
+                                    letterSpacing = 2.sp
+                                ),
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+
+                            Spacer(modifier = Modifier.height(Spacing.extraSmall))
+
+                            // Tagline
+                            Text(
+                                text = "Learn. Play. Master.",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            )
+
+                            Spacer(modifier = Modifier.height(Spacing.small))
+
+                            // Version badge
+                            Card(
+                                shape = RoundedCornerShape(50),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                )
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.version, "1.0.0"),
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(Spacing.medium))
+
+                            // Description
+                            Text(
+                                text = stringResource(id = R.string.about_app_desc),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = Spacing.small)
+                            )
+
+                            Spacer(modifier = Modifier.height(Spacing.medium))
+
+                            // Made with love badge
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "Made with",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "in Turkey",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                                )
+                            }
                         }
-
-                        Spacer(modifier = Modifier.height(Spacing.small))
-
-                        // Version
-                        Text(
-                            text = stringResource(id = R.string.version, "1.0.0"),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                        )
-
-                        Spacer(modifier = Modifier.height(Spacing.small))
-
-                        // Description
-                        Text(
-                            text = stringResource(id = R.string.about_app_desc),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            textAlign = TextAlign.Center
-                        )
                     }
                 }
             }

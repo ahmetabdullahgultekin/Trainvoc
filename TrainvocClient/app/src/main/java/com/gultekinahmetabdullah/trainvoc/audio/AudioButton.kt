@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
+import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
+import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import kotlinx.coroutines.launch
 
@@ -80,9 +82,9 @@ fun AudioButton(
             enabled = !isLoading
         ) {
             if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp
+                InlineLoader(
+                    size = LoaderSize.tiny,
+                    modifier = Modifier.size(16.dp)
                 )
             } else {
                 Icon(
@@ -113,9 +115,9 @@ fun AudioButton(
                 enabled = !isLoading
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
+                    InlineLoader(
+                        size = LoaderSize.small,
+                        modifier = Modifier.size(24.dp)
                     )
                 } else {
                     Icon(
