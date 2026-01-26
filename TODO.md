@@ -128,10 +128,10 @@
 | 051 | Android | `DictionaryScreen.kt:347` | Empty state doesn't handle data loading errors | ✅ FIXED 2026-01-26 |
 | 052 | Android | `CloudBackupScreen.kt` | No error state UI when backup operations fail | ✅ FIXED 2026-01-26 |
 | 053 | Android | `QuizScreen.kt:288-293` | Shows loading but no error state if questions fail | ✅ FIXED 2026-01-26 |
-| 054 | Android | `DictionaryScreen.kt:336-345` | Shimmer loading shown but no error message if search fails | ⬜ OPEN |
+| 054 | Android | `DictionaryScreen.kt:336-345` | Shimmer loading shown but no error message if search fails | ✅ FIXED 2026-01-26 (error state added in #051) |
 | 055 | Android | `CloudBackupScreen.kt:108` | SignedInContent doesn't show clear loading state | ✅ VERIFIED (has ButtonLoader + RollingCatLoader) |
 | 056 | Android | `ProfileScreen.kt` | No loading skeleton for stats before they load | ✅ FIXED 2026-01-26 |
-| 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ⬜ OPEN |
+| 057 | Android | `DictionaryScreen.kt:315-331` | Simple "Loading" text instead of shimmer animation | ✅ FIXED 2026-01-26 (removed redundant text, using shimmer) |
 | 058 | Android | `DictionaryScreen.kt:759-792` | Empty state doesn't handle ALL empty scenarios | ⬜ OPEN |
 | 059 | Android | `CloudBackupScreen.kt:184-188` | Feature list uses emoji checkmarks - inconsistent | ✅ FIXED 2026-01-26 |
 | 060 | Android | `QuizScreen.kt:190` | InfoButton missing contentDescription for info icon | ✅ FIXED (uses stringResource) |
@@ -148,7 +148,7 @@
 | 071 | Android | `SettingsScreen.kt:340,345` | Leaderboard marked "Coming soon" - shows toast only | ✅ FIXED 2026-01-26 |
 | 072 | Android | `UpdateNotesCard.kt:162-164` | "Coming Soon" section for features | ❌ WONTFIX (intentional upcoming features list) |
 | 073 | Android | `ChangelogScreen.kt:225` | "Coming Soon" label in changelog | ❌ WONTFIX (intentional product roadmap) |
-| 074 | Android | `DictionaryScreen.kt:336-345` | Shimmer shows for ALL cards during search | ⬜ OPEN |
+| 074 | Android | `DictionaryScreen.kt:336-345` | Shimmer shows for ALL cards during search | ❌ WONTFIX (appropriate UX for loading) |
 | 075 | Android | `QuizScreen.kt:289-293` | CircularProgressIndicator + text "Loading..." redundant | ✅ FIXED 2026-01-26 |
 | 076 | Android | `DictionaryScreen.kt:432-451` | AlphabetFastScroll letters are very small touch targets | ✅ FIXED 2026-01-25 |
 | 077 | Android | `Buttons.kt:78-82` | Icon button in complex button is 20.dp | ❌ WONTFIX (button is 48dp, icon visual only) |
@@ -181,7 +181,7 @@
 |---|-----------|-----------|-------------|--------|
 | 095 | Android | `QuizScreen.kt:98` | Fixed Lottie size could adapt | ❌ WONTFIX (no Lottie in QuizScreen) |
 | 096 | Android | `AnswerOptionCard.kt:148-150` | ContentDescription could be more specific | ✅ VERIFIED (already has state-aware descriptions) |
-| 097 | Android | `DictionaryScreen.kt:336-345` | Loading text during search basic | ⬜ OPEN |
+| 097 | Android | `DictionaryScreen.kt:336-345` | Loading text during search basic | ✅ FIXED 2026-01-26 (same as #057) |
 | 098 | Android | Multiple screens | No empty state for quiz results when no quizzes | ✅ VERIFIED (NoQuizState exists) |
 | 099 | Android | `strings.xml:79` | "Theme selection coming soon" - outdated | ✅ FIXED 2026-01-26 |
 | 100 | Android | `CloudBackupScreen.kt:156-200` | Features mention Google Drive - should mention Trainvoc | ✅ FIXED 2026-01-26 |
@@ -231,16 +231,16 @@
 | 135 | Docs | `BUILD_ISSUES.md` | May be resolved - verify | ⬜ OPEN |
 | 136 | Docs | `BUILD_STATUS.md` | May be outdated - verify | ⬜ OPEN |
 | 137 | Project | Multiple | Many .md files could be archived to `docs/archive/` | ⬜ OPEN |
-| 138 | Android | `FeatureFlagManager.kt:226,246` | fallback/disabled params have empty defaults - OK | ⬜ OPEN |
-| 139 | Android | `MemoryLeakPrevention.kt:102` | cleanup param has empty default - OK | ⬜ OPEN |
-| 140 | Android | `AnimatedComponents.kt:203` | pressClickable with empty onClick - preview | ⬜ OPEN |
+| 138 | Android | `FeatureFlagManager.kt:226,246` | fallback/disabled params have empty defaults - OK | ❌ WONTFIX (intentional defaults) |
+| 139 | Android | `MemoryLeakPrevention.kt:102` | cleanup param has empty default - OK | ❌ WONTFIX (intentional default) |
+| 140 | Android | `AnimatedComponents.kt:203` | pressClickable with empty onClick - preview | ❌ WONTFIX (preview composable) |
 | 141 | Config | `.env.example` | Production URLs documented for GCP and Hostinger | ✅ FIXED 2026-01-25 |
 | 142 | Config | `application-prod.properties` | CORS configured with env var override for Hostinger | ✅ FIXED 2026-01-25 |
 | 143 | Infra | `docker-compose.yml` | Docker Compose with PostgreSQL, Backend, Nginx | ✅ FIXED 2026-01-25 |
 | 144 | Infra | `SSL_SETUP.md` | Hostinger/GCP deployment partially documented (SSL, Nginx, systemd) | 🔄 PARTIAL |
 | 145 | Test | Web | WebSocketService.test.ts has many hardcoded localhost | ❌ WONTFIX (tests should use predictable URLs) |
-| 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ⬜ OPEN |
-| 147 | Android | Various | Multiple files have "In production" comments | ⬜ OPEN |
+| 146 | Android | `AppConfig.kt:147` | Skeleton loading placeholder widths comment | ❌ WONTFIX (descriptive comment) |
+| 147 | Android | Various | Multiple files have "In production" comments | ❌ WONTFIX (helpful code comments) |
 | 148 | Android | `sync/README.md` | Large README could be split | ⬜ OPEN |
 | 149 | Docs | `TrainvocClient/CLAUDE.md` | Session notes getting long - consider archiving | ⬜ OPEN |
 | 150 | Docs | Root `CLAUDE.md` | May have outdated session info | ⬜ OPEN |
