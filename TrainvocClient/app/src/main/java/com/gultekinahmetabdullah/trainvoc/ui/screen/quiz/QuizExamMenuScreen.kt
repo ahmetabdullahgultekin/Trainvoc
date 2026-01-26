@@ -661,6 +661,20 @@ data class ExamTypeInfo(
 fun getExamTypes(): List<ExamTypeInfo> {
     return listOf(
         ExamTypeInfo(
+            exam = Exam("YDS"),
+            name = stringResource(R.string.exam_yds),
+            description = stringResource(R.string.yds_description),
+            icon = "🇹🇷",
+            enabled = true
+        ),
+        ExamTypeInfo(
+            exam = Exam("YÖKDİL"),
+            name = stringResource(R.string.exam_yokdil),
+            description = stringResource(R.string.yokdil_description),
+            icon = "🎓",
+            enabled = true
+        ),
+        ExamTypeInfo(
             exam = Exam("TOEFL"),
             name = stringResource(R.string.exam_toefl),
             description = stringResource(R.string.toefl_description),
