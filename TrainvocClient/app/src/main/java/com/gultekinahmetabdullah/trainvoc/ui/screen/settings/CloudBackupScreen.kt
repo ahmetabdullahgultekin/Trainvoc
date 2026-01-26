@@ -76,13 +76,13 @@ fun CloudBackupScreen(
                 title = { Text(stringResource(id = R.string.cloud_backup)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back_to_previous_screen))
                     }
                 },
                 actions = {
                     if (authState is CloudAuthState.SignedIn) {
                         IconButton(onClick = { viewModel.refreshBackups() }) {
-                            Icon(Icons.Default.Refresh, stringResource(id = R.string.refresh))
+                            Icon(Icons.Default.Refresh, stringResource(id = R.string.refresh_backup_list))
                         }
                     }
                 }

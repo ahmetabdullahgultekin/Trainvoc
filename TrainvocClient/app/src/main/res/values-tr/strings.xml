@@ -69,7 +69,7 @@
     <string name="system_default">Sistem Varsayılanı</string>
     <string name="light">Açık</string>
     <string name="dark">Koyu</string>
-    <string name="theme_coming_soon">Tema değiştirme özelliği yakında mevcut olacak</string>
+    <string name="theme_changed">Tema başarıyla güncellendi</string>
     <string name="enable_notifications">Bildirimleri Etkinleştir</string>
     <string name="notifications_coming_soon">Bildirim özelliği yakında mevcut olacak</string>
     <string name="language">Dil</string>

@@ -115,7 +115,7 @@ fun ProfileScreen(
                 title = { Text(stringResource(id = R.string.profile)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
+                        Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back_to_previous_screen))
                     }
                 }
             )
