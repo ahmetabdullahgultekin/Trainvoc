@@ -13,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
 /**
@@ -30,10 +32,10 @@ fun LeaderboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Leaderboard") },
+                title = { Text(stringResource(id = R.string.leaderboard)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back))
                     }
                 }
             )
@@ -61,19 +63,19 @@ fun LeaderboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.EmojiEvents,
-                            contentDescription = "Leaderboard icon",
+                            contentDescription = stringResource(id = R.string.content_desc_leaderboard_icon),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(64.dp)
                         )
                         Spacer(modifier = Modifier.height(Spacing.md))
                         Text(
-                            text = "Coming Soon!",
+                            text = stringResource(id = R.string.coming_soon),
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(Spacing.sm))
                         Text(
-                            text = "Compete with learners worldwide",
+                            text = stringResource(id = R.string.compete_worldwide),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -93,13 +95,13 @@ fun LeaderboardScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Leaderboards are being prepared!",
+                            text = stringResource(id = R.string.leaderboards_preparing),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(Spacing.sm))
                         Text(
-                            text = "Keep learning - your progress is tracked locally and will sync when leaderboards launch.",
+                            text = stringResource(id = R.string.progress_tracked_locally),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

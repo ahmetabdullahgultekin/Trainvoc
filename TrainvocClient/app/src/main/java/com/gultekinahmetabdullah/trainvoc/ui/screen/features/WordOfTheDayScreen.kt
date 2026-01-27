@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.components.LargeButton
 import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
 import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
@@ -72,10 +74,10 @@ fun WordOfTheDayScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Word of the Day") },
+                title = { Text(stringResource(id = R.string.word_of_the_day)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back))
                     }
                 }
             )
@@ -90,7 +92,7 @@ fun WordOfTheDayScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     RollingCatLoaderWithText(
-                        message = "Loading word of the day...",
+                        message = stringResource(id = R.string.loading_word_of_day),
                         size = LoaderSize.large
                     )
                 }
@@ -124,7 +126,7 @@ fun WordOfTheDayScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
-                    message = "No word available",
+                    message = stringResource(id = R.string.no_word_available),
                     onRetry = { viewModel.retry() }
                 )
             }
@@ -186,12 +188,13 @@ private fun WordOfDayContent(
         Spacer(modifier = Modifier.height(Spacing.lg))
 
         // Practice Button
+        val practiceThisWordText = stringResource(id = R.string.practice_this_word)
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(animationSpec = tween(AnimationDuration.medium, delayMillis = StaggerDelay.medium))
         ) {
             LargeButton(
-                text = "Practice This Word",
+                text = practiceThisWordText,
                 onClick = onPractice,
                 modifier = Modifier.fillMaxWidth(),
                 height = 56.dp
@@ -201,12 +204,13 @@ private fun WordOfDayContent(
         Spacer(modifier = Modifier.height(Spacing.md))
 
         // View Previous Words Button
+        val viewPreviousWordsText = stringResource(id = R.string.view_previous_words)
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(animationSpec = tween(AnimationDuration.medium, delayMillis = StaggerDelay.long))
         ) {
             SecondaryButton(
-                text = "View Previous Words",
+                text = viewPreviousWordsText,
                 onClick = onViewPreviousWords,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -248,6 +252,8 @@ private fun HeroWordCard(
                 )
         ) {
             // Favorite button in top right
+            val removeFromFavoritesDesc = stringResource(id = R.string.remove_from_favorites)
+            val addToFavoritesDesc = stringResource(id = R.string.add_to_favorites)
             IconButton(
                 onClick = onToggleFavorite,
                 modifier = Modifier
@@ -256,7 +262,7 @@ private fun HeroWordCard(
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                    contentDescription = if (isFavorite) removeFromFavoritesDesc else addToFavoritesDesc,
                     tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
@@ -311,7 +317,7 @@ private fun HeroWordCard(
                     )
                     Icon(
                         imageVector = Icons.Default.VolumeUp,
-                        contentDescription = "Pronunciation",
+                        contentDescription = stringResource(id = R.string.content_desc_pronunciation),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(20.dp)
                     )
@@ -409,13 +415,13 @@ private fun StreakTrackerCard() {
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Word of the day icon",
+                    contentDescription = stringResource(id = R.string.content_desc_word_of_day_icon),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(Spacing.sm))
                 Text(
-                    text = "Your Streak",
+                    text = stringResource(id = R.string.your_streak),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -427,7 +433,7 @@ private fun StreakTrackerCard() {
             // Encouraging message
             val fireEmoji = if (streakDays > 3) " 🔥" else ""
             Text(
-                text = "You've checked the Word of the Day for $streakDays days in a row!$fireEmoji",
+                text = stringResource(id = R.string.streak_days_message, streakDays) + fireEmoji,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -497,7 +503,7 @@ private fun DayCheckmark(
             if (isChecked) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Checked",
+                    contentDescription = stringResource(id = R.string.content_desc_checked),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.size(20.dp)
                 )
@@ -561,7 +567,7 @@ private fun ErrorState(
         ) {
             Icon(
                 imageVector = Icons.Default.Error,
-                contentDescription = "Error",
+                contentDescription = stringResource(id = R.string.content_desc_error),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.error
             )
@@ -574,9 +580,9 @@ private fun ErrorState(
             )
 
             Button(onClick = onRetry) {
-                Icon(Icons.Default.Refresh, "Retry")
+                Icon(Icons.Default.Refresh, stringResource(id = R.string.content_desc_retry))
                 Spacer(Modifier.width(8.dp))
-                Text("Retry")
+                Text(stringResource(id = R.string.retry))
             }
         }
     }
