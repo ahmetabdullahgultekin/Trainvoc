@@ -177,7 +177,11 @@
     <string name="quiz_matching_desc">Match the correct pairs.</string>
     <string name="quiz_generic_desc">Test your knowledge with %1$s.</string>
     <string name="quit_quiz_title">Quit Quiz?</string>
-    <string name="quit_quiz_message">Are you sure you want to quit? This question will be marked as skipped.</string>
+    <string name="quit_quiz_message">Are you sure you want to quit? Your progress on this quiz session will be lost.</string>
+    <string name="quit_quiz_consequences">• Quiz completion will not be recorded\n• Daily activity won\'t count toward streak\n• Individual word stats are still saved</string>
+    <string name="quit_quiz_score_saved">✓ %1$d correct answers saved to word statistics</string>
+    <string name="quit_quiz_confirm">Quit Quiz</string>
+    <string name="continue_quiz">Continue</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="username_prompt">Let us know your name my friend!</string>
