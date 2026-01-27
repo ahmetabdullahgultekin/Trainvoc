@@ -132,6 +132,7 @@
     <string name="progress_reset">Progress reset</string>
     <string name="reset_progress">Reset your progress</string>
     <string name="logout">Logout</string>
+    <string name="logout_confirmation_message">Are you sure you want to sign out? Your progress will be saved.</string>
     <string name="more_options">More Options</string>
     <string name="close">Close</string>
     <string name="about">About</string>
