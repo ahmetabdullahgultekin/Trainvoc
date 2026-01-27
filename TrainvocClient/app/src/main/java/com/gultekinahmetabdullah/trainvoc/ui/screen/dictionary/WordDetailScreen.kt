@@ -190,7 +190,7 @@ fun WordDetailScreen(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Word not found",
+                contentDescription = stringResource(id = R.string.content_desc_word_not_found),
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(64.dp)
             )
@@ -471,7 +471,7 @@ fun HeroWordSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.VolumeUp,
-                    contentDescription = "Play pronunciation",
+                    contentDescription = stringResource(id = R.string.content_desc_play_pronunciation),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
@@ -523,7 +523,7 @@ fun DefinitionSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.BookmarkBorder,
-                    contentDescription = "No related words",
+                    contentDescription = stringResource(id = R.string.content_desc_no_related_words),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(IconSize.medium)
                 )
@@ -784,7 +784,7 @@ fun StatisticsSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.Star,
-                    contentDescription = "Statistics",
+                    contentDescription = stringResource(id = R.string.content_desc_statistics),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(IconSize.large)
                 )
@@ -855,7 +855,7 @@ fun StatisticsSection(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource(id = R.drawable.outline_timer_24),
-                    contentDescription = "Time",
+                    contentDescription = stringResource(id = R.string.content_desc_time),
                     tint = MaterialTheme.colorScheme.statsTime,
                     modifier = Modifier.size(IconSize.medium)
                 )
@@ -875,7 +875,7 @@ fun StatisticsSection(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_bar_chart_24),
-                    contentDescription = "Last Reviewed",
+                    contentDescription = stringResource(id = R.string.content_desc_last_reviewed),
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(IconSize.medium)
                 )

@@ -16,8 +16,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -136,7 +138,7 @@ private fun PictureMatchGameContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Picture Match",
+        title = stringResource(id = R.string.picture_match),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score
@@ -151,7 +153,7 @@ private fun PictureMatchGameContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -169,7 +171,7 @@ private fun PictureMatchGameContent(
                             )
                         ) {
                             Text(
-                                text = "🔥 ${gameState.streakCount} Streak! Keep going!",
+                                text = stringResource(id = R.string.streak_display, gameState.streakCount),
                                 modifier = Modifier.padding(12.dp),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
@@ -232,11 +234,13 @@ private fun PictureMatchGameContent(
 
                 // Instruction
                 item {
+                    val selectEnglishWord = stringResource(id = R.string.select_english_word)
+                    val selectTurkishMeaning = stringResource(id = R.string.select_turkish_meaning)
                     val instructionText = when (question.questionType) {
                         com.gultekinahmetabdullah.trainvoc.games.PictureMatchGame.QuestionType.MEANING_TO_WORD ->
-                            "Select the English word for this meaning:"
+                            selectEnglishWord
                         com.gultekinahmetabdullah.trainvoc.games.PictureMatchGame.QuestionType.WORD_TO_MEANING ->
-                            "Select the Turkish meaning:"
+                            selectTurkishMeaning
                     }
                     Text(
                         text = instructionText,
@@ -271,11 +275,11 @@ private fun PictureMatchGameContent(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatChip(
-                            label = "Accuracy",
+                            label = stringResource(id = R.string.accuracy),
                             value = "${gameState.accuracy.toInt()}%"
                         )
                         StatChip(
-                            label = "Best Streak",
+                            label = stringResource(id = R.string.best_streak),
                             value = "${gameState.bestStreak}"
                         )
                     }
@@ -326,7 +330,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -339,10 +343,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }

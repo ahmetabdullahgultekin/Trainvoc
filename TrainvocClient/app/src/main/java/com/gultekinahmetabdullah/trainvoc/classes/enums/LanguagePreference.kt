@@ -9,22 +9,13 @@ package com.gultekinahmetabdullah.trainvoc.classes.enums
  * Supported languages:
  * - English (en) - Default
  * - Turkish (tr) - Original app language
- * - Spanish (es) - Sprint 7
- * - German (de) - Sprint 7
- * - French (fr) - Sprint 7
- * - Arabic (ar) - Sprint 7 with RTL support
  */
 enum class LanguagePreference(
     val code: String,
-    val displayName: String,
-    val isRTL: Boolean = false
+    val displayName: String
 ) {
-    ENGLISH("en", "English", false),
-    TURKISH("tr", "Türkçe", false),
-    SPANISH("es", "Español", false),
-    GERMAN("de", "Deutsch", false),
-    FRENCH("fr", "Français", false),
-    ARABIC("ar", "العربية", true);  // RTL language
+    ENGLISH("en", "English"),
+    TURKISH("tr", "Türkçe");
 
     companion object {
         /**
@@ -35,17 +26,10 @@ enum class LanguagePreference(
         }
 
         /**
-         * Get all non-RTL languages
+         * Toggle between English and Turkish
          */
-        fun getLTRLanguages(): List<LanguagePreference> {
-            return entries.filter { !it.isRTL }
-        }
-
-        /**
-         * Get all RTL languages
-         */
-        fun getRTLLanguages(): List<LanguagePreference> {
-            return entries.filter { it.isRTL }
+        fun toggle(current: LanguagePreference): LanguagePreference {
+            return if (current == ENGLISH) TURKISH else ENGLISH
         }
     }
 }

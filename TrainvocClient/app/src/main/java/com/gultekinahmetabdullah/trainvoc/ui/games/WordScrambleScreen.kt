@@ -8,10 +8,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -59,10 +61,12 @@ fun WordScrambleScreen(
         }
 
         is WordScrambleUiState.ShowingFeedback -> {
+            val correctFeedback = stringResource(id = R.string.correct_feedback)
+            val incorrectFeedback = stringResource(id = R.string.incorrect_feedback)
             WordScrambleContent(
                 gameState = state.gameState,
                 currentInput = state.answer,
-                feedbackMessage = if (state.isCorrect) "Correct! ✓" else "Incorrect! ✗",
+                feedbackMessage = if (state.isCorrect) correctFeedback else incorrectFeedback,
                 onInputChange = { },
                 onSubmit = { },
                 onHint = { },
@@ -139,7 +143,7 @@ private fun WordScrambleContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Word Scramble",
+        title = stringResource(id = R.string.word_scramble),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score
@@ -154,7 +158,7 @@ private fun WordScrambleContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -175,7 +179,7 @@ private fun WordScrambleContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Unscramble this word:",
+                                text = stringResource(id = R.string.unscramble_this_word),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -189,7 +193,7 @@ private fun WordScrambleContent(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Hint: ${question.hint}",
+                                text = stringResource(id = R.string.hint_label, question.hint),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                             )
@@ -202,7 +206,7 @@ private fun WordScrambleContent(
                     GameTextField(
                         value = currentInput,
                         onValueChange = onInputChange,
-                        placeholder = "Type your answer...",
+                        placeholder = stringResource(id = R.string.type_your_answer),
                         onSubmit = onSubmit,
                         isError = feedbackMessage?.contains("Incorrect") == true
                     )
@@ -243,9 +247,9 @@ private fun WordScrambleContent(
                             onClick = onSkip,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.SkipNext, contentDescription = "Skip question")
+                            Icon(Icons.Default.SkipNext, contentDescription = stringResource(id = R.string.content_desc_skip_question))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Skip")
+                            Text(stringResource(id = R.string.skip))
                         }
                         HintButton(
                             onClick = onHint,
@@ -261,7 +265,7 @@ private fun WordScrambleContent(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = currentInput.isNotBlank() && feedbackMessage == null
                     ) {
-                        Text("Submit Answer")
+                        Text(stringResource(id = R.string.submit_answer))
                     }
                 }
 
@@ -272,15 +276,15 @@ private fun WordScrambleContent(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatsCard(
-                            label = "Correct",
+                            label = stringResource(id = R.string.correct_count),
                             value = "${gameState.correctAnswers}"
                         )
                         StatsCard(
-                            label = "Accuracy",
+                            label = stringResource(id = R.string.accuracy),
                             value = "${gameState.accuracy.toInt()}%"
                         )
                         StatsCard(
-                            label = "Hints",
+                            label = stringResource(id = R.string.hints_used),
                             value = "${gameState.hintsUsed}"
                         )
                     }

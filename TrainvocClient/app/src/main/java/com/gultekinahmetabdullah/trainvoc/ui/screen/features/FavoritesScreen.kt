@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
 import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
@@ -48,17 +50,17 @@ fun FavoritesScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Favorites (${favoriteWords.size})")
+                    Text(stringResource(id = R.string.favorites_count, favoriteWords.size))
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back))
                     }
                 },
                 actions = {
                     if (favoriteWords.isNotEmpty()) {
                         IconButton(onClick = { showClearDialog = true }) {
-                            Icon(Icons.Default.DeleteSweep, "Clear all")
+                            Icon(Icons.Default.DeleteSweep, stringResource(id = R.string.content_desc_clear_all))
                         }
                     }
                 }
@@ -68,8 +70,8 @@ fun FavoritesScreen(
             if (favoriteWords.isNotEmpty()) {
                 ExtendedFloatingActionButton(
                     onClick = onPracticeFavorites,
-                    icon = { Icon(Icons.Default.PlayArrow, "Practice") },
-                    text = { Text("Practice All") }
+                    icon = { Icon(Icons.Default.PlayArrow, stringResource(id = R.string.content_desc_practice)) },
+                    text = { Text(stringResource(id = R.string.practice_all)) }
                 )
             }
         }
@@ -86,12 +88,12 @@ fun FavoritesScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(Spacing.medium),
-                placeholder = { Text("Search favorites...") },
-                leadingIcon = { Icon(Icons.Default.Search, "Search") },
+                placeholder = { Text(stringResource(id = R.string.search_favorites)) },
+                leadingIcon = { Icon(Icons.Default.Search, stringResource(id = R.string.content_desc_search)) },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                            Icon(Icons.Default.Clear, "Clear")
+                            Icon(Icons.Default.Clear, stringResource(id = R.string.content_desc_clear))
                         }
                     }
                 },
@@ -106,7 +108,7 @@ fun FavoritesScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         RollingCatLoaderWithText(
-                            message = "Loading favorites...",
+                            message = stringResource(id = R.string.loading_favorites),
                             size = LoaderSize.medium
                         )
                     }
@@ -148,9 +150,9 @@ fun FavoritesScreen(
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Clear All Favorites?") },
+            title = { Text(stringResource(id = R.string.clear_all_favorites)) },
             text = {
-                Text("This will remove all ${favoriteWords.size} words from your favorites. This action cannot be undone.")
+                Text(stringResource(id = R.string.clear_favorites_message, favoriteWords.size))
             },
             confirmButton = {
                 TextButton(
@@ -159,12 +161,12 @@ fun FavoritesScreen(
                         showClearDialog = false
                     }
                 ) {
-                    Text("Clear All", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(id = R.string.clear_all), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )
@@ -173,6 +175,11 @@ fun FavoritesScreen(
 
 @Composable
 private fun EmptyFavoritesState(hasSearchQuery: Boolean) {
+    val noMatchingFavoritesText = stringResource(id = R.string.no_matching_favorites)
+    val noFavoritesYetText = stringResource(id = R.string.no_favorites_yet)
+    val tryDifferentSearchText = stringResource(id = R.string.try_different_search)
+    val tapHeartText = stringResource(id = R.string.tap_heart_to_add)
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -183,22 +190,22 @@ private fun EmptyFavoritesState(hasSearchQuery: Boolean) {
         ) {
             Icon(
                 imageVector = if (hasSearchQuery) Icons.Default.SearchOff else Icons.Default.FavoriteBorder,
-                contentDescription = "No favorites",
+                contentDescription = stringResource(id = R.string.content_desc_no_favorites),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
-                text = if (hasSearchQuery) "No matching favorites" else "No favorites yet",
+                text = if (hasSearchQuery) noMatchingFavoritesText else noFavoritesYetText,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = if (hasSearchQuery)
-                    "Try a different search term"
+                    tryDifferentSearchText
                 else
-                    "Tap the heart icon on any word to add it to your favorites",
+                    tapHeartText,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -248,7 +255,7 @@ private fun FavoriteWordCard(
             IconButton(onClick = onRemove) {
                 Icon(
                     Icons.Default.Favorite,
-                    "Remove from favorites",
+                    stringResource(id = R.string.content_desc_remove_favorite),
                     tint = MaterialTheme.colorScheme.error
                 )
             }

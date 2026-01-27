@@ -210,4 +210,877 @@
     <string name="no_favorites_message">Favori kelimeleriniz burada görünecek. Kelime eklemeye başlayın!</string>
     <string name="dictionary_empty_title">Sözlük Boş</string>
     <string name="dictionary_empty_message">Henüz kelime yüklenmedi. Test başlatarak kelime yükleyin veya daha sonra tekrar deneyin.</string>
+
+    <!-- Settings Screen Sections -->
+    <string name="theme_customization">Tema Özelleştirme</string>
+    <string name="color_palette">Renk Paleti</string>
+    <string name="amoled">AMOLED</string>
+    <string name="account">Hesap</string>
+    <string name="profile_subtitle">Profilinizi görüntüleyin ve düzenleyin</string>
+    <string name="daily_goals_subtitle">Günlük öğrenme hedeflerinizi belirleyin ve takip edin</string>
+    <string name="social_achievements">Sosyal ve Başarılar</string>
+    <string name="achievements_subtitle">Kazanılan başarılarınızı görüntüleyin</string>
+    <string name="leaderboard_subtitle">Yakında - Dünya genelinde yarışın</string>
+    <string name="word_progress">Kelime İlerlemesi</string>
+    <string name="word_progress_subtitle">Kelime gelişiminizi takip edin</string>
+    <string name="backup_sync">Yedekleme ve Senkronizasyon</string>
+    <string name="backup_restore">Yedekle ve Geri Yükle</string>
+    <string name="backup_restore_subtitle">Bulut yedeklerinizi yönetin</string>
+    <string name="sync_now">Şimdi Senkronize Et</string>
+    <string name="items_pending_sync">%1$d öğe senkronizasyon bekliyor</string>
+    <string name="all_data_synced">Tüm veriler senkronize edildi</string>
+    <string name="login_to_enable_sync">Senkronizasyon için giriş yapın</string>
+    <string name="sync_started">Senkronizasyon başladı</string>
+    <string name="please_login_to_sync">Senkronizasyonu etkinleştirmek için lütfen giriş yapın</string>
+    <string name="accessibility">Erişilebilirlik</string>
+    <string name="accessibility_settings">Erişilebilirlik Ayarları</string>
+    <string name="accessibility_subtitle">İhtiyaçlarınıza göre özelleştirin</string>
+    <string name="audio_pronunciation">Ses ve Telaffuz</string>
+    <string name="enable_pronunciation">Telaffuz Sesini Etkinleştir</string>
+    <string name="pronunciation_hint">Telaffuz dinlemek için kelime kartlarındaki hoparlör düğmelerini kullanın</string>
+    <string name="other_actions">Diğer İşlemler</string>
+    <string name="manage_words_subtitle">Kelime ekle, düzenle veya kaldır</string>
+
+    <!-- Content Descriptions -->
+    <string name="content_desc_back">Geri git</string>
+    <string name="content_desc_menu">Menüyü aç</string>
+    <string name="content_desc_close">Kapat</string>
+    <string name="content_desc_settings">Ayarlar</string>
+    <string name="content_desc_search">Ara</string>
+    <string name="content_desc_speaker">Telaffuzu dinle</string>
+    <string name="content_desc_favorite">Favori durumunu değiştir</string>
+    <string name="content_desc_level_indicator">Seviye göstergesi</string>
+
+    <!-- Common Actions -->
+    <string name="retry">Tekrar Dene</string>
+    <string name="save">Kaydet</string>
+    <string name="delete">Sil</string>
+    <string name="edit">Düzenle</string>
+    <string name="confirm">Onayla</string>
+    <string name="ok">Tamam</string>
+
+    <!-- Error Messages -->
+    <string name="error_generic">Bir şeyler yanlış gitti</string>
+    <string name="error_network">Ağ hatası. Lütfen bağlantınızı kontrol edin.</string>
+    <string name="error_loading">Veri yüklenemedi</string>
+    <string name="error_saving">Kaydedilemedi</string>
+
+    <!-- Empty States -->
+    <string name="empty_results">Sonuç bulunamadı</string>
+    <string name="empty_history">Henüz geçmiş yok</string>
+
+    <!-- Time Formats -->
+    <string name="seconds_format">%1$d sn</string>
+    <string name="minutes_format">%1$d dk</string>
+    <string name="hours_format">%1$d sa</string>
+    <string name="days_format">%1$d gün</string>
+    <string name="never">Hiçbir zaman</string>
+    <string name="today">Bugün</string>
+    <string name="yesterday">Dün</string>
+
+    <!-- Quiz Results -->
+    <string name="quiz_complete">Test Tamamlandı!</string>
+    <string name="your_score">Puanınız</string>
+    <string name="time_taken">Geçen Süre</string>
+    <string name="try_again">Tekrar Dene</string>
+    <string name="view_results">Sonuçları Gör</string>
+    <string name="return_home">Ana Sayfaya Dön</string>
+
+    <!-- Profile Screen -->
+    <string name="total_xp">Toplam XP</string>
+    <string name="current_streak">Mevcut Seri</string>
+    <string name="longest_streak">En Uzun Seri</string>
+    <string name="words_learned">Öğrenilen Kelimeler</string>
+    <string name="accuracy">Doğruluk</string>
+    <string name="member_since">%1$s tarihinden beri üye</string>
+    <string name="member_since_label">Üyelik Başlangıcı</string>
+    <string name="level_format">Seviye %1$d</string>
+    <string name="no_achievements_yet">Henüz başarı yok</string>
+    <string name="keep_learning_to_unlock">Başarıları açmak için öğrenmeye devam edin!</string>
+    <string name="tap_to_change_avatar">Avatarı değiştirmek için dokunun</string>
+    <string name="username_cannot_be_empty">Kullanıcı adı boş olamaz</string>
+    <string name="username_min_length">Kullanıcı adı en az 3 karakter olmalı</string>
+    <string name="username_max_length">Kullanıcı adı en fazla 20 karakter olmalı</string>
+
+    <!-- Review Mode -->
+    <string name="review_mode">Gözden Geçirme Modu</string>
+    <string name="review_mode_title">Gözden Geçirme Modu</string>
+    <string name="review_words_to_practice">Çalışılacak kelimeler</string>
+    <string name="no_words_to_review">Şu an gözden geçirilecek kelime yok</string>
+    <string name="review_complete">Gözden geçirme tamamlandı!</string>
+
+    <!-- Dictionary Screen -->
+    <string name="dictionary">Sözlük</string>
+    <string name="all_words">Tüm Kelimeler</string>
+    <string name="filter_by_level">Seviyeye Göre Filtrele</string>
+    <string name="sort_by">Sırala</string>
+    <string name="alphabetical">Alfabetik</string>
+    <string name="by_level">Seviyeye Göre</string>
+    <string name="by_date">Tarihe Göre</string>
+    <string name="recently_added">Son Eklenenler</string>
+
+    <!-- Missing strings from English -->
+    <string name="actions">İşlemler</string>
+    <string name="edit_profile">Profili Düzenle</string>
+    <string name="view_leaderboard">Liderlik Tablosunu Gör</string>
+    <string name="sign_in">Giriş Yap</string>
+    <string name="sign_out">Çıkış Yap</string>
+    <string name="games">Oyunlar</string>
+    <string name="clear_search">Aramayı temizle</string>
+    <string name="recent_searches">Son Aramalar</string>
+    <string name="search_history">Arama geçmişi</string>
+    <string name="cloud_backup">Bulut Yedekleme</string>
+    <string name="back">Geri</string>
+    <string name="back_to_previous_screen">Önceki ekrana geri dön</string>
+    <string name="refresh">Yenile</string>
+    <string name="refresh_backup_list">Yedek listesini yenile</string>
+    <string name="profile">Profil</string>
+    <string name="question_number">Soru %1$d</string>
+    <string name="correct_label">doğru</string>
+    <string name="incorrect_label">yanlış</string>
+    <string name="skipped_label">atlandı</string>
+    <string name="performance_trends">Performans Eğilimleri</string>
+    <string name="time_based_trends_coming_soon">Günlük ve haftalık eğilimler yakında</string>
+    <string name="daily_label">Günlük</string>
+    <string name="weekly_label">Haftalık</string>
+    <string name="total_label">Toplam</string>
+    <string name="refresh_stats">İstatistikleri Yenile</string>
+    <string name="faq_how_to_backup_desc">Ayarlar > Yedekleme bölümünden yerel yedekleme yapabilirsiniz. Google Drive\'a bulut yedekleme yakında geliyor!</string>
+
+    <!-- Authentication -->
+    <string name="welcome_back">Tekrar Hoş Geldiniz!</string>
+    <string name="login_subtitle">Cihazlar arasında ilerlemenizi senkronize etmek için giriş yapın</string>
+    <string name="login">Giriş Yap</string>
+    <string name="username">Kullanıcı Adı</string>
+    <string name="password">Şifre</string>
+    <string name="email">E-posta</string>
+    <string name="confirm_password">Şifreyi Onayla</string>
+    <string name="show_password">Şifreyi göster</string>
+    <string name="hide_password">Şifreyi gizle</string>
+    <string name="no_account">Hesabınız yok mu?</string>
+    <string name="create_account">Hesap Oluştur</string>
+    <string name="skip_login">Hesap olmadan devam et</string>
+    <string name="register_title">Hesabınızı Oluşturun</string>
+    <string name="register_subtitle">İlerlemenizi senkronize etmek ve arkadaşlarınızla yarışmak için Trainvoc\'a katılın</string>
+    <string name="username_hint">En az 3 karakter</string>
+    <string name="password_hint">En az 6 karakter</string>
+    <string name="already_have_account">Zaten hesabınız var mı?</string>
+    <string name="display_name">Görünen Ad</string>
+    <string name="display_name_hint">İsteğe bağlı - Diğerlerinin sizi göreceği ad</string>
+    <string name="forgot_password">Şifrenizi mi unuttunuz?</string>
+    <string name="forgot_password_title">Şifre Sıfırla</string>
+    <string name="forgot_password_description">E-posta adresinizi girin, size şifre sıfırlama bağlantısı göndereceğiz.</string>
+    <string name="send_reset_email">Sıfırlama E-postası Gönder</string>
+    <string name="cancel">İptal</string>
+    <string name="password_reset_sent">Şifre sıfırlama e-postası gönderildi! Gelen kutunuzu kontrol edin.</string>
+
+    <!-- Home Screen Gamification -->
+    <string name="username_placeholder">Kullanıcı</string>
+    <string name="daily_tasks">Günlük Görevler</string>
+    <string name="task_solve_quizzes">3 Test Çöz</string>
+    <string name="task_learn_words">10 Yeni Kelime Öğren</string>
+    <string name="task_earn_achievement">1 Başarı Kazan</string>
+    <string name="achievements">Başarılar</string>
+    <string name="achievement_first_quiz">İlk Test</string>
+    <string name="achievement_streak_day">Seri Günü</string>
+    <string name="achievement_100_words">100 Kelime</string>
+    <string name="categories">Kategoriler</string>
+    <string name="category_general">Genel</string>
+    <string name="category_targeted">Hedefli</string>
+    <string name="category_quick">Hızlı</string>
+    <string name="quick_access">Hızlı Erişim</string>
+    <string name="word_of_the_day">Günün Kelimesi</string>
+    <string name="favorites">Favoriler</string>
+    <string name="last_quiz">Son Test</string>
+    <string name="xp_progress">%1$d / %2$d XP</string>
+    <string name="task_progress">%1$d/%2$d</string>
+
+    <!-- Notification Strings -->
+    <string name="notification_channel_name">Kelime Hatırlatıcıları</string>
+    <string name="notification_learned_title">Hatırlıyor musun?</string>
+    <string name="notification_learned_message">\"%1$s\" kelimesini hatırlıyor musun?</string>
+    <string name="notification_new_title">Biliyor musun?</string>
+    <string name="notification_new_message">\"%1$s\" kelimesinin anlamını biliyor musun?</string>
+
+    <!-- Accessibility Descriptions -->
+    <string name="decorative_background">Dekoratif arka plan resmi</string>
+    <string name="start_quiz_button">Teste başla</string>
+    <string name="achievement_first_place">Birinci sıra başarısı - Altın madalya</string>
+    <string name="achievement_streak">Günlük seri başarısı - Ateş simgesi</string>
+    <string name="achievement_books">Kitaplar başarısı - Öğrenme dönüm noktası</string>
+    <string name="achievement_locked">Kilitli başarı - Açmak için görevleri tamamlayın</string>
+    <string name="category_brain_training">Beyin eğitimi kategorisi</string>
+    <string name="category_target_practice">Hedef pratik kategorisi</string>
+    <string name="category_quick_quiz">Hızlı test kategorisi</string>
+    <string name="quick_access_word_of_day">Günün kelimesi - Yıldız simgesi</string>
+    <string name="quick_access_favorites">Favoriler - Kalp simgesi</string>
+    <string name="quick_access_last_quiz">Son test - Saat simgesi</string>
+    <string name="statistics_icon">İstatistik bilgisi</string>
+    <string name="trophy_icon">Kupa simgesi</string>
+    <string name="statistics">İstatistikler</string>
+    <string name="success_rate_percent">Başarı Oranı: %1$d%%</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_daily_reminder">Günlük Hatırlatıcılar</string>
+    <string name="channel_daily_reminder_desc">Kelime pratiği için günlük öğrenme hatırlatıcıları</string>
+    <string name="channel_streak_alert">Seri Uyarıları</string>
+    <string name="channel_streak_alert_desc">Öğrenme seriniz hakkında bildirimler</string>
+    <string name="channel_word_of_day">Günün Kelimesi</string>
+    <string name="channel_word_of_day_desc">Günlük öne çıkan kelime bildirimi</string>
+    <string name="channel_general">Genel</string>
+    <string name="channel_general_desc">Genel uygulama bildirimleri</string>
+
+    <!-- Daily Reminder Notifications -->
+    <string name="notification_daily_title">Pratik zamanı!</string>
+    <string name="notification_daily_message">Bugün öğrenme serini sürdür</string>
+    <string name="notification_daily_message_expanded">Bugün pratik yapmayı unutma! Öğrenme serini canlı tut ve kelime hazineni geliştir.</string>
+
+    <!-- Streak Alert Notifications -->
+    <string name="notification_streak_danger_title">%1$d günlük serini bozma!</string>
+    <string name="notification_streak_danger_message">Bugün pratik yapmadın. %1$d günlük serini canlı tut!</string>
+    <string name="notification_streak_milestone_title">Harika! %1$d günlük seri!</string>
+    <string name="notification_streak_milestone_message">%1$d günlük öğrenme serin için tebrikler! Böyle devam et!</string>
+
+    <!-- Word of the Day Notifications -->
+    <string name="notification_wotd_title">Günün Kelimesi</string>
+    <string name="notification_wotd_message">%1$s - %2$s\nSeviye: %3$s</string>
+
+    <!-- Word Quiz Notification Channel -->
+    <string name="channel_word_quiz">Kelime Testi</string>
+    <string name="channel_word_quiz_desc">Etkileşimli kelime testi bildirimleri</string>
+
+    <!-- Word Quiz Notification Content -->
+    <string name="word_quiz_title">Trainvoc Kelime Testi</string>
+    <string name="word_quiz_question">Bu kelimeyi biliyor musun?</string>
+
+    <!-- Word Quiz Notification Actions -->
+    <string name="i_know_it">Biliyorum</string>
+    <string name="show_answer">Cevabı Göster</string>
+    <string name="skip">Atla</string>
+    <string name="got_it">Anladım ✓</string>
+    <string name="need_practice">Pratik Gerekli</string>
+    <string name="next_word">Sonraki</string>
+
+    <!-- Word Quiz Feedback -->
+    <string name="great_job">Harika!</string>
+    <string name="word_marked_correct">\"%1$s\" bilinen olarak işaretlendi</string>
+    <string name="keep_practicing">Pratik yapmaya devam!</string>
+    <string name="word_marked_wrong">\"%1$s\" pratik listesine eklendi</string>
+
+    <!-- Widget Descriptions -->
+    <string name="widget_streak_description">Öğrenme serini ana ekranda takip et</string>
+    <string name="widget_goals_description">Günlük öğrenme hedefleri ilerlemenizi izle</string>
+
+    <!-- Quiz Exam Menu -->
+    <string name="select_level_and_exam">Seviye ve Sınav Seç</string>
+    <string name="words_mastered">%1$d kelime öğrenildi</string>
+    <string name="words_available">%1$d kelime mevcut</string>
+    <string name="difficulty_beginner">★☆☆</string>
+    <string name="difficulty_elementary">★★☆</string>
+    <string name="difficulty_intermediate">★★★</string>
+    <string name="difficulty_upper_intermediate">★★★★</string>
+    <string name="difficulty_advanced">★★★★★</string>
+    <string name="difficulty_proficient">★★★★★★</string>
+    <string name="toefl_description">Yabancı Dil Olarak İngilizce Sınavı</string>
+    <string name="ielts_description">Uluslararası İngilizce Dil Test Sistemi</string>
+    <string name="yds_description">Yabancı Dil Sınavı</string>
+    <string name="yokdil_description">YÖK Yabancı Dil Sınavı - Akademik Yabancı Dil Sınavı</string>
+    <string name="general_vocab_title">Genel Kelime</string>
+    <string name="general_vocab_description">Çok amaçlı kelime pratiği</string>
+    <string name="complete_level_first">Önce %1$s seviyesini tamamlayın</string>
+    <string name="your_current_level">Seviyeniz</string>
+    <string name="locked_level_description">Seviye %1$s kilitli</string>
+
+    <!-- German -->
+    <string name="german">Almanca</string>
+    <string name="arabic">Arapça</string>
+
+    <!-- Dictionary Screen Extended -->
+    <string name="practice">Pratik</string>
+    <string name="share">Paylaş</string>
+    <string name="practice_word">Kelime pratiği</string>
+    <string name="share_word">Kelimeyi paylaş</string>
+    <string name="add_to_favorites">Favorilere ekle</string>
+    <string name="remove_from_favorites">Favorilerden kaldır</string>
+    <string name="pronunciation">Telaffuz</string>
+    <string name="content_desc_pronunciation">Telaffuzu dinle</string>
+    <string name="content_desc_alphabet_nav">Alfabe navigasyonu. Bir harfle başlayan kelimelere atlamak için sürükleyin.</string>
+    <string name="content_desc_jump_letter">%1$s harfine atla</string>
+
+    <!-- Home Screen -->
+    <string name="quick_actions">Hızlı İşlemler</string>
+    <string name="start_quiz_action">Teste Başla</string>
+    <string name="your_stats">İstatistikleriniz</string>
+    <string name="recent_achievements">Son Başarılar</string>
+    <string name="more">Daha Fazla</string>
+    <string name="memory_games">Hafıza Oyunları</string>
+    <string name="quizzes">Testler</string>
+
+    <!-- Backup Screen -->
+    <string name="local">Yerel</string>
+    <string name="cloud">Bulut</string>
+    <string name="json">JSON</string>
+    <string name="csv">CSV</string>
+    <string name="clean_up_old_backups">Eski Yedekleri Temizle</string>
+    <string name="restore">Geri Yükle</string>
+    <string name="backup_success">Yedekleme başarılı!\n%1$d kelime yedeklendi</string>
+    <string name="restore_success">Veri başarıyla geri yüklendi!</string>
+    <string name="create_backup">Yedek Oluştur</string>
+    <string name="backup_format">Yedek Formatı</string>
+    <string name="export_data">Veri Dışa Aktar</string>
+    <string name="export_data_desc">Kelime verilerinizin yedeğini oluşturun</string>
+    <string name="content_desc_export">Kelime verilerini dışa aktar</string>
+    <string name="exporting_progress">Dışa aktarılıyor… %1$d%%</string>
+    <string name="import_data">Veri İçe Aktar</string>
+    <string name="import_data_desc">Yedek dosyasından geri yükle</string>
+    <string name="content_desc_import">Kelime verilerini içe aktar</string>
+    <string name="importing_progress">İçe aktarılıyor… %1$d%%</string>
+    <string name="restore_success_details">Veri başarıyla geri yüklendi!\n%1$d kelime geri yüklendi\n%2$d çakışma çözüldü</string>
+    <string name="available_backups">Mevcut Yedekler (%1$d)</string>
+    <string name="content_desc_no_backups_found">Yedek dosyası bulunamadı</string>
+    <string name="no_backups_found">Yedek bulunamadı</string>
+    <string name="words_count">%1$d kelime</string>
+    <string name="cloud_sync_not_available">Bulut Senkronizasyonu Mevcut Değil</string>
+    <string name="cloud_sync_explanation">Tam bulut yedekleme henüz uygulanmadı. Şu anda yalnızca başarılar Google Play Games ile senkronize ediliyor.\n\nKelime verilerinizin manuel yedeklerini oluşturmak için Yerel sekmesini kullanın.</string>
+    <string name="what_works_now">Şu An Çalışanlar</string>
+    <string name="what_works_list">✓ Google Play Games ile başarı senkronizasyonu\n✓ Yerel yedekler (JSON/CSV dışa aktarma)\n✓ Manuel veri içe/dışa aktarma\n✓ Yerel yedek dosya yönetimi</string>
+    <string name="coming_in_future">Gelecek Güncellemelerde</string>
+    <string name="coming_features_list">• Tam kelime bulut yedekleme\n• Cihazlar arası otomatik senkronizasyon\n• Google Drive entegrasyonu\n• Dropbox entegrasyonu\n• Özel backend desteği</string>
+    <string name="use_local_backups">Bunun Yerine Yerel Yedekleri Kullanın</string>
+    <string name="local_backup_instructions">Şimdilik lütfen Yerel sekmesini kullanın:\n• Yedek dosyaları oluşturun (JSON veya CSV formatı)\n• Cihaz depolamanıza dışa aktarın\n• E-posta, bulut hizmetleri vb. ile paylaşın\n• Önceki yedeklerden içe aktarın</string>
+    <string name="backup_tip">💡 İpucu: Verilerinizi güvende tutmak için düzenli olarak dışa aktarın!</string>
+    <string name="content_desc_coming_soon">Yakında gelecek özellikler</string>
+    <string name="content_desc_file_storage">Dosya depolama konumu</string>
+    <string name="content_desc_backup_info">Yedekleme bilgisi</string>
+    <string name="content_desc_export_success">Dışa aktarma başarılı</string>
+    <string name="content_desc_backup_error">Yedekleme hatası</string>
+    <string name="content_desc_backup_success">Yedekleme başarılı</string>
+
+    <!-- Multiplayer -->
+    <string name="game_lobby">Oyun Lobisi</string>
+    <string name="start_game">Oyunu Başlat</string>
+    <string name="room_code_copied">Oda kodu kopyalandı!</string>
+    <string name="content_desc_leave">Ayrıl</string>
+    <string name="content_desc_copy_code">Kodu kopyala</string>
+    <string name="content_desc_host">Ev sahibi</string>
+    <string name="content_desc_kick_player">Oyuncuyu çıkar</string>
+    <string name="waiting_for_players">Oyuncular bekleniyor…</string>
+    <string name="ready">Hazır</string>
+    <string name="leave_game">Oyundan ayrıl</string>
+    <string name="join_room">Odaya Katıl</string>
+    <string name="room_code">Oda Kodu</string>
+    <string name="join">Katıl</string>
+    <string name="enter_password">Şifre Girin</string>
+    <string name="room_requires_password">\'%1$s\' odası şifre gerektiriyor.</string>
+    <string name="content_desc_refresh">Yenile</string>
+    <string name="content_desc_password_protected">Şifre korumalı</string>
+    <string name="create_room">Oda Oluştur</string>
+    <string name="require_password">Katılmak için şifre gereksin</string>
+    <string name="room_password">Oda Şifresi</string>
+    <string name="time_per_question">Soru başına süre: %1$d sn</string>
+    <string name="number_of_questions">Soru Sayısı</string>
+    <string name="host_participates">Ev sahibi oyuna katılsın</string>
+    <string name="creating_room">Oda Oluşturuluyor…</string>
+    <string name="available_rooms">Mevcut Odalar</string>
+    <string name="rooms_count">%1$d oda</string>
+    <string name="host_name">Ev Sahibi: %1$s</string>
+    <string name="level_label">Seviye: %1$s</string>
+    <string name="players_count">%1$d/%2$d</string>
+    <string name="your_info">Bilgileriniz</string>
+    <string name="game_settings">Oyun Ayarları</string>
+    <string name="difficulty_level">Zorluk Seviyesi</string>
+    <string name="answer_options">Cevap Seçenekleri: %1$d</string>
+    <string name="room_label">Oda: %1$s</string>
+    <string name="winner">Kazanan!</string>
+    <string name="game_over">Oyun Bitti</string>
+    <string name="play_again">Tekrar Oyna</string>
+    <string name="content_desc_winner">Kazanan</string>
+    <string name="play_with_friends">Arkadaşlarla Oyna</string>
+    <string name="create_join_rooms">Oda Oluştur ve Katıl</string>
+    <string name="realtime_competition">Gerçek Zamanlı Yarışma</string>
+    <string name="reconnect">Yeniden Bağlan</string>
+
+    <!-- Tutorial -->
+    <string name="skip_tutorial">Atla</string>
+    <string name="show_tutorial">Öğreticiyi Göster</string>
+    <string name="content_desc_help">Yardım</string>
+
+    <!-- Games Common -->
+    <string name="main_menu">Ana Menü</string>
+    <string name="select_difficulty">Zorluk Seç</string>
+    <string name="hint_remaining">İpucu (%1$d)</string>
+    <string name="game_paused">Oyun Duraklatıldı</string>
+    <string name="take_a_break">Bir mola verin! Hazır olduğunuzda devam edin.</string>
+    <string name="resume">Devam Et</string>
+    <string name="quit">Çık</string>
+    <string name="content_desc_card_face_down">Kart yüzü aşağı</string>
+    <string name="content_desc_get_hint">İpucu al</string>
+    <string name="content_desc_achievement_unlocked">Başarı kazanıldı</string>
+    <string name="loading_game">Oyun yükleniyor…</string>
+    <string name="select_grid_size">Izgara Boyutu Seç</string>
+    <string name="combo">Kombo</string>
+    <string name="best_streak">En İyi Seri</string>
+    <string name="matched">Eşleşen</string>
+    <string name="best">En İyi</string>
+    <string name="apm">DDS</string>
+    <string name="total_answered">Toplam Cevaplanan</string>
+    <string name="max_combo">Maks Kombo</string>
+    <string name="answers_per_min">Cevap/Dakika</string>
+    <string name="games_played">Oynanan Oyunlar</string>
+    <string name="best_accuracy">En İyi Doğruluk</string>
+    <string name="favorite_game">Favori</string>
+    <string name="difficulty">Zorluk</string>
+    <string name="perfect">Mükemmel</string>
+    <string name="hints_used">Kullanılan İpucu</string>
+    <string name="clues_used">Kullanılan İpucu</string>
+    <string name="correct_count">Doğru</string>
+
+    <!-- Specific Games -->
+    <string name="word_detective">Kelime Dedektifi</string>
+    <string name="more_hints">Daha Fazla İpucu</string>
+    <string name="content_desc_hints">İpuçları</string>
+    <string name="content_desc_reveal_hint">İpucu göster</string>
+    <string name="content_desc_skip_question">Soruyu atla</string>
+    <string name="translation_race">Çeviri Yarışı</string>
+    <string name="content_desc_translation_direction">Çeviri yönü</string>
+    <string name="picture_match">Resim Eşleştirme</string>
+    <string name="spelling_challenge">Yazım Testi</string>
+    <string name="type_your_answer">Cevabınızı yazın…</string>
+    <string name="hint">İpucu</string>
+    <string name="submit">Gönder</string>
+    <string name="content_desc_show_hint">İpucu göster</string>
+    <string name="fill_in_blank">Boşluk Doldur</string>
+    <string name="your_answer">Cevabınız</string>
+    <string name="type_the_word">Kelimeyi yazın…</string>
+    <string name="content_desc_toggle_hint">İpucu değiştir</string>
+    <string name="flip_cards">Kart Çevir</string>
+    <string name="listening_quiz">Dinleme Testi</string>
+    <string name="content_desc_audio">Ses</string>
+    <string name="content_desc_play_audio">Sesi oynat</string>
+    <string name="multiple_choice_game">Çoktan Seçmeli</string>
+    <string name="speed_match">Hızlı Eşleştirme</string>
+    <string name="word_scramble">Kelime Karıştırma</string>
+    <string name="submit_answer">Cevabı Gönder</string>
+
+    <!-- Daily Goals Screen -->
+    <string name="words_learned_today">Bugün Öğrenilen Kelimeler</string>
+    <string name="quizzes_completed">Tamamlanan Testler</string>
+    <string name="study_time_minutes">Çalışma Süresi (dakika)</string>
+    <string name="reviews_completed">Tamamlanan Tekrarlar</string>
+    <string name="content_desc_daily_goal_icon">Günlük hedef simgesi</string>
+
+    <!-- Profile Screen -->
+    <string name="view_all">Tümünü Gör</string>
+    <string name="choose_avatar">Avatar Seç</string>
+    <string name="done">Tamam</string>
+    <string name="content_desc_change_avatar">Avatar değiştir</string>
+    <string name="content_desc_user_level">Kullanıcı seviyesi %1$d</string>
+    <string name="content_desc_current_streak">Mevcut seri: %1$d gün</string>
+    <string name="content_desc_longest_streak">En uzun seri: %1$d gün</string>
+    <string name="content_desc_member_since">Üyelik tarihi</string>
+    <string name="content_desc_view_all_achievements">Tüm başarıları gör</string>
+    <string name="content_desc_no_achievements">Henüz başarı kazanılmadı</string>
+    <string name="content_desc_go">Git</string>
+    <string name="content_desc_selected">Seçildi</string>
+
+    <!-- Accessibility Settings Screen -->
+    <string name="visual">Görsel</string>
+    <string name="high_contrast_mode">Yüksek Kontrast Modu</string>
+    <string name="high_contrast_desc">Daha iyi görünürlük için kontrastı artır</string>
+    <string name="color_blind_friendly">Renk Körlüğü Dostu</string>
+    <string name="color_blind_desc">Renk görme bozukluğu için optimize edilmiş renkler kullan</string>
+    <string name="text_size">Metin Boyutu</string>
+    <string name="text_size_adjust">Metin boyutunu ayarla: %1$d%%</string>
+    <string name="interaction">Etkileşim</string>
+    <string name="haptic_feedback">Dokunsal Geri Bildirim</string>
+    <string name="haptic_feedback_desc">Etkileşimler için titreşim geri bildirimi</string>
+    <string name="reduce_motion">Hareketi Azalt</string>
+    <string name="reduce_motion_desc">Animasyonları ve geçişleri minimuma indir</string>
+    <string name="preview">Önizleme</string>
+    <string name="content_desc_accessibility_icon">Erişilebilirlik simgesi</string>
+
+    <!-- Conflict Resolution Dialog -->
+    <string name="resolve">Çöz</string>
+    <string name="smart_merge">Akıllı Birleştirme (Önerilen)</string>
+    <string name="prefer_backup_data">Yedek Verisini Tercih Et</string>
+    <string name="prefer_local_data">Yerel Veriyi Tercih Et</string>
+    <string name="replace_all">Tümünü Değiştir</string>
+    <string name="content_desc_conflict_option">Çakışma çözüm seçeneği</string>
+
+    <!-- Last Quiz Results Screen -->
+    <string name="last_quiz_results">Son Test Sonuçları</string>
+    <string name="start_new_quiz">Yeni Teste Başla</string>
+    <string name="review_missed_words">Yanlış Kelimeleri Tekrarla (%1$d)</string>
+    <string name="start_a_quiz">Teste Başla</string>
+    <string name="content_desc_no_quiz">Test yok</string>
+    <string name="content_desc_error">Hata</string>
+
+    <!-- Streak Detail Screen -->
+    <string name="streak_details">Seri Detayları</string>
+    <string name="content_desc_streak_icon">Seri simgesi</string>
+
+    <!-- About Screen -->
+    <string name="content_desc_open_link">Bağlantıyı aç</string>
+
+    <!-- Unified States -->
+    <string name="content_desc_empty">Boş</string>
+
+    <!-- Word Progress Screen -->
+    <string name="minutes_studied">Çalışılan\nDakika</string>
+    <string name="correct_answers_label">Doğru\nCevaplar</string>
+    <string name="words_learned_label">Öğrenilen\nKelimeler</string>
+
+    <!-- Favorites Screen -->
+    <string name="favorites_count">Favoriler (%1$d)</string>
+    <string name="practice_all">Tümünü Pratik Et</string>
+    <string name="search_favorites">Favorilerde ara…</string>
+    <string name="clear_all_favorites">Tüm Favorileri Temizle?</string>
+    <string name="clear_favorites_message">Bu işlem %1$d kelimeyi favorilerinizden kaldıracak. Bu işlem geri alınamaz.</string>
+    <string name="content_desc_no_favorites">Favori yok</string>
+
+    <!-- Changelog Screen -->
+    <string name="changelog">Değişiklik Günlüğü</string>
+    <string name="changelog_material3">Modern Material 3 Tasarım</string>
+    <string name="changelog_settings">Geliştirilmiş Ayarlar Ekranı</string>
+    <string name="changelog_help">Daha İyi Yardım ve Destek</string>
+    <string name="changelog_about">Güzel Hakkında Ekranı</string>
+    <string name="changelog_accessibility">%100 WCAG 2.1 AA Uyumluluğu</string>
+    <string name="changelog_dark_mode">Karanlık Mod İyileştirmeleri</string>
+
+    <!-- Cloud Backup Screen -->
+    <string name="sign_in_google_coming_soon">Google ile Giriş Yap (Yakında)</string>
+    <string name="backup_now">Şimdi Yedekle</string>
+    <string name="sign_out_title">Çıkış Yap</string>
+    <string name="sign_out_message">Google Drive\'dan çıkış yapmak istediğinize emin misiniz? Otomatik yedekleme devre dışı kalacak.</string>
+    <string name="restore_backup_title">Yedek Geri Yüklensin mi?</string>
+    <string name="restore_backup_message">Bu işlem yedek verilerini mevcut verilerinizle birleştirecek. Çakışmalar yedek verisi tercih edilerek çözülecek.</string>
+    <string name="delete_backup_title">Yedek Silinsin mi?</string>
+    <string name="delete_backup_message">Bu işlem geri alınamaz. Yedek Google Drive\'dan kalıcı olarak silinecek.</string>
+    <string name="content_desc_cloud_backup_disabled">Bulut yedekleme devre dışı</string>
+    <string name="content_desc_sign_in_google">Google ile giriş yap</string>
+    <string name="content_desc_upload_backup">Yedek yükle</string>
+    <string name="content_desc_no_backups">Yedek yok</string>
+    <string name="loading_backups">Yedekler yükleniyor…</string>
+
+    <!-- Word Detail Screen -->
+    <string name="content_desc_word_not_found">Kelime bulunamadı</string>
+    <string name="content_desc_no_related_words">İlgili kelime yok</string>
+    <string name="content_desc_statistics">İstatistikler</string>
+    <string name="content_desc_time">Zaman</string>
+    <string name="content_desc_last_reviewed">Son gözden geçirme</string>
+
+    <!-- Word of the Day Screen -->
+    <string name="loading_word_of_day">Günün kelimesi yükleniyor…</string>
+    <string name="no_word_available">Kelime mevcut değil</string>
+    <string name="content_desc_word_of_day_icon">Günün kelimesi simgesi</string>
+    <string name="content_desc_checked">İşaretli</string>
+
+    <!-- Notification Settings Screen -->
+    <string name="content_desc_send_test_notification">Test bildirimi gönder</string>
+
+    <!-- Navigation Card -->
+    <string name="content_desc_navigate">Git</string>
+
+    <!-- Quiz Exam Menu -->
+    <string name="content_desc_locked">Kilitli</string>
+    <string name="content_desc_select">Seç</string>
+
+    <!-- Leaderboard Screen -->
+    <string name="content_desc_leaderboard_icon">Liderlik tablosu simgesi</string>
+
+    <!-- HomeScreen -->
+    <string name="story_mode_subtitle">Hikayelerle öğren</string>
+    <string name="stats_subtitle">Detaylı istatistikleri görüntüle</string>
+    <string name="level_xp_format">Seviye %1$d • %2$d / %3$d XP</string>
+    <string name="words_count_format">Kelimeler: %1$s</string>
+    <string name="quizzes_count_format">Testler: %1$s</string>
+
+    <!-- Game Feedback -->
+    <string name="correct_feedback">Doğru! ✓</string>
+    <string name="incorrect_feedback">Yanlış! ✗</string>
+    <string name="question_counter">Soru %1$d / %2$d</string>
+    <string name="unscramble_this_word">Bu kelimeyi çözün:</string>
+    <string name="hint_label">İpucu: %1$s</string>
+
+    <!-- Color Blind Modes -->
+    <string name="deuteranopia">Deuteranopi (Yeşil-zayıf)</string>
+    <string name="protanopia">Protanopi (Kırmızı-zayıf)</string>
+    <string name="tritanopia">Tritanopi (Mavi-zayıf)</string>
+
+    <!-- Accessibility Preview -->
+    <string name="preview_text">Mevcut erişilebilirlik ayarlarınızla metin böyle görünecek. Kontrast ve boyut ayarlamaları tüm kullanıcılar için okunabilirliği sağlamaya yardımcı olur.</string>
+    <string name="button_example">Düğme Örneği</string>
+
+    <!-- Game Screens Additional -->
+    <string name="use_hints_instruction">Kelimenin anlamını tahmin etmek için ipuçlarını kullanın:</string>
+    <string name="hints_counter">İpuçları (%1$d/%2$d)</string>
+    <string name="what_is_turkish_meaning">Türkçe anlamı nedir?</string>
+    <string name="game_complete">Oyun Tamamlandı!</string>
+    <string name="race_complete">Yarış Tamamlandı!</string>
+    <string name="error_title">Hata</string>
+    <string name="translate_label">Çevir:</string>
+    <string name="combo_display">🔥 %1$dx KOMBO!</string>
+    <string name="english_flag">🇬🇧 İngilizce</string>
+    <string name="turkish_flag">🇹🇷 Türkçe</string>
+    <string name="mixed_direction">Karışık</string>
+    <string name="type_missing_word">Eksik kelimeyi yazın:</string>
+    <string name="correct_answer_display">Doğru cevap: %1$s</string>
+    <string name="correct_result">Doğru!</string>
+    <string name="incorrect_result">Yanlış</string>
+    <string name="hide_hint">İpucunu Gizle</string>
+    <string name="show_hint">İpucunu Göster</string>
+
+    <!-- Spelling Challenge -->
+    <string name="spell_in_english">Bu kelimeyi İngilizce olarak yazın:</string>
+    <string name="correct_spelling_feedback">Doğru! %1$s</string>
+    <string name="incorrect_spelling_feedback">Yanlış. Doğru yazılış: %1$s</string>
+
+    <!-- Picture Match -->
+    <string name="streak_display">🔥 %1$d Seri! Devam et!</string>
+    <string name="select_english_word">Bu anlam için İngilizce kelimeyi seçin:</string>
+    <string name="select_turkish_meaning">Türkçe anlamı seçin:</string>
+
+    <!-- Flip Cards -->
+    <string name="moves">Hamleler</string>
+    <string name="pairs">Çiftler</string>
+    <string name="new_best_score">🏆 Yeni En İyi Skor!</string>
+    <string name="grid_4x4_desc">8 çift (Kolay)</string>
+    <string name="grid_4x6_desc">12 çift (Orta)</string>
+    <string name="grid_6x6_desc">18 çift (Zor)</string>
+
+    <!-- Listening Quiz -->
+    <string name="listen_select_translation">Dinleyin ve doğru çeviriyi seçin</string>
+    <string name="listen_select_word">Dinleyin ve doğru kelimeyi seçin</string>
+    <string name="listen_select_spelling">Dinleyin ve doğru yazılışı seçin</string>
+    <string name="play_audio">Sesi Oynat</string>
+    <string name="replay_left">Tekrarla (%1$d kaldı)</string>
+    <string name="select_your_answer">Cevabınızı seçin:</string>
+
+    <!-- Last Quiz Results Additional -->
+    <string name="loading_quiz_results">Test sonuçları yükleniyor…</string>
+    <string name="score_display">Skor: %1$d/%2$d</string>
+    <string name="time_label">Süre</string>
+    <string name="xp_earned">Kazanılan XP</string>
+    <string name="performance_breakdown">Performans Dağılımı</string>
+    <string name="correct_performance">Doğru</string>
+    <string name="wrong_performance">Yanlış</string>
+    <string name="skipped_performance">Atlanan</string>
+    <string name="review_mistakes">Hataları İncele (%1$d)</string>
+    <string name="collapse">Daralt</string>
+    <string name="expand">Genişlet</string>
+    <string name="tap_to_see_more">%1$d tane daha görmek için dokun…</string>
+    <string name="view_details">Ayrıntıları görüntüle</string>
+    <string name="practice_tip">Pratik mükemmelleştirir! Skorunuzu artırmak için yanlış kelimeleri gözden geçirmeye devam edin.</string>
+    <string name="no_quiz_results">Henüz Test Sonucu Yok</string>
+    <string name="complete_quiz_to_see">Sonuçlarınızı görmek için bir test tamamlayın</string>
+    <string name="outstanding">Mükemmel!</string>
+    <string name="content_desc_info">Bilgi</string>
+    <string name="content_desc_retry">Tekrar dene</string>
+    <string name="content_desc_review">İncele</string>
+    <string name="content_desc_start">Başlat</string>
+
+    <!-- Favorites Screen Additional -->
+    <string name="content_desc_clear_all">Tümünü temizle</string>
+    <string name="content_desc_practice">Pratik yap</string>
+    <string name="content_desc_search">Ara</string>
+    <string name="content_desc_clear">Temizle</string>
+    <string name="content_desc_remove_favorite">Favorilerden kaldır</string>
+    <string name="loading_favorites">Favoriler yükleniyor…</string>
+    <string name="no_matching_favorites">Eşleşen favori yok</string>
+    <string name="no_favorites_yet">Henüz favori yok</string>
+    <string name="try_different_search">Farklı bir arama terimi deneyin</string>
+    <string name="tap_heart_to_add">Favorilere eklemek için herhangi bir kelimedeki kalp simgesine dokunun</string>
+    <string name="clear_all">Tümünü Temizle</string>
+
+    <!-- Word of the Day Screen Additional -->
+    <string name="practice_this_word">Bu Kelimeyi Pratik Et</string>
+    <string name="view_previous_words">Önceki Kelimeleri Gör</string>
+    <string name="your_streak">Serin</string>
+    <string name="streak_days_message">Günün Kelimesini %1$d gün üst üste kontrol ettiniz!</string>
+    <string name="content_desc_pronunciation">Telaffuz</string>
+
+    <!-- Cloud Backup Screen Additional -->
+    <string name="backup_to_google_drive">Kelime verilerinizi Google Drive\'a güvenle yedekleyin</string>
+    <string name="coming_soon_header">Yakında:</string>
+    <string name="secure_cloud_backup">• Güvenli bulut yedekleme</string>
+    <string name="cross_device_sync">• Cihazlar arası senkronizasyon</string>
+    <string name="automatic_daily_backups">• Otomatik günlük yedekleme</string>
+    <string name="currently_available">Şu Anda Mevcut:</string>
+    <string name="local_backup_available">• Yerel yedekleme (Ayarlar > Yedekleme)</string>
+    <string name="auto_backup">Otomatik Yedekleme</string>
+    <string name="auto_backup_desc">Günlük otomatik yedekleme (Sadece WiFi)</string>
+    <string name="backup_history">Yedekleme Geçmişi</string>
+    <string name="no_backups_yet">Henüz yedek yok</string>
+
+    <!-- Leaderboard Screen Additional -->
+    <string name="compete_worldwide">Dünya genelinde öğrenenlerle yarış</string>
+    <string name="leaderboards_preparing">Sıralama tabloları hazırlanıyor!</string>
+    <string name="progress_tracked_locally">Öğrenmeye devam et - ilerlemeniz yerel olarak izleniyor ve sıralama tabloları başladığında senkronize edilecek.</string>
+
+    <!-- Streak Detail Screen Additional -->
+    <string name="day_streak">%1$d Günlük Seri!</string>
+    <string name="keep_it_up">Böyle devam et!</string>
+    <string name="your_personal_record">Kişisel rekorun</string>
+    <string name="days_count">%1$d gün</string>
+    <string name="last_7_days">Son 7 Gün</string>
+    <string name="completed">Tamamlandı</string>
+    <string name="missed">Kaçırıldı</string>
+
+    <!-- Tutorial Screen Additional -->
+    <string name="step_of">%1$d/%2$d Adım</string>
+    <string name="got_it_button">Anladım!</string>
+    <string name="next">İleri</string>
+    <string name="first_time_playing">İlk Kez Oynuyor musunuz?</string>
+    <string name="tutorial_question">%1$s için hızlı bir eğitim görmek ister misiniz?</string>
+
+    <!-- Notification Settings Screen Additional -->
+    <string name="word_quiz_notifications">Kelime Quiz Bildirimleri</string>
+    <string name="enable_word_quiz">Kelime Quizini Etkinleştir</string>
+    <string name="enable_word_quiz_desc">Etkileşimli kelime quiz bildirimleri al</string>
+    <string name="frequency">Sıklık</string>
+    <string name="word_filters">Kelime Filtreleri</string>
+    <string name="include_levels">Seviyeleri Dahil Et</string>
+    <string name="include_exam_categories">Sınav Kategorilerini Dahil Et</string>
+    <string name="include_learned_words">Öğrenilen Kelimeleri Dahil Et</string>
+    <string name="include_learned_words_desc">Zaten öğrendiğiniz kelimeleri göster</string>
+    <string name="prioritize_low_accuracy">Düşük Doğruluğa Öncelik Ver</string>
+    <string name="prioritize_low_accuracy_desc">Sıkça yanlış yaptığınız kelimelere odaklan</string>
+    <string name="quiet_hours">Sessiz Saatler</string>
+    <string name="enable_quiet_hours">Sessiz Saatleri Etkinleştir</string>
+    <string name="enable_quiet_hours_desc">Belirtilen saatlerde bildirim alma</string>
+    <string name="from">Başlangıç</string>
+    <string name="to">Bitiş</string>
+    <string name="other_notifications">Diğer Bildirimler</string>
+
+    <!-- Screen Titles -->
+    <string name="about">Hakkında</string>
+    <string name="changelog">Değişiklik Günlüğü</string>
+    <string name="word_progress">Kelime İlerlemesi</string>
+
+    <!-- Common Content Descriptions -->
+    <string name="content_desc_success">Başarılı</string>
+    <string name="content_desc_completed">Tamamlandı</string>
+    <string name="content_desc_empty">Boş</string>
+    <string name="content_desc_favorite">Favori</string>
+    <string name="content_desc_card_icon">Kart simgesi</string>
+    <string name="content_desc_chart_icon">Grafik simgesi</string>
+    <string name="content_desc_navigate">Git</string>
+    <string name="content_desc_dismiss">Kapat</string>
+    <string name="content_desc_delete">Sil</string>
+    <string name="content_desc_open_menu">Menüyü aç</string>
+    <string name="content_desc_open_link">Bağlantıyı aç</string>
+    <string name="content_desc_locked">Kilitli</string>
+    <string name="content_desc_select">Seç</string>
+    <string name="content_desc_correct_answer">Doğru cevap</string>
+    <string name="content_desc_total_score">Toplam puan</string>
+    <string name="content_desc_correct_answers">Doğru cevaplar</string>
+    <string name="content_desc_incorrect_answers">Yanlış cevaplar</string>
+    <string name="content_desc_word_not_found">Kelime bulunamadı</string>
+    <string name="content_desc_play_pronunciation">Telaffuzu çal</string>
+    <string name="content_desc_no_related_words">İlgili kelime yok</string>
+    <string name="content_desc_statistics">İstatistikler</string>
+    <string name="content_desc_time">Zaman</string>
+    <string name="content_desc_last_reviewed">Son inceleme</string>
+    <string name="content_desc_backup_info">Yedekleme bilgisi</string>
+    <string name="content_desc_export_successful">Dışa aktarma başarılı</string>
+    <string name="content_desc_coming_soon_features">Yakında gelecek özellikler</string>
+    <string name="content_desc_file_storage">Dosya depolama konumu</string>
+    <string name="content_desc_conflict_resolution">Çakışma çözümleme seçeneği</string>
+
+    <!-- Sync Status -->
+    <string name="content_desc_sync_idle">Senkronizasyon hazır</string>
+    <string name="content_desc_syncing">Senkronizasyon devam ediyor</string>
+    <string name="content_desc_sync_complete">Senkronizasyon tamamlandı</string>
+    <string name="content_desc_sync_error">Senkronizasyon hatası</string>
+    <string name="content_desc_sync_conflict">Senkronizasyon çakışması - manuel çözüm gerekli</string>
+    <string name="content_desc_view_sync_details">Senkronizasyon detaylarını görüntüle</string>
+    <string name="content_desc_last_sync_time">Son senkronizasyon zamanı</string>
+
+    <!-- Multiplayer -->
+    <string name="waiting_for_players">Oyuncular bekleniyor…</string>
+    <string name="loading_question">Soru yükleniyor…</string>
+    <string name="loading_rankings">Sıralama yükleniyor…</string>
+
+    <!-- Quiz Menu -->
+    <string name="quiz_menu_info">Kelime bilginizi test edin ve ilerlemenizi takip edin. Yeni kelimelere odaklanmak için \'Öğrenilmemiş\' ile başlamanızı öneririz.</string>
+
+    <!-- Conflict Resolution Dialog -->
+    <string name="resolve">Çöz</string>
+
+    <!-- Changelog Screen -->
+    <string name="version_history">Sürüm Geçmişi</string>
+    <string name="version_history_desc">Trainvoc\'un her sürümündeki yenilikleri ve iyileştirmeleri görün</string>
+    <string name="version_number">Sürüm %1$s</string>
+    <string name="released_date">Yayınlanma: %1$s</string>
+    <string name="whats_new">Yenilikler</string>
+    <string name="badge_new">YENİ</string>
+    <string name="badge_improved">GELİŞTİRİLDİ</string>
+    <string name="badge_fixed">DÜZELTİLDİ</string>
+    <string name="content_desc_collapse">Daralt</string>
+    <string name="content_desc_expand">Genişlet</string>
+
+    <!-- Word Progress Screen -->
+    <string name="overall_progress">Genel İlerleme</string>
+    <string name="percent_complete">%1$d%% Tamamlandı</string>
+    <string name="progress_by_level">Seviyeye Göre İlerleme</string>
+    <string name="word_status">Kelime Durumu</string>
+    <string name="spaced_repetition_schedule">Aralıklı Tekrar Takvimi</string>
+    <string name="due_for_review_today">Bugün Tekrar Edilecek</string>
+    <string name="words_count_label">%1$d kelime</string>
+    <string name="content_desc_schedule">Takvim</string>
+    <string name="tomorrow">Yarın</string>
+    <string name="this_week">Bu Hafta</string>
+    <string name="this_month">Bu Ay</string>
+    <string name="progress_forecast">İlerleme Tahmini</string>
+    <string name="content_desc_forecast">Tahmin</string>
+    <string name="goal_projection">Hedef Projeksiyonu</string>
+    <string name="based_on_pace">Mevcut öğrenme hızınıza göre</string>
+    <string name="pace_projection">Günde %1$d kelime hızınızla, yaklaşık %3$d günde %2$s seviyesine ulaşacaksınız</string>
+    <string name="estimated_completion">Tahmini Tamamlanma: %1$s</string>
+    <string name="learning_summary">Öğrenme Özeti</string>
+    <string name="amazing_progress">Harika ilerleme! Neredeyse bitirdiniz!</string>
+    <string name="halfway_there">Yarı yoldasınız! Harika gidiyorsunuz!</string>
+    <string name="good_progress">İyi ilerleme! Tutarlılık anahtar!</string>
+    <string name="great_start">Harika başlangıç! Her kelime sayılır!</string>
+    <string name="begin_journey">Akıcılığa giden yolculuğunuza başlayın!</string>
+    <string name="start_learning_progress">İlerlemenizi görmek için öğrenmeye başlayın!</string>
+    <string name="complete_quizzes_track">Yolculuğunuzu takip etmek için quizler çözün ve yeni kelimeler öğrenin.</string>
+    <string name="percent_complete_label">%1$d%% tamamlandı</string>
+    <string name="mastered">Ustalaşıldı</string>
+    <string name="status_learning">Öğreniliyor</string>
+    <string name="struggling">Zorlanılıyor</string>
+    <string name="not_started">Başlanmadı</string>
+    <string name="minutes_studied">Çalışılan\nDakika</string>
+    <string name="correct_answers_label">Doğru\nCevaplar</string>
+    <string name="words_learned_label">Öğrenilen\nKelimeler</string>
+    <string name="content_desc_error">Hata</string>
+
+    <!-- Word Detail Screen -->
+    <string name="content_desc_remove_favorite">Favorilerden kaldır</string>
+    <string name="content_desc_add_favorite">Favorilere ekle</string>
+    <string name="definition">Tanım</string>
+    <string name="examples">Örnekler</string>
+    <string name="content_desc_show_less">Daha az göster</string>
+    <string name="content_desc_show_more">Daha fazla göster</string>
+    <string name="synonyms">Eş Anlamlılar</string>
+    <string name="usage_frequency">Kullanım Sıklığı</string>
+    <string name="favorited">Favorilerde</string>
+    <string name="favorite_word">Favori</string>
+    <string name="share_button">Paylaş</string>
+    <string name="very_common">Çok Yaygın</string>
+    <string name="common">Yaygın</string>
+    <string name="uncommon">Az Kullanılan</string>
+    <string name="rare_word">Nadir</string>
+
+    <!-- Quiz Exam Menu Screen -->
+    <string name="or_practice_by_exam">Veya Sınava Göre Pratik Yap</string>
+
+    <!-- Quiz Menu Screen -->
+    <string name="start_first_quiz_title">İlk quizine başla!</string>
+    <string name="start_first_quiz_message">Kelime bilginizi test edin ve ilerlemenizi takip edin. Yeni kelimelere odaklanmak için \'Öğrenilmemiş\' ile başlamanızı öneririz.</string>
+    <string name="badge_new_quiz">YENİ</string>
+    <string name="best_score_percent">En iyi: %1$d%%</string>
+    <string name="played_count_single">Oynandı: %1$d kez</string>
+    <string name="played_count_plural">Oynandı: %1$d kez</string>
+    <string name="not_played_yet">Henüz oynanmadı</string>
 </resources>
