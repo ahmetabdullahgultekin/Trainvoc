@@ -16,10 +16,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 import java.time.LocalDate
@@ -40,15 +42,24 @@ fun StreakDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Streak Details") },
+                title = { Text(stringResource(id = R.string.streak_details)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back))
                     }
                 }
             )
         }
     ) { paddingValues ->
+        val dayStreakText = stringResource(id = R.string.day_streak, uiState.currentStreak)
+        val keepItUpText = stringResource(id = R.string.keep_it_up)
+        val bestStreakText = stringResource(id = R.string.best_streak)
+        val personalRecordText = stringResource(id = R.string.your_personal_record)
+        val daysCountText = stringResource(id = R.string.days_count, uiState.longestStreak)
+        val last7DaysText = stringResource(id = R.string.last_7_days)
+        val completedText = stringResource(id = R.string.completed)
+        val missedText = stringResource(id = R.string.missed)
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,12 +86,12 @@ fun StreakDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(Spacing.md))
                         Text(
-                            text = "${uiState.currentStreak} Day Streak!",
+                            text = dayStreakText,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Keep it up!",
+                            text = keepItUpText,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -102,18 +113,18 @@ fun StreakDetailScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Best Streak",
+                                text = bestStreakText,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Your personal record",
+                                text = personalRecordText,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Text(
-                            text = "${uiState.longestStreak} days",
+                            text = daysCountText,
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -125,7 +136,7 @@ fun StreakDetailScreen(
             // Streak History Header
             item {
                 Text(
-                    text = "Last 7 Days",
+                    text = last7DaysText,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -138,7 +149,9 @@ fun StreakDetailScreen(
 
                 StreakDayItem(
                     date = date,
-                    isActive = isActive
+                    isActive = isActive,
+                    completedText = completedText,
+                    missedText = missedText
                 )
             }
 
@@ -150,7 +163,9 @@ fun StreakDetailScreen(
 @Composable
 private fun StreakDayItem(
     date: LocalDate,
-    isActive: Boolean
+    isActive: Boolean,
+    completedText: String,
+    missedText: String
 ) {
     val formatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
 
@@ -171,7 +186,7 @@ private fun StreakDayItem(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = if (isActive) "Completed" else "Missed",
+                    text = if (isActive) completedText else missedText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (isActive)
                         MaterialTheme.colorScheme.primary
@@ -194,7 +209,7 @@ private fun StreakDayItem(
             ) {
                 Icon(
                     imageVector = if (isActive) Icons.Default.Check else Icons.Default.Close,
-                    contentDescription = "Streak icon",
+                    contentDescription = stringResource(id = R.string.content_desc_streak_icon),
                     tint = if (isActive)
                         MaterialTheme.colorScheme.onPrimaryContainer
                     else

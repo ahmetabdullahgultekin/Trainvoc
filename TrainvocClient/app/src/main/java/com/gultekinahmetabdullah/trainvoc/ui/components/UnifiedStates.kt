@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 
 /**
  * Unified Loading State Component
@@ -65,7 +67,7 @@ fun ErrorState(
         ) {
             Icon(
                 imageVector = Icons.Default.ErrorOutline,
-                contentDescription = "Error",
+                contentDescription = stringResource(id = R.string.content_desc_error),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.error
             )
@@ -82,7 +84,7 @@ fun ErrorState(
                     onClick = onRetry,
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
-                    Text("Try Again")
+                    Text(stringResource(id = R.string.try_again))
                 }
             }
         }
@@ -116,7 +118,7 @@ fun EmptyState(
         ) {
             Icon(
                 imageVector = Icons.Default.SentimentDissatisfied,
-                contentDescription = "Empty",
+                contentDescription = stringResource(id = R.string.content_desc_empty),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -72,12 +72,12 @@ fun AboutScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("About") },
+                title = { Text(stringResource(id = R.string.about)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.back)
                         )
                     }
                 },
@@ -510,7 +510,7 @@ fun ImprovedSocialLink(
             }
             Icon(
                 imageVector = Icons.Default.Language,
-                contentDescription = "Open link",
+                contentDescription = stringResource(id = R.string.content_desc_open_link),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )

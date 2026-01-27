@@ -163,7 +163,7 @@ fun QuizExamMenuScreen(
             // Exam Type Cards (Full-width list)
             item {
                 Text(
-                    text = "Or Practice by Exam",
+                    text = stringResource(id = R.string.or_practice_by_exam),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(vertical = Spacing.medium)
@@ -399,7 +399,7 @@ fun CEFRLevelCard(
                     if (isLocked) {
                         Icon(
                             imageVector = Icons.Default.Lock,
-                            contentDescription = "Locked",
+                            contentDescription = stringResource(id = R.string.content_desc_locked),
                             tint = Color.White.copy(alpha = 0.8f),
                             modifier = Modifier.size(20.dp)
                         )
@@ -597,14 +597,14 @@ fun ExamCard(
             if (examType.enabled) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = "Select",
+                    contentDescription = stringResource(id = R.string.content_desc_select),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "Locked",
+                    contentDescription = stringResource(id = R.string.content_desc_locked),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                     modifier = Modifier.size(24.dp)
                 )

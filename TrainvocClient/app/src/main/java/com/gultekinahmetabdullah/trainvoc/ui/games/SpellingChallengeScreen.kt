@@ -11,9 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -140,7 +142,7 @@ private fun SpellingChallengeGameContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Spelling Challenge",
+        title = stringResource(id = R.string.spelling_challenge),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score
@@ -155,7 +157,7 @@ private fun SpellingChallengeGameContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -178,7 +180,7 @@ private fun SpellingChallengeGameContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Spell this word in English:",
+                                text = stringResource(id = R.string.spell_in_english),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -220,7 +222,7 @@ private fun SpellingChallengeGameContent(
                         value = gameState.currentInput,
                         onValueChange = onInputChange,
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Type your answer...") },
+                        placeholder = { Text(stringResource(id = R.string.type_your_answer)) },
                         singleLine = true,
                         enabled = !isShowingFeedback,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -237,6 +239,8 @@ private fun SpellingChallengeGameContent(
                 // Feedback message
                 if (isShowingFeedback) {
                     item {
+                        val correctFeedback = stringResource(id = R.string.correct_spelling_feedback, question.correctSpelling)
+                        val incorrectFeedback = stringResource(id = R.string.incorrect_spelling_feedback, question.correctSpelling)
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
@@ -246,9 +250,9 @@ private fun SpellingChallengeGameContent(
                         ) {
                             Text(
                                 text = if (feedbackCorrect == true) {
-                                    "Correct! ${question.correctSpelling}"
+                                    correctFeedback
                                 } else {
-                                    "Incorrect. Correct spelling: ${question.correctSpelling}"
+                                    incorrectFeedback
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -273,9 +277,9 @@ private fun SpellingChallengeGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = !isShowingFeedback && gameState.revealedLetters.size < question.correctSpelling.length
                         ) {
-                            Icon(Icons.Default.Lightbulb, contentDescription = "Show hint")
+                            Icon(Icons.Default.Lightbulb, contentDescription = stringResource(id = R.string.content_desc_show_hint))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Hint")
+                            Text(stringResource(id = R.string.hint))
                         }
 
                         // Submit button
@@ -284,7 +288,7 @@ private fun SpellingChallengeGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = !isShowingFeedback && gameState.currentInput.isNotBlank()
                         ) {
-                            Text("Submit")
+                            Text(stringResource(id = R.string.submit))
                         }
 
                         // Skip button
@@ -293,9 +297,9 @@ private fun SpellingChallengeGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = !isShowingFeedback
                         ) {
-                            Icon(Icons.Default.SkipNext, contentDescription = "Skip question")
+                            Icon(Icons.Default.SkipNext, contentDescription = stringResource(id = R.string.content_desc_skip_question))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Skip")
+                            Text(stringResource(id = R.string.skip))
                         }
                     }
                 }
@@ -308,15 +312,15 @@ private fun SpellingChallengeGameContent(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatChip(
-                            label = "Accuracy",
+                            label = stringResource(id = R.string.accuracy),
                             value = "${gameState.accuracy.toInt()}%"
                         )
                         StatChip(
-                            label = "Perfect",
+                            label = stringResource(id = R.string.perfect),
                             value = "${gameState.perfectSpellings}"
                         )
                         StatChip(
-                            label = "Hints Used",
+                            label = stringResource(id = R.string.hints_used),
                             value = "${gameState.revealedLetters.size}"
                         )
                     }
@@ -367,7 +371,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -380,10 +384,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }

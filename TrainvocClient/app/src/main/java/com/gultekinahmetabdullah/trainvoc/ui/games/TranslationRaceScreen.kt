@@ -11,9 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -140,7 +142,7 @@ private fun TranslationRaceGameContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Translation Race",
+        title = stringResource(id = R.string.translation_race),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score,
@@ -163,7 +165,7 @@ private fun TranslationRaceGameContent(
                             )
                         ) {
                             Text(
-                                text = "🔥 ${gameState.combo}x COMBO!",
+                                text = stringResource(id = R.string.combo_display, gameState.combo),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(12.dp),
@@ -178,6 +180,10 @@ private fun TranslationRaceGameContent(
 
                 // Translation direction indicator
                 item {
+                    val englishFlag = stringResource(id = R.string.english_flag)
+                    val turkishFlag = stringResource(id = R.string.turkish_flag)
+                    val mixedDirection = stringResource(id = R.string.mixed_direction)
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -185,10 +191,10 @@ private fun TranslationRaceGameContent(
                     ) {
                         val (from, to) = when (question.direction) {
                             com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame.TranslationDirection.ENGLISH_TO_TURKISH ->
-                                Pair("🇬🇧 English", "🇹🇷 Turkish")
+                                Pair(englishFlag, turkishFlag)
                             com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame.TranslationDirection.TURKISH_TO_ENGLISH ->
-                                Pair("🇹🇷 Turkish", "🇬🇧 English")
-                            else -> Pair("Mixed", "Mixed")
+                                Pair(turkishFlag, englishFlag)
+                            else -> Pair(mixedDirection, mixedDirection)
                         }
 
                         Text(
@@ -198,7 +204,7 @@ private fun TranslationRaceGameContent(
                         )
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Translation direction",
+                            contentDescription = stringResource(id = R.string.content_desc_translation_direction),
                             modifier = Modifier.padding(horizontal = 8.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -225,7 +231,7 @@ private fun TranslationRaceGameContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Translate:",
+                                text = stringResource(id = R.string.translate_label),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -262,9 +268,9 @@ private fun TranslationRaceGameContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        StatChip(label = "Correct", value = "${gameState.correctAnswers}")
-                        StatChip(label = "Combo", value = "${gameState.maxCombo}x")
-                        StatChip(label = "APM", value = "${gameState.answersPerMinute.toInt()}")
+                        StatChip(label = stringResource(id = R.string.correct_count), value = "${gameState.correctAnswers}")
+                        StatChip(label = stringResource(id = R.string.combo), value = "${gameState.maxCombo}x")
+                        StatChip(label = stringResource(id = R.string.apm), value = "${gameState.answersPerMinute.toInt()}")
                     }
                 }
             }
@@ -280,11 +286,18 @@ private fun TranslationRaceResultDialog(
 ) {
     val rating = com.gultekinahmetabdullah.trainvoc.games.TranslationRaceGame.getPerformanceRating(gameState)
 
+    val correctAnswersLabel = stringResource(id = R.string.correct_answers)
+    val totalAnsweredLabel = stringResource(id = R.string.total_answered)
+    val accuracyLabel = stringResource(id = R.string.accuracy)
+    val maxComboLabel = stringResource(id = R.string.max_combo)
+    val answersPerMinLabel = stringResource(id = R.string.answers_per_min)
+    val scoreLabel = stringResource(id = R.string.score)
+
     AlertDialog(
         onDismissRequest = { },
         title = {
             Text(
-                text = "Race Complete!",
+                text = stringResource(id = R.string.race_complete),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -302,22 +315,22 @@ private fun TranslationRaceResultDialog(
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                StatRow(label = "Correct Answers", value = "${gameState.correctAnswers}")
-                StatRow(label = "Total Answered", value = "${gameState.correctAnswers + gameState.incorrectAnswers}")
-                StatRow(label = "Accuracy", value = "${gameState.accuracy.toInt()}%")
-                StatRow(label = "Max Combo", value = "${gameState.maxCombo}x")
-                StatRow(label = "Answers/Min", value = "${gameState.answersPerMinute.toInt()}")
-                StatRow(label = "Score", value = "${gameState.score}")
+                StatRow(label = correctAnswersLabel, value = "${gameState.correctAnswers}")
+                StatRow(label = totalAnsweredLabel, value = "${gameState.correctAnswers + gameState.incorrectAnswers}")
+                StatRow(label = accuracyLabel, value = "${gameState.accuracy.toInt()}%")
+                StatRow(label = maxComboLabel, value = "${gameState.maxCombo}x")
+                StatRow(label = answersPerMinLabel, value = "${gameState.answersPerMinute.toInt()}")
+                StatRow(label = scoreLabel, value = "${gameState.score}")
             }
         },
         confirmButton = {
             Button(onClick = onPlayAgain) {
-                Text("Play Again")
+                Text(stringResource(id = R.string.play_again))
             }
         },
         dismissButton = {
             TextButton(onClick = onMainMenu) {
-                Text("Main Menu")
+                Text(stringResource(id = R.string.main_menu))
             }
         }
     )
@@ -382,7 +395,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -395,10 +408,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }
