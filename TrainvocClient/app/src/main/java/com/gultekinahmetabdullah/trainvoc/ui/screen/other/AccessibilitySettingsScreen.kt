@@ -48,9 +48,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -84,10 +86,10 @@ fun AccessibilitySettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Accessibility") },
+                title = { Text(stringResource(id = R.string.accessibility)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.content_desc_back))
                     }
                 }
             )
@@ -102,14 +104,14 @@ fun AccessibilitySettingsScreen(
         ) {
             // Visual Settings Section
             item {
-                SectionHeader(title = "Visual")
+                SectionHeader(title = stringResource(id = R.string.visual))
             }
 
             item {
                 SettingsCard(
                     icon = Icons.Default.Contrast,
-                    title = "High Contrast Mode",
-                    subtitle = "Increase contrast for better visibility",
+                    title = stringResource(id = R.string.high_contrast_mode),
+                    subtitle = stringResource(id = R.string.high_contrast_desc),
                     trailing = {
                         Switch(
                             checked = highContrastEnabled,
@@ -125,8 +127,8 @@ fun AccessibilitySettingsScreen(
             item {
                 SettingsCard(
                     icon = Icons.Default.Palette,
-                    title = "Color Blind Friendly",
-                    subtitle = "Use colors optimized for color vision deficiency",
+                    title = stringResource(id = R.string.color_blind_friendly),
+                    subtitle = stringResource(id = R.string.color_blind_desc),
                     trailing = {
                         Switch(
                             checked = colorBlindModeEnabled,
@@ -149,8 +151,8 @@ fun AccessibilitySettingsScreen(
             item {
                 SettingsCard(
                     icon = Icons.Default.FormatSize,
-                    title = "Text Size",
-                    subtitle = "Adjust text size: ${(textSizeScale * 100).toInt()}%"
+                    title = stringResource(id = R.string.text_size),
+                    subtitle = stringResource(id = R.string.text_size_adjust, (textSizeScale * 100).toInt())
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Slider(
@@ -174,14 +176,14 @@ fun AccessibilitySettingsScreen(
             // Interaction Settings Section
             item {
                 Spacer(modifier = Modifier.height(Spacing.medium))
-                SectionHeader(title = "Interaction")
+                SectionHeader(title = stringResource(id = R.string.interaction))
             }
 
             item {
                 SettingsCard(
                     icon = Icons.Default.Vibration,
-                    title = "Haptic Feedback",
-                    subtitle = "Vibration feedback for interactions",
+                    title = stringResource(id = R.string.haptic_feedback),
+                    subtitle = stringResource(id = R.string.haptic_feedback_desc),
                     trailing = {
                         Switch(
                             checked = hapticFeedbackEnabled,
@@ -197,8 +199,8 @@ fun AccessibilitySettingsScreen(
             item {
                 SettingsCard(
                     icon = Icons.Default.Contrast,
-                    title = "Reduce Motion",
-                    subtitle = "Minimize animations and transitions",
+                    title = stringResource(id = R.string.reduce_motion),
+                    subtitle = stringResource(id = R.string.reduce_motion_desc),
                     trailing = {
                         Switch(
                             checked = reduceMotionEnabled,
@@ -214,7 +216,7 @@ fun AccessibilitySettingsScreen(
             // Preview Section
             item {
                 Spacer(modifier = Modifier.height(Spacing.medium))
-                SectionHeader(title = "Preview")
+                SectionHeader(title = stringResource(id = R.string.preview))
             }
 
             item {
@@ -277,7 +279,7 @@ private fun SettingsCard(
                 ) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = "Accessibility icon",
+                        contentDescription = null, // Decorative, title provides context
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp)
                     )

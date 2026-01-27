@@ -14,9 +14,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.RoomSettings
 import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 import com.gultekinahmetabdullah.trainvoc.viewmodel.RoomState
@@ -55,10 +57,10 @@ fun CreateRoomScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Create Room") },
+                title = { Text(stringResource(id = R.string.create_room)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.content_desc_back))
                     }
                 }
             )
@@ -74,7 +76,7 @@ fun CreateRoomScreen(
         ) {
             // Player Info Section
             Text(
-                text = "Your Info",
+                text = stringResource(id = R.string.your_info),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -82,7 +84,7 @@ fun CreateRoomScreen(
             OutlinedTextField(
                 value = playerName,
                 onValueChange = { playerName = it.take(20) },
-                label = { Text("Display Name") },
+                label = { Text(stringResource(id = R.string.display_name)) },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -97,14 +99,14 @@ fun CreateRoomScreen(
                     checked = usePassword,
                     onCheckedChange = { usePassword = it }
                 )
-                Text("Require password to join")
+                Text(stringResource(id = R.string.require_password))
             }
 
             if (usePassword) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it.take(20) },
-                    label = { Text("Room Password") },
+                    label = { Text(stringResource(id = R.string.room_password)) },
                     leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
@@ -116,14 +118,14 @@ fun CreateRoomScreen(
 
             // Game Settings Section
             Text(
-                text = "Game Settings",
+                text = stringResource(id = R.string.game_settings),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
 
             // Difficulty Level
             Text(
-                text = "Difficulty Level",
+                text = stringResource(id = R.string.difficulty_level),
                 style = MaterialTheme.typography.bodyMedium
             )
             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
@@ -145,7 +147,7 @@ fun CreateRoomScreen(
             ) {
                 Icon(Icons.Default.Timer, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Time per question: ${questionDuration}s")
+                Text(stringResource(id = R.string.time_per_question, questionDuration))
             }
             Slider(
                 value = questionDuration.toFloat(),
@@ -160,7 +162,7 @@ fun CreateRoomScreen(
                 onValueChange = {
                     totalQuestions = it.toIntOrNull()?.coerceIn(5, 30) ?: 10
                 },
-                label = { Text("Number of Questions") },
+                label = { Text(stringResource(id = R.string.number_of_questions)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -168,7 +170,7 @@ fun CreateRoomScreen(
 
             // Option Count
             Text(
-                text = "Answer Options: $optionCount",
+                text = stringResource(id = R.string.answer_options, optionCount),
                 style = MaterialTheme.typography.bodyMedium
             )
             Slider(
@@ -187,7 +189,7 @@ fun CreateRoomScreen(
                     checked = hostPlays,
                     onCheckedChange = { hostPlays = it }
                 )
-                Text("Host participates in game")
+                Text(stringResource(id = R.string.host_participates))
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -220,9 +222,9 @@ fun CreateRoomScreen(
                 if (isCreating) {
                     ButtonLoader(modifier = Modifier.size(24.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Creating Room...")
+                    Text(stringResource(id = R.string.creating_room))
                 } else {
-                    Text("Create Room")
+                    Text(stringResource(id = R.string.create_room))
                 }
             }
         }

@@ -483,9 +483,18 @@
     <!-- Profile Screen -->
     <string name="total_xp">Total XP</string>
     <string name="current_streak">Current Streak</string>
+    <string name="longest_streak">Longest Streak</string>
     <string name="words_learned">Words Learned</string>
     <string name="accuracy">Accuracy</string>
     <string name="member_since">Member since %1$s</string>
+    <string name="member_since_label">Member Since</string>
+    <string name="level_format">Level %1$d</string>
+    <string name="no_achievements_yet">No achievements yet</string>
+    <string name="keep_learning_to_unlock">Keep learning to unlock achievements!</string>
+    <string name="tap_to_change_avatar">Tap to change avatar</string>
+    <string name="username_cannot_be_empty">Username cannot be empty</string>
+    <string name="username_min_length">Username must be at least 3 characters</string>
+    <string name="username_max_length">Username must be at most 20 characters</string>
 
     <!-- Review Mode -->
     <string name="review_mode_title">Review Mode</string>
@@ -506,6 +515,9 @@
     <string name="share">Share</string>
     <string name="practice_word">Practice word</string>
     <string name="share_word">Share word</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="pronunciation">Pronunciation</string>
     <string name="content_desc_pronunciation">Play pronunciation</string>
     <string name="content_desc_alphabet_nav">Alphabet navigation. Drag to jump to words starting with a letter.</string>
     <string name="content_desc_jump_letter">Jump to letter %1$s</string>
@@ -530,6 +542,34 @@
     <string name="restore_success">Data restored successfully!</string>
     <string name="create_backup">Create Backup</string>
     <string name="backup_format">Backup Format</string>
+    <string name="export_data">Export Data</string>
+    <string name="export_data_desc">Create a backup of your vocabulary data</string>
+    <string name="content_desc_export">Export vocabulary data</string>
+    <string name="exporting_progress">Exporting… %1$d%%</string>
+    <string name="import_data">Import Data</string>
+    <string name="import_data_desc">Restore from a backup file</string>
+    <string name="content_desc_import">Import vocabulary data</string>
+    <string name="importing_progress">Importing… %1$d%%</string>
+    <string name="restore_success_details">Data restored successfully!\n%1$d words restored\n%2$d conflicts resolved</string>
+    <string name="available_backups">Available Backups (%1$d)</string>
+    <string name="content_desc_no_backups_found">No backup files found</string>
+    <string name="no_backups_found">No backups found</string>
+    <string name="words_count">%1$d words</string>
+    <string name="cloud_sync_not_available">Cloud Sync Not Available</string>
+    <string name="cloud_sync_explanation">Full cloud backup is not yet implemented. Currently, only achievements sync via Google Play Games.\n\nUse the Local tab to create manual backups (JSON/CSV) of your vocabulary data.</string>
+    <string name="what_works_now">What Works Now</string>
+    <string name="what_works_list">✓ Achievements sync via Google Play Games\n✓ Local backups (JSON/CSV export)\n✓ Manual data import/export\n✓ Local backup file management</string>
+    <string name="coming_in_future">Coming in Future Updates</string>
+    <string name="coming_features_list">• Full vocabulary cloud backup\n• Automatic sync across devices\n• Google Drive integration\n• Dropbox integration\n• Custom backend support</string>
+    <string name="use_local_backups">Use Local Backups Instead</string>
+    <string name="local_backup_instructions">For now, please use the Local tab to:\n• Create backup files (JSON or CSV format)\n• Export to your device storage\n• Share via email, cloud services, etc.\n• Import from previous backups</string>
+    <string name="backup_tip">💡 Tip: Regularly export your data to keep it safe!</string>
+    <string name="content_desc_coming_soon">Coming soon features</string>
+    <string name="content_desc_file_storage">File storage location</string>
+    <string name="content_desc_backup_info">Backup information</string>
+    <string name="content_desc_export_success">Export successful</string>
+    <string name="content_desc_backup_error">Backup error</string>
+    <string name="content_desc_backup_success">Backup success</string>
 
     <!-- Multiplayer -->
     <string name="game_lobby">Game Lobby</string>
@@ -540,6 +580,8 @@
     <string name="content_desc_host">Host</string>
     <string name="content_desc_kick_player">Kick player</string>
     <string name="waiting_for_players">Waiting for players…</string>
+    <string name="ready">Ready</string>
+    <string name="leave_game">Leave game</string>
     <string name="join_room">Join Room</string>
     <string name="display_name">Display Name</string>
     <string name="room_code">Room Code</string>
@@ -555,6 +597,18 @@
     <string name="number_of_questions">Number of Questions</string>
     <string name="host_participates">Host participates in game</string>
     <string name="creating_room">Creating Room…</string>
+    <string name="available_rooms">Available Rooms</string>
+    <string name="rooms_count">%1$d rooms</string>
+    <string name="host_name">Host: %1$s</string>
+    <string name="level_label">Level: %1$s</string>
+    <string name="players_count">%1$d/%2$d</string>
+    <string name="home">Home</string>
+    <string name="your_info">Your Info</string>
+    <string name="game_settings">Game Settings</string>
+    <string name="difficulty_level">Difficulty Level</string>
+    <string name="answer_options">Answer Options: %1$d</string>
+    <string name="room_label">Room: %1$s</string>
+    <string name="winner">Winner!</string>
     <string name="game_over">Game Over</string>
     <string name="play_again">Play Again</string>
     <string name="content_desc_winner">Winner</string>

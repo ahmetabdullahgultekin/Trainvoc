@@ -289,9 +289,18 @@
     <!-- Profile Screen -->
     <string name="total_xp">Toplam XP</string>
     <string name="current_streak">Mevcut Seri</string>
+    <string name="longest_streak">En Uzun Seri</string>
     <string name="words_learned">Öğrenilen Kelimeler</string>
     <string name="accuracy">Doğruluk</string>
     <string name="member_since">%1$s tarihinden beri üye</string>
+    <string name="member_since_label">Üyelik Başlangıcı</string>
+    <string name="level_format">Seviye %1$d</string>
+    <string name="no_achievements_yet">Henüz başarı yok</string>
+    <string name="keep_learning_to_unlock">Başarıları açmak için öğrenmeye devam edin!</string>
+    <string name="tap_to_change_avatar">Avatarı değiştirmek için dokunun</string>
+    <string name="username_cannot_be_empty">Kullanıcı adı boş olamaz</string>
+    <string name="username_min_length">Kullanıcı adı en az 3 karakter olmalı</string>
+    <string name="username_max_length">Kullanıcı adı en fazla 20 karakter olmalı</string>
 
     <!-- Review Mode -->
     <string name="review_mode">Gözden Geçirme Modu</string>
@@ -491,6 +500,9 @@
     <string name="share">Paylaş</string>
     <string name="practice_word">Kelime pratiği</string>
     <string name="share_word">Kelimeyi paylaş</string>
+    <string name="add_to_favorites">Favorilere ekle</string>
+    <string name="remove_from_favorites">Favorilerden kaldır</string>
+    <string name="pronunciation">Telaffuz</string>
     <string name="content_desc_pronunciation">Telaffuzu dinle</string>
     <string name="content_desc_alphabet_nav">Alfabe navigasyonu. Bir harfle başlayan kelimelere atlamak için sürükleyin.</string>
     <string name="content_desc_jump_letter">%1$s harfine atla</string>
@@ -515,6 +527,34 @@
     <string name="restore_success">Veri başarıyla geri yüklendi!</string>
     <string name="create_backup">Yedek Oluştur</string>
     <string name="backup_format">Yedek Formatı</string>
+    <string name="export_data">Veri Dışa Aktar</string>
+    <string name="export_data_desc">Kelime verilerinizin yedeğini oluşturun</string>
+    <string name="content_desc_export">Kelime verilerini dışa aktar</string>
+    <string name="exporting_progress">Dışa aktarılıyor… %1$d%%</string>
+    <string name="import_data">Veri İçe Aktar</string>
+    <string name="import_data_desc">Yedek dosyasından geri yükle</string>
+    <string name="content_desc_import">Kelime verilerini içe aktar</string>
+    <string name="importing_progress">İçe aktarılıyor… %1$d%%</string>
+    <string name="restore_success_details">Veri başarıyla geri yüklendi!\n%1$d kelime geri yüklendi\n%2$d çakışma çözüldü</string>
+    <string name="available_backups">Mevcut Yedekler (%1$d)</string>
+    <string name="content_desc_no_backups_found">Yedek dosyası bulunamadı</string>
+    <string name="no_backups_found">Yedek bulunamadı</string>
+    <string name="words_count">%1$d kelime</string>
+    <string name="cloud_sync_not_available">Bulut Senkronizasyonu Mevcut Değil</string>
+    <string name="cloud_sync_explanation">Tam bulut yedekleme henüz uygulanmadı. Şu anda yalnızca başarılar Google Play Games ile senkronize ediliyor.\n\nKelime verilerinizin manuel yedeklerini oluşturmak için Yerel sekmesini kullanın.</string>
+    <string name="what_works_now">Şu An Çalışanlar</string>
+    <string name="what_works_list">✓ Google Play Games ile başarı senkronizasyonu\n✓ Yerel yedekler (JSON/CSV dışa aktarma)\n✓ Manuel veri içe/dışa aktarma\n✓ Yerel yedek dosya yönetimi</string>
+    <string name="coming_in_future">Gelecek Güncellemelerde</string>
+    <string name="coming_features_list">• Tam kelime bulut yedekleme\n• Cihazlar arası otomatik senkronizasyon\n• Google Drive entegrasyonu\n• Dropbox entegrasyonu\n• Özel backend desteği</string>
+    <string name="use_local_backups">Bunun Yerine Yerel Yedekleri Kullanın</string>
+    <string name="local_backup_instructions">Şimdilik lütfen Yerel sekmesini kullanın:\n• Yedek dosyaları oluşturun (JSON veya CSV formatı)\n• Cihaz depolamanıza dışa aktarın\n• E-posta, bulut hizmetleri vb. ile paylaşın\n• Önceki yedeklerden içe aktarın</string>
+    <string name="backup_tip">💡 İpucu: Verilerinizi güvende tutmak için düzenli olarak dışa aktarın!</string>
+    <string name="content_desc_coming_soon">Yakında gelecek özellikler</string>
+    <string name="content_desc_file_storage">Dosya depolama konumu</string>
+    <string name="content_desc_backup_info">Yedekleme bilgisi</string>
+    <string name="content_desc_export_success">Dışa aktarma başarılı</string>
+    <string name="content_desc_backup_error">Yedekleme hatası</string>
+    <string name="content_desc_backup_success">Yedekleme başarılı</string>
 
     <!-- Multiplayer -->
     <string name="game_lobby">Oyun Lobisi</string>
@@ -525,6 +565,8 @@
     <string name="content_desc_host">Ev sahibi</string>
     <string name="content_desc_kick_player">Oyuncuyu çıkar</string>
     <string name="waiting_for_players">Oyuncular bekleniyor…</string>
+    <string name="ready">Hazır</string>
+    <string name="leave_game">Oyundan ayrıl</string>
     <string name="join_room">Odaya Katıl</string>
     <string name="room_code">Oda Kodu</string>
     <string name="join">Katıl</string>
@@ -539,6 +581,17 @@
     <string name="number_of_questions">Soru Sayısı</string>
     <string name="host_participates">Ev sahibi oyuna katılsın</string>
     <string name="creating_room">Oda Oluşturuluyor…</string>
+    <string name="available_rooms">Mevcut Odalar</string>
+    <string name="rooms_count">%1$d oda</string>
+    <string name="host_name">Ev Sahibi: %1$s</string>
+    <string name="level_label">Seviye: %1$s</string>
+    <string name="players_count">%1$d/%2$d</string>
+    <string name="your_info">Bilgileriniz</string>
+    <string name="game_settings">Oyun Ayarları</string>
+    <string name="difficulty_level">Zorluk Seviyesi</string>
+    <string name="answer_options">Cevap Seçenekleri: %1$d</string>
+    <string name="room_label">Oda: %1$s</string>
+    <string name="winner">Kazanan!</string>
     <string name="game_over">Oyun Bitti</string>
     <string name="play_again">Tekrar Oyna</string>
     <string name="content_desc_winner">Kazanan</string>
