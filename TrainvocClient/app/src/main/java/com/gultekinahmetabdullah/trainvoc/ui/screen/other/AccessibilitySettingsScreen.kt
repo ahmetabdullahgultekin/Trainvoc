@@ -312,10 +312,14 @@ private fun SettingsCard(
 private fun ColorBlindModeSelector(viewModel: AccessibilityViewModel) {
     val selectedMode by viewModel.colorBlindMode.collectAsState()
 
+    val deuteranopiaLabel = stringResource(id = R.string.deuteranopia)
+    val protanopiaLabel = stringResource(id = R.string.protanopia)
+    val tritanopiaLabel = stringResource(id = R.string.tritanopia)
+
     val modes = listOf(
-        "deuteranopia" to "Deuteranopia (Green-weak)",
-        "protanopia" to "Protanopia (Red-weak)",
-        "tritanopia" to "Tritanopia (Blue-weak)"
+        "deuteranopia" to deuteranopiaLabel,
+        "protanopia" to protanopiaLabel,
+        "tritanopia" to tritanopiaLabel
     )
 
     Card(
@@ -421,7 +425,7 @@ private fun AccessibilityPreviewCard(
                 .padding(Spacing.medium)
         ) {
             Text(
-                text = "Preview",
+                text = stringResource(id = R.string.preview),
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontSize = MaterialTheme.typography.titleSmall.fontSize * textScale
                 ),
@@ -430,7 +434,7 @@ private fun AccessibilityPreviewCard(
             )
             Spacer(modifier = Modifier.height(Spacing.small))
             Text(
-                text = "This is how text will appear with your current accessibility settings. The contrast and size adjustments help ensure readability for all users.",
+                text = stringResource(id = R.string.preview_text),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize * textScale
                 ),
@@ -446,13 +450,13 @@ private fun AccessibilityPreviewCard(
                 ) {
                     Icon(
                         Icons.Default.Check,
-                        contentDescription = "Accessibility icon",
+                        contentDescription = stringResource(id = R.string.content_desc_accessibility_icon),
                         tint = if (highContrast) Color.Black else Color.White,
                         modifier = Modifier.size(20.dp)
                     )
                 }
                 Text(
-                    text = "Button Example",
+                    text = stringResource(id = R.string.button_example),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontSize = MaterialTheme.typography.labelLarge.fontSize * textScale
                     ),

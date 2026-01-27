@@ -14,9 +14,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -155,7 +157,7 @@ private fun FillInTheBlankContent(
     }
 
     GameScreenTemplate(
-        title = "Fill in the Blank",
+        title = stringResource(id = R.string.fill_in_blank),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.correctAnswers * 10
@@ -170,7 +172,7 @@ private fun FillInTheBlankContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -191,7 +193,7 @@ private fun FillInTheBlankContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Type the missing word:",
+                                text = stringResource(id = R.string.type_missing_word),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -232,12 +234,12 @@ private fun FillInTheBlankContent(
                         onValueChange = { if (!hasSubmitted) userInput = it },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !hasSubmitted,
-                        label = { Text("Your answer") },
-                        placeholder = { Text("Type the word...") },
+                        label = { Text(stringResource(id = R.string.your_answer)) },
+                        placeholder = { Text(stringResource(id = R.string.type_the_word)) },
                         singleLine = true,
                         isError = isCorrect == false,
                         supportingText = if (isCorrect == false) {
-                            { Text("Correct answer: ${question.correctAnswer}", color = MaterialTheme.colorScheme.error) }
+                            { Text(stringResource(id = R.string.correct_answer_display, question.correctAnswer), color = MaterialTheme.colorScheme.error) }
                         } else null,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = if (isCorrect == true) androidx.compose.ui.graphics.Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary,
@@ -278,11 +280,14 @@ private fun FillInTheBlankContent(
                             }
                         )
                     ) {
+                        val correctResultText = stringResource(id = R.string.correct_result)
+                        val incorrectResultText = stringResource(id = R.string.incorrect_result)
+                        val submitText = stringResource(id = R.string.submit)
                         Text(
                             text = when (isCorrect) {
-                                true -> "Correct!"
-                                false -> "Incorrect"
-                                null -> "Submit"
+                                true -> correctResultText
+                                false -> incorrectResultText
+                                null -> submitText
                             },
                             fontWeight = FontWeight.Bold
                         )
@@ -295,9 +300,9 @@ private fun FillInTheBlankContent(
                         onClick = onHintToggle,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Lightbulb, contentDescription = "Toggle hint")
+                        Icon(Icons.Default.Lightbulb, contentDescription = stringResource(id = R.string.content_desc_toggle_hint))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(if (showHint) "Hide Hint" else "Show Hint")
+                        Text(if (showHint) stringResource(id = R.string.hide_hint) else stringResource(id = R.string.show_hint))
                     }
                 }
 
@@ -340,7 +345,7 @@ private fun FillInTheBlankContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Accuracy",
+                                text = stringResource(id = R.string.accuracy),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -373,7 +378,7 @@ private fun ErrorStateContent(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -386,10 +391,10 @@ private fun ErrorStateContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }
