@@ -804,4 +804,88 @@
 
     <!-- Leaderboard Screen -->
     <string name="content_desc_leaderboard_icon">Leaderboard icon</string>
+
+    <!-- Game Feedback -->
+    <string name="correct_feedback">Correct! ✓</string>
+    <string name="incorrect_feedback">Incorrect! ✗</string>
+    <string name="question_counter">Question %1$d of %2$d</string>
+    <string name="unscramble_this_word">Unscramble this word:</string>
+    <string name="hint_label">Hint: %1$s</string>
+
+    <!-- Color Blind Modes -->
+    <string name="deuteranopia">Deuteranopia (Green-weak)</string>
+    <string name="protanopia">Protanopia (Red-weak)</string>
+    <string name="tritanopia">Tritanopia (Blue-weak)</string>
+
+    <!-- Accessibility Preview -->
+    <string name="preview_text">This is how text will appear with your current accessibility settings. The contrast and size adjustments help ensure readability for all users.</string>
+    <string name="button_example">Button Example</string>
+
+    <!-- Game Screens Additional -->
+    <string name="use_hints_instruction">Use the hints to guess the word\'s meaning:</string>
+    <string name="hints_counter">Hints (%1$d/%2$d)</string>
+    <string name="what_is_turkish_meaning">What is the Turkish meaning?</string>
+    <string name="game_complete">Game Complete!</string>
+    <string name="race_complete">Race Complete!</string>
+    <string name="error_title">Error</string>
+    <string name="translate_label">Translate:</string>
+    <string name="combo_display">🔥 %1$dx COMBO!</string>
+    <string name="english_flag">🇬🇧 English</string>
+    <string name="turkish_flag">🇹🇷 Turkish</string>
+    <string name="mixed_direction">Mixed</string>
+    <string name="type_missing_word">Type the missing word:</string>
+    <string name="correct_answer_display">Correct answer: %1$s</string>
+    <string name="correct_result">Correct!</string>
+    <string name="incorrect_result">Incorrect</string>
+    <string name="hide_hint">Hide Hint</string>
+    <string name="show_hint">Show Hint</string>
+
+    <!-- Spelling Challenge -->
+    <string name="spell_in_english">Spell this word in English:</string>
+    <string name="correct_spelling_feedback">Correct! %1$s</string>
+    <string name="incorrect_spelling_feedback">Incorrect. Correct spelling: %1$s</string>
+
+    <!-- Picture Match -->
+    <string name="streak_display">🔥 %1$d Streak! Keep going!</string>
+    <string name="select_english_word">Select the English word for this meaning:</string>
+    <string name="select_turkish_meaning">Select the Turkish meaning:</string>
+
+    <!-- Flip Cards -->
+    <string name="moves">Moves</string>
+    <string name="pairs">Pairs</string>
+    <string name="new_best_score">🏆 New Best Score!</string>
+    <string name="grid_4x4_desc">8 pairs (Easy)</string>
+    <string name="grid_4x6_desc">12 pairs (Medium)</string>
+    <string name="grid_6x6_desc">18 pairs (Hard)</string>
+
+    <!-- Listening Quiz -->
+    <string name="listen_select_translation">Listen and select the correct translation</string>
+    <string name="listen_select_word">Listen and select the correct word</string>
+    <string name="listen_select_spelling">Listen and select the correct spelling</string>
+    <string name="play_audio">Play Audio</string>
+    <string name="replay_left">Replay (%1$d left)</string>
+    <string name="select_your_answer">Select your answer:</string>
+
+    <!-- Last Quiz Results Additional -->
+    <string name="loading_quiz_results">Loading quiz results…</string>
+    <string name="score_display">Score: %1$d/%2$d</string>
+    <string name="time_label">Time</string>
+    <string name="xp_earned">XP Earned</string>
+    <string name="performance_breakdown">Performance Breakdown</string>
+    <string name="correct_performance">Correct</string>
+    <string name="wrong_performance">Wrong</string>
+    <string name="skipped_performance">Skipped</string>
+    <string name="review_mistakes">Review Mistakes (%1$d)</string>
+    <string name="collapse">Collapse</string>
+    <string name="expand">Expand</string>
+    <string name="tap_to_see_more">Tap to see %1$d more…</string>
+    <string name="view_details">View details</string>
+    <string name="practice_tip">Practice makes perfect! Keep reviewing missed words to improve your score.</string>
+    <string name="no_quiz_results">No Quiz Results Yet</string>
+    <string name="complete_quiz_to_see">Complete a quiz to see your results here</string>
+    <string name="outstanding">Outstanding!</string>
+    <string name="content_desc_info">Info</string>
+    <string name="content_desc_retry">Retry</string>
+    <string name="content_desc_review">Review</string>
+    <string name="content_desc_start">Start</string>
 </resources>

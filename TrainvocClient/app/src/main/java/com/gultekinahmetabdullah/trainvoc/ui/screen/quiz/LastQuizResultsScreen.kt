@@ -29,9 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.animations.ConfettiAnimation
 import com.gultekinahmetabdullah.trainvoc.ui.animations.StaggeredListItem
 import com.gultekinahmetabdullah.trainvoc.ui.components.LoadingScreenContent
@@ -70,10 +72,10 @@ fun LastQuizResultsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Last Quiz Results") },
+                title = { Text(stringResource(id = R.string.last_quiz_results)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.content_desc_back))
                     }
                 }
             )
@@ -86,7 +88,7 @@ fun LastQuizResultsScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    LoadingScreenContent(message = "Loading quiz results...")
+                    LoadingScreenContent(message = stringResource(id = R.string.loading_quiz_results))
                 }
             }
             error != null -> {
@@ -154,26 +156,32 @@ private fun QuizResultsContent(
     var showStats by remember { mutableStateOf(false) }
     var triggerConfetti by remember { mutableStateOf(false) }
 
+    // Celebration texts
+    val outstandingText = stringResource(id = R.string.outstanding)
+    val greatJobText = stringResource(id = R.string.great_job)
+    val keepPracticingText = stringResource(id = R.string.keep_practicing)
+    val dontGiveUpText = stringResource(id = R.string.dont_give_up)
+
     // Determine celebration based on score
-    val celebration = remember(accuracy) {
+    val celebration = remember(accuracy, outstandingText, greatJobText, keepPracticingText, dontGiveUpText) {
         when {
             accuracy >= 90 -> Celebration(
-                text = "Outstanding!",
+                text = outstandingText,
                 icon = Icons.Default.EmojiEvents,
                 showConfetti = true
             )
             accuracy >= 70 -> Celebration(
-                text = "Great job!",
+                text = greatJobText,
                 icon = Icons.Default.Star,
                 showConfetti = false
             )
             accuracy >= 50 -> Celebration(
-                text = "Keep practicing!",
+                text = keepPracticingText,
                 icon = Icons.Default.ThumbUp,
                 showConfetti = false
             )
             else -> Celebration(
-                text = "Don't give up!",
+                text = dontGiveUpText,
                 icon = Icons.Default.EmojiEmotions,
                 showConfetti = false
             )
@@ -254,7 +262,7 @@ private fun QuizResultsContent(
                             .padding(vertical = Spacing.lg),
                         progress = accuracy / 100f,
                         score = accuracy,
-                        subtitle = "Score: $correctAnswers/$totalQuestions",
+                        subtitle = stringResource(id = R.string.score_display, correctAnswers, totalQuestions),
                         animate = true
                     )
                 }
@@ -271,7 +279,7 @@ private fun QuizResultsContent(
                             StatsCard(
                                 icon = Icons.Default.Timer,
                                 value = timeTaken,
-                                label = "Time",
+                                label = stringResource(id = R.string.time_label),
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -279,7 +287,7 @@ private fun QuizResultsContent(
                             StatsCard(
                                 icon = Icons.Default.EmojiEvents,
                                 value = "+${accuracy * 10}",
-                                label = "XP Earned",
+                                label = stringResource(id = R.string.xp_earned),
                                 modifier = Modifier.weight(1f),
                                 iconTint = MaterialTheme.colorScheme.statsAverage
                             )
@@ -326,9 +334,9 @@ private fun QuizResultsContent(
                                 onClick = onRetryQuiz,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Icon(Icons.Default.Refresh, "Retry")
+                                Icon(Icons.Default.Refresh, stringResource(id = R.string.content_desc_retry))
                                 Spacer(Modifier.width(Spacing.sm))
-                                Text("Start New Quiz")
+                                Text(stringResource(id = R.string.start_new_quiz))
                             }
 
                             if (missedWords.isNotEmpty()) {
@@ -336,9 +344,9 @@ private fun QuizResultsContent(
                                     onClick = { onReviewMissed(missedWords.map { it.word }) },
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Icon(Icons.AutoMirrored.Filled.Assignment, "Review")
+                                    Icon(Icons.AutoMirrored.Filled.Assignment, stringResource(id = R.string.content_desc_review))
                                     Spacer(Modifier.width(Spacing.sm))
-                                    Text("Review Missed Words (${missedWords.size})")
+                                    Text(stringResource(id = R.string.review_missed_words, missedWords.size))
                                 }
                             }
                         }
@@ -363,12 +371,12 @@ private fun QuizResultsContent(
                             ) {
                                 Icon(
                                     Icons.Default.Info,
-                                    "Info",
+                                    stringResource(id = R.string.content_desc_info),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(Modifier.width(Spacing.md))
                                 Text(
-                                    text = "Practice makes perfect! Keep reviewing missed words to improve your score.",
+                                    text = stringResource(id = R.string.practice_tip),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -510,7 +518,7 @@ private fun PerformanceBreakdown(
                 .padding(Spacing.md)
         ) {
             Text(
-                text = "Performance Breakdown",
+                text = stringResource(id = R.string.performance_breakdown),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -519,7 +527,7 @@ private fun PerformanceBreakdown(
 
             // Correct answers bar
             PerformanceBar(
-                label = "Correct",
+                label = stringResource(id = R.string.correct_performance),
                 count = correctAnswers,
                 total = totalQuestions,
                 color = MaterialTheme.colorScheme.statsCorrect,
@@ -530,7 +538,7 @@ private fun PerformanceBreakdown(
 
             // Wrong answers bar
             PerformanceBar(
-                label = "Wrong",
+                label = stringResource(id = R.string.wrong_performance),
                 count = wrongAnswers,
                 total = totalQuestions,
                 color = MaterialTheme.colorScheme.error,
@@ -541,7 +549,7 @@ private fun PerformanceBreakdown(
 
             // Skipped questions bar
             PerformanceBar(
-                label = "Skipped",
+                label = stringResource(id = R.string.skipped_performance),
                 count = skippedQuestions,
                 total = totalQuestions,
                 color = MaterialTheme.colorScheme.statsSkipped,
@@ -657,14 +665,14 @@ private fun MistakesReview(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Review Mistakes (${missedWords.size})",
+                    text = stringResource(id = R.string.review_mistakes, missedWords.size),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(id = R.string.collapse) else stringResource(id = R.string.expand),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -704,7 +712,7 @@ private fun MistakesReview(
 
                     if (missedWords.size > 3) {
                         Text(
-                            text = "Tap to see ${missedWords.size - 3} more...",
+                            text = stringResource(id = R.string.tap_to_see_more, missedWords.size - 3),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(top = Spacing.xs)
@@ -754,7 +762,7 @@ private fun MissedWordItem(
             }
             Icon(
                 Icons.Default.ChevronRight,
-                "View details",
+                stringResource(id = R.string.view_details),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
@@ -778,27 +786,27 @@ private fun NoQuizState(
         ) {
             Icon(
                 imageVector = Icons.Default.Quiz,
-                contentDescription = "No quiz",
+                contentDescription = stringResource(id = R.string.content_desc_no_quiz),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
-                text = "No Quiz Results Yet",
+                text = stringResource(id = R.string.no_quiz_results),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
-                text = "Complete a quiz to see your results here",
+                text = stringResource(id = R.string.complete_quiz_to_see),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Button(onClick = onStartQuiz) {
-                Icon(Icons.Default.PlayArrow, "Start")
+                Icon(Icons.Default.PlayArrow, stringResource(id = R.string.content_desc_start))
                 Spacer(Modifier.width(8.dp))
-                Text("Start a Quiz")
+                Text(stringResource(id = R.string.start_a_quiz))
             }
         }
     }
@@ -820,7 +828,7 @@ private fun ErrorState(
         ) {
             Icon(
                 imageVector = Icons.Default.Error,
-                contentDescription = "Error",
+                contentDescription = stringResource(id = R.string.content_desc_error),
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.error
             )
@@ -832,9 +840,9 @@ private fun ErrorState(
             )
 
             Button(onClick = onRetry) {
-                Icon(Icons.Default.Refresh, "Retry")
+                Icon(Icons.Default.Refresh, stringResource(id = R.string.content_desc_retry))
                 Spacer(Modifier.width(8.dp))
-                Text("Retry")
+                Text(stringResource(id = R.string.retry))
             }
         }
     }

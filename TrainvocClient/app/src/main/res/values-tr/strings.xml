@@ -794,4 +794,88 @@
     <string name="level_xp_format">Seviye %1$d • %2$d / %3$d XP</string>
     <string name="words_count_format">Kelimeler: %1$s</string>
     <string name="quizzes_count_format">Testler: %1$s</string>
+
+    <!-- Game Feedback -->
+    <string name="correct_feedback">Doğru! ✓</string>
+    <string name="incorrect_feedback">Yanlış! ✗</string>
+    <string name="question_counter">Soru %1$d / %2$d</string>
+    <string name="unscramble_this_word">Bu kelimeyi çözün:</string>
+    <string name="hint_label">İpucu: %1$s</string>
+
+    <!-- Color Blind Modes -->
+    <string name="deuteranopia">Deuteranopi (Yeşil-zayıf)</string>
+    <string name="protanopia">Protanopi (Kırmızı-zayıf)</string>
+    <string name="tritanopia">Tritanopi (Mavi-zayıf)</string>
+
+    <!-- Accessibility Preview -->
+    <string name="preview_text">Mevcut erişilebilirlik ayarlarınızla metin böyle görünecek. Kontrast ve boyut ayarlamaları tüm kullanıcılar için okunabilirliği sağlamaya yardımcı olur.</string>
+    <string name="button_example">Düğme Örneği</string>
+
+    <!-- Game Screens Additional -->
+    <string name="use_hints_instruction">Kelimenin anlamını tahmin etmek için ipuçlarını kullanın:</string>
+    <string name="hints_counter">İpuçları (%1$d/%2$d)</string>
+    <string name="what_is_turkish_meaning">Türkçe anlamı nedir?</string>
+    <string name="game_complete">Oyun Tamamlandı!</string>
+    <string name="race_complete">Yarış Tamamlandı!</string>
+    <string name="error_title">Hata</string>
+    <string name="translate_label">Çevir:</string>
+    <string name="combo_display">🔥 %1$dx KOMBO!</string>
+    <string name="english_flag">🇬🇧 İngilizce</string>
+    <string name="turkish_flag">🇹🇷 Türkçe</string>
+    <string name="mixed_direction">Karışık</string>
+    <string name="type_missing_word">Eksik kelimeyi yazın:</string>
+    <string name="correct_answer_display">Doğru cevap: %1$s</string>
+    <string name="correct_result">Doğru!</string>
+    <string name="incorrect_result">Yanlış</string>
+    <string name="hide_hint">İpucunu Gizle</string>
+    <string name="show_hint">İpucunu Göster</string>
+
+    <!-- Spelling Challenge -->
+    <string name="spell_in_english">Bu kelimeyi İngilizce olarak yazın:</string>
+    <string name="correct_spelling_feedback">Doğru! %1$s</string>
+    <string name="incorrect_spelling_feedback">Yanlış. Doğru yazılış: %1$s</string>
+
+    <!-- Picture Match -->
+    <string name="streak_display">🔥 %1$d Seri! Devam et!</string>
+    <string name="select_english_word">Bu anlam için İngilizce kelimeyi seçin:</string>
+    <string name="select_turkish_meaning">Türkçe anlamı seçin:</string>
+
+    <!-- Flip Cards -->
+    <string name="moves">Hamleler</string>
+    <string name="pairs">Çiftler</string>
+    <string name="new_best_score">🏆 Yeni En İyi Skor!</string>
+    <string name="grid_4x4_desc">8 çift (Kolay)</string>
+    <string name="grid_4x6_desc">12 çift (Orta)</string>
+    <string name="grid_6x6_desc">18 çift (Zor)</string>
+
+    <!-- Listening Quiz -->
+    <string name="listen_select_translation">Dinleyin ve doğru çeviriyi seçin</string>
+    <string name="listen_select_word">Dinleyin ve doğru kelimeyi seçin</string>
+    <string name="listen_select_spelling">Dinleyin ve doğru yazılışı seçin</string>
+    <string name="play_audio">Sesi Oynat</string>
+    <string name="replay_left">Tekrarla (%1$d kaldı)</string>
+    <string name="select_your_answer">Cevabınızı seçin:</string>
+
+    <!-- Last Quiz Results Additional -->
+    <string name="loading_quiz_results">Test sonuçları yükleniyor…</string>
+    <string name="score_display">Skor: %1$d/%2$d</string>
+    <string name="time_label">Süre</string>
+    <string name="xp_earned">Kazanılan XP</string>
+    <string name="performance_breakdown">Performans Dağılımı</string>
+    <string name="correct_performance">Doğru</string>
+    <string name="wrong_performance">Yanlış</string>
+    <string name="skipped_performance">Atlanan</string>
+    <string name="review_mistakes">Hataları İncele (%1$d)</string>
+    <string name="collapse">Daralt</string>
+    <string name="expand">Genişlet</string>
+    <string name="tap_to_see_more">%1$d tane daha görmek için dokun…</string>
+    <string name="view_details">Ayrıntıları görüntüle</string>
+    <string name="practice_tip">Pratik mükemmelleştirir! Skorunuzu artırmak için yanlış kelimeleri gözden geçirmeye devam edin.</string>
+    <string name="no_quiz_results">Henüz Test Sonucu Yok</string>
+    <string name="complete_quiz_to_see">Sonuçlarınızı görmek için bir test tamamlayın</string>
+    <string name="outstanding">Mükemmel!</string>
+    <string name="content_desc_info">Bilgi</string>
+    <string name="content_desc_retry">Tekrar dene</string>
+    <string name="content_desc_review">İncele</string>
+    <string name="content_desc_start">Başlat</string>
 </resources>
