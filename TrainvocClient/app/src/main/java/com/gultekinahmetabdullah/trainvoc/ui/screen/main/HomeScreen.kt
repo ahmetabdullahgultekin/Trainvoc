@@ -148,9 +148,10 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // Get username from SharedPreferences
+    // Get username and avatar from SharedPreferences
     val prefs = remember { context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE) }
     val username = prefs.getString("username", null) ?: stringResource(id = R.string.username_placeholder)
+    val userAvatar = prefs.getString("avatar", null) ?: "🦊" // Default fox avatar
 
     // Update Notes management
     val updateNotesManager = remember { UpdateNotesManager.getInstance(context) }
@@ -193,6 +194,7 @@ fun HomeScreen(
             item {
                 HomeHeader(
                     username = username,
+                    avatar = userAvatar,
                     level = uiState.level,
                     currentXP = uiState.xpCurrent,
                     maxXP = uiState.xpForNextLevel,
@@ -235,14 +237,14 @@ fun HomeScreen(
                         onClick = onNavigateToDailyGoals
                     )
 
-                    // Streak Card
-                    if (uiState.currentStreak > 0) {
-                        StreakWidget(
-                            streakCount = uiState.currentStreak,
-                            onClick = onNavigateToStreakDetail,
-                            modifier = Modifier.weight(0.7f)
-                        )
-                    }
+                    // Streak Card - Always show for engagement
+                    StreakWidget(
+                        streakCount = uiState.currentStreak,
+                        onClick = onNavigateToStreakDetail,
+                        modifier = Modifier.weight(0.7f),
+                        isAtRisk = uiState.isStreakAtRisk,
+                        isActivatedToday = uiState.streakStatus == StreakStatus.ACTIVE_TODAY
+                    )
                 }
             }
 
@@ -678,6 +680,22 @@ fun AnimatedBackground(
     )
 }
 
+// Private helper functions
+
+/**
+ * Returns a time-appropriate greeting message
+ */
+private fun getGreeting(): String {
+    val hour = java.time.LocalTime.now().hour
+    return when {
+        hour < 5 -> "Good night"
+        hour < 12 -> "Good morning"
+        hour < 17 -> "Good afternoon"
+        hour < 21 -> "Good evening"
+        else -> "Good night"
+    }
+}
+
 // Private composable components
 
 /**
@@ -688,6 +706,7 @@ fun AnimatedBackground(
 @Composable
 private fun HomeHeader(
     username: String,
+    avatar: String,
     level: Int,
     currentXP: Int,
     maxXP: Int,
@@ -747,6 +766,7 @@ private fun HomeHeader(
                 modifier = Modifier.padding(Spacing.md),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // User avatar (emoji or first letter fallback)
                 Box(
                     modifier = Modifier
                         .size(56.dp)
@@ -755,15 +775,16 @@ private fun HomeHeader(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = username.take(1).uppercase(),
-                        style = MaterialTheme.typography.headlineSmall,
+                        text = avatar.ifEmpty { username.take(1).uppercase() },
+                        style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
                 Spacer(modifier = Modifier.width(Spacing.md))
                 Column(modifier = Modifier.weight(1f)) {
+                    // Personalized welcome message (fixes #186)
                     Text(
-                        text = username,
+                        text = getGreeting() + ", $username!",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )

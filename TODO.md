@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 6 | 20 | 0 | 26 |
-| 🟠 HIGH | 21 | 22 | 6 | 49 |
-| 🟡 MEDIUM | 15 | 50 | 11 | 76 |
-| 🟢 LOW | 9 | 15 | 19 | 43 |
+| 🔴 CRITICAL | 5 | 21 | 0 | 26 |
+| 🟠 HIGH | 17 | 26 | 6 | 49 |
+| 🟡 MEDIUM | 12 | 53 | 11 | 76 |
+| 🟢 LOW | 8 | 16 | 19 | 43 |
 | ⚪ INFO | 0 | 3 | 21 | 24 |
-| **TOTAL** | **51** | **110** | **57** | **218** |
+| **TOTAL** | **42** | **119** | **57** | **218** |
 
 ---
 
@@ -70,11 +70,11 @@
 | 157 | Android | `StatsScreen.kt` | Stats inconsistency: Profile shows TODAY's quizzes, Stats shows TOTAL | ⚪ BY DESIGN |
 | 158 | Android | Navigation | No Login/Register access point visible in app - only Sign Out shown | ✅ FIXED 2026-01-25 (added Sign In button, connected Login/Register screens) |
 | 168 | Android | `StoryScreen.kt` | Story Mode has NO actual story content - just level selection screen, violates "Learn through stories" promise | ⬜ OPEN |
-| 169 | Android | `FlipCardsScreen.kt:157` | Cards too small on 6x6 grid (~45dp) - unreadable for longer words, game essentially broken | ⬜ OPEN |
-| 170 | Android | `QuizScreen.kt` | Streaks don't persist between sessions - resets every time user opens app, kills engagement | ⬜ OPEN |
+| 169 | Android | `FlipCardsScreen.kt:157` | Cards too small on 6x6 grid (~45dp) - unreadable for longer words, game essentially broken | ✅ FIXED 2026-01-27 (long-press popup, min touch target) |
+| 170 | Android | `QuizScreen.kt` | Streaks don't persist between sessions - resets every time user opens app, kills engagement | ✅ FIXED 2026-01-27 (validate streak in HomeViewModel) |
 | 171 | Android | `GamesMenuScreen.kt` | Multiplayer game UI was deleted from codebase - major feature missing | ⬜ OPEN |
 | 172 | Android | `HomeScreen.kt:249-326` | Home screen has 6+ quick action buttons with flat hierarchy - causes decision paralysis, no clear CTA | ⬜ OPEN |
-| 173 | Android | `ProfileScreen.kt:102` | Auth state checked via SharedPreferences, should use AuthViewModel - causes sync issues on logout | ⬜ OPEN |
+| 173 | Android | `ProfileScreen.kt:102` | Auth state checked via SharedPreferences, should use AuthViewModel - causes sync issues on logout | ✅ FIXED 2026-01-27 (AuthViewModel integration) |
 
 ---
 
@@ -110,7 +110,7 @@
 | 160 | Android | `HomeScreen.kt:360-362` | "Perfect Start" achievement appears twice - added distinctBy filter | ✅ FIXED 2026-01-25 |
 | 161 | Android | `StoryScreen.kt:75-83` | Missing level names - now shows both A1/A2 code AND Beginner/Elementary | ✅ FIXED 2026-01-25 |
 | 162 | Android | `StoryScreen.kt:147-162` | Progress bar added per level showing learned/total words | ✅ FIXED 2026-01-25 |
-| 174 | Android | `HomeScreen.kt:750-762` | HomeScreen shows first letter in circle, should show user's emoji avatar | ⬜ OPEN |
+| 174 | Android | `HomeScreen.kt:750-762` | HomeScreen shows first letter in circle, should show user's emoji avatar | ✅ FIXED 2026-01-27 (avatar parameter added to HomeHeader) |
 | 175 | Android | `LobbyScreen.kt:251` | Multiplayer lobby uses generic Person icon instead of player avatar emoji | ⬜ OPEN |
 | 176 | Android | `GameResultsScreen.kt:251` | Multiplayer results uses generic Person icon instead of player avatar | ⬜ OPEN |
 | 177 | Android | `StoryScreen.kt` | No chapter structure within levels - just flat level selection, no progressive chapters | ⬜ OPEN |
@@ -118,11 +118,11 @@
 | 179 | Android | `QuizScreen.kt` | No adaptive difficulty - quiz doesn't adjust based on user performance | ⬜ OPEN |
 | 180 | Android | `QuizScreen.kt` | No sound effects - only haptic feedback, missing audio cues for engagement | ⬜ OPEN |
 | 181 | Android | `QuizScreen.kt` | No hint system - no "reveal letter" or "eliminate option" hints available | ⬜ OPEN |
-| 182 | Android | `GameScreens.kt:338-343` | Flip Cards font size hardcoded based on char count, user cannot adjust | ⬜ OPEN |
-| 183 | Android | `GameScreens.kt:318-324` | Flip Cards popup auto-dismisses after 2 seconds, should stay until user closes | ⬜ OPEN |
+| 182 | Android | `GameScreens.kt:338-343` | Flip Cards font size hardcoded based on char count, user cannot adjust | ✅ FIXED 2026-01-27 (long-press popup with large text) |
+| 183 | Android | `GameScreens.kt:318-324` | Flip Cards popup auto-dismisses after 2 seconds, should stay until user closes | ✅ FIXED 2026-01-27 (popup stays until dismissed) |
 | 184 | Android | `GameScreens.kt` | Flip Cards no pinch-zoom or manual card enlargement option | ⬜ OPEN |
 | 185 | Android | `AppBottomBar.kt` | Only 4 nav items, design intended for 5 with center play button (isCenter param unused) | ⬜ OPEN |
-| 186 | Android | `HomeScreen.kt` | No welcome/greeting message - doesn't say "Welcome back, [Name]!" | ⬜ OPEN |
+| 186 | Android | `HomeScreen.kt` | No welcome/greeting message - doesn't say "Welcome back, [Name]!" | ✅ FIXED 2026-01-27 (time-based greeting added) |
 | 187 | Android | `HomeScreen.kt` | No "continue where you left off" feature - users must search for last activity | ⬜ OPEN |
 | 188 | Android | `ProfileScreen.kt:174` | Quizzes count shows TODAY only, but StatsScreen shows ALL-TIME - confusing inconsistency | ⬜ OPEN |
 | 189 | Android | Social | Friend system not implemented - no way to add/view friends | ⬜ OPEN |
@@ -204,7 +204,7 @@
 | 197 | Android | `StatsViewModel.kt:77-78` | dailyCorrect/weeklyCorrect collected but never displayed in UI | ⬜ OPEN |
 | 198 | Android | `QuizScreen.kt:224-230` | Stats card hidden by default - must toggle info icon, poor discoverability | ⬜ OPEN |
 | 199 | Android | `QuizScreen.kt` | No speed bonuses - time pressure exists but no reward for fast answers | ⬜ OPEN |
-| 200 | Android | `FlipCardsScreen.kt:432-451` | Touch targets below 48dp minimum on 6x6 grids (~45dp cards) | ⬜ OPEN |
+| 200 | Android | `FlipCardsScreen.kt:432-451` | Touch targets below 48dp minimum on 6x6 grids (~45dp cards) | ✅ FIXED 2026-01-27 (added sizeIn(minWidth=48dp)) |
 | 201 | Android | `AppBottomBar.kt` | No notification badges on nav items | ⬜ OPEN |
 | 202 | Android | `HomeScreen.kt:328-362` | Stats preview section redundant with HomeHeader - shows same info twice | ⬜ OPEN |
 | 203 | Android | `Color.kt` | DEFAULT palette missing AMOLED variant - falls back to dark theme | ⬜ OPEN |
@@ -255,7 +255,7 @@
 | 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ❌ WONTFIX (valid string resource) |
 | 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ✅ FIXED 2026-01-26 |
 | 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ✅ FIXED 2026-01-26 |
-| 210 | Android | `ProfileScreen.kt:845-851` | No logout confirmation dialog - direct logout on tap, could be accidental | ⬜ OPEN |
+| 210 | Android | `ProfileScreen.kt:845-851` | No logout confirmation dialog - direct logout on tap, could be accidental | ✅ FIXED 2026-01-27 (confirmation dialog added) |
 | 211 | Android | `Theme.kt:362` | High contrast + AMOLED can't work simultaneously - one overrides other | ⬜ OPEN |
 | 212 | Android | `Color.kt:100-103` | AMOLED surface color is #0D0D0D not pure black #000000 - less battery savings | ⬜ OPEN |
 | 213 | Android | `HomeScreen.kt:364-391` | Achievements section shown when most users have none - wastes space | ⬜ OPEN |

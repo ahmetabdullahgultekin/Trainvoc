@@ -5,7 +5,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -279,7 +281,12 @@ fun GameResultDialog(
 
 /**
  * Flip Card Component for Memory Game
- * Shows a popup with full content when card content is long
+ * Shows a popup with full content on long-press (fixes #169, #182, #183)
+ *
+ * Improvements:
+ * - Long-press to enlarge card (popup stays until dismissed)
+ * - Minimum 48dp touch target for accessibility
+ * - Responsive font sizing
  */
 @Composable
 fun FlipCard(
@@ -290,11 +297,11 @@ fun FlipCard(
     modifier: Modifier = Modifier
 ) {
     var showPopup by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
 
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped || isMatched) 180f else 0f,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 300),
+        label = "card_rotation"
     )
 
     val backgroundColor = when {
@@ -312,16 +319,21 @@ fun FlipCard(
     Card(
         modifier = modifier
             .aspectRatio(1f)
-            .clickable(enabled = !isMatched) {
-                onClick()
-                // Show popup briefly for flipped cards with long content
-                if ((isFlipped || isMatched) && content.length > 8) {
-                    showPopup = true
-                    scope.launch {
-                        delay(2000)
-                        showPopup = false
+            .sizeIn(minWidth = 48.dp, minHeight = 48.dp) // Minimum touch target
+            .pointerInput(isFlipped, isMatched) {
+                detectTapGestures(
+                    onTap = {
+                        if (!isMatched) {
+                            onClick()
+                        }
+                    },
+                    onLongPress = {
+                        // Long-press to enlarge card content (stays until dismissed)
+                        if (isFlipped || isMatched) {
+                            showPopup = true
+                        }
                     }
-                }
+                )
             },
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
@@ -336,9 +348,10 @@ fun FlipCard(
             if (isFlipped || isMatched) {
                 // Auto-sizing text for card content
                 val textSize = when {
-                    content.length > 15 -> 10.sp
-                    content.length > 10 -> 12.sp
-                    content.length > 6 -> 14.sp
+                    content.length > 15 -> 9.sp
+                    content.length > 12 -> 10.sp
+                    content.length > 8 -> 12.sp
+                    content.length > 5 -> 14.sp
                     else -> 16.sp
                 }
                 Text(
@@ -346,35 +359,54 @@ fun FlipCard(
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = textSize),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(4.dp),
-                    maxLines = 3
+                    modifier = Modifier.padding(2.dp),
+                    maxLines = 3,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
+                // Show expand hint for long content
+                if (content.length > 8) {
+                    Icon(
+                        imageVector = Icons.Default.ZoomIn,
+                        contentDescription = "Long-press to enlarge",
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(2.dp)
+                            .size(12.dp),
+                        tint = contentColor.copy(alpha = 0.5f)
+                    )
+                }
             } else {
                 Icon(
                     imageVector = Icons.Default.QuestionMark,
                     contentDescription = "Card face down",
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(28.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
     }
 
-    // Popup dialog for long content
+    // Popup dialog for enlarged content (stays until user dismisses)
     if (showPopup && (isFlipped || isMatched)) {
         AlertDialog(
             onDismissRequest = { showPopup = false },
-            title = null,
+            title = {
+                Text(
+                    text = "Card Content",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            },
             text = {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = content,
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.headlineLarge,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold
                     )
@@ -382,7 +414,7 @@ fun FlipCard(
             },
             confirmButton = {
                 TextButton(onClick = { showPopup = false }) {
-                    Text("OK")
+                    Text("Close")
                 }
             }
         )

@@ -259,22 +259,50 @@ fun PressAnimatedCard(
 
 /**
  * StreakWidget - Shows streak count with animated flame icon
+ * Supports "at risk" state to warn users to practice today
  */
 @Composable
 fun StreakWidget(
     streakCount: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAtRisk: Boolean = false,
+    isActivatedToday: Boolean = false
 ) {
     val haptic = rememberHapticPerformer()
     val scale = remember { Animatable(1f) }
 
-    // Pulse animation for flame
-    LaunchedEffect(Unit) {
+    // Pulse animation for flame (faster if at risk)
+    LaunchedEffect(isAtRisk) {
         while (true) {
-            scale.animateTo(1.1f, animationSpec = tween(500, easing = FastOutSlowInEasing))
-            scale.animateTo(1f, animationSpec = tween(500, easing = FastOutSlowInEasing))
+            val duration = if (isAtRisk) 300 else 500
+            scale.animateTo(1.1f, animationSpec = tween(duration, easing = FastOutSlowInEasing))
+            scale.animateTo(1f, animationSpec = tween(duration, easing = FastOutSlowInEasing))
         }
+    }
+
+    // Determine colors based on state
+    val backgroundColor = when {
+        streakCount == 0 -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f)
+        isAtRisk -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.9f) // Warning color
+        else -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f) // Fire color
+    }
+    val contentColor = when {
+        streakCount == 0 -> MaterialTheme.colorScheme.onSurfaceVariant
+        isAtRisk -> MaterialTheme.colorScheme.onTertiaryContainer
+        else -> MaterialTheme.colorScheme.onErrorContainer
+    }
+    val emoji = when {
+        streakCount == 0 -> "💤"
+        isAtRisk -> "⚠️"
+        isActivatedToday -> "🔥"
+        else -> "🔥"
+    }
+    val statusText = when {
+        streakCount == 0 -> "Start streak!"
+        isAtRisk -> "Practice today!"
+        isActivatedToday -> "Safe!"
+        else -> "day streak"
     }
 
     GlassCard(
@@ -283,29 +311,29 @@ fun StreakWidget(
             haptic.click()
             onClick()
         },
-        backgroundColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f)
+        backgroundColor = backgroundColor
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "\uD83D\uDD25",
+                text = emoji,
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.scale(scale.value)
             )
             Spacer(modifier = Modifier.width(Spacing.small))
             Column {
                 Text(
-                    text = "$streakCount",
+                    text = if (streakCount > 0) "$streakCount" else "0",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = contentColor
                 )
                 Text(
-                    text = "day streak",
+                    text = if (streakCount > 0 && !isAtRisk && !isActivatedToday) "day streak" else statusText,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
+                    color = contentColor.copy(alpha = 0.7f)
                 )
             }
         }

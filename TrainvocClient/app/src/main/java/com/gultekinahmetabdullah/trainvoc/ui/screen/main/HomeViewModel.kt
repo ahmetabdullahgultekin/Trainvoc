@@ -45,11 +45,27 @@ class HomeViewModel @Inject constructor(
     private fun loadHomeData() {
         viewModelScope.launch {
             try {
-                // Load streak data
+                // Load streak data and validate it
                 val streak = gamificationDao.getStreakTracking() ?: createDefaultStreak()
+                // Only show streak if it's still valid (activity today or yesterday)
+                val validatedCurrentStreak = if (streak.isStreakValid()) streak.currentStreak else 0
 
-                // Load daily goals
-                val dailyGoal = gamificationDao.getDailyGoal() ?: createDefaultDailyGoal()
+                // Calculate streak status for UI feedback
+                val streakStatus = when {
+                    streak.currentStreak == 0 -> StreakStatus.NO_STREAK
+                    streak.isActiveToday() -> StreakStatus.ACTIVE_TODAY
+                    streak.isStreakValid() -> StreakStatus.AT_RISK // Yesterday activity, not today
+                    else -> StreakStatus.BROKEN
+                }
+                val isStreakAtRisk = streakStatus == StreakStatus.AT_RISK
+
+                // Load daily goals (and reset if new day)
+                var dailyGoal = gamificationDao.getDailyGoal() ?: createDefaultDailyGoal()
+                // Check if daily goals need to be reset for a new day
+                if (dailyGoal.needsReset()) {
+                    gamificationDao.resetDailyProgress()
+                    dailyGoal = gamificationDao.getDailyGoal() ?: dailyGoal
+                }
 
                 // Load achievements
                 val unlockedAchievements = gamificationDao.getUnlockedAchievements()
@@ -107,8 +123,10 @@ class HomeViewModel @Inject constructor(
 
                 _uiState.value = HomeUiState(
                     isLoading = false,
-                    currentStreak = streak.currentStreak,
+                    currentStreak = validatedCurrentStreak,
                     longestStreak = streak.longestStreak,
+                    streakStatus = streakStatus,
+                    isStreakAtRisk = isStreakAtRisk,
                     totalScore = totalScore,
                     level = level,
                     xpProgress = xpProgress,
@@ -183,6 +201,8 @@ data class HomeUiState(
     // Streaks
     val currentStreak: Int = 0,
     val longestStreak: Int = 0,
+    val streakStatus: StreakStatus = StreakStatus.NO_STREAK,
+    val isStreakAtRisk: Boolean = false,
 
     // Daily Goals
     val dailyGoal: DailyGoal? = null,
@@ -224,4 +244,14 @@ data class HomeUiState(
     val reviewsProgress: Float get() = if (reviewsGoal > 0) (reviewsToday.toFloat() / reviewsGoal).coerceIn(0f, 1f) else 0f
 
     val achievementsUnlocked: Int get() = unlockedAchievements.size
+}
+
+/**
+ * Streak status for displaying appropriate UI feedback
+ */
+enum class StreakStatus {
+    NO_STREAK,      // User has no streak (0 days)
+    ACTIVE_TODAY,   // User already practiced today, streak is safe
+    AT_RISK,        // User hasn't practiced today but streak is still valid
+    BROKEN          // Streak was broken (2+ days since last activity)
 }
