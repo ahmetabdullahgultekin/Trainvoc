@@ -223,7 +223,7 @@ fun ConflictResolutionDialog(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(id = R.string.cancel))
                     }
                     Button(
                         onClick = { onStrategySelected(selectedStrategy) },
@@ -231,7 +231,7 @@ fun ConflictResolutionDialog(
                     ) {
                         Icon(Icons.Default.Check, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("Resolve")
+                        Text(stringResource(id = R.string.resolve))
                     }
                 }
             }
