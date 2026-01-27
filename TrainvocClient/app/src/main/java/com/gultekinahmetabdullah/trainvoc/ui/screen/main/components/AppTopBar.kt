@@ -97,7 +97,7 @@ fun AppTopBar(
                 }) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(id = R.string.back),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -106,7 +106,7 @@ fun AppTopBar(
                 IconButton(onClick = onMenuClick) {
                     Icon(
                         Icons.Default.Menu,
-                        contentDescription = "Open menu",
+                        contentDescription = stringResource(id = R.string.content_desc_open_menu),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }

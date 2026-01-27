@@ -32,7 +32,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -86,7 +88,7 @@ fun AnimatedCheckmark(
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
-                contentDescription = "Success",
+                contentDescription = stringResource(id = R.string.content_desc_success),
                 tint = color,
                 modifier = Modifier
                     .size(48.dp)
@@ -135,7 +137,7 @@ fun AnimatedErrorCross(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Error",
+                contentDescription = stringResource(id = R.string.content_desc_error),
                 tint = color,
                 modifier = Modifier
                     .size(48.dp)
@@ -351,7 +353,7 @@ fun ProgressCheckmark(
     if (isCompleted || scale > 0f) {
         Icon(
             imageVector = Icons.Default.Check,
-            contentDescription = "Completed",
+            contentDescription = stringResource(id = R.string.content_desc_completed),
             tint = MaterialTheme.colorScheme.primary,
             modifier = modifier
                 .size(24.dp)
