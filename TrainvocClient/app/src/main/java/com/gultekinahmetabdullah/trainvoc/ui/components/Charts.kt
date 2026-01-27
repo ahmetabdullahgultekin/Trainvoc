@@ -34,9 +34,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.AnimationDuration
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 
@@ -603,7 +605,7 @@ fun MilestoneTimeline(
                     ) {
                         Icon(
                             imageVector = milestone.icon,
-                            contentDescription = "Chart icon",
+                            contentDescription = stringResource(id = R.string.content_desc_chart_icon),
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )

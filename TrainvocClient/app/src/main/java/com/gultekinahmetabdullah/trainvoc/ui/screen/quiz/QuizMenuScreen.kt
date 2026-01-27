@@ -95,8 +95,8 @@ fun QuizMenuScreen(
             if (!hasAnyQuizHistory) {
                 InfoCard(
                     icon = Icons.Default.Quiz,
-                    title = "Start your first quiz!",
-                    message = "Test your vocabulary knowledge and track your progress. We recommend starting with 'Not Learned' to focus on new words.",
+                    title = stringResource(id = R.string.start_first_quiz_title),
+                    message = stringResource(id = R.string.start_first_quiz_message),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = Spacing.md)
@@ -230,7 +230,7 @@ fun AnimatedQuizTypeCard(
                                     color = MaterialTheme.colorScheme.secondary
                                 ) {
                                     Text(
-                                        text = "NEW",
+                                        text = stringResource(id = R.string.badge_new_quiz),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSecondary,
                                         fontWeight = FontWeight.Bold,
@@ -257,7 +257,7 @@ fun AnimatedQuizTypeCard(
                         ) {
                             if (bestScore != null) {
                                 Text(
-                                    text = "Best: ${(bestScore * 100).toInt()}%",
+                                    text = stringResource(id = R.string.best_score_percent, (bestScore * 100).toInt()),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -265,13 +265,13 @@ fun AnimatedQuizTypeCard(
 
                             if (timesPlayed > 0) {
                                 Text(
-                                    text = "Played: $timesPlayed ${if (timesPlayed == 1) "time" else "times"}",
+                                    text = if (timesPlayed == 1) stringResource(id = R.string.played_count_single, timesPlayed) else stringResource(id = R.string.played_count_plural, timesPlayed),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             } else if (bestScore == null) {
                                 Text(
-                                    text = "Not played yet",
+                                    text = stringResource(id = R.string.not_played_yet),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                 )

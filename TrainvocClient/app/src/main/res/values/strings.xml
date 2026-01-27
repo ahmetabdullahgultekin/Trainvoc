@@ -961,4 +961,136 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="other_notifications">Other Notifications</string>
+
+    <!-- Screen Titles -->
+    <string name="about">About</string>
+    <string name="changelog">Changelog</string>
+    <string name="word_progress">Word Progress</string>
+
+    <!-- Common Content Descriptions -->
+    <string name="content_desc_success">Success</string>
+    <string name="content_desc_completed">Completed</string>
+    <string name="content_desc_empty">Empty</string>
+    <string name="content_desc_favorite">Favorite</string>
+    <string name="content_desc_card_icon">Card icon</string>
+    <string name="content_desc_chart_icon">Chart icon</string>
+    <string name="content_desc_navigate">Navigate</string>
+    <string name="content_desc_dismiss">Dismiss</string>
+    <string name="content_desc_delete">Delete</string>
+    <string name="content_desc_open_menu">Open menu</string>
+    <string name="content_desc_open_link">Open link</string>
+    <string name="content_desc_locked">Locked</string>
+    <string name="content_desc_select">Select</string>
+    <string name="content_desc_correct_answer">Correct answer</string>
+    <string name="content_desc_total_score">Total score</string>
+    <string name="content_desc_correct_answers">Correct answers</string>
+    <string name="content_desc_incorrect_answers">Incorrect answers</string>
+    <string name="content_desc_word_not_found">Word not found</string>
+    <string name="content_desc_play_pronunciation">Play pronunciation</string>
+    <string name="content_desc_no_related_words">No related words</string>
+    <string name="content_desc_statistics">Statistics</string>
+    <string name="content_desc_time">Time</string>
+    <string name="content_desc_last_reviewed">Last reviewed</string>
+    <string name="content_desc_backup_info">Backup information</string>
+    <string name="content_desc_export_successful">Export successful</string>
+    <string name="content_desc_coming_soon_features">Coming soon features</string>
+    <string name="content_desc_file_storage">File storage location</string>
+    <string name="content_desc_conflict_resolution">Conflict resolution option</string>
+
+    <!-- Sync Status -->
+    <string name="content_desc_sync_idle">Sync idle - ready to sync</string>
+    <string name="content_desc_syncing">Syncing in progress</string>
+    <string name="content_desc_sync_complete">Sync complete - all data synced</string>
+    <string name="content_desc_sync_error">Sync error - unable to sync</string>
+    <string name="content_desc_sync_conflict">Sync conflict detected - manual resolution needed</string>
+    <string name="content_desc_view_sync_details">View sync details</string>
+    <string name="content_desc_last_sync_time">Last sync time</string>
+
+    <!-- Multiplayer -->
+    <string name="waiting_for_players">Waiting for players…</string>
+    <string name="loading_question">Loading question…</string>
+    <string name="loading_rankings">Loading rankings…</string>
+
+    <!-- Quiz Menu -->
+    <string name="quiz_menu_info">Test your vocabulary knowledge and track your progress. We recommend starting with \'Not Learned\' to focus on new words.</string>
+
+    <!-- Conflict Resolution Dialog -->
+    <string name="resolve">Resolve</string>
+
+    <!-- Changelog Screen -->
+    <string name="version_history">Version History</string>
+    <string name="version_history_desc">See what\'s new and improved in each version of Trainvoc</string>
+    <string name="version_number">Version %1$s</string>
+    <string name="released_date">Released %1$s</string>
+    <string name="whats_new">What\'s New</string>
+    <string name="badge_new">NEW</string>
+    <string name="badge_improved">IMPROVED</string>
+    <string name="badge_fixed">FIXED</string>
+    <string name="content_desc_collapse">Collapse</string>
+    <string name="content_desc_expand">Expand</string>
+
+    <!-- Word Progress Screen -->
+    <string name="overall_progress">Overall Progress</string>
+    <string name="percent_complete">%1$d%% Complete</string>
+    <string name="progress_by_level">Progress by Level</string>
+    <string name="word_status">Word Status</string>
+    <string name="spaced_repetition_schedule">Spaced Repetition Schedule</string>
+    <string name="due_for_review_today">Due for Review Today</string>
+    <string name="words_count_label">%1$d words</string>
+    <string name="content_desc_schedule">Schedule</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="this_week">This Week</string>
+    <string name="this_month">This Month</string>
+    <string name="progress_forecast">Progress Forecast</string>
+    <string name="content_desc_forecast">Forecast</string>
+    <string name="goal_projection">Goal Projection</string>
+    <string name="based_on_pace">Based on your current learning pace</string>
+    <string name="pace_projection">At your current pace of %1$d words/day, you\'ll reach %2$s level in approximately %3$d days</string>
+    <string name="estimated_completion">Estimated Completion: %1$s</string>
+    <string name="learning_summary">Learning Summary</string>
+    <string name="amazing_progress">Amazing progress! You\'re almost there!</string>
+    <string name="halfway_there">Halfway there! Keep up the great work!</string>
+    <string name="good_progress">Good progress! Consistency is key!</string>
+    <string name="great_start">Great start! Every word counts!</string>
+    <string name="begin_journey">Begin your journey to fluency!</string>
+    <string name="start_learning_progress">Start learning to see your progress!</string>
+    <string name="complete_quizzes_track">Complete quizzes and learn new words to track your journey.</string>
+    <string name="percent_complete_label">%1$d%% complete</string>
+    <string name="mastered">Mastered</string>
+    <string name="status_learning">Learning</string>
+    <string name="struggling">Struggling</string>
+    <string name="not_started">Not Started</string>
+    <string name="minutes_studied">Minutes\nStudied</string>
+    <string name="correct_answers_label">Correct\nAnswers</string>
+    <string name="words_learned_label">Words\nLearned</string>
+    <string name="content_desc_error">Error</string>
+
+    <!-- Word Detail Screen -->
+    <string name="content_desc_remove_favorite">Remove from favorites</string>
+    <string name="content_desc_add_favorite">Add to favorites</string>
+    <string name="definition">Definition</string>
+    <string name="examples">Examples</string>
+    <string name="content_desc_show_less">Show less</string>
+    <string name="content_desc_show_more">Show more</string>
+    <string name="synonyms">Synonyms</string>
+    <string name="usage_frequency">Usage Frequency</string>
+    <string name="favorited">Favorited</string>
+    <string name="favorite_word">Favorite</string>
+    <string name="share_button">Share</string>
+    <string name="very_common">Very Common</string>
+    <string name="common">Common</string>
+    <string name="uncommon">Uncommon</string>
+    <string name="rare_word">Rare</string>
+
+    <!-- Quiz Exam Menu Screen -->
+    <string name="or_practice_by_exam">Or Practice by Exam</string>
+
+    <!-- Quiz Menu Screen -->
+    <string name="start_first_quiz_title">Start your first quiz!</string>
+    <string name="start_first_quiz_message">Test your vocabulary knowledge and track your progress. We recommend starting with \'Not Learned\' to focus on new words.</string>
+    <string name="badge_new_quiz">NEW</string>
+    <string name="best_score_percent">Best: %1$d%%</string>
+    <string name="played_count_single">Played: %1$d time</string>
+    <string name="played_count_plural">Played: %1$d times</string>
+    <string name="not_played_yet">Not played yet</string>
 </resources>

@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -50,10 +52,10 @@ fun WordProgressScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Word Progress") },
+                title = { Text(stringResource(id = R.string.word_progress)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(id = R.string.back))
                     }
                 }
             )
@@ -81,7 +83,7 @@ fun WordProgressScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Overall Progress",
+                        text = stringResource(id = R.string.overall_progress),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -95,14 +97,14 @@ fun WordProgressScreen(
                     ) {
                         ProgressStat(
                             value = uiState.learnedWords.toString(),
-                            label = "Words Learned",
+                            label = stringResource(id = R.string.words_learned),
                             icon = Icons.Default.CheckCircle,
                             color = MaterialTheme.colorScheme.statsCorrect
                         )
 
                         ProgressStat(
                             value = "${uiState.totalWords}",
-                            label = "Total Words",
+                            label = stringResource(id = R.string.total_words),
                             icon = Icons.Default.Book,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -121,7 +123,7 @@ fun WordProgressScreen(
                     Spacer(Modifier.height(8.dp))
 
                     Text(
-                        text = "${if (uiState.totalWords > 0) ((uiState.learnedWords.toFloat() / uiState.totalWords) * 100).toInt() else 0}% Complete",
+                        text = stringResource(id = R.string.percent_complete, if (uiState.totalWords > 0) ((uiState.learnedWords.toFloat() / uiState.totalWords) * 100).toInt() else 0),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -131,7 +133,7 @@ fun WordProgressScreen(
 
             // Progress by Level
             Text(
-                text = "Progress by Level",
+                text = stringResource(id = R.string.progress_by_level),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -142,7 +144,7 @@ fun WordProgressScreen(
 
             // Word Status Breakdown
             Text(
-                text = "Word Status",
+                text = stringResource(id = R.string.word_status),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -164,7 +166,7 @@ fun WordProgressScreen(
 
             // Review Schedule
             Text(
-                text = "Spaced Repetition Schedule",
+                text = stringResource(id = R.string.spaced_repetition_schedule),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -187,12 +189,12 @@ fun WordProgressScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Due for Review Today",
+                                text = stringResource(id = R.string.due_for_review_today),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                             Text(
-                                text = "${wordsToReview.today} words",
+                                text = stringResource(id = R.string.words_count_label, wordsToReview.today),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onTertiaryContainer
@@ -201,7 +203,7 @@ fun WordProgressScreen(
 
                         Icon(
                             Icons.Default.Schedule,
-                            "Schedule",
+                            stringResource(id = R.string.content_desc_schedule),
                             modifier = Modifier.size(48.dp),
                             tint = MaterialTheme.colorScheme.onTertiaryContainer
                         )
@@ -213,15 +215,15 @@ fun WordProgressScreen(
 
                     Spacer(Modifier.height(12.dp))
 
-                    ReviewScheduleRow("Tomorrow", wordsToReview.tomorrow)
-                    ReviewScheduleRow("This Week", wordsToReview.thisWeek)
-                    ReviewScheduleRow("This Month", wordsToReview.thisMonth)
+                    ReviewScheduleRow(stringResource(id = R.string.tomorrow), wordsToReview.tomorrow)
+                    ReviewScheduleRow(stringResource(id = R.string.this_week), wordsToReview.thisWeek)
+                    ReviewScheduleRow(stringResource(id = R.string.this_month), wordsToReview.thisMonth)
                 }
             }
 
             // Progress Forecast
             Text(
-                text = "Progress Forecast",
+                text = stringResource(id = R.string.progress_forecast),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -242,7 +244,7 @@ fun WordProgressScreen(
                     ) {
                         Icon(
                             Icons.Default.TrendingUp,
-                            "Forecast",
+                            stringResource(id = R.string.content_desc_forecast),
                             modifier = Modifier.size(32.dp),
                             tint = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -251,13 +253,13 @@ fun WordProgressScreen(
 
                         Column {
                             Text(
-                                text = "Goal Projection",
+                                text = stringResource(id = R.string.goal_projection),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                             Text(
-                                text = "Based on your current learning pace",
+                                text = stringResource(id = R.string.based_on_pace),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -274,7 +276,7 @@ fun WordProgressScreen(
                     val estimatedDate = LocalDate.now().plusDays(estimatedDays.toLong())
 
                     Text(
-                        text = "At your current pace of $currentPace words/day, you'll reach $targetLevel level in approximately $estimatedDays days",
+                        text = stringResource(id = R.string.pace_projection, currentPace, targetLevel, estimatedDays),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
@@ -286,7 +288,7 @@ fun WordProgressScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "Estimated Completion: ${estimatedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
+                            text = stringResource(id = R.string.estimated_completion, estimatedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))),
                             modifier = Modifier.padding(12.dp),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
@@ -298,7 +300,7 @@ fun WordProgressScreen(
 
             // Learning Summary
             Text(
-                text = "Learning Summary",
+                text = stringResource(id = R.string.learning_summary),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -320,17 +322,17 @@ fun WordProgressScreen(
                         ) {
                             SummaryStatItem(
                                 value = "${uiState.totalStudyTimeMinutes}",
-                                label = "Minutes\nStudied",
+                                label = stringResource(id = R.string.minutes_studied),
                                 icon = Icons.Default.Timer
                             )
                             SummaryStatItem(
                                 value = "${uiState.totalCorrectAnswers}",
-                                label = "Correct\nAnswers",
+                                label = stringResource(id = R.string.correct_answers_label),
                                 icon = Icons.Default.CheckCircle
                             )
                             SummaryStatItem(
                                 value = "${uiState.learnedWords}",
-                                label = "Words\nLearned",
+                                label = stringResource(id = R.string.words_learned_label),
                                 icon = Icons.Default.School
                             )
                         }
@@ -342,12 +344,18 @@ fun WordProgressScreen(
                             ((uiState.learnedWords.toFloat() / uiState.totalWords) * 100).toInt()
                         } else 0
 
+                        val amazingProgress = stringResource(id = R.string.amazing_progress)
+                        val halfwayThere = stringResource(id = R.string.halfway_there)
+                        val goodProgress = stringResource(id = R.string.good_progress)
+                        val greatStart = stringResource(id = R.string.great_start)
+                        val beginJourney = stringResource(id = R.string.begin_journey)
+
                         val message = when {
-                            progressPercent >= 75 -> "Amazing progress! You're almost there!"
-                            progressPercent >= 50 -> "Halfway there! Keep up the great work!"
-                            progressPercent >= 25 -> "Good progress! Consistency is key!"
-                            progressPercent >= 10 -> "Great start! Every word counts!"
-                            else -> "Begin your journey to fluency!"
+                            progressPercent >= 75 -> amazingProgress
+                            progressPercent >= 50 -> halfwayThere
+                            progressPercent >= 25 -> goodProgress
+                            progressPercent >= 10 -> greatStart
+                            else -> beginJourney
                         }
 
                         Surface(
@@ -388,12 +396,12 @@ fun WordProgressScreen(
                             )
                             Spacer(Modifier.height(12.dp))
                             Text(
-                                text = "Start learning to see your progress!",
+                                text = stringResource(id = R.string.start_learning_progress),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "Complete quizzes and learn new words to track your journey.",
+                                text = stringResource(id = R.string.complete_quizzes_track),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                             )
@@ -498,7 +506,7 @@ private fun LevelProgressCard(progress: LevelProgress) {
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "${if (progress.total > 0) ((progress.learned.toFloat() / progress.total) * 100).toInt() else 0}% complete",
+                text = stringResource(id = R.string.percent_complete_label, if (progress.total > 0) ((progress.learned.toFloat() / progress.total) * 100).toInt() else 0),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -530,7 +538,7 @@ private fun WordStatusRow(status: WordStatus) {
         }
 
         Text(
-            text = "${status.count} words",
+            text = stringResource(id = R.string.words_count_label, status.count),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = status.color
@@ -550,7 +558,7 @@ private fun ReviewScheduleRow(label: String, count: Int) {
             color = MaterialTheme.colorScheme.onTertiaryContainer
         )
         Text(
-            text = "$count words",
+            text = stringResource(id = R.string.words_count_label, count),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onTertiaryContainer
@@ -630,32 +638,38 @@ private fun SummaryStatItem(
 }
 
 // Real data converter
+@Composable
 private fun generateWordStatusList(counts: WordStatusCounts?): List<WordStatus> {
+    val masteredLabel = stringResource(id = R.string.mastered)
+    val learningLabel = stringResource(id = R.string.status_learning)
+    val strugglingLabel = stringResource(id = R.string.struggling)
+    val notStartedLabel = stringResource(id = R.string.not_started)
+
     if (counts == null) {
         return emptyList()
     }
 
     return listOf(
         WordStatus(
-            "Mastered",
+            masteredLabel,
             counts.mastered,
             Icons.Default.CheckCircle,
             StatsColors.correctLight
         ),
         WordStatus(
-            "Learning",
+            learningLabel,
             counts.learning,
             Icons.Default.School,
             StatsColors.goldLight
         ),
         WordStatus(
-            "Struggling",
+            strugglingLabel,
             counts.struggling,
             Icons.Default.Warning,
             StatsColors.incorrectLight
         ),
         WordStatus(
-            "Not Started",
+            notStartedLabel,
             counts.notStarted,
             Icons.Default.Circle,
             StatsColors.skippedLight

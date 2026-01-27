@@ -89,7 +89,7 @@ fun HelpScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.back)
                         )
                     }
                 },
@@ -237,6 +237,8 @@ fun ImprovedFAQItem(
     answer: String
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val collapseText = stringResource(id = R.string.content_desc_collapse)
+    val expandText = stringResource(id = R.string.content_desc_expand)
 
     // Chevron rotation animation
     val rotationAngle by animateFloatAsState(
@@ -288,7 +290,7 @@ fun ImprovedFAQItem(
                 }
                 Icon(
                     imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    contentDescription = if (expanded) collapseText else expandText,
                     tint = if (expanded)
                         MaterialTheme.colorScheme.onPrimaryContainer
                     else
