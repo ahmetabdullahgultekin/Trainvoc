@@ -597,7 +597,7 @@ fun DictionaryWordCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.VolumeUp,
-                            contentDescription = "Pronunciation",
+                            contentDescription = stringResource(id = R.string.pronunciation),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -655,8 +655,12 @@ fun DictionaryWordCard(
             expanded = showQuickActions,
             onDismissRequest = { showQuickActions = false }
         ) {
+            val favoriteText = if (word.isFavorite)
+                stringResource(id = R.string.remove_from_favorites)
+            else
+                stringResource(id = R.string.add_to_favorites)
             DropdownMenuItem(
-                text = { Text(if (word.isFavorite) "Remove from favorites" else "Add to favorites") },
+                text = { Text(favoriteText) },
                 onClick = {
                     onFavoriteClick()
                     showQuickActions = false
@@ -664,12 +668,12 @@ fun DictionaryWordCard(
                 leadingIcon = {
                     Icon(
                         imageVector = if (word.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = if (word.isFavorite) "Remove from favorites" else "Add to favorites"
+                        contentDescription = favoriteText
                     )
                 }
             )
             DropdownMenuItem(
-                text = { Text("Practice") },
+                text = { Text(stringResource(id = R.string.practice)) },
                 onClick = {
                     onPracticeClick()
                     showQuickActions = false
@@ -677,12 +681,12 @@ fun DictionaryWordCard(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "Practice word"
+                        contentDescription = stringResource(id = R.string.practice_word)
                     )
                 }
             )
             DropdownMenuItem(
-                text = { Text("Share") },
+                text = { Text(stringResource(id = R.string.share)) },
                 onClick = {
                     onShareClick()
                     showQuickActions = false
@@ -690,7 +694,7 @@ fun DictionaryWordCard(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Share word"
+                        contentDescription = stringResource(id = R.string.share_word)
                     )
                 }
             )
@@ -827,13 +831,14 @@ fun AlphabetFastScroll(
     val alphabet = ('A'..'Z').map { it.toString() }
     var dragOffset by remember { mutableStateOf(Offset.Zero) }
     var isDragging by remember { mutableStateOf(false) }
+    val alphabetNavDesc = stringResource(id = R.string.content_desc_alphabet_nav)
 
     Column(
         modifier = modifier
             .fillMaxHeight()
             .width(40.dp)  // Increased from 32.dp for better touch targets
             .semantics {
-                contentDescription = "Alphabet navigation. Drag to jump to words starting with a letter."
+                contentDescription = alphabetNavDesc
             }
             .pointerInput(Unit) {
                 detectDragGestures(
@@ -861,6 +866,7 @@ fun AlphabetFastScroll(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         alphabet.forEach { letter ->
+            val jumpToLetterDesc = stringResource(id = R.string.content_desc_jump_letter, letter)
             Text(
                 text = letter,
                 style = MaterialTheme.typography.labelSmall,
@@ -869,7 +875,7 @@ fun AlphabetFastScroll(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(vertical = 1.dp)
-                    .semantics { contentDescription = "Jump to letter $letter" }
+                    .semantics { contentDescription = jumpToLetterDesc }
             )
         }
     }

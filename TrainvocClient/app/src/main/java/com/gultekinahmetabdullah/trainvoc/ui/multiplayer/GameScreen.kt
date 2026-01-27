@@ -13,10 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.PlayerInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.QuestionInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.GameState
@@ -57,13 +59,13 @@ fun GameScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Room: $roomCode",
+                        text = stringResource(id = R.string.room_label, roomCode),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
                 actions = {
                     IconButton(onClick = onLeaveGame) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Leave game")
+                        Icon(Icons.Default.ExitToApp, contentDescription = stringResource(id = R.string.leave_game))
                     }
                 }
             )

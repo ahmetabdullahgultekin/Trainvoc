@@ -336,7 +336,7 @@ fun ProfileHeroSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Change avatar",
+                        contentDescription = stringResource(id = R.string.content_desc_change_avatar),
                         tint = MaterialTheme.colorScheme.onSecondary,
                         modifier = Modifier.size(16.dp)
                     )
@@ -368,12 +368,12 @@ fun ProfileHeroSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "User level $level",
+                        contentDescription = stringResource(id = R.string.content_desc_user_level, level),
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier.size(20.dp)
                     )
                     Text(
-                        text = "Level $level",
+                        text = stringResource(id = R.string.level_format, level),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         fontWeight = FontWeight.Bold
@@ -621,7 +621,7 @@ fun AdditionalInfoSection(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = "Current streak: $currentStreak days",
+                        contentDescription = stringResource(id = R.string.content_desc_current_streak, currentStreak),
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(32.dp)
                     )
@@ -632,7 +632,7 @@ fun AdditionalInfoSection(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Current Streak",
+                        text = stringResource(id = R.string.current_streak),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -647,7 +647,7 @@ fun AdditionalInfoSection(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
-                        contentDescription = "Longest streak: $longestStreak days",
+                        contentDescription = stringResource(id = R.string.content_desc_longest_streak, longestStreak),
                         tint = MaterialTheme.colorScheme.statsGold,
                         modifier = Modifier.size(32.dp)
                     )
@@ -658,7 +658,7 @@ fun AdditionalInfoSection(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Longest Streak",
+                        text = stringResource(id = R.string.longest_streak),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -683,13 +683,13 @@ fun AdditionalInfoSection(
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Member since date",
+                    contentDescription = stringResource(id = R.string.content_desc_member_since),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )
                 Column {
                     Text(
-                        text = "Member Since",
+                        text = stringResource(id = R.string.member_since_label),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -720,17 +720,17 @@ fun AchievementsSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Achievements",
+                text = stringResource(id = R.string.achievements),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             TextButton(onClick = onViewAll) {
-                Text("View All")
+                Text(stringResource(id = R.string.view_all))
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
-                    contentDescription = "View all achievements",
+                    contentDescription = stringResource(id = R.string.content_desc_view_all_achievements),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -752,18 +752,18 @@ fun AchievementsSection(
                 ) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
-                        contentDescription = "No achievements unlocked yet",
+                        contentDescription = stringResource(id = R.string.content_desc_no_achievements),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.height(Spacing.sm))
                     Text(
-                        text = "No achievements yet",
+                        text = stringResource(id = R.string.no_achievements_yet),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Keep learning to unlock achievements!",
+                        text = stringResource(id = R.string.keep_learning_to_unlock),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -923,7 +923,7 @@ private fun ActionCard(
             }
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Go",
+                contentDescription = stringResource(id = R.string.content_desc_go),
                 tint = if (isDestructive) {
                     MaterialTheme.colorScheme.error
                 } else {
@@ -963,9 +963,14 @@ fun EditProfileDialog(
     var error by remember { mutableStateOf<String?>(null) }
     var showAvatarPicker by remember { mutableStateOf(false) }
 
+    // Pre-fetch error strings for use in lambda
+    val errorEmpty = stringResource(id = R.string.username_cannot_be_empty)
+    val errorMinLength = stringResource(id = R.string.username_min_length)
+    val errorMaxLength = stringResource(id = R.string.username_max_length)
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Profile") },
+        title = { Text(stringResource(id = R.string.edit_profile)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(Spacing.md),
@@ -995,7 +1000,7 @@ fun EditProfileDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Change avatar",
+                            contentDescription = stringResource(id = R.string.content_desc_change_avatar),
                             tint = MaterialTheme.colorScheme.onSecondary,
                             modifier = Modifier.size(14.dp)
                         )
@@ -1003,7 +1008,7 @@ fun EditProfileDialog(
                 }
 
                 Text(
-                    text = "Tap to change avatar",
+                    text = stringResource(id = R.string.tap_to_change_avatar),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1049,13 +1054,13 @@ fun EditProfileDialog(
                     onValueChange = {
                         newUsername = it
                         error = when {
-                            it.isBlank() -> "Username cannot be empty"
-                            it.length < 3 -> "Username must be at least 3 characters"
-                            it.length > 20 -> "Username must be at most 20 characters"
+                            it.isBlank() -> errorEmpty
+                            it.length < 3 -> errorMinLength
+                            it.length > 20 -> errorMaxLength
                             else -> null
                         }
                     },
-                    label = { Text("Username") },
+                    label = { Text(stringResource(id = R.string.username)) },
                     leadingIcon = {
                         Icon(Icons.Default.Person, contentDescription = null)
                     },
@@ -1075,12 +1080,12 @@ fun EditProfileDialog(
                 },
                 enabled = error == null && newUsername.isNotBlank()
             ) {
-                Text("Save")
+                Text(stringResource(id = R.string.save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
         }
     )
@@ -1097,7 +1102,7 @@ fun AvatarSelectionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Choose Avatar") },
+        title = { Text(stringResource(id = R.string.choose_avatar)) },
         text = {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(5),
@@ -1135,7 +1140,7 @@ fun AvatarSelectionDialog(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Selected",
+                                    contentDescription = stringResource(id = R.string.content_desc_selected),
                                     tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.size(12.dp)
                                 )
@@ -1147,7 +1152,7 @@ fun AvatarSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Done")
+                Text(stringResource(id = R.string.done))
             }
         }
     )

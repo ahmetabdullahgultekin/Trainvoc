@@ -14,9 +14,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.ConnectionState
 import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
 import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
@@ -42,10 +44,10 @@ fun MultiplayerHomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Multiplayer") },
+                title = { Text(stringResource(id = R.string.multiplayer)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.content_desc_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -253,7 +255,7 @@ private fun ConnectionStatusCard(
             when (connectionState) {
                 is ConnectionState.Disconnected, is ConnectionState.Error -> {
                     TextButton(onClick = onConnect) {
-                        Text("Reconnect")
+                        Text(stringResource(id = R.string.reconnect))
                     }
                 }
                 is ConnectionState.Connecting -> {
