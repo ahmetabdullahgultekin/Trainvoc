@@ -448,7 +448,7 @@ fun CloudBackupTab(
                 ) {
                     Icon(
                         Icons.Default.Info,
-                        contentDescription = "Backup information",
+                        contentDescription = stringResource(id = R.string.content_desc_backup_info),
                         tint = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.size(32.dp)
                     )
@@ -488,7 +488,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CheckCircle,
-                            contentDescription = "Export successful",
+                            contentDescription = stringResource(id = R.string.content_desc_export_successful),
                             tint = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier.size(24.dp)
                         )
@@ -527,7 +527,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.Info,
-                            contentDescription = "Coming soon features",
+                            contentDescription = stringResource(id = R.string.content_desc_coming_soon_features),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -569,7 +569,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.Folder,
-                            contentDescription = "File storage location",
+                            contentDescription = stringResource(id = R.string.content_desc_file_storage),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(24.dp)
                         )

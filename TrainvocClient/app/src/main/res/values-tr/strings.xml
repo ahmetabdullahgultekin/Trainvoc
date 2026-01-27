@@ -951,4 +951,136 @@
     <string name="from">Başlangıç</string>
     <string name="to">Bitiş</string>
     <string name="other_notifications">Diğer Bildirimler</string>
+
+    <!-- Screen Titles -->
+    <string name="about">Hakkında</string>
+    <string name="changelog">Değişiklik Günlüğü</string>
+    <string name="word_progress">Kelime İlerlemesi</string>
+
+    <!-- Common Content Descriptions -->
+    <string name="content_desc_success">Başarılı</string>
+    <string name="content_desc_completed">Tamamlandı</string>
+    <string name="content_desc_empty">Boş</string>
+    <string name="content_desc_favorite">Favori</string>
+    <string name="content_desc_card_icon">Kart simgesi</string>
+    <string name="content_desc_chart_icon">Grafik simgesi</string>
+    <string name="content_desc_navigate">Git</string>
+    <string name="content_desc_dismiss">Kapat</string>
+    <string name="content_desc_delete">Sil</string>
+    <string name="content_desc_open_menu">Menüyü aç</string>
+    <string name="content_desc_open_link">Bağlantıyı aç</string>
+    <string name="content_desc_locked">Kilitli</string>
+    <string name="content_desc_select">Seç</string>
+    <string name="content_desc_correct_answer">Doğru cevap</string>
+    <string name="content_desc_total_score">Toplam puan</string>
+    <string name="content_desc_correct_answers">Doğru cevaplar</string>
+    <string name="content_desc_incorrect_answers">Yanlış cevaplar</string>
+    <string name="content_desc_word_not_found">Kelime bulunamadı</string>
+    <string name="content_desc_play_pronunciation">Telaffuzu çal</string>
+    <string name="content_desc_no_related_words">İlgili kelime yok</string>
+    <string name="content_desc_statistics">İstatistikler</string>
+    <string name="content_desc_time">Zaman</string>
+    <string name="content_desc_last_reviewed">Son inceleme</string>
+    <string name="content_desc_backup_info">Yedekleme bilgisi</string>
+    <string name="content_desc_export_successful">Dışa aktarma başarılı</string>
+    <string name="content_desc_coming_soon_features">Yakında gelecek özellikler</string>
+    <string name="content_desc_file_storage">Dosya depolama konumu</string>
+    <string name="content_desc_conflict_resolution">Çakışma çözümleme seçeneği</string>
+
+    <!-- Sync Status -->
+    <string name="content_desc_sync_idle">Senkronizasyon hazır</string>
+    <string name="content_desc_syncing">Senkronizasyon devam ediyor</string>
+    <string name="content_desc_sync_complete">Senkronizasyon tamamlandı</string>
+    <string name="content_desc_sync_error">Senkronizasyon hatası</string>
+    <string name="content_desc_sync_conflict">Senkronizasyon çakışması - manuel çözüm gerekli</string>
+    <string name="content_desc_view_sync_details">Senkronizasyon detaylarını görüntüle</string>
+    <string name="content_desc_last_sync_time">Son senkronizasyon zamanı</string>
+
+    <!-- Multiplayer -->
+    <string name="waiting_for_players">Oyuncular bekleniyor…</string>
+    <string name="loading_question">Soru yükleniyor…</string>
+    <string name="loading_rankings">Sıralama yükleniyor…</string>
+
+    <!-- Quiz Menu -->
+    <string name="quiz_menu_info">Kelime bilginizi test edin ve ilerlemenizi takip edin. Yeni kelimelere odaklanmak için \'Öğrenilmemiş\' ile başlamanızı öneririz.</string>
+
+    <!-- Conflict Resolution Dialog -->
+    <string name="resolve">Çöz</string>
+
+    <!-- Changelog Screen -->
+    <string name="version_history">Sürüm Geçmişi</string>
+    <string name="version_history_desc">Trainvoc\'un her sürümündeki yenilikleri ve iyileştirmeleri görün</string>
+    <string name="version_number">Sürüm %1$s</string>
+    <string name="released_date">Yayınlanma: %1$s</string>
+    <string name="whats_new">Yenilikler</string>
+    <string name="badge_new">YENİ</string>
+    <string name="badge_improved">GELİŞTİRİLDİ</string>
+    <string name="badge_fixed">DÜZELTİLDİ</string>
+    <string name="content_desc_collapse">Daralt</string>
+    <string name="content_desc_expand">Genişlet</string>
+
+    <!-- Word Progress Screen -->
+    <string name="overall_progress">Genel İlerleme</string>
+    <string name="percent_complete">%1$d%% Tamamlandı</string>
+    <string name="progress_by_level">Seviyeye Göre İlerleme</string>
+    <string name="word_status">Kelime Durumu</string>
+    <string name="spaced_repetition_schedule">Aralıklı Tekrar Takvimi</string>
+    <string name="due_for_review_today">Bugün Tekrar Edilecek</string>
+    <string name="words_count_label">%1$d kelime</string>
+    <string name="content_desc_schedule">Takvim</string>
+    <string name="tomorrow">Yarın</string>
+    <string name="this_week">Bu Hafta</string>
+    <string name="this_month">Bu Ay</string>
+    <string name="progress_forecast">İlerleme Tahmini</string>
+    <string name="content_desc_forecast">Tahmin</string>
+    <string name="goal_projection">Hedef Projeksiyonu</string>
+    <string name="based_on_pace">Mevcut öğrenme hızınıza göre</string>
+    <string name="pace_projection">Günde %1$d kelime hızınızla, yaklaşık %3$d günde %2$s seviyesine ulaşacaksınız</string>
+    <string name="estimated_completion">Tahmini Tamamlanma: %1$s</string>
+    <string name="learning_summary">Öğrenme Özeti</string>
+    <string name="amazing_progress">Harika ilerleme! Neredeyse bitirdiniz!</string>
+    <string name="halfway_there">Yarı yoldasınız! Harika gidiyorsunuz!</string>
+    <string name="good_progress">İyi ilerleme! Tutarlılık anahtar!</string>
+    <string name="great_start">Harika başlangıç! Her kelime sayılır!</string>
+    <string name="begin_journey">Akıcılığa giden yolculuğunuza başlayın!</string>
+    <string name="start_learning_progress">İlerlemenizi görmek için öğrenmeye başlayın!</string>
+    <string name="complete_quizzes_track">Yolculuğunuzu takip etmek için quizler çözün ve yeni kelimeler öğrenin.</string>
+    <string name="percent_complete_label">%1$d%% tamamlandı</string>
+    <string name="mastered">Ustalaşıldı</string>
+    <string name="status_learning">Öğreniliyor</string>
+    <string name="struggling">Zorlanılıyor</string>
+    <string name="not_started">Başlanmadı</string>
+    <string name="minutes_studied">Çalışılan\nDakika</string>
+    <string name="correct_answers_label">Doğru\nCevaplar</string>
+    <string name="words_learned_label">Öğrenilen\nKelimeler</string>
+    <string name="content_desc_error">Hata</string>
+
+    <!-- Word Detail Screen -->
+    <string name="content_desc_remove_favorite">Favorilerden kaldır</string>
+    <string name="content_desc_add_favorite">Favorilere ekle</string>
+    <string name="definition">Tanım</string>
+    <string name="examples">Örnekler</string>
+    <string name="content_desc_show_less">Daha az göster</string>
+    <string name="content_desc_show_more">Daha fazla göster</string>
+    <string name="synonyms">Eş Anlamlılar</string>
+    <string name="usage_frequency">Kullanım Sıklığı</string>
+    <string name="favorited">Favorilerde</string>
+    <string name="favorite_word">Favori</string>
+    <string name="share_button">Paylaş</string>
+    <string name="very_common">Çok Yaygın</string>
+    <string name="common">Yaygın</string>
+    <string name="uncommon">Az Kullanılan</string>
+    <string name="rare_word">Nadir</string>
+
+    <!-- Quiz Exam Menu Screen -->
+    <string name="or_practice_by_exam">Veya Sınava Göre Pratik Yap</string>
+
+    <!-- Quiz Menu Screen -->
+    <string name="start_first_quiz_title">İlk quizine başla!</string>
+    <string name="start_first_quiz_message">Kelime bilginizi test edin ve ilerlemenizi takip edin. Yeni kelimelere odaklanmak için \'Öğrenilmemiş\' ile başlamanızı öneririz.</string>
+    <string name="badge_new_quiz">YENİ</string>
+    <string name="best_score_percent">En iyi: %1$d%%</string>
+    <string name="played_count_single">Oynandı: %1$d kez</string>
+    <string name="played_count_plural">Oynandı: %1$d kez</string>
+    <string name="not_played_yet">Henüz oynanmadı</string>
 </resources>

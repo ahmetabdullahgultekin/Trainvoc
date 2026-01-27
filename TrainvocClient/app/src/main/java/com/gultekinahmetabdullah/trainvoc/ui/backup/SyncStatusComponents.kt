@@ -38,8 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.sync.SyncState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -167,7 +169,7 @@ fun SyncStateIcon(syncState: SyncState) {
 
             Icon(
                 Icons.Default.Sync,
-                contentDescription = "Syncing in progress",
+                contentDescription = stringResource(id = R.string.content_desc_syncing),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(32.dp)
@@ -290,7 +292,7 @@ fun SyncStatusIndicator(
             if (onClick != null) {
                 Icon(
                     Icons.Default.ChevronRight,
-                    contentDescription = "View sync details",
+                    contentDescription = stringResource(id = R.string.content_desc_view_sync_details),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -381,7 +383,7 @@ fun LastSyncTime(
     ) {
         Icon(
             Icons.Default.Schedule,
-            contentDescription = "Last sync time",
+            contentDescription = stringResource(id = R.string.content_desc_last_sync_time),
             modifier = Modifier.size(16.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )

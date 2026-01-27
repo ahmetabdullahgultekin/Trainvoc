@@ -28,6 +28,8 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.gultekinahmetabdullah.trainvoc.R
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -161,7 +163,7 @@ private fun SwipeBackground(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = "Delete",
+            contentDescription = stringResource(id = R.string.content_desc_delete),
             tint = iconTint,
             modifier = Modifier.scale(scale)
         )
