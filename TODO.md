@@ -131,6 +131,7 @@
 | 192 | Android | `LoginScreen.kt` | No Google Sign-In option - only email/password despite GoogleAuthManager existing | ⬜ OPEN |
 | 193 | Android | `AuthRepository.kt` | No session timeout handling - no automatic logout on token expiration | ⬜ OPEN |
 | 194 | Android | `LeaderboardScreen.kt` | Leaderboard is placeholder "Coming Soon" - not functional | ⬜ OPEN |
+| 219 | Android | `QuizScreen.kt` | No visible exit/back button during quiz - bars hidden, user can only use system back gesture (not discoverable) | ✅ FIXED 2026-01-27 (X button added, exit dialog enhanced) |
 
 ---
 
