@@ -888,4 +888,77 @@
     <string name="content_desc_retry">Retry</string>
     <string name="content_desc_review">Review</string>
     <string name="content_desc_start">Start</string>
+
+    <!-- Favorites Screen Additional -->
+    <string name="content_desc_clear_all">Clear all</string>
+    <string name="content_desc_practice">Practice</string>
+    <string name="content_desc_search">Search</string>
+    <string name="content_desc_clear">Clear</string>
+    <string name="content_desc_remove_favorite">Remove from favorites</string>
+    <string name="loading_favorites">Loading favorites…</string>
+    <string name="no_matching_favorites">No matching favorites</string>
+    <string name="no_favorites_yet">No favorites yet</string>
+    <string name="try_different_search">Try a different search term</string>
+    <string name="tap_heart_to_add">Tap the heart icon on any word to add it to your favorites</string>
+    <string name="clear_all">Clear All</string>
+
+    <!-- Word of the Day Screen Additional -->
+    <string name="practice_this_word">Practice This Word</string>
+    <string name="view_previous_words">View Previous Words</string>
+    <string name="your_streak">Your Streak</string>
+    <string name="streak_days_message">You\'ve checked the Word of the Day for %1$d days in a row!</string>
+    <string name="content_desc_pronunciation">Pronunciation</string>
+
+    <!-- Cloud Backup Screen Additional -->
+    <string name="backup_to_google_drive">Safely backup your vocabulary data to Google Drive</string>
+    <string name="coming_soon_header">Coming Soon:</string>
+    <string name="secure_cloud_backup">• Secure cloud backup</string>
+    <string name="cross_device_sync">• Cross-device sync</string>
+    <string name="automatic_daily_backups">• Automatic daily backups</string>
+    <string name="currently_available">Currently Available:</string>
+    <string name="local_backup_available">• Local backup (Settings > Backup)</string>
+    <string name="auto_backup">Auto Backup</string>
+    <string name="auto_backup_desc">Daily automatic backup (WiFi only)</string>
+    <string name="backup_history">Backup History</string>
+    <string name="no_backups_yet">No backups yet</string>
+
+    <!-- Leaderboard Screen Additional -->
+    <string name="compete_worldwide">Compete with learners worldwide</string>
+    <string name="leaderboards_preparing">Leaderboards are being prepared!</string>
+    <string name="progress_tracked_locally">Keep learning - your progress is tracked locally and will sync when leaderboards launch.</string>
+
+    <!-- Streak Detail Screen Additional -->
+    <string name="day_streak">%1$d Day Streak!</string>
+    <string name="keep_it_up">Keep it up!</string>
+    <string name="your_personal_record">Your personal record</string>
+    <string name="days_count">%1$d days</string>
+    <string name="last_7_days">Last 7 Days</string>
+    <string name="completed">Completed</string>
+    <string name="missed">Missed</string>
+
+    <!-- Tutorial Screen Additional -->
+    <string name="step_of">Step %1$d of %2$d</string>
+    <string name="got_it_button">Got it!</string>
+    <string name="next">Next</string>
+    <string name="first_time_playing">First Time Playing?</string>
+    <string name="tutorial_question">Would you like to see a quick tutorial for %1$s?</string>
+
+    <!-- Notification Settings Screen Additional -->
+    <string name="word_quiz_notifications">Word Quiz Notifications</string>
+    <string name="enable_word_quiz">Enable Word Quiz</string>
+    <string name="enable_word_quiz_desc">Receive interactive word quiz notifications</string>
+    <string name="frequency">Frequency</string>
+    <string name="word_filters">Word Filters</string>
+    <string name="include_levels">Include Levels</string>
+    <string name="include_exam_categories">Include Exam Categories</string>
+    <string name="include_learned_words">Include Learned Words</string>
+    <string name="include_learned_words_desc">Show words you\'ve already mastered</string>
+    <string name="prioritize_low_accuracy">Prioritize Low Accuracy</string>
+    <string name="prioritize_low_accuracy_desc">Focus on words you often get wrong</string>
+    <string name="quiet_hours">Quiet Hours</string>
+    <string name="enable_quiet_hours">Enable Quiet Hours</string>
+    <string name="enable_quiet_hours_desc">No notifications during specified hours</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="other_notifications">Other Notifications</string>
 </resources>

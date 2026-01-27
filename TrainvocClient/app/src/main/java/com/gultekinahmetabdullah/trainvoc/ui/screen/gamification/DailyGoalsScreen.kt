@@ -14,9 +14,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.components.LinearProgressBar
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
@@ -36,15 +38,20 @@ fun DailyGoalsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Daily Goals") },
+                title = { Text(stringResource(id = R.string.daily_goals)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back))
                     }
                 }
             )
         }
     ) { paddingValues ->
+        val wordsLearnedTodayTitle = stringResource(id = R.string.words_learned_today)
+        val quizzesCompletedTitle = stringResource(id = R.string.quizzes_completed)
+        val studyTimeTitle = stringResource(id = R.string.study_time_minutes)
+        val reviewsCompletedTitle = stringResource(id = R.string.reviews_completed)
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -57,7 +64,7 @@ fun DailyGoalsScreen(
             // Words Goal
             item {
                 GoalCard(
-                    title = "Words Learned Today",
+                    title = wordsLearnedTodayTitle,
                     icon = Icons.Default.Book,
                     current = uiState.wordsLearnedToday,
                     goal = uiState.wordsGoalToday,
@@ -68,7 +75,7 @@ fun DailyGoalsScreen(
             // Quizzes Goal
             item {
                 GoalCard(
-                    title = "Quizzes Completed",
+                    title = quizzesCompletedTitle,
                     icon = Icons.Default.Quiz,
                     current = uiState.quizzesCompleted,
                     goal = uiState.quizzesGoal,
@@ -79,7 +86,7 @@ fun DailyGoalsScreen(
             // Study Time Goal
             item {
                 GoalCard(
-                    title = "Study Time (minutes)",
+                    title = studyTimeTitle,
                     icon = Icons.Default.Timer,
                     current = uiState.studyTimeToday,
                     goal = uiState.studyTimeGoal,
@@ -90,7 +97,7 @@ fun DailyGoalsScreen(
             // Reviews Goal
             item {
                 GoalCard(
-                    title = "Reviews Completed",
+                    title = reviewsCompletedTitle,
                     icon = Icons.Default.Refresh,
                     current = uiState.reviewsToday,
                     goal = uiState.reviewsGoal,
@@ -123,7 +130,7 @@ private fun GoalCard(
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = "Daily goal icon",
+                    contentDescription = stringResource(id = R.string.content_desc_daily_goal_icon),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )

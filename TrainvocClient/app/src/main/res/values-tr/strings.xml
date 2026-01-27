@@ -878,4 +878,77 @@
     <string name="content_desc_retry">Tekrar dene</string>
     <string name="content_desc_review">İncele</string>
     <string name="content_desc_start">Başlat</string>
+
+    <!-- Favorites Screen Additional -->
+    <string name="content_desc_clear_all">Tümünü temizle</string>
+    <string name="content_desc_practice">Pratik yap</string>
+    <string name="content_desc_search">Ara</string>
+    <string name="content_desc_clear">Temizle</string>
+    <string name="content_desc_remove_favorite">Favorilerden kaldır</string>
+    <string name="loading_favorites">Favoriler yükleniyor…</string>
+    <string name="no_matching_favorites">Eşleşen favori yok</string>
+    <string name="no_favorites_yet">Henüz favori yok</string>
+    <string name="try_different_search">Farklı bir arama terimi deneyin</string>
+    <string name="tap_heart_to_add">Favorilere eklemek için herhangi bir kelimedeki kalp simgesine dokunun</string>
+    <string name="clear_all">Tümünü Temizle</string>
+
+    <!-- Word of the Day Screen Additional -->
+    <string name="practice_this_word">Bu Kelimeyi Pratik Et</string>
+    <string name="view_previous_words">Önceki Kelimeleri Gör</string>
+    <string name="your_streak">Serin</string>
+    <string name="streak_days_message">Günün Kelimesini %1$d gün üst üste kontrol ettiniz!</string>
+    <string name="content_desc_pronunciation">Telaffuz</string>
+
+    <!-- Cloud Backup Screen Additional -->
+    <string name="backup_to_google_drive">Kelime verilerinizi Google Drive\'a güvenle yedekleyin</string>
+    <string name="coming_soon_header">Yakında:</string>
+    <string name="secure_cloud_backup">• Güvenli bulut yedekleme</string>
+    <string name="cross_device_sync">• Cihazlar arası senkronizasyon</string>
+    <string name="automatic_daily_backups">• Otomatik günlük yedekleme</string>
+    <string name="currently_available">Şu Anda Mevcut:</string>
+    <string name="local_backup_available">• Yerel yedekleme (Ayarlar > Yedekleme)</string>
+    <string name="auto_backup">Otomatik Yedekleme</string>
+    <string name="auto_backup_desc">Günlük otomatik yedekleme (Sadece WiFi)</string>
+    <string name="backup_history">Yedekleme Geçmişi</string>
+    <string name="no_backups_yet">Henüz yedek yok</string>
+
+    <!-- Leaderboard Screen Additional -->
+    <string name="compete_worldwide">Dünya genelinde öğrenenlerle yarış</string>
+    <string name="leaderboards_preparing">Sıralama tabloları hazırlanıyor!</string>
+    <string name="progress_tracked_locally">Öğrenmeye devam et - ilerlemeniz yerel olarak izleniyor ve sıralama tabloları başladığında senkronize edilecek.</string>
+
+    <!-- Streak Detail Screen Additional -->
+    <string name="day_streak">%1$d Günlük Seri!</string>
+    <string name="keep_it_up">Böyle devam et!</string>
+    <string name="your_personal_record">Kişisel rekorun</string>
+    <string name="days_count">%1$d gün</string>
+    <string name="last_7_days">Son 7 Gün</string>
+    <string name="completed">Tamamlandı</string>
+    <string name="missed">Kaçırıldı</string>
+
+    <!-- Tutorial Screen Additional -->
+    <string name="step_of">%1$d/%2$d Adım</string>
+    <string name="got_it_button">Anladım!</string>
+    <string name="next">İleri</string>
+    <string name="first_time_playing">İlk Kez Oynuyor musunuz?</string>
+    <string name="tutorial_question">%1$s için hızlı bir eğitim görmek ister misiniz?</string>
+
+    <!-- Notification Settings Screen Additional -->
+    <string name="word_quiz_notifications">Kelime Quiz Bildirimleri</string>
+    <string name="enable_word_quiz">Kelime Quizini Etkinleştir</string>
+    <string name="enable_word_quiz_desc">Etkileşimli kelime quiz bildirimleri al</string>
+    <string name="frequency">Sıklık</string>
+    <string name="word_filters">Kelime Filtreleri</string>
+    <string name="include_levels">Seviyeleri Dahil Et</string>
+    <string name="include_exam_categories">Sınav Kategorilerini Dahil Et</string>
+    <string name="include_learned_words">Öğrenilen Kelimeleri Dahil Et</string>
+    <string name="include_learned_words_desc">Zaten öğrendiğiniz kelimeleri göster</string>
+    <string name="prioritize_low_accuracy">Düşük Doğruluğa Öncelik Ver</string>
+    <string name="prioritize_low_accuracy_desc">Sıkça yanlış yaptığınız kelimelere odaklan</string>
+    <string name="quiet_hours">Sessiz Saatler</string>
+    <string name="enable_quiet_hours">Sessiz Saatleri Etkinleştir</string>
+    <string name="enable_quiet_hours_desc">Belirtilen saatlerde bildirim alma</string>
+    <string name="from">Başlangıç</string>
+    <string name="to">Bitiş</string>
+    <string name="other_notifications">Diğer Bildirimler</string>
 </resources>

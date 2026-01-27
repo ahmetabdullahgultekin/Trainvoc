@@ -36,9 +36,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialState
 
 /**
@@ -103,7 +105,7 @@ fun TutorialOverlay(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Step ${state.currentStep + 1} of ${state.totalSteps}",
+                        text = stringResource(id = R.string.step_of, state.currentStep + 1, state.totalSteps),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -129,10 +131,12 @@ fun TutorialOverlay(
             )
         },
         confirmButton = {
+            val gotItText = stringResource(id = R.string.got_it_button)
+            val nextText = stringResource(id = R.string.next)
             Button(
                 onClick = if (isLastStep) onComplete else onNextStep
             ) {
-                Text(if (isLastStep) "Got it!" else "Next")
+                Text(if (isLastStep) gotItText else nextText)
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = if (isLastStep) Icons.Default.CheckCircle else Icons.AutoMirrored.Filled.ArrowForward,
@@ -144,7 +148,7 @@ fun TutorialOverlay(
         dismissButton = {
             if (!isLastStep) {
                 TextButton(onClick = onSkip) {
-                    Text("Skip")
+                    Text(stringResource(id = R.string.skip_tutorial))
                 }
             }
         }
@@ -182,7 +186,7 @@ fun TutorialHelpButton(
     ) {
         Icon(
             imageVector = Icons.Default.Help,
-            contentDescription = "Help",
+            contentDescription = stringResource(id = R.string.content_desc_help),
             tint = if (showPulse) {
                 MaterialTheme.colorScheme.primary
             } else {
@@ -218,26 +222,26 @@ fun FirstPlayDialog(
         },
         title = {
             Text(
-                text = "First Time Playing?",
+                text = stringResource(id = R.string.first_time_playing),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
         },
         text = {
             Text(
-                text = "Would you like to see a quick tutorial for $gameTitle?",
+                text = stringResource(id = R.string.tutorial_question, gameTitle),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
         },
         confirmButton = {
             Button(onClick = onShowTutorial) {
-                Text("Show Tutorial")
+                Text(stringResource(id = R.string.show_tutorial))
             }
         },
         dismissButton = {
             OutlinedButton(onClick = onSkip) {
-                Text("Skip")
+                Text(stringResource(id = R.string.skip_tutorial))
             }
         }
     )
