@@ -115,8 +115,16 @@ class AuthViewModel @Inject constructor(
             _registerError.value = "Please enter a password"
             return
         }
-        if (password.length < 6) {
-            _registerError.value = "Password must be at least 6 characters"
+        if (password.length < 8) {
+            _registerError.value = "Password must be at least 8 characters"
+            return
+        }
+        if (!password.any { it.isUpperCase() }) {
+            _registerError.value = "Password must contain at least one uppercase letter"
+            return
+        }
+        if (!password.any { it.isDigit() }) {
+            _registerError.value = "Password must contain at least one number"
             return
         }
         if (password != confirmPassword) {

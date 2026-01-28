@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 4 | 22 | 0 | 26 |
 | 🟠 HIGH | 12 | 31 | 6 | 49 |
-| 🟡 MEDIUM | 12 | 53 | 11 | 76 |
-| 🟢 LOW | 7 | 17 | 19 | 43 |
+| 🟡 MEDIUM | 8 | 57 | 11 | 76 |
+| 🟢 LOW | 4 | 20 | 19 | 43 |
 | ⚪ INFO | 0 | 3 | 21 | 24 |
-| **TOTAL** | **35** | **126** | **57** | **218** |
+| **TOTAL** | **28** | **133** | **57** | **218** |
 
 ---
 
@@ -200,14 +200,14 @@
 | 163 | Android | `HelpScreen.kt` | Placeholder phone number "+1 234 567 890" in Contact Support section | ✅ FIXED 2026-01-25 (removed fake phone support) |
 | 164 | Android | `StatsScreen.kt` | Performance Trends bar chart shows same value (24) for all periods | ✅ FIXED 2026-01-25 (show only total, note about time-based coming soon) |
 | 165 | Android | `StoryScreen.kt` | Repetitive lock messages shown on every locked level | ✅ FIXED 2026-01-25 (simplified locked state UI) |
-| 195 | Android | `AppNavigationDrawer.kt` | Missing user profile section (avatar + name) in drawer header | ⬜ OPEN |
-| 196 | Android | `SettingsScreen.kt` | Missing user profile card/section at top of settings | ⬜ OPEN |
+| 195 | Android | `AppNavigationDrawer.kt` | Missing user profile section (avatar + name) in drawer header | ✅ FIXED 2026-01-28 (avatar, username, inline streak in drawer header) |
+| 196 | Android | `SettingsScreen.kt` | Missing user profile card/section at top of settings | ✅ FIXED 2026-01-28 (profile card with avatar at top of settings) |
 | 197 | Android | `StatsViewModel.kt:77-78` | dailyCorrect/weeklyCorrect collected but never displayed in UI | ⬜ OPEN |
-| 198 | Android | `QuizScreen.kt:224-230` | Stats card hidden by default - must toggle info icon, poor discoverability | ⬜ OPEN |
+| 198 | Android | `QuizScreen.kt:224-230` | Stats card hidden by default - must toggle info icon, poor discoverability | ✅ FIXED 2026-01-28 (default showStats=true) |
 | 199 | Android | `QuizScreen.kt` | No speed bonuses - time pressure exists but no reward for fast answers | ⬜ OPEN |
 | 200 | Android | `FlipCardsScreen.kt:432-451` | Touch targets below 48dp minimum on 6x6 grids (~45dp cards) | ✅ FIXED 2026-01-27 (added sizeIn(minWidth=48dp)) |
 | 201 | Android | `AppBottomBar.kt` | No notification badges on nav items | ⬜ OPEN |
-| 202 | Android | `HomeScreen.kt:328-362` | Stats preview section redundant with HomeHeader - shows same info twice | ⬜ OPEN |
+| 202 | Android | `HomeScreen.kt:328-362` | Stats preview section redundant with HomeHeader - shows same info twice | ✅ FIXED 2026-01-28 (replaced with distinct progress: words ratio, all-time quizzes, study time) |
 | 203 | Android | `Color.kt` | DEFAULT palette missing AMOLED variant - falls back to dark theme | ⬜ OPEN |
 | 204 | Android | `StoryScreen.kt` | No story-specific achievements - achievements are all generic | ⬜ OPEN |
 | 205 | Android | Analytics | Google Analytics not fully integrated - missing event tracking | ⬜ OPEN |
@@ -258,13 +258,13 @@
 | 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ✅ FIXED 2026-01-26 |
 | 210 | Android | `ProfileScreen.kt:845-851` | No logout confirmation dialog - direct logout on tap, could be accidental | ✅ FIXED 2026-01-27 (confirmation dialog added) |
 | 211 | Android | `Theme.kt:362` | High contrast + AMOLED can't work simultaneously - one overrides other | ⬜ OPEN |
-| 212 | Android | `Color.kt:100-103` | AMOLED surface color is #0D0D0D not pure black #000000 - less battery savings | ⬜ OPEN |
-| 213 | Android | `HomeScreen.kt:364-391` | Achievements section shown when most users have none - wastes space | ⬜ OPEN |
+| 212 | Android | `Color.kt:100-103` | AMOLED surface color is #0D0D0D not pure black #000000 - less battery savings | ✅ FIXED 2026-01-28 (all 6 themes updated to pure black 0xFF000000) |
+| 213 | Android | `HomeScreen.kt:364-391` | Achievements section shown when most users have none - wastes space | ✅ VERIFIED 2026-01-28 (already guarded with isNotEmpty() check) |
 | 214 | Android | `StoryScreen.kt` | Missing session length recommendations - users don't know ideal study time | ⬜ OPEN |
 | 215 | Android | `SplashScreen.kt` | No tap-to-skip functionality for splash screen | ✅ FIXED 2026-01-28 (tap anywhere to skip, prevents double navigation) |
 | 216 | Android | `AppConfig.kt` | Splash screen configuration not in AppConfig - hardcoded in SplashScreen.kt | ⬜ OPEN |
 | 217 | Android | `StatsViewModel.kt:76` | lastAnswered variable collected but never displayed in UI | ⬜ OPEN |
-| 218 | Android | `AuthViewModel.kt:118-121` | Password validation only checks length (6+ chars), no strength requirements | ⬜ OPEN |
+| 218 | Android | `AuthViewModel.kt:118-121` | Password validation only checks length (6+ chars), no strength requirements | ✅ FIXED 2026-01-28 (8+ chars, uppercase, digit required) |
 
 ---
 
