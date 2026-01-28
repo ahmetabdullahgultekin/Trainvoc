@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.PlayerInfo
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.GameState
 import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
@@ -56,10 +58,10 @@ fun LobbyScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Game Lobby") },
+                title = { Text(stringResource(id = R.string.game_lobby)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Leave")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.content_desc_leave))
                     }
                 }
             )
@@ -80,7 +82,7 @@ fun LobbyScreen(
                         ) {
                             Icon(Icons.Default.PlayArrow, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Start Game")
+                            Text(stringResource(id = R.string.start_game))
                         }
                     }
                 }
@@ -91,11 +93,11 @@ fun LobbyScreen(
                 Snackbar(
                     action = {
                         TextButton(onClick = { showCopiedSnackbar = false }) {
-                            Text("OK")
+                            Text(stringResource(id = R.string.ok))
                         }
                     }
                 ) {
-                    Text("Room code copied!")
+                    Text(stringResource(id = R.string.room_code_copied))
                 }
             }
         }
@@ -121,7 +123,7 @@ fun LobbyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Room Code",
+                        text = stringResource(id = R.string.room_code),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -144,7 +146,7 @@ fun LobbyScreen(
                         ) {
                             Icon(
                                 Icons.Default.ContentCopy,
-                                contentDescription = "Copy code",
+                                contentDescription = stringResource(id = R.string.content_desc_copy_code),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
@@ -277,14 +279,14 @@ private fun PlayerCard(
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.Default.Star,
-                            contentDescription = "Host",
+                            contentDescription = stringResource(id = R.string.content_desc_host),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
                 Text(
-                    text = "Ready",
+                    text = stringResource(id = R.string.ready),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -295,7 +297,7 @@ private fun PlayerCard(
                 IconButton(onClick = onKick) {
                     Icon(
                         imageVector = Icons.Default.RemoveCircle,
-                        contentDescription = "Kick player",
+                        contentDescription = stringResource(id = R.string.content_desc_kick_player),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }

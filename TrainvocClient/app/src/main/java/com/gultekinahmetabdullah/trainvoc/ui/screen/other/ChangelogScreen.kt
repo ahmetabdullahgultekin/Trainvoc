@@ -41,9 +41,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.data.UpdateNotesManager
 import com.gultekinahmetabdullah.trainvoc.model.UpdateHighlight
 import com.gultekinahmetabdullah.trainvoc.model.UpdateNotes
@@ -76,12 +78,12 @@ fun ChangelogScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Changelog") },
+                title = { Text(stringResource(id = R.string.changelog)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.back)
                         )
                     }
                 },
@@ -105,7 +107,7 @@ fun ChangelogScreen(navController: NavController) {
 
             item {
                 Text(
-                    text = "Version History",
+                    text = stringResource(id = R.string.version_history),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -114,7 +116,7 @@ fun ChangelogScreen(navController: NavController) {
 
             item {
                 Text(
-                    text = "See what's new and improved in each version of Trainvoc",
+                    text = stringResource(id = R.string.version_history_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -143,6 +145,10 @@ fun ChangelogScreen(navController: NavController) {
 private fun VersionCard(updateNotes: UpdateNotes) {
     var isExpanded by remember { mutableStateOf(false) }
 
+    // Pre-fetch strings for use in composable
+    val collapseText = stringResource(id = R.string.content_desc_collapse)
+    val expandText = stringResource(id = R.string.content_desc_expand)
+
     // Chevron rotation animation
     val rotationAngle by animateFloatAsState(
         targetValue = if (isExpanded) 180f else 0f,
@@ -169,13 +175,13 @@ private fun VersionCard(updateNotes: UpdateNotes) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Version ${updateNotes.currentVersion}",
+                        text = stringResource(id = R.string.version_number, updateNotes.currentVersion),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Released ${updateNotes.releaseDate}",
+                        text = stringResource(id = R.string.released_date, updateNotes.releaseDate),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -184,7 +190,7 @@ private fun VersionCard(updateNotes: UpdateNotes) {
                 IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        contentDescription = if (isExpanded) "Collapse" else "Expand",
+                        contentDescription = if (isExpanded) collapseText else expandText,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.rotate(rotationAngle)
                     )
@@ -202,7 +208,7 @@ private fun VersionCard(updateNotes: UpdateNotes) {
 
                     // Highlights
                     Text(
-                        text = "What's New",
+                        text = stringResource(id = R.string.whats_new),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -222,7 +228,7 @@ private fun VersionCard(updateNotes: UpdateNotes) {
                         )
 
                         Text(
-                            text = "Coming Soon",
+                            text = stringResource(id = R.string.coming_soon),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -260,6 +266,10 @@ private fun VersionCard(updateNotes: UpdateNotes) {
  */
 @Composable
 private fun VersionHighlightItem(highlight: UpdateHighlight) {
+    val badgeNew = stringResource(id = R.string.badge_new)
+    val badgeImproved = stringResource(id = R.string.badge_improved)
+    val badgeFixed = stringResource(id = R.string.badge_fixed)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top
@@ -278,9 +288,9 @@ private fun VersionHighlightItem(highlight: UpdateHighlight) {
         Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val badge = when (highlight.type) {
-                    UpdateType.NEW -> "NEW"
-                    UpdateType.IMPROVED -> "IMPROVED"
-                    UpdateType.FIXED -> "FIXED"
+                    UpdateType.NEW -> badgeNew
+                    UpdateType.IMPROVED -> badgeImproved
+                    UpdateType.FIXED -> badgeFixed
                 }
                 Text(
                     text = badge,

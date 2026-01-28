@@ -14,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.multiplayer.websocket.PlayerRanking
 import com.gultekinahmetabdullah.trainvoc.viewmodel.GameStats
 
@@ -36,7 +38,7 @@ fun GameResultsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Game Over") }
+                title = { Text(stringResource(id = R.string.game_over)) }
             )
         },
         bottomBar = {
@@ -56,7 +58,7 @@ fun GameResultsScreen(
                     ) {
                         Icon(Icons.Default.Home, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Home")
+                        Text(stringResource(id = R.string.home))
                     }
 
                     Button(
@@ -65,7 +67,7 @@ fun GameResultsScreen(
                     ) {
                         Icon(Icons.Default.Replay, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Play Again")
+                        Text(stringResource(id = R.string.play_again))
                     }
                 }
             }
@@ -136,7 +138,7 @@ private fun WinnerSection(
         ) {
             Icon(
                 imageVector = Icons.Default.EmojiEvents,
-                contentDescription = "Winner",
+                contentDescription = stringResource(id = R.string.content_desc_winner),
                 modifier = Modifier.size(64.dp),
                 tint = Color(0xFFFFD700) // Gold color
             )
@@ -144,7 +146,7 @@ private fun WinnerSection(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Winner!",
+                text = stringResource(id = R.string.winner),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

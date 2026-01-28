@@ -20,9 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.ui.theme.TrainvocTheme
 
@@ -109,7 +111,7 @@ fun NavigationCard(
             // Right side: Chevron indicator
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Navigate",
+                contentDescription = stringResource(id = R.string.content_desc_navigate),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
             )

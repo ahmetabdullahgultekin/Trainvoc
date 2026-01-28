@@ -123,7 +123,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.content_desc_back)
                         )
                     }
                 },
@@ -203,7 +203,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Palette,
-                    title = "Theme Customization"
+                    title = stringResource(id = R.string.theme_customization)
                 ) {
                     // Theme Mode Selection (System, Light, Dark, AMOLED)
                     val themeOptions = listOf(
@@ -216,7 +216,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                         stringResource(id = R.string.system_default),
                         stringResource(id = R.string.light),
                         stringResource(id = R.string.dark),
-                        "AMOLED"
+                        stringResource(id = R.string.amoled)
                     )
                     val selectedThemeIndex = themeOptions.indexOf(theme)
                     SettingDropdown(
@@ -235,7 +235,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
                     // Color Palette Selection
                     Text(
-                        text = "Color Palette",
+                        text = stringResource(id = R.string.color_palette),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -342,12 +342,12 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Person,
-                    title = "Account"
+                    title = stringResource(id = R.string.account)
                 ) {
                     NavigationCard(
                         icon = Icons.Default.Person,
-                        title = "Profile",
-                        subtitle = "View and edit your profile",
+                        title = stringResource(id = R.string.profile),
+                        subtitle = stringResource(id = R.string.profile_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.PROFILE)
@@ -360,12 +360,12 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Timeline,
-                    title = "Learning"
+                    title = stringResource(id = R.string.learning)
                 ) {
                     NavigationCard(
                         icon = Icons.Default.Timeline,
-                        title = "Daily Goals",
-                        subtitle = "Set and track your daily learning goals",
+                        title = stringResource(id = R.string.daily_goals),
+                        subtitle = stringResource(id = R.string.daily_goals_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.DAILY_GOALS)
@@ -378,12 +378,12 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.EmojiEvents,
-                    title = "Social & Achievements"
+                    title = stringResource(id = R.string.social_achievements)
                 ) {
                     NavigationCard(
                         icon = Icons.Default.EmojiEvents,
-                        title = "Achievements",
-                        subtitle = "View your unlocked achievements",
+                        title = stringResource(id = R.string.achievements),
+                        subtitle = stringResource(id = R.string.achievements_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.ACHIEVEMENTS)
@@ -394,8 +394,8 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
                     NavigationCard(
                         icon = Icons.Default.Leaderboard,
-                        title = "Leaderboard",
-                        subtitle = "Coming soon - Compete worldwide",
+                        title = stringResource(id = R.string.leaderboard),
+                        subtitle = stringResource(id = R.string.leaderboard_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.LEADERBOARD)
@@ -408,12 +408,12 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Timeline,
-                    title = "Progress"
+                    title = stringResource(id = R.string.progress)
                 ) {
                     NavigationCard(
                         icon = Icons.Default.Timeline,
-                        title = "Word Progress",
-                        subtitle = "Track your vocabulary growth",
+                        title = stringResource(id = R.string.word_progress),
+                        subtitle = stringResource(id = R.string.word_progress_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.WORD_PROGRESS)
@@ -424,14 +424,26 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
 
             // Backup & Sync Section
             item {
+                val syncSubtitle = if (isSyncEnabled) {
+                    if (pendingSyncCount > 0) {
+                        stringResource(id = R.string.items_pending_sync, pendingSyncCount)
+                    } else {
+                        stringResource(id = R.string.all_data_synced)
+                    }
+                } else {
+                    stringResource(id = R.string.login_to_enable_sync)
+                }
+                val syncStartedMsg = stringResource(id = R.string.sync_started)
+                val loginToSyncMsg = stringResource(id = R.string.please_login_to_sync)
+
                 SettingSectionCard(
                     icon = Icons.Default.CloudQueue,
-                    title = "Backup & Sync"
+                    title = stringResource(id = R.string.backup_sync)
                 ) {
                     NavigationCard(
                         icon = Icons.Default.CloudQueue,
-                        title = "Backup & Restore",
-                        subtitle = "Manage your cloud backups",
+                        title = stringResource(id = R.string.backup_restore),
+                        subtitle = stringResource(id = R.string.backup_restore_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.BACKUP)
@@ -443,30 +455,22 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                     // Sync Now Button
                     NavigationCard(
                         icon = Icons.Default.CloudSync,
-                        title = "Sync Now",
-                        subtitle = if (isSyncEnabled) {
-                            if (pendingSyncCount > 0) {
-                                "$pendingSyncCount items pending sync"
-                            } else {
-                                "All data synced"
-                            }
-                        } else {
-                            "Login to enable sync"
-                        },
+                        title = stringResource(id = R.string.sync_now),
+                        subtitle = syncSubtitle,
                         onClick = {
                             if (isSyncEnabled) {
                                 haptic.click()
                                 viewModel.syncNow()
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
-                                        message = "Sync started",
+                                        message = syncStartedMsg,
                                         duration = SnackbarDuration.Short
                                     )
                                 }
                             } else {
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
-                                        message = "Please login to enable sync",
+                                        message = loginToSyncMsg,
                                         duration = SnackbarDuration.Short
                                     )
                                 }
@@ -480,12 +484,12 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Accessibility,
-                    title = "Accessibility"
+                    title = stringResource(id = R.string.accessibility)
                 ) {
                     NavigationCard(
                         icon = Icons.Default.Accessibility,
-                        title = "Accessibility Settings",
-                        subtitle = "Customize for your needs",
+                        title = stringResource(id = R.string.accessibility_settings),
+                        subtitle = stringResource(id = R.string.accessibility_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.ACCESSIBILITY_SETTINGS)
@@ -498,17 +502,17 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.RecordVoiceOver,
-                    title = "Audio & Pronunciation"
+                    title = stringResource(id = R.string.audio_pronunciation)
                 ) {
                     // TTS Enable Toggle (always available - Android TTS is free)
                     SettingSwitch(
-                        title = "Enable Pronunciation Audio",
+                        title = stringResource(id = R.string.enable_pronunciation),
                         isChecked = true, // TTS is always enabled since it's free
                         onCheckedChange = { /* No-op, TTS is always available */ }
                     )
 
                     Text(
-                        text = "Use speaker buttons (🔊) on word cards to hear pronunciation",
+                        text = stringResource(id = R.string.pronunciation_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = Spacing.extraSmall)
@@ -522,31 +526,11 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                     icon = Icons.Default.Language,
                     title = stringResource(id = R.string.language)
                 ) {
-                    // Language Selection - All 6 supported languages
-                    val languageOptions = listOf(
-                        LanguagePreference.ENGLISH,
-                        LanguagePreference.TURKISH,
-                        LanguagePreference.SPANISH,
-                        LanguagePreference.GERMAN,
-                        LanguagePreference.FRENCH,
-                        LanguagePreference.ARABIC
-                    )
-                    val languageLabels = listOf(
-                        stringResource(id = R.string.english),
-                        stringResource(id = R.string.turkish),
-                        stringResource(id = R.string.spanish),
-                        stringResource(id = R.string.german),
-                        stringResource(id = R.string.french),
-                        stringResource(id = R.string.arabic)
-                    )
-                    val selectedLanguageIndex = languageOptions.indexOf(language)
-                    SettingDropdown(
-                        title = stringResource(id = R.string.language),
-                        options = languageLabels,
-                        selectedOption = languageLabels.getOrElse(selectedLanguageIndex) { languageLabels[0] },
-                        onOptionSelected = { label ->
-                            val index = languageLabels.indexOf(label)
-                            viewModel.setLanguage(languageOptions.getOrElse(index) { LanguagePreference.ENGLISH })
+                    // Language Toggle Switch - English / Turkish
+                    LanguageToggleSwitch(
+                        currentLanguage = language,
+                        onLanguageChanged = { newLanguage ->
+                            viewModel.setLanguage(newLanguage)
                         }
                     )
                 }
@@ -556,13 +540,13 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Settings,
-                    title = "Other Actions"
+                    title = stringResource(id = R.string.other_actions)
                 ) {
                     // Manage Words
                     NavigationCard(
                         icon = Icons.Default.Settings,
                         title = stringResource(id = R.string.manage_words),
-                        subtitle = "Add, edit, or remove words",
+                        subtitle = stringResource(id = R.string.manage_words_subtitle),
                         onClick = {
                             haptic.click()
                             navController.navigate(Route.MANAGEMENT)
@@ -824,5 +808,86 @@ private fun getPreviewColors(palette: ColorPalettePreference): List<Color> {
             Color(0xFF625B71),  // Material You default secondary
             Color(0xFF7D5260)   // Material You default tertiary
         )
+    }
+}
+
+/**
+ * Language Toggle Switch Component
+ *
+ * A toggle switch for selecting between English and Turkish languages.
+ * Shows both language options with visual indication of the current selection.
+ */
+@Composable
+fun LanguageToggleSwitch(
+    currentLanguage: LanguagePreference,
+    onLanguageChanged: (LanguagePreference) -> Unit
+) {
+    val haptic = rememberHapticPerformer()
+    val isEnglish = currentLanguage == LanguagePreference.ENGLISH
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(CornerRadius.medium))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(Spacing.extraSmall),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // English option
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(CornerRadius.small))
+                .background(
+                    if (isEnglish) MaterialTheme.colorScheme.primary
+                    else Color.Transparent
+                )
+                .pressClickable {
+                    if (!isEnglish) {
+                        haptic.click()
+                        onLanguageChanged(LanguagePreference.ENGLISH)
+                    }
+                }
+                .padding(vertical = Spacing.small),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "English",
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (isEnglish)
+                    MaterialTheme.colorScheme.onPrimary
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        // Turkish option
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(CornerRadius.small))
+                .background(
+                    if (!isEnglish) MaterialTheme.colorScheme.primary
+                    else Color.Transparent
+                )
+                .pressClickable {
+                    if (isEnglish) {
+                        haptic.click()
+                        onLanguageChanged(LanguagePreference.TURKISH)
+                    }
+                }
+                .padding(vertical = Spacing.small),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Türkçe",
+                style = MaterialTheme.typography.bodyLarge,
+                color = if (!isEnglish)
+                    MaterialTheme.colorScheme.onPrimary
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }

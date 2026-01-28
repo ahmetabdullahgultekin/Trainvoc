@@ -10,9 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -122,7 +124,7 @@ private fun FlipCardsContent(
     }
 
     GameScreenTemplate(
-        title = "Flip Cards",
+        title = stringResource(id = R.string.flip_cards),
         onNavigateBack = onNavigateBack,
         progress = gameState.matchedPairs.toFloat() / gameState.totalPairs,
         score = calculateScore(gameState)
@@ -139,18 +141,18 @@ private fun FlipCardsContent(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 StatCard(
-                    label = "Moves",
+                    label = stringResource(id = R.string.moves),
                     value = "${gameState.moves}",
                     icon = null
                 )
                 StatCard(
-                    label = "Pairs",
+                    label = stringResource(id = R.string.pairs),
                     value = "${gameState.matchedPairs}/${gameState.totalPairs}",
                     icon = null
                 )
                 if (gameState.bestMoves != null) {
                     StatCard(
-                        label = "Best",
+                        label = stringResource(id = R.string.best),
                         value = "${gameState.bestMoves}",
                         icon = null
                     )
@@ -185,7 +187,7 @@ private fun FlipCardsContent(
                     )
                 ) {
                     Text(
-                        text = "🏆 New Best Score!",
+                        text = stringResource(id = R.string.new_best_score),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(12.dp),
@@ -229,22 +231,26 @@ private fun GridSizeSelectionDialog(
     onGridSizeSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val grid4x4Desc = stringResource(id = R.string.grid_4x4_desc)
+    val grid4x6Desc = stringResource(id = R.string.grid_4x6_desc)
+    val grid6x6Desc = stringResource(id = R.string.grid_6x6_desc)
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Grid Size") },
+        title = { Text(stringResource(id = R.string.select_grid_size)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                GridSizeOption("4x4", "8 pairs (Easy)", onClick = { onGridSizeSelected("4x4") })
-                GridSizeOption("4x6", "12 pairs (Medium)", onClick = { onGridSizeSelected("4x6") })
-                GridSizeOption("6x6", "18 pairs (Hard)", onClick = { onGridSizeSelected("6x6") })
+                GridSizeOption("4x4", grid4x4Desc, onClick = { onGridSizeSelected("4x4") })
+                GridSizeOption("4x6", grid4x6Desc, onClick = { onGridSizeSelected("4x6") })
+                GridSizeOption("6x6", grid6x6Desc, onClick = { onGridSizeSelected("6x6") })
             }
         },
         confirmButton = { },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
         }
     )

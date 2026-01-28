@@ -42,10 +42,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.sync.ConflictStrategy
 import com.gultekinahmetabdullah.trainvoc.sync.DataConflict
 
@@ -88,7 +90,7 @@ fun ConflictResolutionDialog(
                     ) {
                         Icon(
                             Icons.Default.Warning,
-                            contentDescription = "Conflict resolution option",
+                            contentDescription = stringResource(id = R.string.content_desc_conflict_resolution),
                             tint = MaterialTheme.colorScheme.onErrorContainer,
                             modifier = Modifier.size(32.dp)
                         )
@@ -187,7 +189,7 @@ fun ConflictResolutionDialog(
                         ) {
                             Icon(
                                 if (showDetails) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                contentDescription = "Conflict resolution option"
+                                contentDescription = stringResource(id = R.string.content_desc_conflict_resolution)
                             )
                             Spacer(Modifier.width(8.dp))
                             Text(
@@ -221,7 +223,7 @@ fun ConflictResolutionDialog(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(id = R.string.cancel))
                     }
                     Button(
                         onClick = { onStrategySelected(selectedStrategy) },
@@ -229,7 +231,7 @@ fun ConflictResolutionDialog(
                     ) {
                         Icon(Icons.Default.Check, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("Resolve")
+                        Text(stringResource(id = R.string.resolve))
                     }
                 }
             }
@@ -269,7 +271,7 @@ fun StrategyOption(
         ) {
             Icon(
                 icon,
-                contentDescription = "Conflict resolution option",
+                contentDescription = stringResource(id = R.string.content_desc_conflict_resolution),
                 tint = if (selected) {
                     MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
@@ -331,7 +333,7 @@ fun ConflictDetailItem(conflict: DataConflict) {
                     ) {
                         Icon(
                             Icons.Default.ContentCopy,
-                            contentDescription = "Conflict resolution option",
+                            contentDescription = stringResource(id = R.string.content_desc_conflict_resolution),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(20.dp)
                         )
@@ -370,7 +372,7 @@ fun ConflictDetailItem(conflict: DataConflict) {
                     ) {
                         Icon(
                             Icons.Default.BarChart,
-                            contentDescription = "Conflict resolution option",
+                            contentDescription = stringResource(id = R.string.content_desc_conflict_resolution),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(20.dp)
                         )

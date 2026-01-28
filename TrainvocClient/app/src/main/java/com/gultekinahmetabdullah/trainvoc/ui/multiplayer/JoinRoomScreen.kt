@@ -14,9 +14,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.multiplayer.data.RoomListItem
 import com.gultekinahmetabdullah.trainvoc.ui.components.ButtonLoader
 import com.gultekinahmetabdullah.trainvoc.viewmodel.RoomState
@@ -55,15 +57,15 @@ fun JoinRoomScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Join Room") },
+                title = { Text(stringResource(id = R.string.join_room)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.content_desc_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = onRefreshRooms) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(id = R.string.content_desc_refresh))
                     }
                 }
             )
@@ -79,7 +81,7 @@ fun JoinRoomScreen(
             OutlinedTextField(
                 value = playerName,
                 onValueChange = { playerName = it.take(20) },
-                label = { Text("Display Name") },
+                label = { Text(stringResource(id = R.string.display_name)) },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -95,7 +97,7 @@ fun JoinRoomScreen(
                 OutlinedTextField(
                     value = roomCode,
                     onValueChange = { roomCode = it.uppercase().take(6) },
-                    label = { Text("Room Code") },
+                    label = { Text(stringResource(id = R.string.room_code)) },
                     modifier = Modifier.weight(1f),
                     singleLine = true
                 )
@@ -121,7 +123,7 @@ fun JoinRoomScreen(
                     if (isJoining) {
                         ButtonLoader(modifier = Modifier.size(20.dp))
                     } else {
-                        Text("Join")
+                        Text(stringResource(id = R.string.join))
                     }
                 }
             }
@@ -139,12 +141,12 @@ fun JoinRoomScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Available Rooms",
+                    text = stringResource(id = R.string.available_rooms),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${availableRooms.size} rooms",
+                    text = stringResource(id = R.string.rooms_count, availableRooms.size),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -213,15 +215,15 @@ fun JoinRoomScreen(
                 selectedRoom = null
                 password = ""
             },
-            title = { Text("Enter Password") },
+            title = { Text(stringResource(id = R.string.enter_password)) },
             text = {
                 Column {
-                    Text("Room '${selectedRoom?.roomCode}' requires a password.")
+                    Text(stringResource(id = R.string.room_requires_password, selectedRoom?.roomCode ?: ""))
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        label = { Text(stringResource(id = R.string.password)) },
                         visualTransformation = PasswordVisualTransformation(),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
@@ -238,7 +240,7 @@ fun JoinRoomScreen(
                         password = ""
                     }
                 ) {
-                    Text("Join")
+                    Text(stringResource(id = R.string.join))
                 }
             },
             dismissButton = {
@@ -249,7 +251,7 @@ fun JoinRoomScreen(
                         password = ""
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )
@@ -284,7 +286,7 @@ private fun RoomCard(
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.Default.Lock,
-                            contentDescription = "Password protected",
+                            contentDescription = stringResource(id = R.string.content_desc_password_protected),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -292,12 +294,12 @@ private fun RoomCard(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Host: ${room.hostName}",
+                    text = stringResource(id = R.string.host_name, room.hostName),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Level: ${room.level}",
+                    text = stringResource(id = R.string.level_label, room.level),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

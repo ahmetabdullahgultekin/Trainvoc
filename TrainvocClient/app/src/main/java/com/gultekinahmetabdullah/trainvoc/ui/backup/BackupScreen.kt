@@ -55,9 +55,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.sync.BackupData
 import com.gultekinahmetabdullah.trainvoc.sync.BackupFileInfo
 import com.gultekinahmetabdullah.trainvoc.sync.ConflictStrategy
@@ -105,10 +107,10 @@ fun BackupScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Backup & Restore") },
+                title = { Text(stringResource(id = R.string.backup_restore)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.content_desc_back))
                     }
                 }
             )
@@ -124,14 +126,14 @@ fun BackupScreen(
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Local") },
-                    icon = { Icon(Icons.Default.Folder, "Local") }
+                    text = { Text(stringResource(id = R.string.local)) },
+                    icon = { Icon(Icons.Default.Folder, stringResource(id = R.string.local)) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Cloud") },
-                    icon = { Icon(Icons.Default.Cloud, "Cloud") }
+                    text = { Text(stringResource(id = R.string.cloud)) },
+                    icon = { Icon(Icons.Default.Cloud, stringResource(id = R.string.cloud)) }
                 )
             }
 
@@ -199,6 +201,7 @@ fun LocalBackupTab(
     ) {
         // Export Section
         item {
+            val exportSuccessMsg = stringResource(id = R.string.backup_success, 0)
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -211,19 +214,19 @@ fun LocalBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CloudUpload,
-                            contentDescription = "Export vocabulary data",
+                            contentDescription = stringResource(id = R.string.content_desc_export),
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            "Export Data",
+                            stringResource(id = R.string.export_data),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
                     Text(
-                        "Create a backup of your vocabulary data",
+                        stringResource(id = R.string.export_data_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -240,7 +243,7 @@ fun LocalBackupTab(
                         ) {
                             Icon(Icons.Default.Description, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("JSON")
+                            Text(stringResource(id = R.string.json))
                         }
 
                         OutlinedButton(
@@ -250,7 +253,7 @@ fun LocalBackupTab(
                         ) {
                             Icon(Icons.Default.TableChart, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("CSV")
+                            Text(stringResource(id = R.string.csv))
                         }
                     }
 
@@ -262,7 +265,7 @@ fun LocalBackupTab(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Text(
-                                "Exporting... ${(progress * 100).toInt()}%",
+                                stringResource(id = R.string.exporting_progress, (progress * 100).toInt()),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -271,7 +274,7 @@ fun LocalBackupTab(
                     // Success message
                     if (uiState is BackupUiState.ExportSuccess) {
                         ResultMessage(
-                            message = "Backup created successfully!\n${uiState.wordCount} words backed up",
+                            message = stringResource(id = R.string.backup_success, uiState.wordCount),
                             isError = false
                         )
                     }
@@ -293,19 +296,19 @@ fun LocalBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CloudDownload,
-                            contentDescription = "Import vocabulary data",
+                            contentDescription = stringResource(id = R.string.content_desc_import),
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(Modifier.width(12.dp))
                         Text(
-                            "Import Data",
+                            stringResource(id = R.string.import_data),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
                     Text(
-                        "Restore from a backup file",
+                        stringResource(id = R.string.import_data_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -318,7 +321,7 @@ fun LocalBackupTab(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Text(
-                                "Importing... ${(progress * 100).toInt()}%",
+                                stringResource(id = R.string.importing_progress, (progress * 100).toInt()),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -327,9 +330,7 @@ fun LocalBackupTab(
                     // Success message
                     if (uiState is BackupUiState.ImportSuccess) {
                         ResultMessage(
-                            message = "Data restored successfully!\n" +
-                                    "${uiState.wordsRestored} words restored\n" +
-                                    "${uiState.conflictsResolved} conflicts resolved",
+                            message = stringResource(id = R.string.restore_success_details, uiState.wordsRestored, uiState.conflictsResolved),
                             isError = false
                         )
                     }
@@ -340,7 +341,7 @@ fun LocalBackupTab(
         // Available Backups
         item {
             Text(
-                "Available Backups (${availableBackups.size})",
+                stringResource(id = R.string.available_backups, availableBackups.size),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -363,12 +364,12 @@ fun LocalBackupTab(
                         ) {
                             Icon(
                                 Icons.Default.FolderOff,
-                                contentDescription = "No backup files found",
+                                contentDescription = stringResource(id = R.string.content_desc_no_backups_found),
                                 modifier = Modifier.size(48.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                "No backups found",
+                                stringResource(id = R.string.no_backups_found),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -401,7 +402,7 @@ fun LocalBackupTab(
                 ) {
                     Icon(Icons.Default.DeleteSweep, null)
                     Spacer(Modifier.width(8.dp))
-                    Text("Clean Up Old Backups")
+                    Text(stringResource(id = R.string.clean_up_old_backups))
                 }
             }
         }
@@ -447,7 +448,7 @@ fun CloudBackupTab(
                 ) {
                     Icon(
                         Icons.Default.Info,
-                        contentDescription = "Backup information",
+                        contentDescription = stringResource(id = R.string.content_desc_backup_info),
                         tint = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.size(32.dp)
                     )
@@ -487,7 +488,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.CheckCircle,
-                            contentDescription = "Export successful",
+                            contentDescription = stringResource(id = R.string.content_desc_export_successful),
                             tint = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier.size(24.dp)
                         )
@@ -526,7 +527,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.Info,
-                            contentDescription = "Coming soon features",
+                            contentDescription = stringResource(id = R.string.content_desc_coming_soon_features),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -568,7 +569,7 @@ fun CloudBackupTab(
                     ) {
                         Icon(
                             Icons.Default.Folder,
-                            contentDescription = "File storage location",
+                            contentDescription = stringResource(id = R.string.content_desc_file_storage),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(24.dp)
                         )
@@ -652,7 +653,7 @@ fun BackupFileItem(
                 ) {
                     Icon(Icons.Default.Restore, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Restore")
+                    Text(stringResource(id = R.string.restore))
                 }
             }
 

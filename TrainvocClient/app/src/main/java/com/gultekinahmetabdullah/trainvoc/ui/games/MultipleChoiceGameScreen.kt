@@ -8,9 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -133,7 +135,7 @@ private fun MultipleChoiceGameContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Multiple Choice",
+        title = stringResource(id = R.string.multiple_choice_game),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score,
@@ -149,7 +151,7 @@ private fun MultipleChoiceGameContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -170,7 +172,7 @@ private fun MultipleChoiceGameContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Translate:",
+                                text = stringResource(id = R.string.translate_label),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -215,11 +217,11 @@ private fun MultipleChoiceGameContent(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatChip(
-                            label = "Accuracy",
+                            label = stringResource(id = R.string.accuracy),
                             value = "$accuracy%"
                         )
                         StatChip(
-                            label = "Difficulty",
+                            label = stringResource(id = R.string.difficulty),
                             value = question.difficulty.name.lowercase().capitalize()
                         )
                     }
@@ -270,7 +272,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -283,10 +285,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }
