@@ -175,3 +175,13 @@ object TtsConfig {
     const val SPEED_FAST = 1.5f
     const val SPEED_VERY_FAST = 2.0f
 }
+
+/**
+ * Splash screen configuration (fixes #216)
+ */
+object SplashConfig {
+    /** Duration for returning users (have username saved) */
+    const val RETURNING_USER_DURATION_MS = 1200L
+    /** Duration for new users (first launch) */
+    const val NEW_USER_DURATION_MS = 3000L
+}

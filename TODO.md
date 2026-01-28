@@ -38,10 +38,10 @@
 |----------|------|-------|---------|-------|
 | 🔴 CRITICAL | 4 | 22 | 0 | 26 |
 | 🟠 HIGH | 12 | 31 | 6 | 49 |
-| 🟡 MEDIUM | 8 | 57 | 11 | 76 |
-| 🟢 LOW | 4 | 20 | 19 | 43 |
+| 🟡 MEDIUM | 2 | 63 | 11 | 76 |
+| 🟢 LOW | 2 | 22 | 19 | 43 |
 | ⚪ INFO | 0 | 3 | 21 | 24 |
-| **TOTAL** | **28** | **133** | **57** | **218** |
+| **TOTAL** | **20** | **141** | **57** | **218** |
 
 ---
 
@@ -111,8 +111,8 @@
 | 161 | Android | `StoryScreen.kt:75-83` | Missing level names - now shows both A1/A2 code AND Beginner/Elementary | ✅ FIXED 2026-01-25 |
 | 162 | Android | `StoryScreen.kt:147-162` | Progress bar added per level showing learned/total words | ✅ FIXED 2026-01-25 |
 | 174 | Android | `HomeScreen.kt:750-762` | HomeScreen shows first letter in circle, should show user's emoji avatar | ✅ FIXED 2026-01-27 (avatar parameter added to HomeHeader) |
-| 175 | Android | `LobbyScreen.kt:251` | Multiplayer lobby uses generic Person icon instead of player avatar emoji | ⬜ OPEN |
-| 176 | Android | `GameResultsScreen.kt:251` | Multiplayer results uses generic Person icon instead of player avatar | ⬜ OPEN |
+| 175 | Android | `LobbyScreen.kt:251` | Multiplayer lobby uses generic Person icon instead of player avatar emoji | ✅ FIXED 2026-01-28 |
+| 176 | Android | `GameResultsScreen.kt:251` | Multiplayer results uses generic Person icon instead of player avatar | ✅ FIXED 2026-01-28 |
 | 177 | Android | `StoryScreen.kt` | No chapter structure within levels - just flat level selection, no progressive chapters | ⬜ OPEN |
 | 178 | Android | `StoryScreen.kt` | No contextual learning - words aren't grouped by narrative themes or usage context | ⬜ OPEN |
 | 179 | Android | `QuizScreen.kt` | No adaptive difficulty - quiz doesn't adjust based on user performance | ⬜ OPEN |
@@ -202,18 +202,18 @@
 | 165 | Android | `StoryScreen.kt` | Repetitive lock messages shown on every locked level | ✅ FIXED 2026-01-25 (simplified locked state UI) |
 | 195 | Android | `AppNavigationDrawer.kt` | Missing user profile section (avatar + name) in drawer header | ✅ FIXED 2026-01-28 (avatar, username, inline streak in drawer header) |
 | 196 | Android | `SettingsScreen.kt` | Missing user profile card/section at top of settings | ✅ FIXED 2026-01-28 (profile card with avatar at top of settings) |
-| 197 | Android | `StatsViewModel.kt:77-78` | dailyCorrect/weeklyCorrect collected but never displayed in UI | ⬜ OPEN |
+| 197 | Android | `StatsViewModel.kt:77-78` | dailyCorrect/weeklyCorrect collected but never displayed in UI | ✅ FIXED 2026-01-28 |
 | 198 | Android | `QuizScreen.kt:224-230` | Stats card hidden by default - must toggle info icon, poor discoverability | ✅ FIXED 2026-01-28 (default showStats=true) |
 | 199 | Android | `QuizScreen.kt` | No speed bonuses - time pressure exists but no reward for fast answers | ⬜ OPEN |
 | 200 | Android | `FlipCardsScreen.kt:432-451` | Touch targets below 48dp minimum on 6x6 grids (~45dp cards) | ✅ FIXED 2026-01-27 (added sizeIn(minWidth=48dp)) |
 | 201 | Android | `AppBottomBar.kt` | No notification badges on nav items | ⬜ OPEN |
 | 202 | Android | `HomeScreen.kt:328-362` | Stats preview section redundant with HomeHeader - shows same info twice | ✅ FIXED 2026-01-28 (replaced with distinct progress: words ratio, all-time quizzes, study time) |
-| 203 | Android | `Color.kt` | DEFAULT palette missing AMOLED variant - falls back to dark theme | ⬜ OPEN |
+| 203 | Android | `Color.kt` | DEFAULT palette missing AMOLED variant - falls back to dark theme | ✅ FIXED 2026-01-28 |
 | 204 | Android | `StoryScreen.kt` | No story-specific achievements - achievements are all generic | ⬜ OPEN |
 | 205 | Android | Analytics | Google Analytics not fully integrated - missing event tracking | ⬜ OPEN |
 | 206 | Android | Firebase | Firestore not used for leaderboard/user data - could enhance social features | ⬜ OPEN |
-| 207 | Android | `GameScreen.kt` | Multiplayer game screen missing player avatars in ranking display | ⬜ OPEN |
-| 208 | Android | `FlipCardsScreen.kt:113-118` | Grid size options too limited - only 3 options, no responsive adjustment | ⬜ OPEN |
+| 207 | Android | `GameScreen.kt` | Multiplayer game screen missing player avatars in ranking display | ✅ FIXED 2026-01-28 |
+| 208 | Android | `FlipCardsScreen.kt:113-118` | Grid size options too limited - only 3 options, no responsive adjustment | ✅ FIXED 2026-01-28 |
 | 209 | Android | Navigation | Some screens may be inaccessible from normal navigation - needs audit | ⬜ OPEN |
 
 ---
@@ -257,12 +257,12 @@
 | 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ✅ FIXED 2026-01-26 |
 | 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ✅ FIXED 2026-01-26 |
 | 210 | Android | `ProfileScreen.kt:845-851` | No logout confirmation dialog - direct logout on tap, could be accidental | ✅ FIXED 2026-01-27 (confirmation dialog added) |
-| 211 | Android | `Theme.kt:362` | High contrast + AMOLED can't work simultaneously - one overrides other | ⬜ OPEN |
+| 211 | Android | `Theme.kt:362` | High contrast + AMOLED can't work simultaneously - one overrides other | ✅ FIXED 2026-01-28 |
 | 212 | Android | `Color.kt:100-103` | AMOLED surface color is #0D0D0D not pure black #000000 - less battery savings | ✅ FIXED 2026-01-28 (all 6 themes updated to pure black 0xFF000000) |
 | 213 | Android | `HomeScreen.kt:364-391` | Achievements section shown when most users have none - wastes space | ✅ VERIFIED 2026-01-28 (already guarded with isNotEmpty() check) |
 | 214 | Android | `StoryScreen.kt` | Missing session length recommendations - users don't know ideal study time | ⬜ OPEN |
 | 215 | Android | `SplashScreen.kt` | No tap-to-skip functionality for splash screen | ✅ FIXED 2026-01-28 (tap anywhere to skip, prevents double navigation) |
-| 216 | Android | `AppConfig.kt` | Splash screen configuration not in AppConfig - hardcoded in SplashScreen.kt | ⬜ OPEN |
+| 216 | Android | `AppConfig.kt` | Splash screen configuration not in AppConfig - hardcoded in SplashScreen.kt | ✅ FIXED 2026-01-28 |
 | 217 | Android | `StatsViewModel.kt:76` | lastAnswered variable collected but never displayed in UI | ⬜ OPEN |
 | 218 | Android | `AuthViewModel.kt:118-121` | Password validation only checks length (6+ chars), no strength requirements | ✅ FIXED 2026-01-28 (8+ chars, uppercase, digit required) |
 

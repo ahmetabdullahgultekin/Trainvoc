@@ -383,7 +383,13 @@ private fun RankingScreen(players: List<PlayerInfo>) {
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
+                    // Avatar emoji (fixes #207)
+                    Text(
+                        text = getAvatarEmoji(player.avatarId),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = player.name,
                         style = MaterialTheme.typography.titleMedium,
@@ -409,4 +415,11 @@ private fun RankingScreen(players: List<PlayerInfo>) {
             modifier = Modifier.fillMaxWidth()
         )
     }
+}
+
+/** Map avatar ID to emoji for multiplayer player display */
+private fun getAvatarEmoji(avatarId: Int): String {
+    val avatars = listOf("🦊", "🐱", "🐶", "🐻", "🐼", "🐨", "🦁", "🐯", "🐸", "🦉",
+        "🐺", "🦄", "🐲", "🦅", "🐧", "🐙", "🦋", "🌟", "🎯", "🚀")
+    return avatars.getOrElse(avatarId % avatars.size) { "🦊" }
 }

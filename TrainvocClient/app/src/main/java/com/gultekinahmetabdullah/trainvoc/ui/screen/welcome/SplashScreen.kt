@@ -37,6 +37,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.config.SplashConfig
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import kotlinx.coroutines.delay
 
@@ -89,7 +90,7 @@ fun SplashScreen(
     // Launch effect to navigate after animation (auto-skip timer)
     LaunchedEffect(true) {
         // Shorter splash for returning users, full animation for new users
-        val splashDuration = if (isReturningUser) 1200L else 3000L
+        val splashDuration = if (isReturningUser) SplashConfig.RETURNING_USER_DURATION_MS else SplashConfig.NEW_USER_DURATION_MS
         delay(splashDuration)
         navigateAway()
     }
