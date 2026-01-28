@@ -62,6 +62,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -141,6 +142,63 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                 .padding(horizontal = Spacing.medium),
             verticalArrangement = Arrangement.spacedBy(Spacing.medium)
         ) {
+            // User Profile Card (fixes #196)
+            item {
+                val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
+                val username = remember { prefs.getString("username", null) ?: "User" }
+                val userAvatar = remember { prefs.getString("avatar", null) ?: "🦊" }
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navController.navigate(Route.PROFILE) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Spacing.medium),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(androidx.compose.foundation.shape.CircleShape)
+                                .background(MaterialTheme.colorScheme.surface),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = userAvatar,
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(Spacing.medium))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = username,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Text(
+                                text = "View Profile",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .graphicsLayer { rotationZ = 180f }
+                        )
+                    }
+                }
+            }
+
             // Theme Customization Section
             item {
                 SettingSectionCard(

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -89,7 +90,7 @@ fun QuizScreen(
     var selectedAnswer by remember { mutableStateOf<Word?>(null) }
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
     var showExitDialog by remember { mutableStateOf(false) }
-    var showStats by rememberSaveable { mutableStateOf(false) }
+    var showStats by rememberSaveable { mutableStateOf(true) } // Show stats by default (fixes #198)
     var currentStreak by remember { mutableStateOf(0) }
     var triggerConfetti by remember { mutableStateOf(false) }
     var loadingTimeoutReached by remember { mutableStateOf(false) }
@@ -207,11 +208,26 @@ fun QuizScreen(
                 )
             }
 
-            // Info icon to toggle stats display
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.TopEnd
+            // Top bar with exit button and info toggle
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.small, vertical = Spacing.extraSmall),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                // Exit/Close button (fixes #219 - visible exit option)
+                IconButton(
+                    onClick = { showExitDialog = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = stringResource(id = R.string.quit_quiz_title),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // Info icon to toggle stats display
                 IconButton(onClick = { showStats = !showStats }) {
                     Icon(
                         imageVector = Icons.Default.Info,
@@ -421,7 +437,8 @@ fun QuizScreen(
                 onQuit.invoke()
                 quizViewModel.finalizeQuiz()
                 showExitDialog = false
-            }
+            },
+            currentScore = score
         )
     }
 }

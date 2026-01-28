@@ -8,6 +8,8 @@ import com.gultekinahmetabdullah.trainvoc.gamification.DailyGoal
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
 import com.gultekinahmetabdullah.trainvoc.gamification.StreakTracking
 import com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.LevelProgress
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.ReviewSchedule
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordStatusCounts
@@ -32,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val gamificationDao: GamificationDao,
-    private val wordDao: WordDao
+    private val wordDao: WordDao,
+    private val quizHistoryDao: QuizHistoryDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -45,11 +48,27 @@ class HomeViewModel @Inject constructor(
     private fun loadHomeData() {
         viewModelScope.launch {
             try {
-                // Load streak data
+                // Load streak data and validate it
                 val streak = gamificationDao.getStreakTracking() ?: createDefaultStreak()
+                // Only show streak if it's still valid (activity today or yesterday)
+                val validatedCurrentStreak = if (streak.isStreakValid()) streak.currentStreak else 0
 
-                // Load daily goals
-                val dailyGoal = gamificationDao.getDailyGoal() ?: createDefaultDailyGoal()
+                // Calculate streak status for UI feedback
+                val streakStatus = when {
+                    streak.currentStreak == 0 -> StreakStatus.NO_STREAK
+                    streak.isActiveToday() -> StreakStatus.ACTIVE_TODAY
+                    streak.isStreakValid() -> StreakStatus.AT_RISK // Yesterday activity, not today
+                    else -> StreakStatus.BROKEN
+                }
+                val isStreakAtRisk = streakStatus == StreakStatus.AT_RISK
+
+                // Load daily goals (and reset if new day)
+                var dailyGoal = gamificationDao.getDailyGoal() ?: createDefaultDailyGoal()
+                // Check if daily goals need to be reset for a new day
+                if (dailyGoal.needsReset()) {
+                    gamificationDao.resetDailyProgress()
+                    dailyGoal = gamificationDao.getDailyGoal() ?: dailyGoal
+                }
 
                 // Load achievements
                 val unlockedAchievements = gamificationDao.getUnlockedAchievements()
@@ -65,6 +84,16 @@ class HomeViewModel @Inject constructor(
                 // Calculate total score from statistics
                 val totalCorrect = wordDao.getCorrectAnswers()
                 val totalScore = totalCorrect * 10
+
+                // Load total quiz count (all-time, for Profile display - fixes #188)
+                val totalQuizzesAllTime = try {
+                    quizHistoryDao.getTotalQuizCount()
+                } catch (_: Exception) { 0 }
+
+                // Load last quiz result (for "continue where you left off" - fixes #187)
+                val lastQuiz = try {
+                    quizHistoryDao.getLastQuizResult()
+                } catch (_: Exception) { null }
 
                 // Calculate level based on XP (totalScore)
                 val level = calculateLevel(totalScore)
@@ -107,8 +136,10 @@ class HomeViewModel @Inject constructor(
 
                 _uiState.value = HomeUiState(
                     isLoading = false,
-                    currentStreak = streak.currentStreak,
+                    currentStreak = validatedCurrentStreak,
                     longestStreak = streak.longestStreak,
+                    streakStatus = streakStatus,
+                    isStreakAtRisk = isStreakAtRisk,
                     totalScore = totalScore,
                     level = level,
                     xpProgress = xpProgress,
@@ -123,7 +154,9 @@ class HomeViewModel @Inject constructor(
                     wordStatusCounts = wordStatusCounts,
                     reviewSchedule = reviewSchedule,
                     totalStudyTimeMinutes = totalStudyTimeMinutes,
-                    totalCorrectAnswers = totalCorrect
+                    totalCorrectAnswers = totalCorrect,
+                    totalQuizzesAllTime = totalQuizzesAllTime,
+                    lastQuizResult = lastQuiz
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -183,6 +216,8 @@ data class HomeUiState(
     // Streaks
     val currentStreak: Int = 0,
     val longestStreak: Int = 0,
+    val streakStatus: StreakStatus = StreakStatus.NO_STREAK,
+    val isStreakAtRisk: Boolean = false,
 
     // Daily Goals
     val dailyGoal: DailyGoal? = null,
@@ -202,7 +237,11 @@ data class HomeUiState(
 
     // Total accumulated stats (for Profile)
     val totalStudyTimeMinutes: Int = 0,
-    val totalCorrectAnswers: Int = 0
+    val totalCorrectAnswers: Int = 0,
+    val totalQuizzesAllTime: Int = 0,
+
+    // Last quiz result (for "continue where you left off" - fixes #187)
+    val lastQuizResult: QuizHistory? = null
 ) {
     // Computed properties for daily tasks
     val quizzesCompleted: Int get() = dailyGoal?.quizzesToday ?: 0
@@ -224,4 +263,14 @@ data class HomeUiState(
     val reviewsProgress: Float get() = if (reviewsGoal > 0) (reviewsToday.toFloat() / reviewsGoal).coerceIn(0f, 1f) else 0f
 
     val achievementsUnlocked: Int get() = unlockedAchievements.size
+}
+
+/**
+ * Streak status for displaying appropriate UI feedback
+ */
+enum class StreakStatus {
+    NO_STREAK,      // User has no streak (0 days)
+    ACTIVE_TODAY,   // User already practiced today, streak is safe
+    AT_RISK,        // User hasn't practiced today but streak is still valid
+    BROKEN          // Streak was broken (2+ days since last activity)
 }

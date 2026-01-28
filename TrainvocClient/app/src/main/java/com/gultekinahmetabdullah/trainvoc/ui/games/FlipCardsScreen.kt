@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
@@ -112,11 +113,14 @@ private fun FlipCardsContent(
     onCardClick: (Int) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    // Responsive grid columns based on screen width and grid size (fixes #208)
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
     val columns = when (gameState.gridSize) {
-        "4x4" -> 4
-        "4x6" -> 4
-        "6x6" -> 6
-        else -> 4
+        "4x4" -> if (screenWidthDp >= 600) 4 else 4
+        "4x6" -> if (screenWidthDp >= 600) 6 else 4
+        "6x6" -> if (screenWidthDp >= 600) 6 else 5
+        else -> if (screenWidthDp >= 600) 6 else 4
     }
 
     GameScreenTemplate(

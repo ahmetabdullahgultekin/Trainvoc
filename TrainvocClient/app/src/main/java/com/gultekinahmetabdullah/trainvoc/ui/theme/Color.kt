@@ -99,7 +99,7 @@ object OceanColors {
 
     // AMOLED variant (true black)
     val backgroundAmoled = Color(0xFF000000)      // Pure black
-    val surfaceAmoled = Color(0xFF0D0D0D)         // Almost black
+    val surfaceAmoled = Color(0xFF000000)         // Pure black (fixes #212)
 }
 
 // ============================================================
@@ -129,7 +129,7 @@ object ForestColors {
 
     // AMOLED variant
     val backgroundAmoled = Color(0xFF000000)      // Pure black
-    val surfaceAmoled = Color(0xFF0D0D0D)         // Almost black
+    val surfaceAmoled = Color(0xFF000000)         // Pure black (fixes #212)
 }
 
 // ============================================================
@@ -159,7 +159,7 @@ object SunsetColors {
 
     // AMOLED variant
     val backgroundAmoled = Color(0xFF000000)      // Pure black
-    val surfaceAmoled = Color(0xFF0D0D0D)         // Almost black
+    val surfaceAmoled = Color(0xFF000000)         // Pure black (fixes #212)
 }
 
 // ============================================================
@@ -189,7 +189,7 @@ object LavenderColors {
 
     // AMOLED variant
     val backgroundAmoled = Color(0xFF000000)      // Pure black
-    val surfaceAmoled = Color(0xFF0D0D0D)         // Almost black
+    val surfaceAmoled = Color(0xFF000000)         // Pure black (fixes #212)
 }
 
 // ============================================================
@@ -219,7 +219,7 @@ object CrimsonColors {
 
     // AMOLED variant
     val backgroundAmoled = Color(0xFF000000)      // Pure black
-    val surfaceAmoled = Color(0xFF0D0D0D)         // Almost black
+    val surfaceAmoled = Color(0xFF000000)         // Pure black (fixes #212)
 }
 
 // ============================================================
@@ -249,7 +249,7 @@ object MintColors {
 
     // AMOLED variant
     val backgroundAmoled = Color(0xFF000000)      // Pure black
-    val surfaceAmoled = Color(0xFF0D0D0D)         // Almost black
+    val surfaceAmoled = Color(0xFF000000)         // Pure black (fixes #212)
 }
 
 // ============================================================

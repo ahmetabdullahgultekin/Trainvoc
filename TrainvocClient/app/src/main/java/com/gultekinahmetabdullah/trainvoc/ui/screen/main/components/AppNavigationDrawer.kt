@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -78,6 +79,10 @@ fun AppNavigationDrawerContent(
     gamificationViewModel: GamificationViewModel = hiltViewModel()
 ) {
     val streakData by gamificationViewModel.streakData.collectAsState()
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
+    val username = remember { prefs.getString("username", null) ?: "User" }
+    val userAvatar = remember { prefs.getString("avatar", null) ?: "🦊" }
 
     ModalDrawerSheet(
         modifier = Modifier.width(300.dp),
@@ -88,8 +93,10 @@ fun AppNavigationDrawerContent(
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
         ) {
-            // Header with gradient and user info
+            // Header with gradient and user info (fixes #195)
             DrawerHeader(
+                username = username,
+                avatar = userAvatar,
                 currentStreak = streakData?.currentStreak ?: 0,
                 onClose = { coroutineScope.launch { drawerState.close() } }
             )
@@ -267,6 +274,8 @@ fun AppNavigationDrawerContent(
 
 @Composable
 private fun DrawerHeader(
+    username: String,
+    avatar: String,
     currentStreak: Int,
     onClose: () -> Unit
 ) {
@@ -317,32 +326,59 @@ private fun DrawerHeader(
 
             Spacer(modifier = Modifier.height(Spacing.medium))
 
-            // Streak display
-            if (currentStreak > 0) {
-                Surface(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = MaterialTheme.shapes.medium
+            // User profile section (fixes #195)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.padding(
-                            horizontal = Spacing.medium,
-                            vertical = Spacing.small
-                        ),
-                        verticalAlignment = Alignment.CenterVertically
+                    Text(
+                        text = avatar,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                Spacer(modifier = Modifier.width(Spacing.small))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = username,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+
+                // Streak display inline
+                if (currentStreak > 0) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = MaterialTheme.shapes.small
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.LocalFireDepartment,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(Spacing.small))
-                        Text(
-                            text = stringResource(R.string.streak_days, currentStreak),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
+                        Row(
+                            modifier = Modifier.padding(
+                                horizontal = Spacing.small,
+                                vertical = 2.dp
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocalFireDepartment,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.streak_days, currentStreak),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                            )
+                        }
                     }
                 }
             }
