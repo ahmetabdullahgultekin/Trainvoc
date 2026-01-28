@@ -99,7 +99,7 @@ fun CloudBackupScreen(
             when (val state = authState) {
                 is CloudAuthState.Loading -> {
                     RollingCatLoaderWithText(
-                        message = "Loading...",
+                        message = stringResource(id = R.string.loading),
                         size = LoaderSize.medium,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -161,7 +161,7 @@ private fun SignedOutContent(
         ) {
             Icon(
                 imageVector = Icons.Default.CloudOff,
-                contentDescription = "Cloud backup disabled",
+                contentDescription = stringResource(id = R.string.content_desc_cloud_backup_disabled),
                 modifier = Modifier.size(iconSize),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -169,7 +169,7 @@ private fun SignedOutContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Cloud Backup",
+            text = stringResource(id = R.string.cloud_backup),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -177,7 +177,7 @@ private fun SignedOutContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Safely backup your vocabulary data to Google Drive",
+            text = stringResource(id = R.string.backup_to_google_drive),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -191,26 +191,26 @@ private fun SignedOutContent(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Coming Soon:",
+                    text = stringResource(id = R.string.coming_soon_header),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                FeatureItem("• Secure cloud backup")
-                FeatureItem("• Cross-device sync")
-                FeatureItem("• Automatic daily backups")
+                FeatureItem(stringResource(id = R.string.secure_cloud_backup))
+                FeatureItem(stringResource(id = R.string.cross_device_sync))
+                FeatureItem(stringResource(id = R.string.automatic_daily_backups))
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Currently Available:",
+                    text = stringResource(id = R.string.currently_available),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                FeatureItem("• Local backup (Settings > Backup)")
+                FeatureItem(stringResource(id = R.string.local_backup_available))
             }
         }
 
@@ -221,9 +221,9 @@ private fun SignedOutContent(
             modifier = Modifier.fillMaxWidth(),
             enabled = false  // Disabled until cloud backup is implemented
         ) {
-            Icon(Icons.AutoMirrored.Filled.Login, contentDescription = "Sign in with Google")
+            Icon(Icons.AutoMirrored.Filled.Login, contentDescription = stringResource(id = R.string.content_desc_sign_in_google))
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Sign in with Google (Coming Soon)")
+            Text(stringResource(id = R.string.sign_in_google_coming_soon))
         }
         }
     }
@@ -299,9 +299,9 @@ private fun SignedInContent(
                             containerColor = MaterialTheme.colorScheme.error
                         )
                     ) {
-                        Icon(Icons.Default.Refresh, contentDescription = null)
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(id = R.string.content_desc_retry))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Retry")
+                        Text(stringResource(id = R.string.retry))
                     }
                 }
             }
@@ -332,7 +332,7 @@ private fun SignedInContent(
                 }
 
                 TextButton(onClick = { showSignOutDialog = true }) {
-                    Text("Sign Out")
+                    Text(stringResource(id = R.string.sign_out))
                 }
             }
         }
@@ -352,12 +352,12 @@ private fun SignedInContent(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Auto Backup",
+                        text = stringResource(id = R.string.auto_backup),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Daily automatic backup (WiFi only)",
+                        text = stringResource(id = R.string.auto_backup_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -381,17 +381,17 @@ private fun SignedInContent(
             if (isLoading) {
                 ButtonLoader(modifier = Modifier.size(20.dp))
             } else {
-                Icon(Icons.Default.CloudUpload, contentDescription = "Upload backup")
+                Icon(Icons.Default.CloudUpload, contentDescription = stringResource(id = R.string.content_desc_upload_backup))
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Backup Now")
+            Text(stringResource(id = R.string.backup_now))
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Backup history header
         Text(
-            text = "Backup History",
+            text = stringResource(id = R.string.backup_history),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
@@ -405,7 +405,7 @@ private fun SignedInContent(
                 contentAlignment = Alignment.Center
             ) {
                 RollingCatLoaderWithText(
-                    message = "Loading backups...",
+                    message = stringResource(id = R.string.loading_backups),
                     size = LoaderSize.medium
                 )
             }
@@ -421,13 +421,13 @@ private fun SignedInContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.CloudQueue,
-                        contentDescription = "No backups",
+                        contentDescription = stringResource(id = R.string.content_desc_no_backups),
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.outline
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "No backups yet",
+                        text = stringResource(id = R.string.no_backups_yet),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -453,8 +453,8 @@ private fun SignedInContent(
     if (showSignOutDialog) {
         AlertDialog(
             onDismissRequest = { showSignOutDialog = false },
-            title = { Text("Sign Out") },
-            text = { Text("Are you sure you want to sign out from Google Drive? Auto-backup will be disabled.") },
+            title = { Text(stringResource(id = R.string.sign_out_title)) },
+            text = { Text(stringResource(id = R.string.sign_out_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -462,12 +462,12 @@ private fun SignedInContent(
                         onSignOut()
                     }
                 ) {
-                    Text("Sign Out")
+                    Text(stringResource(id = R.string.sign_out))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSignOutDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )
@@ -518,10 +518,10 @@ private fun BackupListItem(
 
             Row {
                 IconButton(onClick = { showRestoreDialog = true }) {
-                    Icon(Icons.Default.CloudDownload, "Restore")
+                    Icon(Icons.Default.CloudDownload, stringResource(id = R.string.restore))
                 }
                 IconButton(onClick = { showDeleteDialog = true }) {
-                    Icon(Icons.Default.Delete, "Delete")
+                    Icon(Icons.Default.Delete, stringResource(id = R.string.delete))
                 }
             }
         }
@@ -531,8 +531,8 @@ private fun BackupListItem(
     if (showRestoreDialog) {
         AlertDialog(
             onDismissRequest = { showRestoreDialog = false },
-            title = { Text("Restore Backup?") },
-            text = { Text("This will merge the backup data with your current data. Conflicts will be resolved by preferring the backup data.") },
+            title = { Text(stringResource(id = R.string.restore_backup_title)) },
+            text = { Text(stringResource(id = R.string.restore_backup_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -540,12 +540,12 @@ private fun BackupListItem(
                         onRestore()
                     }
                 ) {
-                    Text("Restore")
+                    Text(stringResource(id = R.string.restore))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showRestoreDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )
@@ -555,8 +555,8 @@ private fun BackupListItem(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Backup?") },
-            text = { Text("This action cannot be undone. The backup will be permanently deleted from Google Drive.") },
+            title = { Text(stringResource(id = R.string.delete_backup_title)) },
+            text = { Text(stringResource(id = R.string.delete_backup_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -567,12 +567,12 @@ private fun BackupListItem(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Delete")
+                    Text(stringResource(id = R.string.delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )

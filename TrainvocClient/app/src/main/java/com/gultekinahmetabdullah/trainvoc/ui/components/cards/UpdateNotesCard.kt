@@ -35,9 +35,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.model.UpdateHighlight
 import com.gultekinahmetabdullah.trainvoc.model.UpdateNotes
 import com.gultekinahmetabdullah.trainvoc.model.UpdateType
@@ -132,7 +134,7 @@ fun UpdateNotesCard(
                     IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Dismiss",
+                            contentDescription = stringResource(id = R.string.content_desc_dismiss),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }

@@ -13,10 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -164,7 +166,7 @@ private fun ListeningQuizGameContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Listening Quiz",
+        title = stringResource(id = R.string.listening_quiz),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.correctAnswers * 10
@@ -179,7 +181,7 @@ private fun ListeningQuizGameContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -204,25 +206,28 @@ private fun ListeningQuizGameContent(
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                                contentDescription = "Audio",
+                                contentDescription = stringResource(id = R.string.content_desc_audio),
                                 modifier = Modifier.size(64.dp),
                                 tint = MaterialTheme.colorScheme.onSecondaryContainer
                             )
 
+                            val listenSelectTranslation = stringResource(id = R.string.listen_select_translation)
+                            val listenSelectWord = stringResource(id = R.string.listen_select_word)
+                            val listenSelectSpelling = stringResource(id = R.string.listen_select_spelling)
                             Text(
-                                text = "Listen and select the correct ${
-                                    when (question.questionType) {
-                                        com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.QuestionType.WORD_TO_TRANSLATION -> "translation"
-                                        com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.QuestionType.TRANSLATION_TO_WORD -> "word"
-                                        com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.QuestionType.WORD_TO_SPELLING -> "spelling"
-                                    }
-                                }",
+                                text = when (question.questionType) {
+                                    com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.QuestionType.WORD_TO_TRANSLATION -> listenSelectTranslation
+                                    com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.QuestionType.TRANSLATION_TO_WORD -> listenSelectWord
+                                    com.gultekinahmetabdullah.trainvoc.games.ListeningQuizGame.QuestionType.WORD_TO_SPELLING -> listenSelectSpelling
+                                },
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
 
                             // Single unified play button
+                            val playAudioText = stringResource(id = R.string.play_audio)
+                            val replayLeftText = stringResource(id = R.string.replay_left, gameState.canReplay)
                             Button(
                                 onClick = {
                                     if (!gameState.audioPlayed) {
@@ -234,13 +239,13 @@ private fun ListeningQuizGameContent(
                                 enabled = !gameState.audioPlayed || gameState.canReplayAudio,
                                 modifier = Modifier.padding(horizontal = 32.dp)
                             ) {
-                                Icon(Icons.Default.PlayArrow, contentDescription = "Play audio")
+                                Icon(Icons.Default.PlayArrow, contentDescription = stringResource(id = R.string.content_desc_play_audio))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     if (!gameState.audioPlayed) {
-                                        "Play Audio"
+                                        playAudioText
                                     } else {
-                                        "Replay (${gameState.canReplay} left)"
+                                        replayLeftText
                                     }
                                 )
                             }
@@ -251,7 +256,7 @@ private fun ListeningQuizGameContent(
                 // Instruction
                 item {
                     Text(
-                        text = "Select your answer:",
+                        text = stringResource(id = R.string.select_your_answer),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)
@@ -289,7 +294,7 @@ private fun ListeningQuizGameContent(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Accuracy",
+                                text = stringResource(id = R.string.accuracy),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -347,7 +352,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -360,10 +365,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }

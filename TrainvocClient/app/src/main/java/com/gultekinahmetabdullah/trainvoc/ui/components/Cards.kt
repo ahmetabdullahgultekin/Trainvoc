@@ -30,10 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
@@ -232,7 +234,7 @@ fun WordCard(
                 // Favorite button
                 Icon(
                     imageVector = Icons.Default.Star,
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(id = R.string.content_desc_favorite),
                     tint = if (isFavorite) Color(0xFFFFD600) else Color.Gray,
                     modifier = Modifier
                         .size(24.dp)
@@ -284,7 +286,7 @@ fun InfoCard(
         ) {
             Icon(
                 imageVector = icon,
-                contentDescription = "Card icon",
+                contentDescription = stringResource(id = R.string.content_desc_card_icon),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp)
             )

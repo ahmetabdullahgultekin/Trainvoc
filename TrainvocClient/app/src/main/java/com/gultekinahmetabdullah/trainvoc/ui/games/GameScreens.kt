@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialHelpButton
 import com.gultekinahmetabdullah.trainvoc.ui.components.RollingCatLoaderWithText
 import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
@@ -267,12 +269,12 @@ fun GameResultDialog(
             },
             confirmButton = {
                 Button(onClick = onPlayAgain) {
-                    Text("Play Again")
+                    Text(stringResource(id = R.string.play_again))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onMainMenu) {
-                    Text("Main Menu")
+                    Text(stringResource(id = R.string.main_menu))
                 }
             }
         )
@@ -378,8 +380,8 @@ fun FlipCard(
             } else {
                 Icon(
                     imageVector = Icons.Default.QuestionMark,
-                    contentDescription = "Card face down",
-                    modifier = Modifier.size(28.dp),
+                    contentDescription = stringResource(id = R.string.content_desc_card_face_down),
+                    modifier = Modifier.size(32.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -414,7 +416,7 @@ fun FlipCard(
             },
             confirmButton = {
                 TextButton(onClick = { showPopup = false }) {
-                    Text("Close")
+                    Text(stringResource(id = R.string.ok))
                 }
             }
         )
@@ -535,9 +537,9 @@ fun HintButton(
         modifier = modifier,
         enabled = hintsRemaining > 0
     ) {
-        Icon(Icons.Default.Lightbulb, contentDescription = "Get hint")
+        Icon(Icons.Default.Lightbulb, contentDescription = stringResource(id = R.string.content_desc_get_hint))
         Spacer(modifier = Modifier.width(8.dp))
-        Text("Hint ($hintsRemaining)")
+        Text(stringResource(id = R.string.hint_remaining, hintsRemaining))
     }
 }
 
@@ -553,16 +555,16 @@ fun PauseDialog(
     if (isPaused) {
         AlertDialog(
             onDismissRequest = onResume,
-            title = { Text("Game Paused") },
-            text = { Text("Take a break! Resume when ready.") },
+            title = { Text(stringResource(id = R.string.game_paused)) },
+            text = { Text(stringResource(id = R.string.take_a_break)) },
             confirmButton = {
                 Button(onClick = onResume) {
-                    Text("Resume")
+                    Text(stringResource(id = R.string.resume))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onQuit) {
-                    Text("Quit")
+                    Text(stringResource(id = R.string.quit))
                 }
             }
         )
@@ -610,13 +612,13 @@ fun AchievementPopup(
             ) {
                 Icon(
                     Icons.Default.Stars,
-                    contentDescription = "Achievement unlocked",
+                    contentDescription = stringResource(id = R.string.content_desc_achievement_unlocked),
                     tint = MaterialTheme.colorScheme.onTertiary,
                     modifier = Modifier.size(40.dp)
                 )
                 Column {
                     Text(
-                        text = "Achievement Unlocked!",
+                        text = stringResource(id = R.string.achievement_unlocked),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onTertiary
                     )
@@ -643,7 +645,7 @@ fun GameLoadingState() {
         contentAlignment = Alignment.Center
     ) {
         RollingCatLoaderWithText(
-            message = "Loading game...",
+            message = stringResource(id = R.string.loading_game),
             size = LoaderSize.large
         )
     }
@@ -681,10 +683,10 @@ fun ErrorStateGeneric(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }
@@ -701,20 +703,20 @@ fun DifficultySelectionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Difficulty") },
+        title = { Text(stringResource(id = R.string.select_difficulty)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                DifficultyOption("Easy", "A1-A2 words", onClick = { onDifficultySelected("easy") })
-                DifficultyOption("Medium", "A2-B1 words", onClick = { onDifficultySelected("medium") })
-                DifficultyOption("Hard", "B2-C2 words", onClick = { onDifficultySelected("hard") })
+                DifficultyOption(stringResource(id = R.string.easy), "A1-A2", onClick = { onDifficultySelected("easy") })
+                DifficultyOption(stringResource(id = R.string.medium), "A2-B1", onClick = { onDifficultySelected("medium") })
+                DifficultyOption(stringResource(id = R.string.hard), "B2-C2", onClick = { onDifficultySelected("hard") })
             }
         },
         confirmButton = { },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
         }
     )

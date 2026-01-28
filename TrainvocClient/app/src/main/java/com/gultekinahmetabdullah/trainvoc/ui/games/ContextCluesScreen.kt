@@ -17,9 +17,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -144,7 +146,7 @@ private fun ContextCluesGameContent(
     val question = gameState.currentQuestion
 
     GameScreenTemplate(
-        title = "Word Detective",
+        title = stringResource(id = R.string.word_detective),
         onNavigateBack = onNavigateBack,
         progress = gameState.currentQuestionIndex.toFloat() / gameState.totalQuestions,
         score = gameState.score
@@ -159,7 +161,7 @@ private fun ContextCluesGameContent(
                 // Question counter
                 item {
                     Text(
-                        text = "Question ${gameState.currentQuestionIndex + 1} of ${gameState.totalQuestions}",
+                        text = stringResource(id = R.string.question_counter, gameState.currentQuestionIndex + 1, gameState.totalQuestions),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -170,7 +172,7 @@ private fun ContextCluesGameContent(
                 // Instruction
                 item {
                     Text(
-                        text = "Use the hints to guess the word's meaning:",
+                        text = stringResource(id = R.string.use_hints_instruction),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth(),
@@ -198,12 +200,12 @@ private fun ContextCluesGameContent(
                             ) {
                                 Icon(
                                     Icons.Default.Lightbulb,
-                                    contentDescription = "Hints",
+                                    contentDescription = stringResource(id = R.string.content_desc_hints),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Hints (${question.hintsRevealed}/${question.hints.size})",
+                                    text = stringResource(id = R.string.hints_counter, question.hintsRevealed, question.hints.size),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -236,7 +238,7 @@ private fun ContextCluesGameContent(
                 // Question prompt
                 item {
                     Text(
-                        text = "What is the Turkish meaning?",
+                        text = stringResource(id = R.string.what_is_turkish_meaning),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth(),
@@ -270,9 +272,9 @@ private fun ContextCluesGameContent(
                             modifier = Modifier.weight(1f),
                             enabled = gameState.canRevealMoreHints
                         ) {
-                            Icon(Icons.Default.Lightbulb, contentDescription = "Reveal hint")
+                            Icon(Icons.Default.Lightbulb, contentDescription = stringResource(id = R.string.content_desc_reveal_hint))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("More Hints")
+                            Text(stringResource(id = R.string.more_hints))
                         }
 
                         // Skip button
@@ -280,9 +282,9 @@ private fun ContextCluesGameContent(
                             onClick = onSkip,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Icon(Icons.Default.SkipNext, contentDescription = "Skip question")
+                            Icon(Icons.Default.SkipNext, contentDescription = stringResource(id = R.string.content_desc_skip_question))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Skip")
+                            Text(stringResource(id = R.string.skip))
                         }
                     }
                 }
@@ -295,11 +297,11 @@ private fun ContextCluesGameContent(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         StatChip(
-                            label = "Accuracy",
+                            label = stringResource(id = R.string.accuracy),
                             value = "${gameState.accuracy.toInt()}%"
                         )
                         StatChip(
-                            label = "Hints Used",
+                            label = stringResource(id = R.string.clues_used),
                             value = "${gameState.cluesUsed}"
                         )
                     }
@@ -317,11 +319,16 @@ private fun ContextCluesResultDialog(
 ) {
     val comprehensionLevel = com.gultekinahmetabdullah.trainvoc.games.ContextCluesGame.getComprehensionLevel(gameState)
 
+    val correctAnswersLabel = stringResource(id = R.string.correct_answers)
+    val accuracyLabel = stringResource(id = R.string.accuracy)
+    val cluesUsedLabel = stringResource(id = R.string.clues_used)
+    val scoreLabel = stringResource(id = R.string.score)
+
     AlertDialog(
         onDismissRequest = { },
         title = {
             Text(
-                text = "Game Complete!",
+                text = stringResource(id = R.string.game_complete),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -347,20 +354,20 @@ private fun ContextCluesResultDialog(
 
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-                StatRow(label = "Correct Answers", value = "${gameState.correctAnswers}/${gameState.totalQuestions}")
-                StatRow(label = "Accuracy", value = "${gameState.accuracy.toInt()}%")
-                StatRow(label = "Clues Used", value = "${gameState.cluesUsed}")
-                StatRow(label = "Score", value = "${gameState.score}")
+                StatRow(label = correctAnswersLabel, value = "${gameState.correctAnswers}/${gameState.totalQuestions}")
+                StatRow(label = accuracyLabel, value = "${gameState.accuracy.toInt()}%")
+                StatRow(label = cluesUsedLabel, value = "${gameState.cluesUsed}")
+                StatRow(label = scoreLabel, value = "${gameState.score}")
             }
         },
         confirmButton = {
             Button(onClick = onPlayAgain) {
-                Text("Play Again")
+                Text(stringResource(id = R.string.play_again))
             }
         },
         dismissButton = {
             TextButton(onClick = onMainMenu) {
-                Text("Main Menu")
+                Text(stringResource(id = R.string.main_menu))
             }
         }
     )
@@ -425,7 +432,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -438,10 +445,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }

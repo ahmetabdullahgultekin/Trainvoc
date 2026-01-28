@@ -77,7 +77,7 @@ fun NotificationSettingsScreen(
                 title = { Text(stringResource(R.string.notification_settings)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -92,11 +92,11 @@ fun NotificationSettingsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Word Quiz Notifications Section
-            SectionCard(title = "Word Quiz Notifications") {
+            SectionCard(title = stringResource(R.string.word_quiz_notifications)) {
                 // Master toggle
                 SettingRow(
-                    title = "Enable Word Quiz",
-                    subtitle = "Receive interactive word quiz notifications"
+                    title = stringResource(R.string.enable_word_quiz),
+                    subtitle = stringResource(R.string.enable_word_quiz_desc)
                 ) {
                     Switch(
                         checked = wordQuizEnabled,
@@ -109,7 +109,7 @@ fun NotificationSettingsScreen(
 
                     // Frequency selector
                     Text(
-                        text = "Frequency",
+                        text = stringResource(R.string.frequency),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium
                     )
@@ -126,19 +126,19 @@ fun NotificationSettingsScreen(
                         onClick = { viewModel.sendTestNotification() },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Send test notification")
+                        Icon(Icons.Default.Notifications, contentDescription = stringResource(R.string.content_desc_send_test_notification))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Send Test Notification")
+                        Text(stringResource(R.string.send_test_notification))
                     }
                 }
             }
 
             // Word Filters Section
             if (wordQuizEnabled) {
-                SectionCard(title = "Word Filters") {
+                SectionCard(title = stringResource(R.string.word_filters)) {
                     // Levels
                     Text(
-                        text = "Include Levels",
+                        text = stringResource(R.string.include_levels),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium
                     )
@@ -163,7 +163,7 @@ fun NotificationSettingsScreen(
 
                     // Exams
                     Text(
-                        text = "Include Exam Categories",
+                        text = stringResource(R.string.include_exam_categories),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium
                     )
@@ -188,8 +188,8 @@ fun NotificationSettingsScreen(
 
                     // Learning status filters
                     SettingRow(
-                        title = "Include Learned Words",
-                        subtitle = "Show words you've already mastered"
+                        title = stringResource(R.string.include_learned_words),
+                        subtitle = stringResource(R.string.include_learned_words_desc)
                     ) {
                         Switch(
                             checked = includeLearnedWords,
@@ -198,8 +198,8 @@ fun NotificationSettingsScreen(
                     }
 
                     SettingRow(
-                        title = "Prioritize Low Accuracy",
-                        subtitle = "Focus on words you often get wrong"
+                        title = stringResource(R.string.prioritize_low_accuracy),
+                        subtitle = stringResource(R.string.prioritize_low_accuracy_desc)
                     ) {
                         Switch(
                             checked = includeLowAccuracyWords,
@@ -209,10 +209,10 @@ fun NotificationSettingsScreen(
                 }
 
                 // Quiet Hours Section
-                SectionCard(title = "Quiet Hours") {
+                SectionCard(title = stringResource(R.string.quiet_hours)) {
                     SettingRow(
-                        title = "Enable Quiet Hours",
-                        subtitle = "No notifications during specified hours"
+                        title = stringResource(R.string.enable_quiet_hours),
+                        subtitle = stringResource(R.string.enable_quiet_hours_desc)
                     ) {
                         Switch(
                             checked = quietHoursEnabled,
@@ -223,19 +223,21 @@ fun NotificationSettingsScreen(
                     if (quietHoursEnabled) {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
+                        val fromLabel = stringResource(R.string.from)
+                        val toLabel = stringResource(R.string.to)
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             TimeSelector(
-                                label = "From",
+                                label = fromLabel,
                                 hour = quietHoursStart,
                                 onHourChanged = { viewModel.setQuietHoursStart(it) },
                                 modifier = Modifier.weight(1f)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             TimeSelector(
-                                label = "To",
+                                label = toLabel,
                                 hour = quietHoursEnd,
                                 onHourChanged = { viewModel.setQuietHoursEnd(it) },
                                 modifier = Modifier.weight(1f)
@@ -246,7 +248,7 @@ fun NotificationSettingsScreen(
             }
 
             // Other Notifications Section
-            SectionCard(title = "Other Notifications") {
+            SectionCard(title = stringResource(R.string.other_notifications)) {
                 SettingRow(
                     title = stringResource(R.string.enable_daily_reminders),
                     subtitle = stringResource(R.string.daily_reminders_desc)

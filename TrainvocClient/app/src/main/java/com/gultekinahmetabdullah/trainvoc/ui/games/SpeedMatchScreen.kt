@@ -8,9 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.GameType
 import com.gultekinahmetabdullah.trainvoc.ui.tutorial.TutorialOverlay
 import com.gultekinahmetabdullah.trainvoc.viewmodel.TutorialViewModel
@@ -116,7 +118,7 @@ private fun SpeedMatchGameContent(
     onNavigateBack: () -> Unit
 ) {
     GameScreenTemplate(
-        title = "Speed Match",
+        title = stringResource(id = R.string.speed_match),
         onNavigateBack = onNavigateBack,
         progress = gameState.matchedPairs.toFloat() / gameState.totalPairs,
         score = gameState.score,
@@ -141,9 +143,9 @@ private fun SpeedMatchGameContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatCard(label = "Matched", value = "${gameState.matchedPairs}/${gameState.totalPairs}")
-                StatCard(label = "Combo", value = "${gameState.combo}x")
-                StatCard(label = "Best", value = "${gameState.maxCombo}x")
+                StatCard(label = stringResource(id = R.string.matched), value = "${gameState.matchedPairs}/${gameState.totalPairs}")
+                StatCard(label = stringResource(id = R.string.combo), value = "${gameState.combo}x")
+                StatCard(label = stringResource(id = R.string.best), value = "${gameState.maxCombo}x")
             }
 
             HorizontalDivider()
@@ -276,7 +278,7 @@ private fun ErrorState(
             modifier = Modifier.padding(32.dp)
         ) {
             Text(
-                text = "Error",
+                text = stringResource(id = R.string.error_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.error
             )
@@ -289,10 +291,10 @@ private fun ErrorState(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(onClick = onBack) {
-                    Text("Back")
+                    Text(stringResource(id = R.string.back))
                 }
                 Button(onClick = onRetry) {
-                    Text("Retry")
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         }

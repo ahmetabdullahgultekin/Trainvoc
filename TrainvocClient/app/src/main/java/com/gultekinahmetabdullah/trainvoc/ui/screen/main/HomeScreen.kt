@@ -265,15 +265,15 @@ fun HomeScreen(
             item {
                 HeroCTAButton(
                     emoji = "🎯",
-                    title = "Start Quiz",
-                    subtitle = "Practice vocabulary now",
+                    title = stringResource(id = R.string.start_quiz_action),
+                    subtitle = stringResource(id = R.string.practice_now),
                     onClick = onNavigateToQuiz
                 )
             }
 
             // 4. SECONDARY ACTIONS (2x2 grid)
             item {
-                SectionHeader(title = "Quick Actions")
+                SectionHeader(title = stringResource(id = R.string.quick_actions))
             }
 
             item {
@@ -284,7 +284,7 @@ fun HomeScreen(
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "📖",
-                        title = "Dictionary",
+                        title = stringResource(id = R.string.dictionary),
                         onClick = onNavigateToDictionary,
                         backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
@@ -292,7 +292,7 @@ fun HomeScreen(
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "⭐",
-                        title = "Favorites",
+                        title = stringResource(id = R.string.favorites),
                         onClick = onNavigateToFavorites,
                         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
                     )
@@ -304,10 +304,27 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
+                    // Word of the Day
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "⭐",
+                        title = stringResource(id = R.string.word_of_the_day),
+                        onClick = onNavigateToWordOfDay,
+                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                }
+            }
+
+            // Memory Games & Multiplayer
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+                ) {
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "🎮",
-                        title = "Memory Games",
+                        title = stringResource(id = R.string.memory_games),
                         onClick = onNavigateToGames,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer
                     )
@@ -315,7 +332,7 @@ fun HomeScreen(
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "👥",
-                        title = "Multiplayer",
+                        title = stringResource(id = R.string.multiplayer),
                         onClick = onNavigateToMultiplayer,
                         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
                     )
@@ -324,7 +341,7 @@ fun HomeScreen(
 
             // 5. STATS PREVIEW - shows all-time data (fixes #202 - distinct from header)
             item {
-                SectionHeader(title = "Your Progress")
+                SectionHeader(title = stringResource(id = R.string.your_stats))
             }
 
             item {
@@ -336,7 +353,7 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Book,
                         value = "${uiState.learnedWords}/${uiState.totalWords}",
-                        label = "Words",
+                        label = stringResource(id = R.string.words_learned),
                         iconTint = MaterialTheme.colorScheme.primary
                     )
 
@@ -344,7 +361,7 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Quiz,
                         value = "${uiState.totalQuizzesAllTime}",
-                        label = "All Quizzes",
+                        label = stringResource(id = R.string.quizzes),
                         iconTint = MaterialTheme.colorScheme.secondary
                     )
 
@@ -352,7 +369,7 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Timer,
                         value = "${uiState.totalStudyTimeMinutes}m",
-                        label = "Study Time",
+                        label = stringResource(id = R.string.total_time_spent),
                         iconTint = MaterialTheme.colorScheme.tertiary
                     )
                 }
@@ -363,7 +380,7 @@ fun HomeScreen(
             val uniqueAchievements = uiState.unlockedAchievements.distinctBy { it.achievementId }
             if (uniqueAchievements.isNotEmpty()) {
                 item {
-                    SectionHeader(title = "Recent Achievements")
+                    SectionHeader(title = stringResource(id = R.string.recent_achievements))
                 }
 
                 item {
@@ -389,30 +406,17 @@ fun HomeScreen(
 
             // 6. MORE OPTIONS
             item {
-                SectionHeader(title = "More")
+                SectionHeader(title = stringResource(id = R.string.more))
             }
 
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
-                ) {
-                    QuickActionButton(
-                        modifier = Modifier.weight(1f),
-                        emoji = "📚",
-                        title = "Story Mode",
-                        onClick = onNavigateToStory,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-
-                    QuickActionButton(
-                        modifier = Modifier.weight(1f),
-                        emoji = "⭐",
-                        title = "Word of Day",
-                        onClick = onNavigateToWordOfDay,
-                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
-                    )
-                }
+                FeatureCard(
+                    title = stringResource(id = R.string.story_mode),
+                    subtitle = stringResource(id = R.string.story_mode_subtitle),
+                    emoji = "📚",
+                    onClick = onNavigateToStory,
+                    backgroundColor = MaterialTheme.colorScheme.primaryContainer
+                )
             }
 
             item {
@@ -423,7 +427,7 @@ fun HomeScreen(
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "📊",
-                        title = "Statistics",
+                        title = stringResource(id = R.string.stats),
                         onClick = onNavigateToStats,
                         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
                     )
@@ -431,7 +435,7 @@ fun HomeScreen(
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "🏆",
-                        title = "Leaderboard",
+                        title = stringResource(id = R.string.leaderboard),
                         onClick = onNavigateToLeaderboard,
                         backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
@@ -805,7 +809,7 @@ private fun HomeHeader(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Level $level • $currentXP / $maxXP XP",
+                        text = stringResource(id = R.string.level_xp_format, level, currentXP, maxXP),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -837,17 +841,17 @@ private fun DailyGoalsCard(
     ) {
         Column(modifier = Modifier.padding(Spacing.md)) {
             Text(
-                text = "Daily Goals",
+                text = stringResource(id = R.string.daily_goals),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(Spacing.sm))
             Text(
-                text = "Words: $wordsCount",
+                text = stringResource(id = R.string.words_count_format, wordsCount),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Quizzes: $quizzesCount",
+                text = stringResource(id = R.string.quizzes_count_format, quizzesCount),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
