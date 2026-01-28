@@ -1,8 +1,8 @@
 # Trainvoc - Unified Issue Tracker
 
 > **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
-> **Last Updated**: 2026-01-26
-> **Total Issues**: 167
+> **Last Updated**: 2026-01-27
+> **Total Issues**: 218
 
 ## How This Document Works
 
@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 0 | 20 | 0 | 20 |
-| 🟠 HIGH | 0 | 22 | 6 | 28 |
-| 🟡 MEDIUM | 0 | 50 | 11 | 61 |
-| 🟢 LOW | 0 | 15 | 19 | 34 |
+| 🔴 CRITICAL | 4 | 22 | 0 | 26 |
+| 🟠 HIGH | 12 | 31 | 6 | 49 |
+| 🟡 MEDIUM | 2 | 63 | 11 | 76 |
+| 🟢 LOW | 2 | 22 | 19 | 43 |
 | ⚪ INFO | 0 | 3 | 21 | 24 |
-| **TOTAL** | **0** | **110** | **57** | **167** |
+| **TOTAL** | **20** | **141** | **57** | **218** |
 
 ---
 
@@ -69,6 +69,12 @@
 | 156 | Android | `ProfileScreen.kt:144-159` | 0m Study Time - now shows total time when today's time is 0 | ✅ FIXED 2026-01-25 |
 | 157 | Android | `StatsScreen.kt` | Stats inconsistency: Profile shows TODAY's quizzes, Stats shows TOTAL | ⚪ BY DESIGN |
 | 158 | Android | Navigation | No Login/Register access point visible in app - only Sign Out shown | ✅ FIXED 2026-01-25 (added Sign In button, connected Login/Register screens) |
+| 168 | Android | `StoryScreen.kt` | Story Mode has NO actual story content - just level selection screen, violates "Learn through stories" promise | ⬜ OPEN |
+| 169 | Android | `FlipCardsScreen.kt:157` | Cards too small on 6x6 grid (~45dp) - unreadable for longer words, game essentially broken | ✅ FIXED 2026-01-27 (long-press popup, min touch target) |
+| 170 | Android | `QuizScreen.kt` | Streaks don't persist between sessions - resets every time user opens app, kills engagement | ✅ FIXED 2026-01-27 (validate streak in HomeViewModel) |
+| 171 | Android | `GamesMenuScreen.kt` | Multiplayer game UI was deleted from codebase - major feature missing | ⬜ OPEN |
+| 172 | Android | `HomeScreen.kt:249-326` | Home screen has 6+ quick action buttons with flat hierarchy - causes decision paralysis, no clear CTA | ✅ FIXED 2026-01-28 (hero CTA button, 2x2 secondary grid) |
+| 173 | Android | `ProfileScreen.kt:102` | Auth state checked via SharedPreferences, should use AuthViewModel - causes sync issues on logout | ✅ FIXED 2026-01-27 (AuthViewModel integration) |
 
 ---
 
@@ -104,6 +110,28 @@
 | 160 | Android | `HomeScreen.kt:360-362` | "Perfect Start" achievement appears twice - added distinctBy filter | ✅ FIXED 2026-01-25 |
 | 161 | Android | `StoryScreen.kt:75-83` | Missing level names - now shows both A1/A2 code AND Beginner/Elementary | ✅ FIXED 2026-01-25 |
 | 162 | Android | `StoryScreen.kt:147-162` | Progress bar added per level showing learned/total words | ✅ FIXED 2026-01-25 |
+| 174 | Android | `HomeScreen.kt:750-762` | HomeScreen shows first letter in circle, should show user's emoji avatar | ✅ FIXED 2026-01-27 (avatar parameter added to HomeHeader) |
+| 175 | Android | `LobbyScreen.kt:251` | Multiplayer lobby uses generic Person icon instead of player avatar emoji | ✅ FIXED 2026-01-28 |
+| 176 | Android | `GameResultsScreen.kt:251` | Multiplayer results uses generic Person icon instead of player avatar | ✅ FIXED 2026-01-28 |
+| 177 | Android | `StoryScreen.kt` | No chapter structure within levels - just flat level selection, no progressive chapters | ⬜ OPEN |
+| 178 | Android | `StoryScreen.kt` | No contextual learning - words aren't grouped by narrative themes or usage context | ⬜ OPEN |
+| 179 | Android | `QuizScreen.kt` | No adaptive difficulty - quiz doesn't adjust based on user performance | ⬜ OPEN |
+| 180 | Android | `QuizScreen.kt` | No sound effects - only haptic feedback, missing audio cues for engagement | ⬜ OPEN |
+| 181 | Android | `QuizScreen.kt` | No hint system - no "reveal letter" or "eliminate option" hints available | ⬜ OPEN |
+| 182 | Android | `GameScreens.kt:338-343` | Flip Cards font size hardcoded based on char count, user cannot adjust | ✅ FIXED 2026-01-27 (long-press popup with large text) |
+| 183 | Android | `GameScreens.kt:318-324` | Flip Cards popup auto-dismisses after 2 seconds, should stay until user closes | ✅ FIXED 2026-01-27 (popup stays until dismissed) |
+| 184 | Android | `GameScreens.kt` | Flip Cards no pinch-zoom or manual card enlargement option | ⬜ OPEN |
+| 185 | Android | `AppBottomBar.kt` | Only 4 nav items, design intended for 5 with center play button (isCenter param unused) | ✅ FIXED 2026-01-28 (5 items: Home, Games, Play center, Dictionary, Profile) |
+| 186 | Android | `HomeScreen.kt` | No welcome/greeting message - doesn't say "Welcome back, [Name]!" | ✅ FIXED 2026-01-27 (time-based greeting added) |
+| 187 | Android | `HomeScreen.kt` | No "continue where you left off" feature - users must search for last activity | ✅ FIXED 2026-01-28 (ContinueCard shows last quiz type, accuracy, time ago) |
+| 188 | Android | `ProfileScreen.kt:174` | Quizzes count shows TODAY only, but StatsScreen shows ALL-TIME - confusing inconsistency | ✅ FIXED 2026-01-28 (ProfileScreen now uses totalQuizzesAllTime) |
+| 189 | Android | Social | Friend system not implemented - no way to add/view friends | ⬜ OPEN |
+| 190 | Android | Feedback | No feedback system - users cannot easily report issues or suggestions | ✅ FIXED 2026-01-28 (email-based bug report + feedback in HelpScreen) |
+| 191 | Android | `AuthRepository.kt:219` | Email verification code exists but no UI screen to prompt verification | ⬜ OPEN |
+| 192 | Android | `LoginScreen.kt` | No Google Sign-In option - only email/password despite GoogleAuthManager existing | ⬜ OPEN |
+| 193 | Android | `AuthRepository.kt` | No session timeout handling - no automatic logout on token expiration | ⬜ OPEN |
+| 194 | Android | `LeaderboardScreen.kt` | Leaderboard is placeholder "Coming Soon" - not functional | ⬜ OPEN |
+| 219 | Android | `QuizScreen.kt` | No visible exit/back button during quiz - bars hidden, user can only use system back gesture (not discoverable) | ✅ FIXED 2026-01-27 (X button added, exit dialog enhanced) |
 
 ---
 
@@ -172,6 +200,21 @@
 | 163 | Android | `HelpScreen.kt` | Placeholder phone number "+1 234 567 890" in Contact Support section | ✅ FIXED 2026-01-25 (removed fake phone support) |
 | 164 | Android | `StatsScreen.kt` | Performance Trends bar chart shows same value (24) for all periods | ✅ FIXED 2026-01-25 (show only total, note about time-based coming soon) |
 | 165 | Android | `StoryScreen.kt` | Repetitive lock messages shown on every locked level | ✅ FIXED 2026-01-25 (simplified locked state UI) |
+| 195 | Android | `AppNavigationDrawer.kt` | Missing user profile section (avatar + name) in drawer header | ✅ FIXED 2026-01-28 (avatar, username, inline streak in drawer header) |
+| 196 | Android | `SettingsScreen.kt` | Missing user profile card/section at top of settings | ✅ FIXED 2026-01-28 (profile card with avatar at top of settings) |
+| 197 | Android | `StatsViewModel.kt:77-78` | dailyCorrect/weeklyCorrect collected but never displayed in UI | ✅ FIXED 2026-01-28 |
+| 198 | Android | `QuizScreen.kt:224-230` | Stats card hidden by default - must toggle info icon, poor discoverability | ✅ FIXED 2026-01-28 (default showStats=true) |
+| 199 | Android | `QuizScreen.kt` | No speed bonuses - time pressure exists but no reward for fast answers | ⬜ OPEN |
+| 200 | Android | `FlipCardsScreen.kt:432-451` | Touch targets below 48dp minimum on 6x6 grids (~45dp cards) | ✅ FIXED 2026-01-27 (added sizeIn(minWidth=48dp)) |
+| 201 | Android | `AppBottomBar.kt` | No notification badges on nav items | ⬜ OPEN |
+| 202 | Android | `HomeScreen.kt:328-362` | Stats preview section redundant with HomeHeader - shows same info twice | ✅ FIXED 2026-01-28 (replaced with distinct progress: words ratio, all-time quizzes, study time) |
+| 203 | Android | `Color.kt` | DEFAULT palette missing AMOLED variant - falls back to dark theme | ✅ FIXED 2026-01-28 |
+| 204 | Android | `StoryScreen.kt` | No story-specific achievements - achievements are all generic | ⬜ OPEN |
+| 205 | Android | Analytics | Google Analytics not fully integrated - missing event tracking | ⬜ OPEN |
+| 206 | Android | Firebase | Firestore not used for leaderboard/user data - could enhance social features | ⬜ OPEN |
+| 207 | Android | `GameScreen.kt` | Multiplayer game screen missing player avatars in ranking display | ✅ FIXED 2026-01-28 |
+| 208 | Android | `FlipCardsScreen.kt:113-118` | Grid size options too limited - only 3 options, no responsive adjustment | ✅ FIXED 2026-01-28 |
+| 209 | Android | Navigation | Some screens may be inaccessible from normal navigation - needs audit | ⬜ OPEN |
 
 ---
 
@@ -213,6 +256,15 @@
 | 126 | Android | `HomeScreen.kt:188` | username_placeholder string resource used | ❌ WONTFIX (valid string resource) |
 | 166 | Android | `ProfileScreen.kt` | Edit Profile dialog only has Username field - no avatar, email, etc. | ✅ FIXED 2026-01-26 |
 | 167 | Android | `SplashScreen.kt` | Splash screen duration too long for returning users | ✅ FIXED 2026-01-26 |
+| 210 | Android | `ProfileScreen.kt:845-851` | No logout confirmation dialog - direct logout on tap, could be accidental | ✅ FIXED 2026-01-27 (confirmation dialog added) |
+| 211 | Android | `Theme.kt:362` | High contrast + AMOLED can't work simultaneously - one overrides other | ✅ FIXED 2026-01-28 |
+| 212 | Android | `Color.kt:100-103` | AMOLED surface color is #0D0D0D not pure black #000000 - less battery savings | ✅ FIXED 2026-01-28 (all 6 themes updated to pure black 0xFF000000) |
+| 213 | Android | `HomeScreen.kt:364-391` | Achievements section shown when most users have none - wastes space | ✅ VERIFIED 2026-01-28 (already guarded with isNotEmpty() check) |
+| 214 | Android | `StoryScreen.kt` | Missing session length recommendations - users don't know ideal study time | ⬜ OPEN |
+| 215 | Android | `SplashScreen.kt` | No tap-to-skip functionality for splash screen | ✅ FIXED 2026-01-28 (tap anywhere to skip, prevents double navigation) |
+| 216 | Android | `AppConfig.kt` | Splash screen configuration not in AppConfig - hardcoded in SplashScreen.kt | ✅ FIXED 2026-01-28 |
+| 217 | Android | `StatsViewModel.kt:76` | lastAnswered variable collected but never displayed in UI | ⬜ OPEN |
+| 218 | Android | `AuthViewModel.kt:118-121` | Password validation only checks length (6+ chars), no strength requirements | ✅ FIXED 2026-01-28 (8+ chars, uppercase, digit required) |
 
 ---
 
@@ -326,34 +378,42 @@
 
 When starting a fix session, prioritize in this order:
 
-### PHASE 1 - BLOCKERS (Must fix before Open Test)
-1. **#151** - Remove "Test Mode" banner from production
-2. **#152** - Fix Multiplayer CLEARTEXT error (network security config)
-3. **#153** - Fix Dictionary heart button click handler
-4. **#154** - Fix Dictionary sidebar overlap with Row layout
+### PHASE 1 - CRITICAL UX REDESIGN (App Core Experience)
+1. **#172** - HomeScreen has 6+ quick action buttons - redesign with hierarchy
+2. **#168** - Story Mode has no actual story - needs content/chapter structure
+3. **#170** - Quiz streaks don't persist between sessions
+4. **#169** - Flip Cards too small on 6x6 grid - card size/popup fix
 
-### PHASE 2 - DATA BUGS (Critical for user trust)
-5. **#155** - Fix Mastery % calculation
-6. **#156** - Fix Study Time tracking
-7. **#157** - Fix Stats data inconsistency (2 vs 45 quizzes)
+### PHASE 2 - AUTHENTICATION & IDENTITY
+5. **#173** - Auth state uses SharedPreferences instead of AuthViewModel
+6. **#192** - Add Google Sign-In to LoginScreen
+7. **#191** - Add email verification UI screen
+8. **#174** - HomeScreen shows letter instead of avatar emoji
 
-### PHASE 3 - MISSING FEATURES
-8. **#158** - Add Login/Register access point
-9. **#163** - Remove placeholder phone number
-10. **#160** - Fix duplicate achievement display
+### PHASE 3 - ENGAGEMENT & GAMIFICATION
+9. **#179** - Add adaptive difficulty to quizzes
+10. **#180** - Add sound effects to quiz (correct/wrong/milestone)
+11. **#181** - Add hint system to quizzes
+12. **#189** - Implement friend system
 
-### PHASE 4 - POLISH
-11. **#159** - Fix double header
-12. **#161-162** - Add level names and progress to Story Mode
-13. **#167** - Reduce splash screen duration
-14. **#166** - Enhance Edit Profile dialog
+### PHASE 4 - NAVIGATION & LAYOUT
+13. **#185** - Restore 5-item bottom bar with center play button
+14. **#186** - Add welcome message to HomeScreen
+15. **#187** - Add "continue where you left off" feature
+16. **#195-196** - Add user profile section to drawer and settings
 
-### Legacy Issues (still open)
-- **🔴 CRITICAL #008-009** - Tutorial stub implementations
-- **🟠 HIGH #024-026** - Cloud backup and analytics stubs
-- **🟡 MEDIUM** - As time allows
-- **🟢 LOW** - Polish phase
-- **⚪ INFO** - Cleanup session
+### PHASE 5 - SOCIAL & ANALYTICS
+17. **#190** - Implement feedback system
+18. **#194** - Make Leaderboard functional
+19. **#205-206** - Integrate Google Analytics and Firestore
+
+### PHASE 6 - POLISH
+20. **#182-184** - Fix Flip Cards font/popup/zoom issues
+21. **#210** - Add logout confirmation dialog
+22. **#188** - Fix Profile vs Stats quizzes inconsistency
+
+### Legacy Issues (all now FIXED or WONTFIX)
+- All previous issues resolved in Jan 2026 sessions
 
 ---
 

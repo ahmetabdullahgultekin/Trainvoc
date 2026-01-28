@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
@@ -63,6 +64,30 @@ private val DefaultDarkColorScheme = darkColorScheme(
     surface = DarkSurface,
     onSurface = DarkOnSurface,
     surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = DarkOnSurfaceVariant,
+)
+
+// Default AMOLED Color Scheme (fixes #203)
+private val DefaultAmoledColorScheme = darkColorScheme(
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    primaryContainer = DarkPrimaryContainer,
+    onPrimaryContainer = DarkOnPrimaryContainer,
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+    secondaryContainer = DarkSecondaryContainer,
+    onSecondaryContainer = DarkOnSecondaryContainer,
+    tertiary = DarkTertiary,
+    onTertiary = DarkOnTertiary,
+    tertiaryContainer = DarkTertiaryContainer,
+    onTertiaryContainer = DarkOnTertiaryContainer,
+    error = DarkError,
+    onError = DarkOnError,
+    background = Color(0xFF000000),
+    onBackground = DarkOnSurface,
+    surface = Color(0xFF000000),
+    onSurface = DarkOnSurface,
+    surfaceVariant = Color(0xFF1C1B1F),
     onSurfaceVariant = DarkOnSurfaceVariant,
 )
 
@@ -358,9 +383,16 @@ private fun getColorScheme(
 ): ColorScheme {
     val context = LocalContext.current
 
-    // High contrast mode takes precedence over palette selection for accessibility
+    // High contrast mode for accessibility (fixes #211 - AMOLED can combine with high contrast)
     if (highContrastMode) {
-        return if (darkTheme) HighContrastDarkColorScheme else HighContrastLightColorScheme
+        val baseScheme = if (darkTheme) HighContrastDarkColorScheme else HighContrastLightColorScheme
+        if (amoledMode && darkTheme) {
+            return baseScheme.copy(
+                background = Color(0xFF000000),
+                surface = Color(0xFF000000)
+            )
+        }
+        return baseScheme
     }
 
     return when (palette) {
@@ -422,7 +454,11 @@ private fun getColorScheme(
         }
 
         ColorPalettePreference.DEFAULT -> {
-            if (darkTheme) DefaultDarkColorScheme else DefaultLightColorScheme
+            when {
+                amoledMode -> DefaultAmoledColorScheme
+                darkTheme -> DefaultDarkColorScheme
+                else -> DefaultLightColorScheme
+            }
         }
     }
 }

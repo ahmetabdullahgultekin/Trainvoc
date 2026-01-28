@@ -106,6 +106,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import java.util.concurrent.TimeUnit
 
 /**
  * HomeScreen - Main dashboard with gamification features
@@ -148,9 +149,10 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // Get username from SharedPreferences
+    // Get username and avatar from SharedPreferences
     val prefs = remember { context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE) }
     val username = prefs.getString("username", null) ?: stringResource(id = R.string.username_placeholder)
+    val userAvatar = prefs.getString("avatar", null) ?: "🦊" // Default fox avatar
 
     // Update Notes management
     val updateNotesManager = remember { UpdateNotesManager.getInstance(context) }
@@ -193,6 +195,7 @@ fun HomeScreen(
             item {
                 HomeHeader(
                     username = username,
+                    avatar = userAvatar,
                     level = uiState.level,
                     currentXP = uiState.xpCurrent,
                     maxXP = uiState.xpForNextLevel,
@@ -235,18 +238,40 @@ fun HomeScreen(
                         onClick = onNavigateToDailyGoals
                     )
 
-                    // Streak Card
-                    if (uiState.currentStreak > 0) {
-                        StreakWidget(
-                            streakCount = uiState.currentStreak,
-                            onClick = onNavigateToStreakDetail,
-                            modifier = Modifier.weight(0.7f)
-                        )
-                    }
+                    // Streak Card - Always show for engagement
+                    StreakWidget(
+                        streakCount = uiState.currentStreak,
+                        onClick = onNavigateToStreakDetail,
+                        modifier = Modifier.weight(0.7f),
+                        isAtRisk = uiState.isStreakAtRisk,
+                        isActivatedToday = uiState.streakStatus == StreakStatus.ACTIVE_TODAY
+                    )
                 }
             }
 
-            // 3. QUICK ACTIONS
+            // 3. CONTINUE WHERE YOU LEFT OFF (fixes #187)
+            if (uiState.lastQuizResult != null) {
+                item {
+                    ContinueCard(
+                        quizType = uiState.lastQuizResult.quizType,
+                        accuracy = uiState.lastQuizResult.accuracy,
+                        timestamp = uiState.lastQuizResult.timestamp,
+                        onClick = onNavigateToQuiz
+                    )
+                }
+            }
+
+            // 4. PRIMARY CTA - Start Quiz (hero button, fixes #172)
+            item {
+                HeroCTAButton(
+                    emoji = "🎯",
+                    title = stringResource(id = R.string.start_quiz_action),
+                    subtitle = stringResource(id = R.string.practice_now),
+                    onClick = onNavigateToQuiz
+                )
+            }
+
+            // 4. SECONDARY ACTIONS (2x2 grid)
             item {
                 SectionHeader(title = stringResource(id = R.string.quick_actions))
             }
@@ -256,16 +281,14 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    // Start Quiz - Primary action
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
-                        emoji = "🎯",
-                        title = stringResource(id = R.string.start_quiz_action),
-                        onClick = onNavigateToQuiz,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer
+                        emoji = "📖",
+                        title = stringResource(id = R.string.dictionary),
+                        onClick = onNavigateToDictionary,
+                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
 
-                    // Favorites
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "⭐",
@@ -289,19 +312,10 @@ fun HomeScreen(
                         onClick = onNavigateToWordOfDay,
                         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
                     )
-
-                    // Dictionary
-                    QuickActionButton(
-                        modifier = Modifier.weight(1f),
-                        emoji = "📖",
-                        title = stringResource(id = R.string.dictionary),
-                        onClick = onNavigateToDictionary,
-                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
                 }
             }
 
-            // Memory Games - NEW!
+            // Memory Games & Multiplayer
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -325,7 +339,7 @@ fun HomeScreen(
                 }
             }
 
-            // 4. STATS PREVIEW
+            // 5. STATS PREVIEW - shows all-time data (fixes #202 - distinct from header)
             item {
                 SectionHeader(title = stringResource(id = R.string.your_stats))
             }
@@ -338,7 +352,7 @@ fun HomeScreen(
                     StatsCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Book,
-                        value = "${uiState.learnedWords}",
+                        value = "${uiState.learnedWords}/${uiState.totalWords}",
                         label = stringResource(id = R.string.words_learned),
                         iconTint = MaterialTheme.colorScheme.primary
                     )
@@ -346,16 +360,16 @@ fun HomeScreen(
                     StatsCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Quiz,
-                        value = "${uiState.quizzesCompleted}",
+                        value = "${uiState.totalQuizzesAllTime}",
                         label = stringResource(id = R.string.quizzes),
                         iconTint = MaterialTheme.colorScheme.secondary
                     )
 
                     StatsCard(
                         modifier = Modifier.weight(1f),
-                        icon = Icons.Default.EmojiEvents,
-                        value = "${uiState.level}",
-                        label = stringResource(id = R.string.level),
+                        icon = Icons.Default.Timer,
+                        value = "${uiState.totalStudyTimeMinutes}m",
+                        label = stringResource(id = R.string.total_time_spent),
                         iconTint = MaterialTheme.colorScheme.tertiary
                     )
                 }
@@ -410,12 +424,20 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    StatChip(
+                    QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "📊",
-                        value = stringResource(id = R.string.stats),
-                        label = stringResource(id = R.string.stats_subtitle),
+                        title = stringResource(id = R.string.stats),
+                        onClick = onNavigateToStats,
                         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
+
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "🏆",
+                        title = stringResource(id = R.string.leaderboard),
+                        onClick = onNavigateToLeaderboard,
+                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
             }
@@ -678,6 +700,22 @@ fun AnimatedBackground(
     )
 }
 
+// Private helper functions
+
+/**
+ * Returns a time-appropriate greeting message
+ */
+private fun getGreeting(): String {
+    val hour = java.time.LocalTime.now().hour
+    return when {
+        hour < 5 -> "Good night"
+        hour < 12 -> "Good morning"
+        hour < 17 -> "Good afternoon"
+        hour < 21 -> "Good evening"
+        else -> "Good night"
+    }
+}
+
 // Private composable components
 
 /**
@@ -688,6 +726,7 @@ fun AnimatedBackground(
 @Composable
 private fun HomeHeader(
     username: String,
+    avatar: String,
     level: Int,
     currentXP: Int,
     maxXP: Int,
@@ -747,6 +786,7 @@ private fun HomeHeader(
                 modifier = Modifier.padding(Spacing.md),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // User avatar (emoji or first letter fallback)
                 Box(
                     modifier = Modifier
                         .size(56.dp)
@@ -755,15 +795,16 @@ private fun HomeHeader(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = username.take(1).uppercase(),
-                        style = MaterialTheme.typography.headlineSmall,
+                        text = avatar.ifEmpty { username.take(1).uppercase() },
+                        style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
                 Spacer(modifier = Modifier.width(Spacing.md))
                 Column(modifier = Modifier.weight(1f)) {
+                    // Personalized welcome message (fixes #186)
                     Text(
-                        text = username,
+                        text = getGreeting() + ", $username!",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -812,6 +853,128 @@ private fun DailyGoalsCard(
             Text(
                 text = stringResource(id = R.string.quizzes_count_format, quizzesCount),
                 style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+/**
+ * "Continue where you left off" card - shows the user's last quiz and allows quick restart
+ * (fixes #187)
+ */
+@Composable
+private fun ContinueCard(
+    quizType: String,
+    accuracy: Float,
+    timestamp: Long,
+    onClick: () -> Unit
+) {
+    val timeAgo = remember(timestamp) {
+        val diff = System.currentTimeMillis() - timestamp
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+        val hours = TimeUnit.MILLISECONDS.toHours(diff)
+        val days = TimeUnit.MILLISECONDS.toDays(diff)
+        when {
+            minutes < 1 -> "Just now"
+            minutes < 60 -> "${minutes}m ago"
+            hours < 24 -> "${hours}h ago"
+            days < 7 -> "${days}d ago"
+            else -> "${days / 7}w ago"
+        }
+    }
+
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Spacing.md),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Replay icon
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Continue where you left off",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "$quizType • ${(accuracy * 100).toInt()}% accuracy • $timeAgo",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Hero Call-to-Action button - prominent primary action on HomeScreen
+ * Designed to be the clear main action, reducing decision paralysis (fixes #172)
+ */
+@Composable
+private fun HeroCTAButton(
+    emoji: String,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp),
+        shape = RoundedCornerShape(CornerRadius.large),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = emoji,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                )
+            }
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(28.dp)
             )
         }
     }

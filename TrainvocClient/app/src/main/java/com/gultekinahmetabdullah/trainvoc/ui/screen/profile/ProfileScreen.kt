@@ -46,6 +46,8 @@ import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressIndicator
 import com.gultekinahmetabdullah.trainvoc.ui.animations.ShimmerBox
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
+import com.gultekinahmetabdullah.trainvoc.viewmodel.AuthViewModel
+import com.gultekinahmetabdullah.trainvoc.repository.AuthState
 import com.gultekinahmetabdullah.trainvoc.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -73,10 +75,15 @@ fun ProfileScreen(
     onViewAchievements: () -> Unit = {},
     onViewLeaderboard: () -> Unit = {},
     onSettings: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+
+    // Use AuthViewModel for authentication state (fixes #173 - auth state consistency)
+    val authState by authViewModel.authState.collectAsState()
+    val currentUser by authViewModel.currentUser.collectAsState()
 
     // Responsive design: Determine grid columns and padding based on screen width
     val configuration = androidx.compose.ui.platform.LocalConfiguration.current
@@ -95,18 +102,54 @@ fun ProfileScreen(
         else -> 0.dp                     // Phones (sections have their own padding)
     }
 
-    // Get username and avatar from SharedPreferences
+    // Get username and avatar from SharedPreferences (for display)
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
-    val username = prefs.getString("username", null) ?: "User"
+    val username = currentUser?.displayName ?: prefs.getString("username", null) ?: "User"
     val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
-    val isLoggedIn = prefs.getString("email", null) != null || prefs.getString("auth_token", null) != null
+    // Use AuthViewModel for login state (consistent with auth system)
+    val isLoggedIn = authState is AuthState.Authenticated || authState is AuthState.AuthenticatedOffline
     var currentAvatar by remember {
         mutableStateOf(prefs.getString("avatar", com.gultekinahmetabdullah.trainvoc.constants.Avatars.getRandomAvatar()) ?: "\uD83E\uDD8A")
     }
 
     val showEditDialog = remember { mutableStateOf(false) }
     val showAvatarDialog = remember { mutableStateOf(false) }
+    val showLogoutConfirmDialog = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+
+    // Check auth state when screen loads
+    LaunchedEffect(Unit) {
+        authViewModel.checkAuthState()
+    }
+
+    // Logout confirmation dialog (fixes #210)
+    if (showLogoutConfirmDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showLogoutConfirmDialog.value = false },
+            icon = { Icon(Icons.Default.Logout, contentDescription = null) },
+            title = { Text(stringResource(id = R.string.sign_out)) },
+            text = { Text(stringResource(id = R.string.logout_confirmation_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutConfirmDialog.value = false
+                        authViewModel.logout()
+                        onSignOut()
+                    }
+                ) {
+                    Text(
+                        stringResource(id = R.string.sign_out),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutConfirmDialog.value = false }) {
+                    Text(stringResource(id = R.string.cancel))
+                }
+            }
+        )
+    }
 
     // Pull to refresh state
     var isRefreshing by remember { mutableStateOf(false) }
@@ -171,7 +214,7 @@ fun ProfileScreen(
                     StatsGridSection(
                         learnedWords = uiState.learnedWords,
                         totalWords = uiState.totalWords,
-                        quizzesCompleted = uiState.quizzesCompleted,
+                        quizzesCompleted = uiState.totalQuizzesAllTime,
                         studyTimeMinutes = studyTime,
                         correctAnswers = uiState.learnedWords,  // Words learned = mastery progress
                         totalAnswers = if (uiState.totalWords > 0) uiState.totalWords else 1,  // Total words in dictionary
@@ -213,7 +256,10 @@ fun ProfileScreen(
                         onViewLeaderboard = onViewLeaderboard,
                         onSettings = onSettings,
                         onSignIn = onSignIn,
-                        onSignOut = onSignOut,
+                        onSignOut = {
+                            // Show confirmation dialog instead of immediate logout (fixes #210)
+                            showLogoutConfirmDialog.value = true
+                        },
                         isLoggedIn = isLoggedIn,
                         modifier = Modifier.padding(horizontal = Spacing.md)
                     )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -250,7 +249,7 @@ private fun RankingCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Avatar
+            // Avatar (fixes #176 - show player avatar emoji)
             Surface(
                 modifier = Modifier
                     .size(40.dp)
@@ -258,10 +257,9 @@ private fun RankingCard(
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                    Text(
+                        text = getAvatarEmoji(player.avatarId),
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -298,6 +296,13 @@ private fun RankingCard(
             }
         }
     }
+}
+
+/** Map avatar ID to emoji for multiplayer player display */
+private fun getAvatarEmoji(avatarId: Int): String {
+    val avatars = listOf("🦊", "🐱", "🐶", "🐻", "🐼", "🐨", "🦁", "🐯", "🐸", "🦉",
+        "🐺", "🦄", "🐲", "🦅", "🐧", "🐙", "🦋", "🌟", "🎯", "🚀")
+    return avatars.getOrElse(avatarId % avatars.size) { "🦊" }
 }
 
 @Composable
