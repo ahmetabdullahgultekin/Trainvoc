@@ -106,6 +106,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.CornerRadius
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Elevation
 import com.gultekinahmetabdullah.trainvoc.ui.theme.IconSize
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import java.util.concurrent.TimeUnit
 
 /**
  * HomeScreen - Main dashboard with gamification features
@@ -248,7 +249,29 @@ fun HomeScreen(
                 }
             }
 
-            // 3. QUICK ACTIONS
+            // 3. CONTINUE WHERE YOU LEFT OFF (fixes #187)
+            if (uiState.lastQuizResult != null) {
+                item {
+                    ContinueCard(
+                        quizType = uiState.lastQuizResult.quizType,
+                        accuracy = uiState.lastQuizResult.accuracy,
+                        timestamp = uiState.lastQuizResult.timestamp,
+                        onClick = onNavigateToQuiz
+                    )
+                }
+            }
+
+            // 4. PRIMARY CTA - Start Quiz (hero button, fixes #172)
+            item {
+                HeroCTAButton(
+                    emoji = "🎯",
+                    title = "Start Quiz",
+                    subtitle = "Practice vocabulary now",
+                    onClick = onNavigateToQuiz
+                )
+            }
+
+            // 4. SECONDARY ACTIONS (2x2 grid)
             item {
                 SectionHeader(title = "Quick Actions")
             }
@@ -258,16 +281,14 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    // Start Quiz - Primary action
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
-                        emoji = "🎯",
-                        title = "Start Quiz",
-                        onClick = onNavigateToQuiz,
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer
+                        emoji = "📖",
+                        title = "Dictionary",
+                        onClick = onNavigateToDictionary,
+                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
 
-                    // Favorites
                     QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "⭐",
@@ -278,32 +299,6 @@ fun HomeScreen(
                 }
             }
 
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
-                ) {
-                    // Word of the Day
-                    QuickActionButton(
-                        modifier = Modifier.weight(1f),
-                        emoji = "⭐",
-                        title = "Word of Day",
-                        onClick = onNavigateToWordOfDay,
-                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
-                    )
-
-                    // Dictionary
-                    QuickActionButton(
-                        modifier = Modifier.weight(1f),
-                        emoji = "📖",
-                        title = "Dictionary",
-                        onClick = onNavigateToDictionary,
-                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                }
-            }
-
-            // Memory Games - NEW!
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -398,13 +393,26 @@ fun HomeScreen(
             }
 
             item {
-                FeatureCard(
-                    title = "Story Mode",
-                    subtitle = "Learn through stories",
-                    emoji = "📚",
-                    onClick = onNavigateToStory,
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
+                ) {
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "📚",
+                        title = "Story Mode",
+                        onClick = onNavigateToStory,
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "⭐",
+                        title = "Word of Day",
+                        onClick = onNavigateToWordOfDay,
+                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                }
             }
 
             item {
@@ -412,12 +420,20 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    StatChip(
+                    QuickActionButton(
                         modifier = Modifier.weight(1f),
                         emoji = "📊",
-                        value = "Stats",
-                        label = "View detailed stats",
+                        title = "Statistics",
+                        onClick = onNavigateToStats,
                         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
+
+                    QuickActionButton(
+                        modifier = Modifier.weight(1f),
+                        emoji = "🏆",
+                        title = "Leaderboard",
+                        onClick = onNavigateToLeaderboard,
+                        backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
             }
@@ -833,6 +849,128 @@ private fun DailyGoalsCard(
             Text(
                 text = "Quizzes: $quizzesCount",
                 style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+/**
+ * "Continue where you left off" card - shows the user's last quiz and allows quick restart
+ * (fixes #187)
+ */
+@Composable
+private fun ContinueCard(
+    quizType: String,
+    accuracy: Float,
+    timestamp: Long,
+    onClick: () -> Unit
+) {
+    val timeAgo = remember(timestamp) {
+        val diff = System.currentTimeMillis() - timestamp
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diff)
+        val hours = TimeUnit.MILLISECONDS.toHours(diff)
+        val days = TimeUnit.MILLISECONDS.toDays(diff)
+        when {
+            minutes < 1 -> "Just now"
+            minutes < 60 -> "${minutes}m ago"
+            hours < 24 -> "${hours}h ago"
+            days < 7 -> "${days}d ago"
+            else -> "${days / 7}w ago"
+        }
+    }
+
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Spacing.md),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Replay icon
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Continue where you left off",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "$quizType • ${(accuracy * 100).toInt()}% accuracy • $timeAgo",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Hero Call-to-Action button - prominent primary action on HomeScreen
+ * Designed to be the clear main action, reducing decision paralysis (fixes #172)
+ */
+@Composable
+private fun HeroCTAButton(
+    emoji: String,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp),
+        shape = RoundedCornerShape(CornerRadius.large),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = emoji,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                )
+            }
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(28.dp)
             )
         }
     }

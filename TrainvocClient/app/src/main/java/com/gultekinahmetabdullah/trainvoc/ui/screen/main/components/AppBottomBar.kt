@@ -93,10 +93,22 @@ fun AppBottomBar(navController: NavController) {
             )
 
             BottomNavItem(
+                label = stringResource(id = R.string.games),
+                selectedIcon = Icons.Filled.SportsEsports,
+                unselectedIcon = Icons.Outlined.SportsEsports,
+                isSelected = currentRoute == Route.GAMES_MENU,
+                onClick = {
+                    navController.navigate(Route.GAMES_MENU)
+                }
+            )
+
+            // Center Play button (fixes #185)
+            BottomNavItem(
                 label = stringResource(id = R.string.quiz),
                 selectedIcon = Icons.Filled.PlayArrow,
                 unselectedIcon = Icons.Outlined.PlayArrow,
                 isSelected = currentRoute == Route.QUIZ_EXAM_MENU || currentRoute == Route.QUIZ,
+                isCenter = true,
                 onClick = {
                     navController.navigate(Route.QUIZ_EXAM_MENU)
                 }

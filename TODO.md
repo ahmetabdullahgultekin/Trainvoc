@@ -36,12 +36,12 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 5 | 21 | 0 | 26 |
-| 🟠 HIGH | 16 | 27 | 6 | 49 |
+| 🔴 CRITICAL | 4 | 22 | 0 | 26 |
+| 🟠 HIGH | 12 | 31 | 6 | 49 |
 | 🟡 MEDIUM | 12 | 53 | 11 | 76 |
-| 🟢 LOW | 8 | 16 | 19 | 43 |
+| 🟢 LOW | 7 | 17 | 19 | 43 |
 | ⚪ INFO | 0 | 3 | 21 | 24 |
-| **TOTAL** | **41** | **120** | **57** | **218** |
+| **TOTAL** | **35** | **126** | **57** | **218** |
 
 ---
 
@@ -73,7 +73,7 @@
 | 169 | Android | `FlipCardsScreen.kt:157` | Cards too small on 6x6 grid (~45dp) - unreadable for longer words, game essentially broken | ✅ FIXED 2026-01-27 (long-press popup, min touch target) |
 | 170 | Android | `QuizScreen.kt` | Streaks don't persist between sessions - resets every time user opens app, kills engagement | ✅ FIXED 2026-01-27 (validate streak in HomeViewModel) |
 | 171 | Android | `GamesMenuScreen.kt` | Multiplayer game UI was deleted from codebase - major feature missing | ⬜ OPEN |
-| 172 | Android | `HomeScreen.kt:249-326` | Home screen has 6+ quick action buttons with flat hierarchy - causes decision paralysis, no clear CTA | ⬜ OPEN |
+| 172 | Android | `HomeScreen.kt:249-326` | Home screen has 6+ quick action buttons with flat hierarchy - causes decision paralysis, no clear CTA | ✅ FIXED 2026-01-28 (hero CTA button, 2x2 secondary grid) |
 | 173 | Android | `ProfileScreen.kt:102` | Auth state checked via SharedPreferences, should use AuthViewModel - causes sync issues on logout | ✅ FIXED 2026-01-27 (AuthViewModel integration) |
 
 ---
@@ -121,12 +121,12 @@
 | 182 | Android | `GameScreens.kt:338-343` | Flip Cards font size hardcoded based on char count, user cannot adjust | ✅ FIXED 2026-01-27 (long-press popup with large text) |
 | 183 | Android | `GameScreens.kt:318-324` | Flip Cards popup auto-dismisses after 2 seconds, should stay until user closes | ✅ FIXED 2026-01-27 (popup stays until dismissed) |
 | 184 | Android | `GameScreens.kt` | Flip Cards no pinch-zoom or manual card enlargement option | ⬜ OPEN |
-| 185 | Android | `AppBottomBar.kt` | Only 4 nav items, design intended for 5 with center play button (isCenter param unused) | ⬜ OPEN |
+| 185 | Android | `AppBottomBar.kt` | Only 4 nav items, design intended for 5 with center play button (isCenter param unused) | ✅ FIXED 2026-01-28 (5 items: Home, Games, Play center, Dictionary, Profile) |
 | 186 | Android | `HomeScreen.kt` | No welcome/greeting message - doesn't say "Welcome back, [Name]!" | ✅ FIXED 2026-01-27 (time-based greeting added) |
-| 187 | Android | `HomeScreen.kt` | No "continue where you left off" feature - users must search for last activity | ⬜ OPEN |
-| 188 | Android | `ProfileScreen.kt:174` | Quizzes count shows TODAY only, but StatsScreen shows ALL-TIME - confusing inconsistency | ⬜ OPEN |
+| 187 | Android | `HomeScreen.kt` | No "continue where you left off" feature - users must search for last activity | ✅ FIXED 2026-01-28 (ContinueCard shows last quiz type, accuracy, time ago) |
+| 188 | Android | `ProfileScreen.kt:174` | Quizzes count shows TODAY only, but StatsScreen shows ALL-TIME - confusing inconsistency | ✅ FIXED 2026-01-28 (ProfileScreen now uses totalQuizzesAllTime) |
 | 189 | Android | Social | Friend system not implemented - no way to add/view friends | ⬜ OPEN |
-| 190 | Android | Feedback | No feedback system - users cannot easily report issues or suggestions | ⬜ OPEN |
+| 190 | Android | Feedback | No feedback system - users cannot easily report issues or suggestions | ✅ FIXED 2026-01-28 (email-based bug report + feedback in HelpScreen) |
 | 191 | Android | `AuthRepository.kt:219` | Email verification code exists but no UI screen to prompt verification | ⬜ OPEN |
 | 192 | Android | `LoginScreen.kt` | No Google Sign-In option - only email/password despite GoogleAuthManager existing | ⬜ OPEN |
 | 193 | Android | `AuthRepository.kt` | No session timeout handling - no automatic logout on token expiration | ⬜ OPEN |
@@ -261,7 +261,7 @@
 | 212 | Android | `Color.kt:100-103` | AMOLED surface color is #0D0D0D not pure black #000000 - less battery savings | ⬜ OPEN |
 | 213 | Android | `HomeScreen.kt:364-391` | Achievements section shown when most users have none - wastes space | ⬜ OPEN |
 | 214 | Android | `StoryScreen.kt` | Missing session length recommendations - users don't know ideal study time | ⬜ OPEN |
-| 215 | Android | `SplashScreen.kt` | No tap-to-skip functionality for splash screen | ⬜ OPEN |
+| 215 | Android | `SplashScreen.kt` | No tap-to-skip functionality for splash screen | ✅ FIXED 2026-01-28 (tap anywhere to skip, prevents double navigation) |
 | 216 | Android | `AppConfig.kt` | Splash screen configuration not in AppConfig - hardcoded in SplashScreen.kt | ⬜ OPEN |
 | 217 | Android | `StatsViewModel.kt:76` | lastAnswered variable collected but never displayed in UI | ⬜ OPEN |
 | 218 | Android | `AuthViewModel.kt:118-121` | Password validation only checks length (6+ chars), no strength requirements | ⬜ OPEN |

@@ -8,6 +8,8 @@ import com.gultekinahmetabdullah.trainvoc.gamification.DailyGoal
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
 import com.gultekinahmetabdullah.trainvoc.gamification.StreakTracking
 import com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.LevelProgress
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.ReviewSchedule
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordStatusCounts
@@ -32,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val gamificationDao: GamificationDao,
-    private val wordDao: WordDao
+    private val wordDao: WordDao,
+    private val quizHistoryDao: QuizHistoryDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -81,6 +84,16 @@ class HomeViewModel @Inject constructor(
                 // Calculate total score from statistics
                 val totalCorrect = wordDao.getCorrectAnswers()
                 val totalScore = totalCorrect * 10
+
+                // Load total quiz count (all-time, for Profile display - fixes #188)
+                val totalQuizzesAllTime = try {
+                    quizHistoryDao.getTotalQuizCount()
+                } catch (_: Exception) { 0 }
+
+                // Load last quiz result (for "continue where you left off" - fixes #187)
+                val lastQuiz = try {
+                    quizHistoryDao.getLastQuizResult()
+                } catch (_: Exception) { null }
 
                 // Calculate level based on XP (totalScore)
                 val level = calculateLevel(totalScore)
@@ -141,7 +154,9 @@ class HomeViewModel @Inject constructor(
                     wordStatusCounts = wordStatusCounts,
                     reviewSchedule = reviewSchedule,
                     totalStudyTimeMinutes = totalStudyTimeMinutes,
-                    totalCorrectAnswers = totalCorrect
+                    totalCorrectAnswers = totalCorrect,
+                    totalQuizzesAllTime = totalQuizzesAllTime,
+                    lastQuizResult = lastQuiz
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -222,7 +237,11 @@ data class HomeUiState(
 
     // Total accumulated stats (for Profile)
     val totalStudyTimeMinutes: Int = 0,
-    val totalCorrectAnswers: Int = 0
+    val totalCorrectAnswers: Int = 0,
+    val totalQuizzesAllTime: Int = 0,
+
+    // Last quiz result (for "continue where you left off" - fixes #187)
+    val lastQuizResult: QuizHistory? = null
 ) {
     // Computed properties for daily tasks
     val quizzesCompleted: Int get() = dailyGoal?.quizzesToday ?: 0
