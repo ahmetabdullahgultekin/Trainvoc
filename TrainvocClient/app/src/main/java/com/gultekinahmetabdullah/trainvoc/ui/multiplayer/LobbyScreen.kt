@@ -248,7 +248,7 @@ private fun PlayerCard(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar
+            // Avatar (fixes #175 - show player avatar emoji instead of generic icon)
             Surface(
                 modifier = Modifier
                     .size(48.dp)
@@ -256,11 +256,9 @@ private fun PlayerCard(
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    Text(
+                        text = getAvatarEmoji(player.avatarId),
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
             }
@@ -304,4 +302,11 @@ private fun PlayerCard(
             }
         }
     }
+}
+
+/** Map avatar ID to emoji for multiplayer player display */
+private fun getAvatarEmoji(avatarId: Int): String {
+    val avatars = listOf("🦊", "🐱", "🐶", "🐻", "🐼", "🐨", "🦁", "🐯", "🐸", "🦉",
+        "🐺", "🦄", "🐲", "🦅", "🐧", "🐙", "🦋", "🌟", "🎯", "🚀")
+    return avatars.getOrElse(avatarId % avatars.size) { "🦊" }
 }
