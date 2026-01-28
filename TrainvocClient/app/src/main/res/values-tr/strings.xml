@@ -177,7 +177,6 @@
     <string name="faq_how_to_suggest_feature">Yeni bir özellik nasıl önerilir?</string>
     <string name="faq_how_to_suggest_feature_desc">Geri bildirim formunu kullanarak veya e-posta ile bize ulaşarak yeni özellikler önerebilirsiniz.</string>
     <string name="faq_how_to_backup">Verilerimi nasıl yedeklerim?</string>
-    <string name="faq_how_to_backup_desc">Yedekleme ve geri yükleme özellikleri yakında eklenecek. Takipte kalın!</string>
     <string name="help_welcome">Yardım merkezine hoş geldiniz! Burada sıkça sorulan soruların yanıtlarını bulabilir, destek ile iletişime geçebilir ve bize geri bildirim gönderebilirsiniz.</string>
     <string name="total_quizzes">Toplam Test Sayısı</string>
     <string name="avg_time_per_question">Ortalama Soru Başına Süre</string>
@@ -258,6 +257,25 @@
     <string name="edit">Düzenle</string>
     <string name="confirm">Onayla</string>
     <string name="ok">Tamam</string>
+
+    <!-- Missing Content Descriptions -->
+    <string name="content_desc_export_successful">Dışa aktarma başarılı</string>
+    <string name="content_desc_coming_soon_features">Yakında gelecek özellikler</string>
+    <string name="content_desc_conflict_resolution">Çakışma çözümü</string>
+    <string name="content_desc_play_pronunciation">Telaffuzu dinle</string>
+    <string name="content_desc_total_score">Toplam puan</string>
+    <string name="content_desc_correct_answers">Doğru cevaplar</string>
+    <string name="content_desc_incorrect_answers">Yanlış cevaplar</string>
+    <string name="content_desc_correct_answer">Doğru cevap</string>
+
+    <!-- Missing Game Strings -->
+    <string name="achievement_unlocked">Başarı Kazanıldı!</string>
+    <string name="easy">Kolay</string>
+    <string name="medium">Orta</string>
+    <string name="hard">Zor</string>
+
+    <!-- Missing Quiz Strings -->
+    <string name="dont_give_up">Pes etme!</string>
 
     <!-- Error Messages -->
     <string name="error_generic">Bir şeyler yanlış gitti</string>
@@ -882,13 +900,11 @@
     <!-- Favorites Screen Additional -->
     <string name="content_desc_clear_all">Tümünü temizle</string>
     <string name="content_desc_practice">Pratik yap</string>
-    <string name="content_desc_search">Ara</string>
     <string name="content_desc_clear">Temizle</string>
     <string name="content_desc_remove_favorite">Favorilerden kaldır</string>
     <string name="loading_favorites">Favoriler yükleniyor…</string>
     <string name="no_matching_favorites">Eşleşen favori yok</string>
     <string name="no_favorites_yet">Henüz favori yok</string>
-    <string name="try_different_search">Farklı bir arama terimi deneyin</string>
     <string name="tap_heart_to_add">Favorilere eklemek için herhangi bir kelimedeki kalp simgesine dokunun</string>
     <string name="clear_all">Tümünü Temizle</string>
 
@@ -897,7 +913,6 @@
     <string name="view_previous_words">Önceki Kelimeleri Gör</string>
     <string name="your_streak">Serin</string>
     <string name="streak_days_message">Günün Kelimesini %1$d gün üst üste kontrol ettiniz!</string>
-    <string name="content_desc_pronunciation">Telaffuz</string>
 
     <!-- Cloud Backup Screen Additional -->
     <string name="backup_to_google_drive">Kelime verilerinizi Google Drive\'a güvenle yedekleyin</string>
@@ -952,40 +967,17 @@
     <string name="to">Bitiş</string>
     <string name="other_notifications">Diğer Bildirimler</string>
 
-    <!-- Screen Titles -->
-    <string name="about">Hakkında</string>
-    <string name="changelog">Değişiklik Günlüğü</string>
-    <string name="word_progress">Kelime İlerlemesi</string>
+
 
     <!-- Common Content Descriptions -->
     <string name="content_desc_success">Başarılı</string>
     <string name="content_desc_completed">Tamamlandı</string>
-    <string name="content_desc_empty">Boş</string>
-    <string name="content_desc_favorite">Favori</string>
     <string name="content_desc_card_icon">Kart simgesi</string>
     <string name="content_desc_chart_icon">Grafik simgesi</string>
-    <string name="content_desc_navigate">Git</string>
     <string name="content_desc_dismiss">Kapat</string>
     <string name="content_desc_delete">Sil</string>
     <string name="content_desc_open_menu">Menüyü aç</string>
-    <string name="content_desc_open_link">Bağlantıyı aç</string>
-    <string name="content_desc_locked">Kilitli</string>
-    <string name="content_desc_select">Seç</string>
-    <string name="content_desc_correct_answer">Doğru cevap</string>
-    <string name="content_desc_total_score">Toplam puan</string>
-    <string name="content_desc_correct_answers">Doğru cevaplar</string>
-    <string name="content_desc_incorrect_answers">Yanlış cevaplar</string>
-    <string name="content_desc_word_not_found">Kelime bulunamadı</string>
-    <string name="content_desc_play_pronunciation">Telaffuzu çal</string>
-    <string name="content_desc_no_related_words">İlgili kelime yok</string>
-    <string name="content_desc_statistics">İstatistikler</string>
-    <string name="content_desc_time">Zaman</string>
-    <string name="content_desc_last_reviewed">Son inceleme</string>
-    <string name="content_desc_backup_info">Yedekleme bilgisi</string>
-    <string name="content_desc_export_successful">Dışa aktarma başarılı</string>
-    <string name="content_desc_coming_soon_features">Yakında gelecek özellikler</string>
-    <string name="content_desc_file_storage">Dosya depolama konumu</string>
-    <string name="content_desc_conflict_resolution">Çakışma çözümleme seçeneği</string>
+
 
     <!-- Sync Status -->
     <string name="content_desc_sync_idle">Senkronizasyon hazır</string>
@@ -997,15 +989,11 @@
     <string name="content_desc_last_sync_time">Son senkronizasyon zamanı</string>
 
     <!-- Multiplayer -->
-    <string name="waiting_for_players">Oyuncular bekleniyor…</string>
     <string name="loading_question">Soru yükleniyor…</string>
     <string name="loading_rankings">Sıralama yükleniyor…</string>
 
     <!-- Quiz Menu -->
     <string name="quiz_menu_info">Kelime bilginizi test edin ve ilerlemenizi takip edin. Yeni kelimelere odaklanmak için \'Öğrenilmemiş\' ile başlamanızı öneririz.</string>
-
-    <!-- Conflict Resolution Dialog -->
-    <string name="resolve">Çöz</string>
 
     <!-- Changelog Screen -->
     <string name="version_history">Sürüm Geçmişi</string>
@@ -1050,13 +1038,8 @@
     <string name="status_learning">Öğreniliyor</string>
     <string name="struggling">Zorlanılıyor</string>
     <string name="not_started">Başlanmadı</string>
-    <string name="minutes_studied">Çalışılan\nDakika</string>
-    <string name="correct_answers_label">Doğru\nCevaplar</string>
-    <string name="words_learned_label">Öğrenilen\nKelimeler</string>
-    <string name="content_desc_error">Hata</string>
 
     <!-- Word Detail Screen -->
-    <string name="content_desc_remove_favorite">Favorilerden kaldır</string>
     <string name="content_desc_add_favorite">Favorilere ekle</string>
     <string name="definition">Tanım</string>
     <string name="examples">Örnekler</string>

@@ -86,7 +86,23 @@
       "Bash(echo:*)",
       "Bash(timeout 60 \"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat \"*:E\")",
       "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat -d)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(./gradlew assembleRelease:*)",
+      "Bash(gradlew.bat test:*)",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew.bat test --tests *SyncServiceTest* 2>&1\")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && gradlew.bat test --tests *SyncServiceTest*\")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocBackend && .\\\\gradlew.bat test --tests *SyncServiceTest* --no-daemon\")",
+      "Bash(./gradlew compileDebugKotlin:*)",
+      "Bash(git reset:*)",
+      "Bash(copy \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\google-services.json\" \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocClient\\\\app\\\\google-services.json\")",
+      "Bash(cmd /c copy \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\google-services.json\" \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocClient\\\\app\\\\google-services.json\")",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew --stop)",
+      "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" install:*)",
+      "Bash(\"$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe\" install -r \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocClient\\\\app\\\\build\\\\outputs\\\\apk\\\\debug\\\\app-debug.apk\")",
+      "Bash(adb install:*)",
+      "Bash($env:LOCALAPPDATAAndroidSdkplatform-toolsadb.exe install -r \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocClient\\\\app\\\\build\\\\outputs\\\\apk\\\\debug\\\\app-debug.apk\")",
+      "Bash(\"C:\\\\Users\\\\ahabg\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\" install -r \"C:\\\\Users\\\\ahabg\\\\OneDrive\\\\Belgeler\\\\GitHub\\\\Trainvoc\\\\TrainvocClient\\\\app\\\\build\\\\outputs\\\\apk\\\\debug\\\\app-debug.apk\")"
     ]
   }
 }
