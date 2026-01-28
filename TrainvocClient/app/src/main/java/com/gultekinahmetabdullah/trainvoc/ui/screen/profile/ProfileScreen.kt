@@ -214,7 +214,7 @@ fun ProfileScreen(
                     StatsGridSection(
                         learnedWords = uiState.learnedWords,
                         totalWords = uiState.totalWords,
-                        quizzesCompleted = uiState.quizzesCompleted,
+                        quizzesCompleted = uiState.totalQuizzesAllTime,
                         studyTimeMinutes = studyTime,
                         correctAnswers = uiState.learnedWords,  // Words learned = mastery progress
                         totalAnswers = if (uiState.totalWords > 0) uiState.totalWords else 1,  // Total words in dictionary

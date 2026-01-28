@@ -182,42 +182,96 @@ fun HelpScreen(navController: NavController) {
                 }
             }
 
-            // Feedback Section
+            // Feedback Section (fixes #190 - in-app feedback via email)
             item {
                 SettingSectionCard(
                     icon = Icons.Default.Feedback,
                     title = stringResource(id = R.string.give_feedback)
                 ) {
-                    val redirectingFeedback = stringResource(id = R.string.redirecting_feedback)
-
+                    // Bug Report
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = redirectingFeedback,
-                                    duration = SnackbarDuration.Short
+                            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = "mailto:rollingcat.help@gmail.com".toUri()
+                                putExtra(Intent.EXTRA_SUBJECT, "[Trainvoc Bug Report]")
+                                putExtra(Intent.EXTRA_TEXT,
+                                    "Bug Description:\n\n" +
+                                    "Steps to Reproduce:\n1. \n2. \n3. \n\n" +
+                                    "Expected Behavior:\n\n" +
+                                    "Device: ${android.os.Build.MODEL}\n" +
+                                    "Android: ${android.os.Build.VERSION.RELEASE}\n" +
+                                    "App Version: ${context.packageManager.getPackageInfo(context.packageName, 0).versionName}"
                                 )
                             }
-                            val feedbackIntent = Intent(
-                                Intent.ACTION_VIEW,
-                                "https://www.trainvoc.com/feedback".toUri()
+                            context.startActivity(Intent.createChooser(emailIntent, "Report Bug"))
+                        },
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(Spacing.medium),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Feedback,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onErrorContainer,
+                                modifier = Modifier.size(20.dp)
                             )
-                            context.startActivity(feedbackIntent)
+                            Spacer(modifier = Modifier.width(Spacing.small))
+                            Text(
+                                text = "Report a Bug",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(Spacing.small))
+
+                    // Feature Request / General Feedback
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = "mailto:rollingcat.help@gmail.com".toUri()
+                                putExtra(Intent.EXTRA_SUBJECT, "[Trainvoc Feedback]")
+                                putExtra(Intent.EXTRA_TEXT,
+                                    "Feedback Type: [ ] Suggestion  [ ] Feature Request  [ ] Other\n\n" +
+                                    "Your Feedback:\n\n"
+                                )
+                            }
+                            context.startActivity(Intent.createChooser(emailIntent, "Send Feedback"))
                         },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.submit_feedback),
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(Spacing.medium),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(Spacing.small))
+                            Text(
+                                text = stringResource(id = R.string.submit_feedback),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
                 }
             }
