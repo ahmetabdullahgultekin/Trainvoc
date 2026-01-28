@@ -322,9 +322,9 @@ fun HomeScreen(
                 }
             }
 
-            // 4. STATS PREVIEW
+            // 5. STATS PREVIEW - shows all-time data (fixes #202 - distinct from header)
             item {
-                SectionHeader(title = "Your Stats")
+                SectionHeader(title = "Your Progress")
             }
 
             item {
@@ -335,24 +335,24 @@ fun HomeScreen(
                     StatsCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Book,
-                        value = "${uiState.learnedWords}",
-                        label = "Words Learned",
+                        value = "${uiState.learnedWords}/${uiState.totalWords}",
+                        label = "Words",
                         iconTint = MaterialTheme.colorScheme.primary
                     )
 
                     StatsCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Quiz,
-                        value = "${uiState.quizzesCompleted}",
-                        label = "Quizzes",
+                        value = "${uiState.totalQuizzesAllTime}",
+                        label = "All Quizzes",
                         iconTint = MaterialTheme.colorScheme.secondary
                     )
 
                     StatsCard(
                         modifier = Modifier.weight(1f),
-                        icon = Icons.Default.EmojiEvents,
-                        value = "${uiState.level}",
-                        label = "Level",
+                        icon = Icons.Default.Timer,
+                        value = "${uiState.totalStudyTimeMinutes}m",
+                        label = "Study Time",
                         iconTint = MaterialTheme.colorScheme.tertiary
                     )
                 }

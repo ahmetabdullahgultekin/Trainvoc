@@ -90,7 +90,7 @@ fun QuizScreen(
     var selectedAnswer by remember { mutableStateOf<Word?>(null) }
     var isCorrect by remember { mutableStateOf<Boolean?>(null) }
     var showExitDialog by remember { mutableStateOf(false) }
-    var showStats by rememberSaveable { mutableStateOf(false) }
+    var showStats by rememberSaveable { mutableStateOf(true) } // Show stats by default (fixes #198)
     var currentStreak by remember { mutableStateOf(0) }
     var triggerConfetti by remember { mutableStateOf(false) }
     var loadingTimeoutReached by remember { mutableStateOf(false) }
