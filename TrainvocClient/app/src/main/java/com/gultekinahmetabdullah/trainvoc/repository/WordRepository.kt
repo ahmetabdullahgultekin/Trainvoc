@@ -217,12 +217,12 @@ class WordRepository @Inject constructor(
 
     // Number of correctly answered questions today
     override suspend fun getDailyCorrectAnswers(): Int {
-        return statisticDao.getDailyCorrectAnswers()
+        return statisticDao.getDailyCorrectAnswers() ?: 0
     }
 
     // Number of correctly answered questions this week
     override suspend fun getWeeklyCorrectAnswers(): Int {
-        return statisticDao.getWeeklyCorrectAnswers()
+        return statisticDao.getWeeklyCorrectAnswers() ?: 0
     }
 
     // Get the word with most wrong answers

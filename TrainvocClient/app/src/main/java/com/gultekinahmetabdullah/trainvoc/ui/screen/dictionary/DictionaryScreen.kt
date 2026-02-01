@@ -215,7 +215,7 @@ fun DictionaryScreen(navController: NavController, wordViewModel: WordViewModel)
                 onSearch = { query ->
                     if (query.isNotEmpty() && !searchHistory.contains(query)) {
                         searchHistory.add(0, query)
-                        if (searchHistory.size > 5) searchHistory.removeLast()
+                        if (searchHistory.size > 5) searchHistory.removeAt(searchHistory.lastIndex)
                     }
                     isSearchBarActive = false
                 },

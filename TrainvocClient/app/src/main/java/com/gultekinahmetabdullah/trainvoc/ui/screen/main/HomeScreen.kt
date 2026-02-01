@@ -250,12 +250,13 @@ fun HomeScreen(
             }
 
             // 3. CONTINUE WHERE YOU LEFT OFF (fixes #187)
-            if (uiState.lastQuizResult != null) {
+            val lastQuiz = uiState.lastQuizResult
+            if (lastQuiz != null) {
                 item {
                     ContinueCard(
-                        quizType = uiState.lastQuizResult.quizType,
-                        accuracy = uiState.lastQuizResult.accuracy,
-                        timestamp = uiState.lastQuizResult.timestamp,
+                        quizType = lastQuiz.quizType,
+                        accuracy = lastQuiz.accuracy,
+                        timestamp = lastQuiz.timestamp,
                         onClick = onNavigateToQuiz
                     )
                 }

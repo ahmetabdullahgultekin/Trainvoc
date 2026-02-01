@@ -589,7 +589,6 @@
     <string name="ready">Ready</string>
     <string name="leave_game">Leave game</string>
     <string name="join_room">Join Room</string>
-    <string name="display_name">Display Name</string>
     <string name="room_code">Room Code</string>
     <string name="join">Join</string>
     <string name="enter_password">Enter Password</string>
@@ -608,7 +607,6 @@
     <string name="host_name">Host: %1$s</string>
     <string name="level_label">Level: %1$s</string>
     <string name="players_count">%1$d/%2$d</string>
-    <string name="home">Home</string>
     <string name="your_info">Your Info</string>
     <string name="game_settings">Game Settings</string>
     <string name="difficulty_level">Difficulty Level</string>
@@ -639,6 +637,11 @@
     <string name="content_desc_card_face_down">Card face down</string>
     <string name="content_desc_get_hint">Get hint</string>
     <string name="content_desc_achievement_unlocked">Achievement unlocked</string>
+    <string name="achievement_unlocked">Achievement Unlocked!</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+    <string name="dont_give_up">Don\'t give up!</string>
     <string name="loading_game">Loading game…</string>
     <string name="select_grid_size">Select Grid Size</string>
     <string name="combo">Combo</string>
@@ -898,13 +901,11 @@
     <!-- Favorites Screen Additional -->
     <string name="content_desc_clear_all">Clear all</string>
     <string name="content_desc_practice">Practice</string>
-    <string name="content_desc_search">Search</string>
     <string name="content_desc_clear">Clear</string>
     <string name="content_desc_remove_favorite">Remove from favorites</string>
     <string name="loading_favorites">Loading favorites…</string>
     <string name="no_matching_favorites">No matching favorites</string>
     <string name="no_favorites_yet">No favorites yet</string>
-    <string name="try_different_search">Try a different search term</string>
     <string name="tap_heart_to_add">Tap the heart icon on any word to add it to your favorites</string>
     <string name="clear_all">Clear All</string>
 
@@ -913,7 +914,6 @@
     <string name="view_previous_words">View Previous Words</string>
     <string name="your_streak">Your Streak</string>
     <string name="streak_days_message">You\'ve checked the Word of the Day for %1$d days in a row!</string>
-    <string name="content_desc_pronunciation">Pronunciation</string>
 
     <!-- Cloud Backup Screen Additional -->
     <string name="backup_to_google_drive">Safely backup your vocabulary data to Google Drive</string>
@@ -969,38 +969,22 @@
     <string name="other_notifications">Other Notifications</string>
 
     <!-- Screen Titles -->
-    <string name="about">About</string>
-    <string name="changelog">Changelog</string>
-    <string name="word_progress">Word Progress</string>
 
     <!-- Common Content Descriptions -->
     <string name="content_desc_success">Success</string>
     <string name="content_desc_completed">Completed</string>
-    <string name="content_desc_empty">Empty</string>
-    <string name="content_desc_favorite">Favorite</string>
     <string name="content_desc_card_icon">Card icon</string>
     <string name="content_desc_chart_icon">Chart icon</string>
-    <string name="content_desc_navigate">Navigate</string>
     <string name="content_desc_dismiss">Dismiss</string>
     <string name="content_desc_delete">Delete</string>
     <string name="content_desc_open_menu">Open menu</string>
-    <string name="content_desc_open_link">Open link</string>
-    <string name="content_desc_locked">Locked</string>
-    <string name="content_desc_select">Select</string>
     <string name="content_desc_correct_answer">Correct answer</string>
     <string name="content_desc_total_score">Total score</string>
     <string name="content_desc_correct_answers">Correct answers</string>
     <string name="content_desc_incorrect_answers">Incorrect answers</string>
-    <string name="content_desc_word_not_found">Word not found</string>
     <string name="content_desc_play_pronunciation">Play pronunciation</string>
-    <string name="content_desc_no_related_words">No related words</string>
-    <string name="content_desc_statistics">Statistics</string>
-    <string name="content_desc_time">Time</string>
-    <string name="content_desc_last_reviewed">Last reviewed</string>
-    <string name="content_desc_backup_info">Backup information</string>
     <string name="content_desc_export_successful">Export successful</string>
     <string name="content_desc_coming_soon_features">Coming soon features</string>
-    <string name="content_desc_file_storage">File storage location</string>
     <string name="content_desc_conflict_resolution">Conflict resolution option</string>
 
     <!-- Sync Status -->
@@ -1013,7 +997,6 @@
     <string name="content_desc_last_sync_time">Last sync time</string>
 
     <!-- Multiplayer -->
-    <string name="waiting_for_players">Waiting for players…</string>
     <string name="loading_question">Loading question…</string>
     <string name="loading_rankings">Loading rankings…</string>
 
@@ -1021,7 +1004,6 @@
     <string name="quiz_menu_info">Test your vocabulary knowledge and track your progress. We recommend starting with \'Not Learned\' to focus on new words.</string>
 
     <!-- Conflict Resolution Dialog -->
-    <string name="resolve">Resolve</string>
 
     <!-- Changelog Screen -->
     <string name="version_history">Version History</string>
@@ -1066,13 +1048,8 @@
     <string name="status_learning">Learning</string>
     <string name="struggling">Struggling</string>
     <string name="not_started">Not Started</string>
-    <string name="minutes_studied">Minutes\nStudied</string>
-    <string name="correct_answers_label">Correct\nAnswers</string>
-    <string name="words_learned_label">Words\nLearned</string>
-    <string name="content_desc_error">Error</string>
 
     <!-- Word Detail Screen -->
-    <string name="content_desc_remove_favorite">Remove from favorites</string>
     <string name="content_desc_add_favorite">Add to favorites</string>
     <string name="definition">Definition</string>
     <string name="examples">Examples</string>

@@ -47,7 +47,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressIndicato
 import com.gultekinahmetabdullah.trainvoc.ui.animations.ShimmerBox
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.AuthViewModel
-import com.gultekinahmetabdullah.trainvoc.repository.AuthState
+import com.gultekinahmetabdullah.trainvoc.auth.AuthState
 import com.gultekinahmetabdullah.trainvoc.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -104,7 +104,7 @@ fun ProfileScreen(
 
     // Get username and avatar from SharedPreferences (for display)
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
-    val username = currentUser?.displayName ?: prefs.getString("username", null) ?: "User"
+    val username = currentUser?.username ?: prefs.getString("username", null) ?: "User"
     val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
     // Use AuthViewModel for login state (consistent with auth system)
     val isLoggedIn = authState is AuthState.Authenticated || authState is AuthState.AuthenticatedOffline
