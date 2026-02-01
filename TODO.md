@@ -1,8 +1,8 @@
 # Trainvoc - Unified Issue Tracker
 
 > **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
-> **Last Updated**: 2026-01-27
-> **Total Issues**: 218
+> **Last Updated**: 2026-02-01
+> **Total Issues**: 220
 
 ## How This Document Works
 
@@ -40,8 +40,8 @@
 | 🟠 HIGH | 12 | 31 | 6 | 49 |
 | 🟡 MEDIUM | 2 | 63 | 11 | 76 |
 | 🟢 LOW | 2 | 22 | 19 | 43 |
-| ⚪ INFO | 0 | 3 | 21 | 24 |
-| **TOTAL** | **20** | **141** | **57** | **218** |
+| ⚪ INFO | 2 | 3 | 21 | 26 |
+| **TOTAL** | **22** | **141** | **57** | **220** |
 
 ---
 
@@ -414,6 +414,28 @@ When starting a fix session, prioritize in this order:
 
 ### Legacy Issues (all now FIXED or WONTFIX)
 - All previous issues resolved in Jan 2026 sessions
+
+---
+
+## Deployment Log
+
+| # | Date | Version | Track | Status | Notes |
+|---|------|---------|-------|--------|-------|
+| D01 | 2025-11-19 | 1.1.2 (versionCode 12) | Closed testing - Alpha | ✅ Released | WorkManager Configuration Fix |
+| D02 | 2026-02-01 | 1.2.0 (versionCode 13) | Closed testing - Alpha | 🔄 Submitted | Major UI redesign, i18n, theme improvements |
+
+### Play Store Status
+- **Production access**: ❌ DENIED (2026-01-25) — Google requires more testing before production access
+- **Requirements for production**: 20+ testers active for 14+ consecutive days
+- **Current track**: Closed testing - Alpha
+- **Keystore**: `D:\Kişisel\Bitirme\Private\password.jks` (alias: `key0`)
+
+### Pending Play Store Tasks
+
+| # | Description | Status |
+|---|-------------|--------|
+| 219 | Recruit 20+ closed testing testers and keep active 14 days | ⬜ OPEN |
+| 220 | Re-apply for production access after testing requirement met | ⬜ OPEN |
 
 ---
 

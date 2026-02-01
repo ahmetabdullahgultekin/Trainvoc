@@ -140,7 +140,7 @@ class TutorialViewModel @Inject constructor(
                     "Train your visual vocabulary association."
                 )
             )
-            GameType.FILL_IN_THE_BLANK -> TutorialContent(
+            GameType.FILL_IN_BLANK -> TutorialContent(
                 title = "Fill in the Blank",
                 steps = listOf(
                     "Read the sentence with a missing word.",

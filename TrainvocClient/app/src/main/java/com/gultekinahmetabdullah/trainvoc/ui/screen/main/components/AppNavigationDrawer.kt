@@ -43,8 +43,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,14 +54,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import com.gultekinahmetabdullah.trainvoc.viewmodel.GamificationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -75,10 +72,8 @@ fun AppNavigationDrawerContent(
     drawerState: DrawerState,
     coroutineScope: CoroutineScope,
     navController: NavController,
-    currentRoute: String?,
-    gamificationViewModel: GamificationViewModel = hiltViewModel()
+    currentRoute: String?
 ) {
-    val streakData by gamificationViewModel.streakData.collectAsState()
     val context = LocalContext.current
     val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
     val username = remember { prefs.getString("username", null) ?: "User" }
@@ -97,7 +92,7 @@ fun AppNavigationDrawerContent(
             DrawerHeader(
                 username = username,
                 avatar = userAvatar,
-                currentStreak = streakData?.currentStreak ?: 0,
+                currentStreak = 0,
                 onClose = { coroutineScope.launch { drawerState.close() } }
             )
 
