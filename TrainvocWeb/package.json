@@ -56,5 +56,8 @@
     "react-router-dom": "^7.6.2",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18"
+  },
+  "overrides": {
+    "serialize-javascript": ">=7.0.4"
   }
 }
