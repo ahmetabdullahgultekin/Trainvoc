@@ -43,7 +43,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     // Firebase Admin SDK for authentication
-    implementation 'com.google.firebase:firebase-admin:9.4.1'
+    implementation 'com.google.firebase:firebase-admin:9.8.0'
 
     // Caching
     implementation 'org.springframework.boot:spring-boot-starter-cache'
