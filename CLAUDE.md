@@ -151,7 +151,7 @@ This is the **SINGLE SOURCE OF TRUTH** for all issues, bugs, TODOs, and improvem
 
 | Layer | TrainvocClient | TrainvocWeb | TrainvocBackend |
 |-------|---------------|-------------|-----------------|
-| **Language** | Kotlin 2.1.10 | TypeScript 5.8.3 | Java 24 |
+| **Language** | Kotlin 2.3.20 | TypeScript 5.8.3 | Java 24 |
 | **Framework** | Jetpack Compose | React 19.1.0 | Spring Boot 3.5.0 |
 | **Build** | Gradle (KTS) | Vite 8.0 | Gradle |
 | **Database** | Room/SQLite | N/A | PostgreSQL |

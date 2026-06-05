@@ -1,11 +1,12 @@
 package com.gultekinahmetabdullah.trainvoc.images
 
 import android.content.Context
-import coil.ImageLoader
-import coil.annotation.ExperimentalCoilApi
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
-import coil.request.ImageRequest
+import coil3.ImageLoader
+import coil3.annotation.ExperimentalCoilApi
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
+import coil3.request.ImageRequest
+import okio.Path.Companion.toOkioPath
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,17 +37,16 @@ class ImageService @Inject constructor(
     private val imageLoader: ImageLoader by lazy {
         ImageLoader.Builder(context)
             .memoryCache {
-                MemoryCache.Builder(context)
-                    .maxSizePercent(0.25)  // 25% of app memory
+                MemoryCache.Builder()
+                    .maxSizePercent(context, 0.25)  // 25% of app memory
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory(context.cacheDir.resolve("image_cache"))
+                    .directory(context.cacheDir.resolve("image_cache").toOkioPath())
                     .maxSizePercent(0.02)  // 2% of disk space
                     .build()
             }
-            .respectCacheHeaders(false)
             .build()
     }
 

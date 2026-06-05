@@ -17,6 +17,21 @@
 - **Auth surface (v1-ready)**: email/password **+ Google Sign-In** (`#192`, `FirebaseAuthRepository.signInWithGoogle`), email-verification banner (`#191`, `EmailVerificationBanner` on ProfileScreen), session-timeout handling (`#193`, `AuthRepository.validateSession()` + `SessionExpiredHandler`). Covered by `AuthViewModelTest`.
 - **Leaderboard**: shows the user's real local "Your Progress" stats via `LeaderboardViewModel`; the global cross-user board is honestly "coming soon" pending the backend (`#194`).
 
+### Dependency versions (updated 2026-06-05, PR #38 batch)
+
+| Dependency | Version |
+|---|---|
+| Kotlin | 2.3.20 |
+| KSP | 2.3.9 |
+| Compose BOM | 2026.05.01 |
+| Coil | 3.4.0 (coil3) |
+| Hilt | 2.57.2 (+ kotlin-metadata-jvm:2.3.20 force) |
+
+Notes:
+- `kotlinOptions { jvmTarget }` replaced with `kotlin { compilerOptions { jvmTarget } }` (required by Kotlin 2.3.x).
+- Coil 3 coordinate: `io.coil-kt.coil3:coil-compose` + `io.coil-kt.coil3:coil-network-okhttp`; package renamed `coil.` → `coil3.`; `MemoryCache.Builder` no longer takes context; `DiskCache.Builder.directory()` takes `okio.Path` (use `.toOkioPath()` extension); `crossfade` is an extension import (`coil3.request.crossfade`).
+- Hilt 2.57.x ships `kotlin-metadata-jvm:2.2.x` which can't read Kotlin 2.3.x metadata. Workaround: `configurations.all { resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:2.3.20") }` in `app/build.gradle.kts` (valid since Hilt 2.57 unshades this dep).
+
 **Build/test commands** (host has `/opt/android-sdk` + JDK 21; no emulator):
 - Compile: `./gradlew :app:compileDebugKotlin`
 - Unit tests: `./gradlew :app:testDebugUnitTest`

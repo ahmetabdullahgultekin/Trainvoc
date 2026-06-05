@@ -11,6 +11,14 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// Hilt 2.57.x ships with kotlin-metadata-jvm 2.2.x which cannot read Kotlin 2.3.x
+// class metadata. Since Hilt 2.57+ unshades this dependency, we can force a newer
+// version so Hilt's annotation processor works with Kotlin 2.3.20.
+// See: https://github.com/google/dagger/issues/5001
+configurations.all {
+    resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:2.3.20")
+}
+
 // Apply the Google Services (Firebase) Gradle plugin ONLY when a real
 // `google-services.json` is present. The file is gitignored (it carries API
 // keys), so a clean checkout / CI has none — applying the plugin unconditionally
@@ -139,9 +147,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -183,6 +188,12 @@ android {
             // "Method ... not mocked". See #222 test-suite rehabilitation.
             isReturnDefaultValues = true
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
@@ -228,8 +239,9 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.gson)
 
-    // Coil for image loading
+    // Coil 3 for image loading
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     // Retrofit & OkHttp for API calls
     implementation(libs.retrofit)
@@ -267,7 +279,7 @@ dependencies {
     testImplementation(libs.hilt.android.testing)
     testImplementation("androidx.work:work-testing:2.10.1")
     testImplementation("org.robolectric:robolectric:4.14.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
     kspTest(libs.hilt.compiler)
 
     // MockK for mocking
