@@ -45,6 +45,15 @@ class AuthViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    // #191: email-verification UI state
+    private val _emailVerificationSent = MutableStateFlow(false)
+    val emailVerificationSent: StateFlow<Boolean> = _emailVerificationSent.asStateFlow()
+
+    // #193: emitted when the session is found to have expired so the UI can
+    // route the user back to login.
+    private val _sessionExpired = MutableStateFlow(false)
+    val sessionExpired: StateFlow<Boolean> = _sessionExpired.asStateFlow()
+
     init {
         checkAuthState()
     }
@@ -96,6 +105,46 @@ class AuthViewModel @Inject constructor(
 
             _isLoading.value = false
         }
+    }
+
+    /**
+     * Sign in with Google (#192).
+     *
+     * @param idToken The Google ID token obtained from the Google Sign-In flow
+     *   in the UI layer (GoogleSignInAccount.idToken).
+     */
+    fun loginWithGoogle(idToken: String?) {
+        if (idToken.isNullOrBlank()) {
+            _loginError.value = "Google sign in was cancelled or returned no token"
+            return
+        }
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            _loginError.value = null
+
+            when (val result = authRepository.loginWithGoogle(idToken)) {
+                is AuthResult.Success -> {
+                    // Success — authState observers navigate onward.
+                }
+                is AuthResult.Error -> {
+                    _loginError.value = result.message
+                }
+                else -> {
+                    _loginError.value = "Unexpected error during Google sign in"
+                }
+            }
+
+            _isLoading.value = false
+        }
+    }
+
+    /**
+     * Surface a Google Sign-In failure that happened in the UI layer
+     * (e.g. the user cancelled, or Play Services returned an error).
+     */
+    fun onGoogleSignInError(message: String) {
+        _loginError.value = message
     }
 
     /**
@@ -230,5 +279,49 @@ class AuthViewModel @Inject constructor(
      */
     fun isEmailVerified(): Boolean {
         return authRepository.isEmailVerified()
+    }
+
+    /**
+     * Sends an email-verification message to the current user (#191).
+     */
+    fun sendEmailVerification() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            when (authRepository.sendEmailVerification()) {
+                is AuthResult.EmailVerificationSent -> {
+                    _emailVerificationSent.value = true
+                }
+                is AuthResult.Error -> {
+                    _emailVerificationSent.value = false
+                }
+                else -> { /* no-op */ }
+            }
+            _isLoading.value = false
+        }
+    }
+
+    /**
+     * Clears the "verification email sent" flag once the UI has shown it (#191).
+     */
+    fun clearEmailVerificationSent() {
+        _emailVerificationSent.value = false
+    }
+
+    /**
+     * Validates the current session and flags expiry for the UI (#193).
+     * Call this on app resume / when entering authenticated surfaces.
+     */
+    fun validateSession() {
+        viewModelScope.launch {
+            val valid = authRepository.validateSession()
+            _sessionExpired.value = !valid
+        }
+    }
+
+    /**
+     * Clears the session-expired flag once the UI has handled re-auth routing (#193).
+     */
+    fun clearSessionExpired() {
+        _sessionExpired.value = false
     }
 }

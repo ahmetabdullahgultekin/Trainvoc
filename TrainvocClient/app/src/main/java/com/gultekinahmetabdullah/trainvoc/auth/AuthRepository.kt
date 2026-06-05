@@ -83,6 +83,36 @@ class AuthRepository @Inject constructor(
     }
 
     /**
+     * Sign in with Google using an ID token from the Google Sign-In flow.
+     */
+    suspend fun loginWithGoogle(idToken: String): AuthResult = withContext(Dispatchers.IO) {
+        _authState.value = AuthState.Loading
+
+        when (val result = firebaseAuthRepository.signInWithGoogle(idToken)) {
+            is FirebaseAuthResult.Success -> {
+                _authState.value = AuthState.Authenticated
+
+                // Try to sync with backend
+                try {
+                    syncWithBackend()
+                } catch (e: Exception) {
+                    _authState.value = AuthState.AuthenticatedOffline
+                }
+
+                AuthResult.Success(_currentUser.value)
+            }
+            is FirebaseAuthResult.Error -> {
+                _authState.value = AuthState.NotAuthenticated
+                AuthResult.Error(result.message)
+            }
+            else -> {
+                _authState.value = AuthState.NotAuthenticated
+                AuthResult.Error("Unexpected error during Google sign in")
+            }
+        }
+    }
+
+    /**
      * Register a new user with email and password using Firebase.
      * Note: Username is optional and will be synced to backend.
      */
@@ -155,6 +185,37 @@ class AuthRepository @Inject constructor(
      */
     suspend fun getFirebaseIdToken(): String? = withContext(Dispatchers.IO) {
         firebaseAuthRepository.getIdToken(forceRefresh = false)
+    }
+
+    /**
+     * Validates that the current session is still alive (#193 session timeout).
+     *
+     * Firebase ID tokens are short-lived (1h) and refresh transparently, but the
+     * underlying session can be invalidated server-side (password change, account
+     * disabled, token revoked). Force-refreshing the token surfaces that: if the
+     * refresh fails while a user is present, the session has expired and we drop to
+     * [AuthState.NotAuthenticated] so the UI can route the user back to login.
+     *
+     * @return true if the session is valid, false if it expired (and state was reset).
+     */
+    suspend fun validateSession(): Boolean = withContext(Dispatchers.IO) {
+        val user = firebaseAuthRepository.getCurrentUser() ?: run {
+            _authState.value = AuthState.NotAuthenticated
+            _currentUser.value = null
+            return@withContext false
+        }
+
+        val freshToken = firebaseAuthRepository.getIdToken(forceRefresh = true)
+        if (freshToken == null) {
+            // Token could not be refreshed → session is no longer valid.
+            firebaseAuthRepository.signOut()
+            clearLocalData()
+            _currentUser.value = null
+            _authState.value = AuthState.NotAuthenticated
+            false
+        } else {
+            true
+        }
     }
 
     /**

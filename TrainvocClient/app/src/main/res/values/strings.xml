@@ -237,6 +237,19 @@
     <string name="send_reset_email">Send Reset Email</string>
     <string name="cancel">Cancel</string>
     <string name="password_reset_sent">Password reset email sent! Check your inbox.</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="or_divider">OR</string>
+    <string name="google_sign_in_failed">Google sign-in failed. Please try again.</string>
+    <!-- Email verification (#191) -->
+    <string name="email_not_verified_title">Verify your email</string>
+    <string name="email_not_verified_message">Your email address hasn\'t been verified yet. Please check your inbox to confirm your account.</string>
+    <string name="resend_verification_email">Resend verification email</string>
+    <string name="verification_email_sent">Verification email sent! Check your inbox.</string>
+    <string name="email_verified">Email verified</string>
+    <!-- Session timeout (#193) -->
+    <string name="session_expired_title">Session expired</string>
+    <string name="session_expired_message">Your session has expired for security. Please sign in again.</string>
+    <string name="sign_in_again">Sign in again</string>
 
     <string name="notifications_enabled">Notifications enabled</string>
     <string name="notifications_disabled">Notifications disabled</string>
@@ -500,6 +513,13 @@
     <string name="no_achievements_yet">No achievements yet</string>
     <string name="keep_learning_to_unlock">Keep learning to unlock achievements!</string>
     <string name="tap_to_change_avatar">Tap to change avatar</string>
+    <!-- Leaderboard (#194) -->
+    <string name="your_progress">Your Progress</string>
+    <string name="global_leaderboard_coming_soon">Global leaderboard coming soon</string>
+    <string name="global_leaderboard_description">Compete with learners worldwide once you connect an account. For now, track your personal bests below.</string>
+    <string name="active_days">Active Days</string>
+    <string name="goals_completed">Goals Completed</string>
+    <string name="achievements_unlocked_format">%1$d / %2$d</string>
     <string name="username_cannot_be_empty">Username cannot be empty</string>
     <string name="username_min_length">Username must be at least 3 characters</string>
     <string name="username_max_length">Username must be at most 20 characters</string>

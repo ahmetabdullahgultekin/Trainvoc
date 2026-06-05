@@ -8,27 +8,44 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gultekinahmetabdullah.trainvoc.R
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationStats
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
+import com.gultekinahmetabdullah.trainvoc.viewmodel.LeaderboardViewModel
 
 /**
- * Leaderboard Screen
- * Shows top learners (placeholder implementation)
+ * Leaderboard Screen (#194).
+ *
+ * The global, cross-user online board needs the (not-yet-deployed) backend, so it
+ * is presented honestly as "coming soon". Below it the screen shows the user's own
+ * local "personal best" stats (streak, active days, achievements) from
+ * [LeaderboardViewModel] so standalone v1 surfaces real progress, not an empty page.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LeaderboardScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    viewModel: LeaderboardViewModel = hiltViewModel()
 ) {
+    val stats by viewModel.stats.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,11 +67,9 @@ fun LeaderboardScreen(
         ) {
             item { Spacer(modifier = Modifier.height(Spacing.sm)) }
 
-            // Coming Soon Card
+            // Global leaderboard — honestly "coming soon" (needs backend)
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                Card(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -69,37 +84,49 @@ fun LeaderboardScreen(
                         )
                         Spacer(modifier = Modifier.height(Spacing.md))
                         Text(
-                            text = stringResource(id = R.string.coming_soon),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold
+                            text = stringResource(id = R.string.global_leaderboard_coming_soon),
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(Spacing.sm))
                         Text(
-                            text = stringResource(id = R.string.compete_worldwide),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = stringResource(id = R.string.global_leaderboard_description),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
             }
 
-            // Coming soon message
+            // Your local "personal best" progress (#194)
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
+                Text(
+                    text = stringResource(id = R.string.your_progress),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = Spacing.sm)
+                )
+            }
+
+            if (isLoading) {
+                item {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(Spacing.lg),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .padding(Spacing.xl),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.leaderboards_preparing),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(Spacing.sm))
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                val s = stats
+                if (s != null) {
+                    item { PersonalStatsPanel(stats = s) }
+                } else {
+                    item {
                         Text(
                             text = stringResource(id = R.string.progress_tracked_locally),
                             style = MaterialTheme.typography.bodyMedium,
@@ -114,67 +141,79 @@ fun LeaderboardScreen(
     }
 }
 
+/**
+ * Grid of the user's local personal-best stats.
+ */
 @Composable
-private fun LeaderboardItem(
-    rank: Int,
-    name: String,
-    score: Int,
-    medal: String,
-    isCurrentUser: Boolean
+private fun PersonalStatsPanel(stats: GamificationStats) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
+            StatTile(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Default.LocalFireDepartment,
+                label = stringResource(id = R.string.current_streak),
+                value = stats.currentStreak.toString()
+            )
+            StatTile(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Default.WorkspacePremium,
+                label = stringResource(id = R.string.longest_streak),
+                value = stats.longestStreak.toString()
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.md)) {
+            StatTile(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Default.EmojiEvents,
+                label = stringResource(id = R.string.active_days),
+                value = stats.totalActiveDays.toString()
+            )
+            StatTile(
+                modifier = Modifier.weight(1f),
+                icon = Icons.Default.MilitaryTech,
+                label = stringResource(id = R.string.achievements),
+                value = stringResource(
+                    id = R.string.achievements_unlocked_format,
+                    stats.achievementsUnlocked,
+                    stats.totalAchievements
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatTile(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    label: String,
+    value: String
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isCurrentUser)
-                MaterialTheme.colorScheme.primaryContainer
-            else
-                MaterialTheme.colorScheme.surface
-        )
-    ) {
-        Row(
+    Card(modifier = modifier) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(Spacing.md),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Spacing.md)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (medal.isNotEmpty()) {
-                        Text(text = medal, fontSize = 20.sp)
-                    } else {
-                        Text(
-                            text = "$rank",
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
-                }
-
-                Column {
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = if (isCurrentUser) FontWeight.Bold else FontWeight.Medium
-                    )
-                    Text(
-                        text = "$score XP",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
+            Spacer(modifier = Modifier.height(Spacing.xs))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
