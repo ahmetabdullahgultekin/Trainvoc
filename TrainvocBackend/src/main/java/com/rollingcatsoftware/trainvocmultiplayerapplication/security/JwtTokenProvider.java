@@ -3,6 +3,8 @@ package com.rollingcatsoftware.trainvocmultiplayerapplication.security;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +21,27 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+
+    /**
+     * Insecure built-in default. Used only when {@code jwt.secret} / {@code JWT_SECRET}
+     * is not provided. Any deployment that relies on it can have its tokens forged, so
+     * production MUST override it (see .env.example). A loud warning is emitted on boot.
+     */
+    static final String INSECURE_DEFAULT_SECRET =
+            "defaultSecretKeyThatShouldBeChangedInProduction123456";
+
     private final SecretKey secretKey;
     private final long validityInMilliseconds;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret:defaultSecretKeyThatShouldBeChangedInProduction123456}") String secret,
+            @Value("${jwt.secret:" + INSECURE_DEFAULT_SECRET + "}") String secret,
             @Value("${jwt.expiration:86400000}") long validityInMilliseconds) {
+        if (INSECURE_DEFAULT_SECRET.equals(secret)) {
+            log.warn("SECURITY: JWT is using the built-in insecure default secret. " +
+                    "Set the JWT_SECRET environment variable (>=256-bit) before any non-local deployment — " +
+                    "tokens are otherwise forgeable.");
+        }
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.validityInMilliseconds = validityInMilliseconds;
     }

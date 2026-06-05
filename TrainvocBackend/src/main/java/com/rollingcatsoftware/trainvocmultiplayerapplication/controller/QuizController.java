@@ -37,7 +37,8 @@ public class QuizController {
             }
             return ResponseEntity.ok(question);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(400).body(java.util.Collections.singletonMap("error", ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred while generating the question."));
+            // Do not leak internal exception messages to the client (information disclosure).
+            return ResponseEntity.status(400).body(java.util.Collections.singletonMap("error", "An unexpected error occurred while generating the question."));
         }
     }
 
@@ -45,19 +46,20 @@ public class QuizController {
     public ResponseEntity<?> getGameQuestions(@RequestParam String roomCode) {
         var room = gameService.getRoom(roomCode);
         if (room == null) {
-            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Oda bulunamadı."));
+            return ResponseEntity.status(404).body(java.util.Collections.singletonMap("error", "Room not found."));
         }
         String level = room.getLevel();
         int optionCount = room.getOptionCount();
         int totalQuestionCount = room.getTotalQuestionCount();
         if (level == null || level.isEmpty() || optionCount <= 0 || totalQuestionCount <= 0) {
-            return ResponseEntity.badRequest().body(java.util.Collections.singletonMap("error", "Oda ayarları eksik."));
+            return ResponseEntity.badRequest().body(java.util.Collections.singletonMap("error", "Room settings are incomplete."));
         }
         try {
             List<QuizQuestion> questions = quizService.generateQuestions(level, optionCount, totalQuestionCount);
             return ResponseEntity.ok(questions);
         } catch (RuntimeException ex) {
-            return ResponseEntity.status(400).body(java.util.Collections.singletonMap("error", ex.getMessage() != null ? ex.getMessage() : "Soru oluşturulurken beklenmeyen bir hata oluştu."));
+            // Do not leak internal exception messages to the client (information disclosure).
+            return ResponseEntity.status(400).body(java.util.Collections.singletonMap("error", "An unexpected error occurred while generating the questions."));
         }
     }
 }
