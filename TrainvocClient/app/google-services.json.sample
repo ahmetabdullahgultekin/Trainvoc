@@ -1,0 +1,39 @@
+{
+  "_comment": [
+    "SAMPLE / TEMPLATE ONLY — contains placeholder values, NOT real credentials.",
+    "The real app/google-services.json is gitignored (it carries API keys).",
+    "Firebase is OPTIONAL for building Trainvoc: app/build.gradle.kts applies the",
+    "com.google.gms.google-services plugin only when app/google-services.json exists,",
+    "so a clean checkout builds fine without it (issue #221). To enable Firebase",
+    "(email/password sign-in, Google Sign-In), download your own config from the",
+    "Firebase console for package com.gultekinahmetabdullah.trainvoc and save it as",
+    "app/google-services.json. Do NOT commit the real file."
+  ],
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "trainvoc-sample",
+    "storage_bucket": "trainvoc-sample.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "android_client_info": {
+          "package_name": "com.gultekinahmetabdullah.trainvoc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "REPLACE_WITH_YOUR_FIREBASE_API_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

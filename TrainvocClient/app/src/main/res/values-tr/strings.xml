@@ -5,7 +5,10 @@
     <string name="home_subtitle">Eğlenceli testler ve akıllı öğrenme araçlarıyla İngilizce-Türkçe kelime bilginizi geliştirin.</string>
     <string name="lottie_desc">Animasyonlu elmas</string>
     <string name="start_quiz">Özel Teste Başla</string>
-    <string name="story_mode">Hikaye Modu</string>
+    <!-- #168: "Hikaye Modu" / "Hikayelerle öğren" yeniden adlandırıldı — özellik
+         anlatı içeriği olmayan, normal teste yönlendiren bir CEFR seviye seçicisidir.
+         Kaynak adları (story_mode*) sabit tutuldu. -->
+    <string name="story_mode">Öğrenme Yolu</string>
     <string name="settings">Ayarlar</string>
     <string name="menu">Menü</string>
     <string name="help">Yardım</string>
@@ -794,7 +797,7 @@
     <string name="content_desc_leaderboard_icon">Liderlik tablosu simgesi</string>
 
     <!-- HomeScreen -->
-    <string name="story_mode_subtitle">Hikayelerle öğren</string>
+    <string name="story_mode_subtitle">Kelimeleri CEFR seviyesine göre çalışın</string>
     <string name="stats_subtitle">Detaylı istatistikleri görüntüle</string>
     <string name="level_xp_format">Seviye %1$d • %2$d / %3$d XP</string>
     <string name="words_count_format">Kelimeler: %1$s</string>

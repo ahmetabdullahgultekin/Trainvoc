@@ -5,8 +5,11 @@
     <string name="home_subtitle">Improve your English-Turkish vocabulary with engaging quizzes and smart learning tools.</string>
     <string name="lottie_desc">Animated diamond</string>
     <string name="start_quiz">Start Custom Quiz</string>
-    <string name="story_mode">Story Mode</string>
-    <string name="story_mode_subtitle">Learn through stories</string>
+    <!-- Renamed from "Story Mode" / "Learn through stories" (#168): the feature is a
+         CEFR level picker that launches a normal quiz, with no narrative content, so the
+         old name promised stories that do not exist. Resource names kept for stability. -->
+    <string name="story_mode">Learning Path</string>
+    <string name="story_mode_subtitle">Practice words by CEFR level</string>
     <string name="stats_subtitle">View detailed stats</string>
     <string name="level_xp_format">Level %1$d • %2$d / %3$d XP</string>
     <string name="words_count_format">Words: %1$s</string>
