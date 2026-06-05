@@ -26,6 +26,7 @@ hilt = "2.57.2"
 hiltNavigationCompose = "1.2.0"
 securityCrypto = "1.1.0-alpha06"
 mockk = "1.13.14"
+mockitoKotlin = "5.4.0"
 turbine = "1.2.0"
 kover = "0.9.4"
 googleAuth = "21.2.0"
@@ -79,6 +80,7 @@ hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testi
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "googleAuth" }
 google-play-games = { group = "com.google.android.gms", name = "play-services-games-v2", version.ref = "googlePlayGames" }

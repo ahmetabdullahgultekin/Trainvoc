@@ -175,6 +175,15 @@ android {
         // Treat warnings as errors for stricter quality control
         warningsAsErrors = false  // Will enable after fixing all warnings
     }
+
+    testOptions {
+        unitTests {
+            // Return default values (0/false/null) for un-mocked android.* SDK calls
+            // (e.g. android.util.Log, DateFormat) so pure-JVM unit tests don't throw
+            // "Method ... not mocked". See #222 test-suite rehabilitation.
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
@@ -264,6 +273,10 @@ dependencies {
     // MockK for mocking
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("io.mockk:mockk-android:1.13.8")
+
+    // mockito-kotlin: several unit tests use org.mockito.kotlin (mock/whenever/verify/any/eq/never).
+    // Declared alongside MockK so the unit-test source set compiles (#222).
+    testImplementation(libs.mockito.kotlin)
 
     // Turbine for Flow testing
     testImplementation("app.cash.turbine:turbine:1.0.0")

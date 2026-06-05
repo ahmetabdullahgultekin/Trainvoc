@@ -1,15 +1,20 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
+import com.gultekinahmetabdullah.trainvoc.audio.TextToSpeechService
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
+import com.gultekinahmetabdullah.trainvoc.repository.DictionaryRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.*
 
@@ -27,22 +32,27 @@ import org.mockito.kotlin.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class WordViewModelTest {
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var wordRepository: IWordRepository
     private lateinit var wordStatisticsService: IWordStatisticsService
+    private lateinit var dictionaryRepository: DictionaryRepository
+    private lateinit var ttsService: TextToSpeechService
     private lateinit var dispatchers: TestDispatcherProvider
     private lateinit var viewModel: WordViewModel
 
     private val testWords = listOf(
         WordAskedInExams(
-            word = Word(word = "apple", meaning = "a fruit", level = "A1", statId = 1),
+            word = Word(word = "apple", meaning = "a fruit", level = WordLevel.A1, statId = 1),
             exams = emptyList()
         ),
         WordAskedInExams(
-            word = Word(word = "banana", meaning = "yellow fruit", level = "A1", statId = 2),
+            word = Word(word = "banana", meaning = "yellow fruit", level = WordLevel.A1, statId = 2),
             exams = emptyList()
         ),
         WordAskedInExams(
-            word = Word(word = "cat", meaning = "an animal", level = "A2", statId = 3),
+            word = Word(word = "cat", meaning = "an animal", level = WordLevel.A2, statId = 3),
             exams = emptyList()
         )
     )
@@ -51,6 +61,8 @@ class WordViewModelTest {
     fun setup() {
         wordRepository = mock()
         wordStatisticsService = mock()
+        dictionaryRepository = mock()
+        ttsService = mock()
         dispatchers = TestDispatcherProvider()
     }
 
@@ -60,7 +72,7 @@ class WordViewModelTest {
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
 
         // Act
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Assert
@@ -74,14 +86,14 @@ class WordViewModelTest {
         whenever(wordRepository.getAllWordsAskedInExams())
             .thenReturn(testWords)
             .thenReturn(testWords + WordAskedInExams(
-                word = Word(word = "dog", meaning = "pet animal", level = "A1", statId = 4),
+                word = Word(word = "dog", meaning = "pet animal", level = WordLevel.A1, statId = 4),
                 exams = emptyList()
             ))
 
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
-        val newWord = Word(word = "dog", meaning = "pet animal", level = "A1", statId = 4)
+        val newWord = Word(word = "dog", meaning = "pet animal", level = WordLevel.A1, statId = 4)
 
         // Act
         viewModel.insertWord(newWord)
@@ -97,7 +109,7 @@ class WordViewModelTest {
     fun `filterWords with valid query filters word list`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act
@@ -113,7 +125,7 @@ class WordViewModelTest {
     fun `filterWords with empty query returns empty list`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act
@@ -128,7 +140,7 @@ class WordViewModelTest {
     fun `filterWords validates and sanitizes query`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act - try with query longer than max length (100 chars)
@@ -145,7 +157,7 @@ class WordViewModelTest {
     fun `filterWords searches both word and meaning`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act - search by meaning
@@ -168,7 +180,7 @@ class WordViewModelTest {
     fun `filterWords is case insensitive`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act - search with uppercase
@@ -184,7 +196,7 @@ class WordViewModelTest {
     fun `getWordById returns correct word`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act
@@ -200,7 +212,7 @@ class WordViewModelTest {
     fun `getWordById returns null for non-existent word`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act
@@ -214,7 +226,7 @@ class WordViewModelTest {
     fun `filteredWords sorted alphabetically`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act - filter to get all A1 level words
@@ -239,7 +251,7 @@ class WordViewModelTest {
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
 
         // Act - create ViewModel but don't advance coroutines yet
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
 
         // Assert - should start with empty list
         assertTrue("Expected empty list initially", viewModel.words.value.isEmpty())
@@ -255,7 +267,7 @@ class WordViewModelTest {
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
 
         // Act
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Assert - filtered words should be empty until search performed
@@ -266,7 +278,7 @@ class WordViewModelTest {
     fun `multiple sequential filters work correctly`() = runTest {
         // Arrange
         whenever(wordRepository.getAllWordsAskedInExams()).thenReturn(testWords)
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Act - first filter
@@ -290,7 +302,7 @@ class WordViewModelTest {
         whenever(wordRepository.getAllWordsAskedInExams()).thenThrow(RuntimeException("DB error"))
 
         // Act - should not crash
-        viewModel = WordViewModel(wordRepository, wordStatisticsService, dispatchers)
+        viewModel = WordViewModel(wordRepository, wordStatisticsService, dictionaryRepository, dispatchers, ttsService)
         advanceUntilIdle()
 
         // Assert - words should remain empty

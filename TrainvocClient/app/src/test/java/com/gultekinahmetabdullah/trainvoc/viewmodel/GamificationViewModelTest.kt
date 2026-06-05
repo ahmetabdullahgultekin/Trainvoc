@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
+import com.gultekinahmetabdullah.trainvoc.gamification.Achievement
 import com.gultekinahmetabdullah.trainvoc.gamification.AchievementProgress
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import com.gultekinahmetabdullah.trainvoc.testing.BaseTest
@@ -27,22 +28,19 @@ class GamificationViewModelTest : BaseTest() {
     private lateinit var gamificationManager: GamificationManager
     private lateinit var viewModel: GamificationViewModel
 
+    // First entry: fully-unlocked WORDS_10 (requirement 10). Second entry: WORDS_100
+    // (requirement 100) at 50/100 progress, still locked. AchievementProgress derives
+    // its id/name/target from the wrapped Achievement enum.
     private val mockAchievements = listOf(
         AchievementProgress(
-            achievementId = "first_word",
-            name = "First Word",
-            description = "Learn your first word",
-            currentProgress = 1,
-            targetProgress = 1,
+            achievement = Achievement.WORDS_10,
+            currentProgress = 10,
             isUnlocked = true,
             unlockedAt = System.currentTimeMillis()
         ),
         AchievementProgress(
-            achievementId = "word_master",
-            name = "Word Master",
-            description = "Learn 100 words",
+            achievement = Achievement.WORDS_100,
             currentProgress = 50,
-            targetProgress = 100,
             isUnlocked = false,
             unlockedAt = null
         )
@@ -65,7 +63,7 @@ class GamificationViewModelTest : BaseTest() {
 
         // Assert
         assertEquals(2, viewModel.achievementProgress.value.size)
-        assertEquals("first_word", viewModel.achievementProgress.value[0].achievementId)
+        assertEquals("words_10", viewModel.achievementProgress.value[0].achievement.id)
         assertFalse(viewModel.isLoading.value)
     }
 
@@ -169,12 +167,11 @@ class GamificationViewModelTest : BaseTest() {
         advanceUntilIdle()
 
         // Assert
-        val wordMaster = viewModel.achievementProgress.value.find { it.achievementId == "word_master" }
+        val wordMaster = viewModel.achievementProgress.value.find { it.achievement.id == "words_100" }
         assertNotNull(wordMaster)
         assertEquals(50, wordMaster!!.currentProgress)
-        assertEquals(100, wordMaster.targetProgress)
-        // Progress percentage = 50/100 = 50%
-        val progressPercent = (wordMaster.currentProgress.toFloat() / wordMaster.targetProgress * 100).toInt()
-        assertEquals(50, progressPercent)
+        assertEquals(100, wordMaster.achievement.requirement)
+        // Progress percentage = 50/100 = 50% (AchievementProgress exposes this directly)
+        assertEquals(50, wordMaster.progressPercentage)
     }
 }

@@ -1,14 +1,17 @@
 package com.gultekinahmetabdullah.trainvoc.domain.usecase
 
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.core.common.AppError
 import com.gultekinahmetabdullah.trainvoc.core.common.AppResult
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.*
 
@@ -23,6 +26,9 @@ import org.mockito.kotlin.*
  * - Testing statistic updates
  */
 class SubmitQuizAnswerUseCaseTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var wordStatisticsService: IWordStatisticsService
     private lateinit var dispatchers: TestDispatcherProvider
@@ -42,14 +48,14 @@ class SubmitQuizAnswerUseCaseTest {
         testWord = Word(
             word = "apple",
             meaning = "a fruit",
-            level = "A1",
+            level = WordLevel.A1,
             statId = 1
         )
 
         wrongWord = Word(
             word = "banana",
             meaning = "another fruit",
-            level = "A1",
+            level = WordLevel.A1,
             statId = 2
         )
 
@@ -58,7 +64,6 @@ class SubmitQuizAnswerUseCaseTest {
             correctCount = 5,
             wrongCount = 2,
             skippedCount = 1,
-            secondsSpent = 120,
             learned = false
         )
     }
@@ -188,9 +193,9 @@ class SubmitQuizAnswerUseCaseTest {
         val answerResult = (result as AppResult.Success).data
 
         assertEquals(
-            "Expected secondsSpent preserved",
-            testStatistic.secondsSpent,
-            answerResult.newStatistic.secondsSpent
+            "Expected skippedCount preserved",
+            testStatistic.skippedCount,
+            answerResult.newStatistic.skippedCount
         )
         assertEquals(
             "Expected learned status preserved",

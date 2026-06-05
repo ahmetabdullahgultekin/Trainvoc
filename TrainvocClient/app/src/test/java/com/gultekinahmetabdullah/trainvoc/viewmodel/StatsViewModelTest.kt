@@ -1,12 +1,14 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -24,6 +26,9 @@ import org.mockito.kotlin.whenever
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class StatsViewModelTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var analyticsService: IAnalyticsService
     private lateinit var dispatchers: TestDispatcherProvider

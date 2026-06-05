@@ -1,7 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.classes.word.WordLevel
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.features.WordOfDay
 import com.gultekinahmetabdullah.trainvoc.features.WordOfDayDao
@@ -9,8 +9,10 @@ import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -34,6 +36,9 @@ import java.util.Locale
 @OptIn(ExperimentalCoroutinesApi::class)
 class WordOfDayViewModelTest {
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var wordOfDayDao: WordOfDayDao
     private lateinit var wordDao: WordDao
     private lateinit var repository: IWordRepository
@@ -42,7 +47,7 @@ class WordOfDayViewModelTest {
     private val testWord = Word(
         word = "apple",
         meaning = "elma",
-        wordLevel = WordLevel.A1,
+        level = WordLevel.A1,
         isFavorite = false
     )
 
@@ -272,7 +277,7 @@ class WordOfDayViewModelTest {
         // Arrange - first load fails
         whenever(wordOfDayDao.getWordOfDay(todayDate))
             .thenReturn(null)
-            .thenReturn(WordOfDay("apple", todayDate, false))
+            .thenReturn(WordOfDay(wordId = "apple", date = todayDate, wasViewed = false))
         whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(null)
         whenever(wordDao.getWord("apple")).thenReturn(testWord)
 
