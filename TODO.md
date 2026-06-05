@@ -1,8 +1,9 @@
 # Trainvoc - Unified Issue Tracker
 
 > **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
-> **Last Updated**: 2026-02-01
-> **Total Issues**: 220
+> **Last Updated**: 2026-06-04 (refreshed against HEAD `1f020c3`; statuses re-verified in code)
+> **Total Issues**: 221
+> **Strategic context**: see `ROADMAP.md` for phased path to Android v1 ship.
 
 ## How This Document Works
 
@@ -36,12 +37,54 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 4 | 22 | 0 | 26 |
-| 🟠 HIGH | 12 | 31 | 6 | 49 |
+| 🔴 CRITICAL | 4 | 23 | 0 | 27 |
+| 🟠 HIGH | 11 | 32 | 6 | 49 |
 | 🟡 MEDIUM | 2 | 63 | 11 | 76 |
 | 🟢 LOW | 2 | 22 | 19 | 43 |
 | ⚪ INFO | 2 | 3 | 21 | 26 |
-| **TOTAL** | **22** | **141** | **57** | **220** |
+| **TOTAL** | **21** | **143** | **57** | **221** |
+
+> Changes this refresh: **+#221** (clean-checkout build blocker, new 🔴). **#171 reclassified** ⬜ OPEN → ✅ RESOLVED-ON-HEAD (multiplayer UI exists & is wired — verified). All counts above reflect these two changes.
+
+---
+
+## ⭐ PRIORITIZED ACTION VIEW (read this first)
+
+Curated, actionable slice of the issue list below, ordered by what blocks an **Android v1 ship**. Full per-issue history stays in the severity tables further down. IDs cross-reference those tables. See `ROADMAP.md` for the phased plan.
+
+## P0 — Ship-blockers (must clear before any v1 build/submission)
+
+- [ ] **#221 — Android app does NOT build from a clean checkout** · `TrainvocClient/app/build.gradle.kts:7` applies `alias(libs.plugins.google.services)`, but `google-services.json` is gitignored (`.gitignore:9`) and absent. *Why*: the `com.google.gms.google-services` plugin fails the build when the file is missing → only the original dev's machine can build/CI. *Done when*: a fresh `git clone` + `./gradlew assembleDebug` succeeds with no Firebase file present (apply the plugin conditionally on file existence, OR commit a CI-safe template, OR gate Firebase Auth behind a build flag).
+- [ ] **#168 — "Story Mode" has NO story content** · `TrainvocClient/app/src/main/java/.../ui/screen/main/StoryScreen.kt` · It is a CEFR leaf-button level picker; `onLevelSelected` just calls `quizViewModel.startQuiz(...)` (`MainScreen.kt` ~L169). *Why*: ships a feature whose name + "learn through stories" marketing is false. *Done when*: EITHER real chapter/story content exists behind level selection, OR the feature + all marketing copy is renamed (e.g. "Learning Path / Levels") so no narrative is promised. (Blocks #177, #178, #204, #214 which all assume story structure.)
+- [ ] **#219 — Start Google Play closed-testing clock** · Play Console · Production access DENIED 2026-01-25; Google requires **20+ testers active 14 consecutive days**. *Why*: non-technical hard wall, cannot be shortened — must run in parallel with all engineering. *Done when*: 20+ testers enrolled and the 14-day active window has elapsed.
+- [ ] **Keystore is a single point of failure** (tracked under Deployment Log) · keystore lives only at `D:\...\password.jks` on the dev's Windows box; release signing is env-gated (`build.gradle.kts` `signingConfigs.release`) so an env-less release build is **unsigned**. *Why*: losing it = the app can never be updated again. *Done when*: keystore is securely backed up off-machine AND the release pipeline reliably signs (env vars wired or documented).
+
+## P1 — v1 quality / auth gaps (clear before production submission)
+
+- [ ] **#192 — No Google Sign-In button** · `LoginScreen.kt` (a `GoogleAuthManager` already exists, just unwired). *Done when*: Google Sign-In flow works end-to-end or is explicitly deferred + hidden.
+- [ ] **#191 — No email-verification UI** · `AuthRepository.kt:219` has the code path but no screen prompts the user. *Done when*: a verification screen exists, or email/password signup is gated/removed for v1.
+- [ ] **#193 — No session-timeout handling** · `AuthRepository.kt` · no auto-logout on token expiry. *Done when*: expired-token responses route the user to re-auth.
+- [ ] **#194 — Leaderboard is a "Coming Soon" placeholder** · `LeaderboardScreen.kt`. *Done when*: either hidden honestly for standalone v1, or wired to the (later-deployed) backend.
+- [ ] **Cloud sync / Drive backup is local-only** · `sync/CloudBackupManager.kt:437,459` (`TODO`). *Done when*: presented honestly as "Coming Soon" in standalone v1 (real Drive impl is a Phase-3 item, not a v1 blocker).
+- [ ] **Web/Backend dependency + security debt** · 22 open Dependabot PRs + **security PR #32** (5 TrainvocWeb alerts). *Why*: must be merged before web/backend go public (Phase 3/4). *Done when*: security PR #32 merged and Dependabot backlog triaged.
+
+## P2 — Engagement & feature depth (post-submission, pre-1.x)
+
+- [ ] **#179** adaptive difficulty · `QuizScreen.kt` — quiz doesn't adapt to performance.
+- [ ] **#181** hint system · `QuizScreen.kt` — no reveal-letter / eliminate-option.
+- [ ] **#180 / #199 / #200** quiz audio feedback + speed bonuses · `QuizScreen.kt`.
+- [ ] **#177 / #178** chapter structure + contextual/thematic word grouping · `StoryScreen.kt` (depends on #168 decision).
+- [ ] **#189** friend system · social — add/view friends (needs deployed backend).
+- [ ] **#184** Flip Cards no pinch-zoom / manual enlarge · `GameScreens.kt`.
+
+## P3 — Polish, analytics, cleanup
+
+- [ ] **#205 / #206** Google Analytics events + Firestore for social data.
+- [ ] **#201** notification badges on nav · `AppBottomBar.kt`.
+- [ ] **#209** audit for unreachable screens · navigation.
+- [ ] **#217** `lastAnswered` collected but never displayed · `StatsViewModel.kt:76`.
+- [ ] **#214** session-length recommendations · `StoryScreen.kt`.
+- [ ] **Stale docs cleanup**: root `CLAUDE.md`, `TrainvocClient/CLAUDE.md`, `GAMES_UI_INVESTIGATION.md` still claim games are deleted / TTS unwired — both false on HEAD. *Done when*: corrected or marked superseded.
 
 ---
 
@@ -72,7 +115,8 @@
 | 168 | Android | `StoryScreen.kt` | Story Mode has NO actual story content - just level selection screen, violates "Learn through stories" promise | ⬜ OPEN |
 | 169 | Android | `FlipCardsScreen.kt:157` | Cards too small on 6x6 grid (~45dp) - unreadable for longer words, game essentially broken | ✅ FIXED 2026-01-27 (long-press popup, min touch target) |
 | 170 | Android | `QuizScreen.kt` | Streaks don't persist between sessions - resets every time user opens app, kills engagement | ✅ FIXED 2026-01-27 (validate streak in HomeViewModel) |
-| 171 | Android | `GamesMenuScreen.kt` | Multiplayer game UI was deleted from codebase - major feature missing | ⬜ OPEN |
+| 171 | Android | `ui/multiplayer/*`, `navigation/MultiplayerNavigation.kt` | Multiplayer game UI was deleted from codebase - major feature missing | ✅ RESOLVED-ON-HEAD 2026-06-04 (restored in `fb6d0bc`; 6 screens — MultiplayerHome/CreateRoom/JoinRoom/Lobby/Game/GameResults — exist and are wired via `multiplayerNavGraph` → `Route.MULTIPLAYER_HOME`. Single-player games likewise restored under `ui/games/`. Stale claim.) |
+| 221 | Android | `app/build.gradle.kts:7` + `.gitignore:9` | Clean checkout does NOT build: `google.services` plugin applied unconditionally but `google-services.json` is gitignored/absent → only original dev/CI-with-secret can build | ⬜ OPEN |
 | 172 | Android | `HomeScreen.kt:249-326` | Home screen has 6+ quick action buttons with flat hierarchy - causes decision paralysis, no clear CTA | ✅ FIXED 2026-01-28 (hero CTA button, 2x2 secondary grid) |
 | 173 | Android | `ProfileScreen.kt:102` | Auth state checked via SharedPreferences, should use AuthViewModel - causes sync issues on logout | ✅ FIXED 2026-01-27 (AuthViewModel integration) |
 
