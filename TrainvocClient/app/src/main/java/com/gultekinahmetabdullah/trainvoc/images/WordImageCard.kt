@@ -10,8 +10,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
 import com.gultekinahmetabdullah.trainvoc.ui.components.InlineLoader
 import com.gultekinahmetabdullah.trainvoc.ui.components.LoaderSize
