@@ -4,7 +4,9 @@
 
 **TrainvocBackend** is a Spring Boot-based game server providing REST API and WebSocket support for the Trainvoc multiplayer vocabulary game platform. It manages game rooms, players, quizzes, and real-time game state.
 
-> **Status (2026-06-05):** Safe non-major dependency bumps merged on `dev/2026-06-05` — postgresql 42.7.10, org.json 20251224, jjwt 0.13.0 (verified API-compatible with the existing fluent usage), firebase-admin 9.8.0, caffeine 3.2.3. **Held** breaking majors: Spring Boot 4 (#25), springdoc 3 (#23), gradle 9 (#16). **Build requires a JDK 24 toolchain** — it could not be compiled on the JDK-21 host used for that branch, so **CI must verify the build**. Not yet deployed/hardened — see `../ROADMAP.md` Phase 3 (DTO layer, API versioning, pagination, auth enforcement).
+> **Status (2026-06-05):** **Migrated to Spring Boot 4.0.6 + Jackson 3 + springdoc 3 on JDK 21 LTS** (`migrate/backend-spring-boot-4-2026-06-05`) — drops the EOL JDK 24 toolchain (Spring Boot 3.5 OSS support ends 2026-06-30) and makes the build verifiable on the JDK-21 host. `./gradlew clean build -x test` is **BUILD SUCCESSFUL** and the bootJar assembles; the test suite has 20 pre-existing failures (`#222`/`#223` class — unwired EntityManagerFactory mocks + controller assertion mismatches) that are unchanged by the migration. This closes held majors **Spring Boot 4 (#25)** and **springdoc 3 (#23)**; **gradle 9 (#16)** is still held (wrapper is 8.14.2, which Boot 4 supports). Safe non-major bumps already merged on `dev/2026-06-05` — postgresql 42.7.10, org.json 20251224, jjwt 0.13.0, firebase-admin 9.8.0, caffeine 3.2.3. Not yet deployed/hardened — see `../ROADMAP.md` Phase 3 (DTO layer, API versioning, pagination, auth enforcement).
+>
+> **Spring Boot 4 package moves applied** (verified against the resolved 4.0.6 jars): `JpaProperties` → `org.springframework.boot.jpa.autoconfigure`; `HibernateProperties`/`HibernateSettings` → `org.springframework.boot.hibernate.autoconfigure`; `ConfigurableServletWebServerFactory` → `org.springframework.boot.web.server.servlet`. Tests: `@WebMvcTest`/`@AutoConfigureMockMvc` → `org.springframework.boot.webmvc.test.autoconfigure.*` (needs the new `spring-boot-starter-webmvc-test` test dependency); `@MockBean` → `@MockitoBean` (`org.springframework.test.context.bean.override.mockito`). Jackson annotations (`@JsonManagedReference`/`@JsonBackReference`) stay on `com.fasterxml.jackson.annotation` (the jackson-annotations module is the documented exception to the `tools.jackson` rename), so no source change was needed for them.
 
 ---
 
@@ -12,8 +14,8 @@
 
 | Category | Technology | Version |
 |----------|------------|---------|
-| **Framework** | Spring Boot | 3.5.0 |
-| **Language** | Java | 24 |
+| **Framework** | Spring Boot | 4.0.6 |
+| **Language** | Java | 21 (LTS) |
 | **Build Tool** | Gradle | Latest |
 | **Database** | PostgreSQL | 15+ |
 | **ORM** | Spring Data JPA / Hibernate | Latest |
