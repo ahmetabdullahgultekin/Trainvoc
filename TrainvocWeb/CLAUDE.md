@@ -4,7 +4,7 @@
 
 **TrainvocWeb** is a React-based web platform for multiplayer vocabulary games. It provides real-time multiplayer game sessions where users can compete against each other in vocabulary quizzes.
 
-> **Status (2026-06-05):** `npm audit` reports **0 vulnerabilities**. Security alerts were resolved (serialize-javascript pinned via `overrides`, plus non-breaking `npm audit fix` for ajv/vite/vitest/ws) and safe Dependabot patch bumps merged (axios, i18next, typescript, @types/react-dom, tailwindcss, @tailwindcss/postcss). **Held** breaking majors: vite 8, `@vitejs/plugin-react` 6 (its v6 requires vite ^8). Verified green: `tsc --noEmit`, `npm run build`, `npm run test:run` (118/118). See `../ROADMAP.md` Phase 4 for web launch.
+> **Status (2026-06-05):** `npm audit` reports **0 vulnerabilities**. Security alerts were resolved (serialize-javascript pinned via `overrides`, plus non-breaking `npm audit fix` for ajv/vite/vitest/ws) and safe Dependabot patch bumps merged (axios, i18next, typescript, @types/react-dom, tailwindcss, @tailwindcss/postcss). **Breaking majors now LANDED:** `vite` 6→8 (rolldown runtime), `@vitejs/plugin-react` 4→6 (its v6 requires vite ^8), `@playwright/test` 1.57→1.60, `vitest` 4.0→4.1. Verified green: `npm run build`, `npm run test:run` (118/118), and 22/23 backend-independent e2e on playwright 1.60 (the single failure exercises `/play` + `/leaderboard`, which require the live Spring API not running locally — environmental, not a regression). See `../ROADMAP.md` Phase 4 for web launch.
 
 ---
 

@@ -179,7 +179,8 @@ This is where the online product comes alive. Sequencing matters: **deploy priva
 - **Keystore is a single point of failure** — only on the dev's Windows box. Back it up *before* Phase 2. (operator)
 - **Google's 14-day testing wall** — a hard, non-engineering gate. Start it on day one. (operator)
 - **Backend build needs JDK 24** — not available on every host; make the CI toolchain authoritative and gate deploys on a green backend build.
-- **Held major bumps** (Spring Boot 4, springdoc 3, gradle 9, vite 8, @vitejs/plugin-react 6) — each needs a dedicated test-then-merge; don't let them rot, but don't rush them into a release either.
+- **Web major bumps LANDED 2026-06-05** (vite 6→8, @vitejs/plugin-react 4→6, @playwright/test 1.57→1.60, vitest 4.0→4.1) — verified green: `npm run build`, 118/118 unit, 22/23 backend-independent e2e on playwright 1.60 (the 1 fail needs the live Spring API). See `TrainvocWeb/`.
+- **Held major bumps** (Spring Boot 4, springdoc 3, gradle 9) — backend only; each needs a dedicated test-then-merge on a JDK that satisfies the toolchain (host JDK 21 cannot verify these yet). Don't let them rot, but don't rush them into a release either.
 - **No live environment anywhere yet** — the first backend deploy + TLS + DNS is greenfield; budget real time.
 - **Stale documentation drift** — legacy `.md` files have repeatedly mis-described the project (deleted games, unwired TTS, mockito vs MockK). Keep docs honest; treat doc updates as part of "done".
 
