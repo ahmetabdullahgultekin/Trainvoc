@@ -117,10 +117,18 @@ fun ProfileScreen(
     val showLogoutConfirmDialog = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Check auth state when screen loads
+    // Check auth state when screen loads, and validate the session is still
+    // alive (#193) so an expired token routes the user back to login.
     LaunchedEffect(Unit) {
         authViewModel.checkAuthState()
+        authViewModel.validateSession()
     }
+
+    // Session-expiry handler (#193): shows a blocking dialog and routes to login.
+    com.gultekinahmetabdullah.trainvoc.ui.screen.auth.SessionExpiredHandler(
+        onReauthenticate = onSignIn,
+        viewModel = authViewModel
+    )
 
     // Logout confirmation dialog (fixes #210)
     if (showLogoutConfirmDialog.value) {
@@ -187,6 +195,16 @@ fun ProfileScreen(
                     .padding(horizontal = horizontalPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Email-verification prompt (#191) — renders only for signed-in,
+                // unverified users; no-op otherwise.
+                if (isLoggedIn) {
+                    item {
+                        com.gultekinahmetabdullah.trainvoc.ui.screen.auth.EmailVerificationBanner(
+                            viewModel = authViewModel
+                        )
+                    }
+                }
+
                 // Hero Section
                 item {
                     ProfileHeroSection(

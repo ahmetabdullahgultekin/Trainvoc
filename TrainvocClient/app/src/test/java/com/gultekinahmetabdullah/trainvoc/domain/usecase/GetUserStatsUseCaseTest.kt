@@ -3,10 +3,12 @@ package com.gultekinahmetabdullah.trainvoc.domain.usecase
 import com.gultekinahmetabdullah.trainvoc.core.common.AppError
 import com.gultekinahmetabdullah.trainvoc.core.common.AppResult
 import com.gultekinahmetabdullah.trainvoc.repository.IAnalyticsService
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -22,6 +24,9 @@ import org.mockito.kotlin.whenever
  * - Using TestDispatcherProvider for deterministic tests
  */
 class GetUserStatsUseCaseTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var analyticsService: IAnalyticsService
     private lateinit var dispatchers: TestDispatcherProvider

@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 2026-06-05 (branch `dev/2026-06-05`)
+
+#### Added — TrainvocClient (auth + leaderboard)
+- **Google Sign-In** (#192): `FirebaseAuthRepository.signInWithGoogle(idToken)` → `AuthRepository.loginWithGoogle` → `AuthViewModel.loginWithGoogle`; "Sign in with Google" button on `LoginScreen` (GoogleSignIn + ActivityResultLauncher; clean-checkout-safe web-client-id lookup).
+- **Email-verification UI** (#191): `EmailVerificationBanner` composable (resend action) wired into `ProfileScreen`; `AuthViewModel.sendEmailVerification()/emailVerificationSent`.
+- **Session-timeout handling** (#193): `AuthRepository.validateSession()` (token force-refresh → sign-out on failure) + `SessionExpiredHandler` dialog routing to login.
+- **Functional leaderboard** (#194): local "Your Progress" panel (streaks, active days, achievements) via new `LeaderboardViewModel`; global board kept honestly "coming soon". Removed dead `LeaderboardItem`.
+- New `AuthViewModelTest` (6 tests) + new `MainDispatcherRule` test utility. EN + TR strings for all new UI.
+
+#### Fixed — TrainvocClient (test infra)
+- **Unit-test source set compiles + runs again** (#222): declared `mockito-kotlin 5.4.0` (alongside MockK) and reconciled ~9 drifted test files with current models (`WordLevel` enum, `Statistic`, `QuizType` in `classes.enums`, `DriveBackup*`, `AchievementProgress`, `RoomSettings`/`PlayerRanking`/`RoomListItem`, updated ViewModel ctors). Fixed the pre-existing `TestDispatcherProvider` "different schedulers" defect and added `testOptions.unitTests.isReturnDefaultValues=true`. `:app:testDebugUnitTest` went from 0 (wouldn't compile) → 178 tests, 148 passing. Remaining 30 runtime failures tracked as #223.
+
+#### Fixed — TrainvocWeb (security)
+- **All security alerts resolved; `npm audit` = 0** (supersedes PR #32): pinned `serialize-javascript >=7.0.4` via overrides + `npm audit fix` (ajv, vite, vitest, ws — all non-breaking). Merged safe Dependabot patch bumps (axios, i18next, typescript, @types/react-dom, tailwindcss, @tailwindcss/postcss). Held breaking majors (vite 8, @vitejs/plugin-react 6). Verified: `tsc --noEmit`, `npm run build`, `npm run test:run` (118/118) all green.
+
+#### Changed — TrainvocBackend (dependencies)
+- Merged safe non-major Dependabot bumps: postgresql 42.7.10, org.json 20251224, jjwt 0.13.0 (verified API-compatible), firebase-admin 9.8.0, caffeine 3.2.3. Held breaking majors (Spring Boot 4, springdoc 3, gradle 9). Backend build not locally verifiable (host lacks JDK 24 toolchain) — CI must confirm.
+
+#### Docs
+- Rewrote `ROADMAP.md` into a long, phased, production-grade plan (Phase 0 ship → backend → web → iOS → growth → engineering excellence), folding in `MASTER_FIX_PLAN`.
+- Added a "Future / Professionalization" section to `README.md`.
+- Corrected stale claims in root + client `CLAUDE.md` (games/TTS present; build/tests fixed).
+
 ### Added
 
 #### TrainvocBackend

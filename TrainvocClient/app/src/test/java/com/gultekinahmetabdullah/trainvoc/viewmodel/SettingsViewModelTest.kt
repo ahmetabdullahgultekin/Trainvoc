@@ -1,17 +1,20 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
-import android.content.Context
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.offline.SyncManager
 import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -30,33 +33,35 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
 
-    private lateinit var context: Context
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var repository: IWordRepository
     private lateinit var preferencesRepository: IPreferencesRepository
+    private lateinit var syncManager: SyncManager
     private lateinit var dispatchers: TestDispatcherProvider
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setup() {
-        context = mock()
         repository = mock()
         preferencesRepository = mock()
+        syncManager = mock()
         dispatchers = TestDispatcherProvider()
 
         // Setup default returns
-        whenever(context.applicationContext).thenReturn(context)
         whenever(preferencesRepository.getTheme()).thenReturn(ThemePreference.SYSTEM)
-        whenever(preferencesRepository.getColorPalette()).thenReturn(ColorPalettePreference.BLUE)
+        whenever(preferencesRepository.getColorPalette()).thenReturn(ColorPalettePreference.OCEAN)
         whenever(preferencesRepository.getLanguage()).thenReturn(LanguagePreference.ENGLISH)
         whenever(preferencesRepository.isNotificationsEnabled()).thenReturn(true)
     }
 
     private fun createViewModel(): SettingsViewModel {
         return SettingsViewModel(
-            context = context,
             repository = repository,
             preferencesRepository = preferencesRepository,
-            dispatchers = dispatchers
+            dispatchers = dispatchers,
+            syncManager = syncManager
         )
     }
 
@@ -68,7 +73,7 @@ class SettingsViewModelTest {
 
         // Assert
         assertEquals(ThemePreference.SYSTEM, viewModel.theme.value)
-        assertEquals(ColorPalettePreference.BLUE, viewModel.colorPalette.value)
+        assertEquals(ColorPalettePreference.OCEAN, viewModel.colorPalette.value)
         assertTrue(viewModel.notificationsEnabled.value)
     }
 
@@ -107,11 +112,11 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         // Act
-        viewModel.setColorPalette(ColorPalettePreference.GREEN)
+        viewModel.setColorPalette(ColorPalettePreference.FOREST)
 
         // Assert
-        verify(preferencesRepository).setColorPalette(ColorPalettePreference.GREEN)
-        assertEquals(ColorPalettePreference.GREEN, viewModel.colorPalette.value)
+        verify(preferencesRepository).setColorPalette(ColorPalettePreference.FOREST)
+        assertEquals(ColorPalettePreference.FOREST, viewModel.colorPalette.value)
     }
 
     @Test
@@ -121,11 +126,11 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         // Act
-        viewModel.setColorPalette(ColorPalettePreference.PURPLE)
+        viewModel.setColorPalette(ColorPalettePreference.LAVENDER)
 
         // Assert
-        verify(preferencesRepository).setColorPalette(ColorPalettePreference.PURPLE)
-        assertEquals(ColorPalettePreference.PURPLE, viewModel.colorPalette.value)
+        verify(preferencesRepository).setColorPalette(ColorPalettePreference.LAVENDER)
+        assertEquals(ColorPalettePreference.LAVENDER, viewModel.colorPalette.value)
     }
 
     @Test
@@ -188,7 +193,7 @@ class SettingsViewModelTest {
     @Test
     fun `getColorPalette returns current palette from repository`() = runTest {
         // Arrange
-        whenever(preferencesRepository.getColorPalette()).thenReturn(ColorPalettePreference.ORANGE)
+        whenever(preferencesRepository.getColorPalette()).thenReturn(ColorPalettePreference.SUNSET)
         viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -196,13 +201,13 @@ class SettingsViewModelTest {
         val palette = viewModel.getColorPalette()
 
         // Assert
-        assertEquals(ColorPalettePreference.ORANGE, palette)
+        assertEquals(ColorPalettePreference.SUNSET, palette)
     }
 
     @Test
     fun `getLanguage returns current language from repository`() = runTest {
         // Arrange
-        whenever(preferencesRepository.getLanguage()).thenReturn(LanguagePreference.GERMAN)
+        whenever(preferencesRepository.getLanguage()).thenReturn(LanguagePreference.TURKISH)
         viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -210,7 +215,7 @@ class SettingsViewModelTest {
         val language = viewModel.getLanguage()
 
         // Assert
-        assertEquals(LanguagePreference.GERMAN, language)
+        assertEquals(LanguagePreference.TURKISH, language)
     }
 
     @Test
@@ -262,14 +267,14 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         var eventReceived = false
-        val job = kotlinx.coroutines.launch {
+        val job = backgroundScope.launch {
             viewModel.languageChanged.collect {
                 eventReceived = true
             }
         }
 
         // Act
-        viewModel.setLanguage(LanguagePreference.FRENCH)
+        viewModel.setLanguage(LanguagePreference.TURKISH)
         advanceUntilIdle()
 
         // Assert

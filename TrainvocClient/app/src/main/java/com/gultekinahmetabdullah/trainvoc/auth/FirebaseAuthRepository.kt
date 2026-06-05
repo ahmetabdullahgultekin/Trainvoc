@@ -3,6 +3,7 @@ package com.gultekinahmetabdullah.trainvoc.auth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -79,6 +80,30 @@ class FirebaseAuthRepository @Inject constructor() {
             FirebaseAuthResult.Error(mapFirebaseError(e.errorCode))
         } catch (e: Exception) {
             FirebaseAuthResult.Error(e.message ?: "Registration failed")
+        }
+    }
+
+    /**
+     * Signs in with a Google account using the ID token obtained from the
+     * Google Sign-In flow (see [com.google.android.gms.auth.api.signin.GoogleSignIn]).
+     *
+     * @param idToken The Google ID token returned by `GoogleSignInAccount.idToken`
+     * @return FirebaseAuthResult indicating success or failure
+     */
+    suspend fun signInWithGoogle(idToken: String): FirebaseAuthResult {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val result = firebaseAuth.signInWithCredential(credential).await()
+            val user = result.user
+            if (user != null) {
+                FirebaseAuthResult.Success(user)
+            } else {
+                FirebaseAuthResult.Error("Google sign in failed: No user returned")
+            }
+        } catch (e: FirebaseAuthException) {
+            FirebaseAuthResult.Error(mapFirebaseError(e.errorCode))
+        } catch (e: Exception) {
+            FirebaseAuthResult.Error(e.message ?: "Google sign in failed")
         }
     }
 

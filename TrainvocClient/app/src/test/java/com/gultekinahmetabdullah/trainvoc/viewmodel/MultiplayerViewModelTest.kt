@@ -13,8 +13,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -32,13 +34,16 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 class MultiplayerViewModelTest {
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var repository: MultiplayerRepository
     private lateinit var viewModel: MultiplayerViewModel
 
     // Mocked state flows
-    private val connectionStateFlow = MutableStateFlow(ConnectionState.DISCONNECTED)
+    private val connectionStateFlow = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     private val playersFlow = MutableStateFlow<List<PlayerInfo>>(emptyList())
-    private val gameStateFlow = MutableStateFlow(GameState.WAITING)
+    private val gameStateFlow = MutableStateFlow(GameState.LOBBY)
     private val currentQuestionFlow = MutableStateFlow<QuestionInfo?>(null)
     private val remainingTimeFlow = MutableStateFlow(0)
     private val rankingsFlow = MutableStateFlow<List<PlayerRanking>>(emptyList())
@@ -46,9 +51,10 @@ class MultiplayerViewModelTest {
     private val errorFlow = MutableStateFlow<String?>(null)
 
     private val testSettings = RoomSettings(
-        maxPlayers = 4,
-        questionCount = 10,
-        timePerQuestion = 15
+        questionDuration = 15,
+        optionCount = 4,
+        level = "A1",
+        totalQuestionCount = 10
     )
 
     @Before
@@ -280,8 +286,8 @@ class MultiplayerViewModelTest {
         // Arrange
         viewModel = createViewModel()
         rankingsFlow.value = listOf(
-            PlayerRanking("player1", "Winner", 100, 1),
-            PlayerRanking("player2", "Runner", 80, 2)
+            PlayerRanking(rank = 1, playerId = "player1", name = "Winner", score = 100, correctCount = 8, avatarId = 0),
+            PlayerRanking(rank = 2, playerId = "player2", name = "Runner", score = 80, correctCount = 6, avatarId = 1)
         )
         advanceUntilIdle()
 
@@ -300,7 +306,7 @@ class MultiplayerViewModelTest {
         // Arrange
         viewModel = createViewModel()
         rankingsFlow.value = listOf(
-            PlayerRanking("player1", "Winner", 100, 1)
+            PlayerRanking(rank = 1, playerId = "player1", name = "Winner", score = 100, correctCount = 8, avatarId = 0)
         )
         gameStateFlow.value = GameState.FINAL
         advanceUntilIdle()
@@ -319,8 +325,8 @@ class MultiplayerViewModelTest {
     fun `refreshAvailableRooms updates room list on success`() = runTest {
         // Arrange
         val rooms = listOf(
-            RoomListItem("ROOM1", "Host1", 2, 4),
-            RoomListItem("ROOM2", "Host2", 3, 4)
+            RoomListItem(roomCode = "ROOM1", hostName = "Host1", playerCount = 2, maxPlayers = 4, hasPassword = false, level = "A1"),
+            RoomListItem(roomCode = "ROOM2", hostName = "Host2", playerCount = 3, maxPlayers = 4, hasPassword = true, level = "B1")
         )
         whenever(repository.getActiveRooms()).thenReturn(Result.success(rooms))
 
@@ -393,13 +399,13 @@ class MultiplayerViewModelTest {
     }
 
     @Test
-    fun `onCleared disconnects from server`() = runTest {
+    fun `disconnect tears down the server connection`() = runTest {
         // Arrange
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Act - simulate ViewModel cleared
-        viewModel.onCleared()
+        // Act - public disconnect() is what onCleared() delegates to
+        viewModel.disconnect()
 
         // Assert
         verify(repository).disconnect()

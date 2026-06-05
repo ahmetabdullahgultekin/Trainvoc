@@ -108,7 +108,7 @@ class CloudBackupViewModelTest {
         whenever(authManager.getSignedInAccount()).thenReturn(testAccount)
         whenever(authManager.isSignedIn()).thenReturn(true)
         whenever(backupService.listBackups()).thenReturn(listOf(
-            DriveBackup("file1", "backup1.json", 1000L, "2024-01-01", 100)
+            DriveBackup(fileId = "file1", fileName = "backup1.json", sizeBytes = 1000L, createdTime = 1704067200000L, description = "Backup 2024-01-01")
         ))
 
         viewModel = createViewModel()
@@ -132,7 +132,7 @@ class CloudBackupViewModelTest {
         whenever(authManager.isSignedIn()).thenReturn(true)
         whenever(backupService.listBackups()).thenReturn(emptyList())
         whenever(backupService.uploadBackup()).thenReturn(
-            DriveBackupResult.Success(fileName = "backup.json", fileId = "123", wordCount = 500)
+            DriveBackupResult.Success(fileId = "123", fileName = "backup.json", sizeBytes = 2048L, uploadTime = 1704067200000L, wordCount = 500)
         )
 
         viewModel = createViewModel()
@@ -175,7 +175,7 @@ class CloudBackupViewModelTest {
         whenever(authManager.isSignedIn()).thenReturn(true)
         whenever(backupService.listBackups()).thenReturn(emptyList())
         whenever(backupService.downloadAndRestoreBackup(any(), any())).thenReturn(
-            DriveRestoreResult.Success(wordsRestored = 250)
+            DriveRestoreResult.Success(wordsRestored = 250, statisticsRestored = 10)
         )
 
         viewModel = createViewModel()
@@ -314,8 +314,8 @@ class CloudBackupViewModelTest {
     fun `refreshBackups loads backup list`() = runTest {
         // Arrange
         val testBackups = listOf(
-            DriveBackup("id1", "backup1.json", 1000L, "2024-01-01", 100),
-            DriveBackup("id2", "backup2.json", 2000L, "2024-01-02", 200)
+            DriveBackup(fileId = "id1", fileName = "backup1.json", sizeBytes = 1000L, createdTime = 1704067200000L, description = "Backup 2024-01-01"),
+            DriveBackup(fileId = "id2", fileName = "backup2.json", sizeBytes = 2000L, createdTime = 1704153600000L, description = "Backup 2024-01-02")
         )
         whenever(authManager.getSignedInAccount()).thenReturn(testAccount)
         whenever(authManager.isSignedIn()).thenReturn(true)
@@ -326,7 +326,7 @@ class CloudBackupViewModelTest {
 
         // Assert - backups were loaded on init
         assertEquals(2, viewModel.backups.value.size)
-        assertEquals("backup1.json", viewModel.backups.value[0].name)
+        assertEquals("backup1.json", viewModel.backups.value[0].fileName)
     }
 
     @Test
@@ -336,7 +336,7 @@ class CloudBackupViewModelTest {
         whenever(authManager.isSignedIn()).thenReturn(true)
         whenever(backupService.listBackups()).thenReturn(emptyList())
         whenever(backupService.uploadBackup()).thenReturn(
-            DriveBackupResult.Success(fileName = "backup.json", fileId = "123", wordCount = 500)
+            DriveBackupResult.Success(fileId = "123", fileName = "backup.json", sizeBytes = 2048L, uploadTime = 1704067200000L, wordCount = 500)
         )
 
         viewModel = createViewModel()

@@ -8,10 +8,12 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.core.common.AppError
 import com.gultekinahmetabdullah.trainvoc.core.common.AppResult
 import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -32,6 +34,9 @@ import org.mockito.kotlin.whenever
  * - Harder to isolate business logic from presentation logic
  */
 class StartQuizUseCaseTest {
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var quizService: IQuizService
     private lateinit var dispatchers: TestDispatcherProvider

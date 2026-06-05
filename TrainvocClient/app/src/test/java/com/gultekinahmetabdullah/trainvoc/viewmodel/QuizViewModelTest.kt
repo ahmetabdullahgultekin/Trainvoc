@@ -1,23 +1,25 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
-import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizType
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.classes.word.WordLevel
+import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
 import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
 import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -36,10 +38,14 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 class QuizViewModelTest {
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var quizService: IQuizService
     private lateinit var wordStatisticsService: IWordStatisticsService
     private lateinit var progressService: IProgressService
     private lateinit var quizHistoryDao: QuizHistoryDao
+    private lateinit var gamificationManager: GamificationManager
     private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var dispatchers: TestDispatcherProvider
     private lateinit var viewModel: QuizViewModel
@@ -47,26 +53,25 @@ class QuizViewModelTest {
     private val testWord = Word(
         word = "apple",
         meaning = "elma",
-        wordLevel = WordLevel.A1
+        level = WordLevel.A1
     )
 
     private val wrongWord = Word(
         word = "banana",
         meaning = "muz",
-        wordLevel = WordLevel.A1
+        level = WordLevel.A1
     )
 
     private val testQuestion = Question(
         correctWord = testWord,
-        options = listOf(testWord, wrongWord),
-        questionType = QuizType.TRANSLATION
+        incorrectWords = listOf(wrongWord)
     )
 
     private val testStats = Statistic(
         correctCount = 5,
         wrongCount = 2,
         skippedCount = 1,
-        secondsSpent = 120
+        learned = false
     )
 
     @Before
@@ -75,6 +80,7 @@ class QuizViewModelTest {
         wordStatisticsService = mock()
         progressService = mock()
         quizHistoryDao = mock()
+        gamificationManager = mock()
         savedStateHandle = SavedStateHandle()
         dispatchers = TestDispatcherProvider()
     }
@@ -85,6 +91,7 @@ class QuizViewModelTest {
             wordStatisticsService = wordStatisticsService,
             progressService = progressService,
             quizHistoryDao = quizHistoryDao,
+            gamificationManager = gamificationManager,
             savedStateHandle = savedStateHandle,
             dispatchers = dispatchers
         )
@@ -116,7 +123,7 @@ class QuizViewModelTest {
         advanceUntilIdle()
 
         // Start quiz and get to a question
-        val quiz = Quiz(type = QuizType.TRANSLATION)
+        val quiz = Quiz.Random
         val parameter = QuizParameter.Level(WordLevel.A1)
         viewModel.startQuiz(parameter, quiz)
         advanceUntilIdle()
@@ -142,7 +149,7 @@ class QuizViewModelTest {
         advanceUntilIdle()
 
         // Start quiz
-        val quiz = Quiz(type = QuizType.TRANSLATION)
+        val quiz = Quiz.Random
         val parameter = QuizParameter.Level(WordLevel.A1)
         viewModel.startQuiz(parameter, quiz)
         advanceUntilIdle()
@@ -168,7 +175,7 @@ class QuizViewModelTest {
         advanceUntilIdle()
 
         // Start quiz
-        val quiz = Quiz(type = QuizType.TRANSLATION)
+        val quiz = Quiz.Random
         val parameter = QuizParameter.Level(WordLevel.A1)
         viewModel.startQuiz(parameter, quiz)
         advanceUntilIdle()
@@ -207,7 +214,7 @@ class QuizViewModelTest {
         advanceUntilIdle()
 
         // Start and progress quiz
-        val quiz = Quiz(type = QuizType.TRANSLATION)
+        val quiz = Quiz.Random
         val parameter = QuizParameter.Level(WordLevel.A1)
         viewModel.startQuiz(parameter, quiz)
         advanceUntilIdle()
@@ -297,7 +304,7 @@ class QuizViewModelTest {
 
     private suspend fun setupQuizServiceMock() {
         whenever(quizService.generateTenQuestions(any(), any())).thenReturn(
-            listOf(testQuestion, testQuestion, testQuestion)
+            mutableListOf(testQuestion, testQuestion, testQuestion)
         )
     }
 }

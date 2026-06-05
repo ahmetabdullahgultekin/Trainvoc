@@ -1,6 +1,7 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import app.cash.turbine.test
+import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.repository.IWordRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,8 +9,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.*
 
@@ -27,13 +30,16 @@ import org.mockito.kotlin.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesViewModelTest {
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var repository: IWordRepository
     private lateinit var viewModel: FavoritesViewModel
 
     private val testFavorites = listOf(
-        Word(word = "apple", meaning = "a fruit", level = "A1", statId = 1, isFavorite = true),
-        Word(word = "book", meaning = "reading material", level = "A2", statId = 2, isFavorite = true),
-        Word(word = "cat", meaning = "an animal", level = "A1", statId = 3, isFavorite = true)
+        Word(word = "apple", meaning = "a fruit", level = WordLevel.A1, statId = 1, isFavorite = true),
+        Word(word = "book", meaning = "reading material", level = WordLevel.A2, statId = 2, isFavorite = true),
+        Word(word = "cat", meaning = "an animal", level = WordLevel.A1, statId = 3, isFavorite = true)
     )
 
     @Before
