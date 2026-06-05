@@ -1,0 +1,128 @@
+---
+title: Trainvoc SRS Engine — Scheduler Sequence & Card State Machine
+---
+
+%%{init: {"theme": "default", "sequence": {"mirrorActors": false}}}%%
+
+sequenceDiagram
+    autonumber
+
+    box Android Client (offline-first)
+        participant User
+        participant HomeScreen
+        participant ReviewQueueVM as ReviewQueueViewModel
+        participant QuizVM as QuizViewModel
+        participant SrsSvc as SrsSchedulerService
+        participant FsrsAlg as FsrsAlgorithm
+        participant GamesDao
+        participant ReviewDao as ReviewScheduleDao
+        participant GamifMgr as GamificationManager
+        participant SyncQ as SyncQueueDao
+    end
+    box Backend (S4 — optional)
+        participant Backend as TrainvocBackend
+        participant BackendDB as PostgreSQL srs_schedule
+    end
+
+    Note over HomeScreen: App foreground / periodic refresh
+
+    HomeScreen->>ReviewDao: getDueCountFlow(now)
+    ReviewDao-->>HomeScreen: Flow<Int> (e.g. 12)
+    HomeScreen->>HomeScreen: Show "12 due" badge + Review CTA card
+
+    User->>HomeScreen: Tap "12 due" badge
+    HomeScreen->>ReviewQueueVM: navigate("review_queue")
+
+    ReviewQueueVM->>GamesDao: getDueCards(userId, now, limit=50)
+    GamesDao-->>ReviewQueueVM: List<SRSCard> (12 cards)
+    ReviewQueueVM->>ReviewQueueVM: emit Loading → Active(card[0], remaining=12)
+
+    loop Each card in session
+
+        ReviewQueueVM->>User: Show card front (English word + TTS button)
+        User->>ReviewQueueVM: Tap to flip
+        ReviewQueueVM->>User: Show card back (meaning + example sentence + IPA)
+
+        User->>ReviewQueueVM: Rate card (Again | Hard | Good | Easy)
+
+        ReviewQueueVM->>SrsSvc: computeNextReview(wordId, rating)
+
+        SrsSvc->>GamesDao: getSRSCard(wordId, userId)
+        GamesDao-->>SrsSvc: SRSCard (current state)
+
+        SrsSvc->>FsrsAlg: schedule(fsrsCard, rating, now)
+        Note over FsrsAlg: Pure function — no Android deps<br/>Implements FSRS-5 two-component<br/>memory model (stability + difficulty)
+        FsrsAlg-->>SrsSvc: Updated FsrsCard (new stability, difficulty, due, state)
+
+        SrsSvc->>GamesDao: updateSRSCard(updatedCard)
+        SrsSvc->>ReviewDao: upsert(ReviewScheduleRow)
+        Note over ReviewDao: due_at = new nextReviewDate<br/>synced_to_server = 0 (dirty)
+
+        SrsSvc->>SyncQ: enqueue(SRS_REVIEW_EVENT, payload)
+        Note over SyncQ: Queued for S4 backend sync
+
+        SrsSvc->>GamifMgr: onReviewCompleted(userId)
+        GamifMgr->>GamifMgr: increment reviews_today<br/>check streak<br/>fire achievement unlocks
+
+        ReviewQueueVM->>ReviewQueueVM: emit Active(card[n+1], remaining--)
+
+    end
+
+    ReviewQueueVM->>User: Show session summary<br/>(cards reviewed, new cards, retention rate)
+
+    Note over QuizVM,SrsSvc: Quiz-outcome → SRS auto-schedule (S3)
+
+    User->>QuizVM: Answer quiz question
+    QuizVM->>QuizVM: recordAnswer() → QuizHistory
+
+    QuizVM->>SrsSvc: onQuizAnswer(wordId, wasCorrect)
+    SrsSvc->>GamesDao: getSRSCard(wordId, userId)
+
+    alt No SRSCard exists yet
+        GamesDao-->>SrsSvc: null
+        SrsSvc->>FsrsAlg: schedule(newCard, rating=Good/Again, now)
+        FsrsAlg-->>SrsSvc: FsrsCard (state=NEW→LEARNING)
+        SrsSvc->>GamesDao: insertSRSCard(newCard)
+        SrsSvc->>ReviewDao: upsert(ReviewScheduleRow, due_at=tomorrow)
+    else SRSCard exists
+        GamesDao-->>SrsSvc: SRSCard
+        SrsSvc->>FsrsAlg: schedule(existingCard, rating, now)
+        FsrsAlg-->>SrsSvc: updated FsrsCard
+        SrsSvc->>GamesDao: updateSRSCard(updatedCard)
+        SrsSvc->>ReviewDao: upsert(ReviewScheduleRow)
+    end
+
+    Note over SyncQ,BackendDB: S4 — Backend sync (requires backend deployed)
+
+    SyncQ->>Backend: POST /api/v1/srs/reviews (batch dirty rows)
+    Backend->>BackendDB: UPSERT srs_schedule (last-write-wins on client_updated_at)
+    BackendDB-->>Backend: OK
+    Backend-->>SyncQ: 204 No Content
+    SyncQ->>ReviewDao: markSynced(wordIds)
+
+---
+%%{init: {"theme": "default"}}%%
+
+stateDiagram-v2
+    direction LR
+    [*] --> NEW : Word first seen in quiz
+
+    NEW --> LEARNING : Any rating
+    LEARNING --> LEARNING : Again (interval reset, short)\nHard (small interval)
+    LEARNING --> REVIEW : Good / Easy (graduated)
+    REVIEW --> REVIEW : Again (stability decays\nbut does not collapse)\nHard / Good / Easy
+    REVIEW --> RELEARNING : Again (stability below threshold)
+    RELEARNING --> REVIEW : Good / Easy (re-graduated)
+    RELEARNING --> RELEARNING : Again (interval reset)
+
+    note right of NEW
+        stability = initial (FSRS w0-w3)
+        difficulty = initial (FSRS w4)
+        due = now (show immediately)
+    end note
+
+    note right of REVIEW
+        interval = S × ln(desiredRetention) / ln(0.9)
+        default desiredRetention = 0.9
+        stability grows each successful review
+    end note
