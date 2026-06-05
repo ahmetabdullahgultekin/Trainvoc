@@ -37,14 +37,15 @@
 
 | Severity | Open | Fixed | WONTFIX | Total |
 |----------|------|-------|---------|-------|
-| 🔴 CRITICAL | 4 | 23 | 0 | 27 |
-| 🟠 HIGH | 11 | 32 | 6 | 49 |
+| 🔴 CRITICAL | 2 | 25 | 0 | 27 |
+| 🟠 HIGH | 12 | 32 | 6 | 50 |
 | 🟡 MEDIUM | 2 | 63 | 11 | 76 |
 | 🟢 LOW | 2 | 22 | 19 | 43 |
 | ⚪ INFO | 2 | 3 | 21 | 26 |
-| **TOTAL** | **21** | **143** | **57** | **221** |
+| **TOTAL** | **20** | **145** | **57** | **222** |
 
-> Changes this refresh: **+#221** (clean-checkout build blocker, new 🔴). **#171 reclassified** ⬜ OPEN → ✅ RESOLVED-ON-HEAD (multiplayer UI exists & is wired — verified). All counts above reflect these two changes.
+> Changes 2026-06-05 (branch `exec/p0-2026-06-05`): **#221 FIXED** (clean-checkout build blocker — google-services plugin now conditional) and **#168 FIXED** (Story Mode renamed to "Learning Path"; no narrative promised). Both 🔴 CRITICAL moved Open→Fixed. Also **+#222** (new 🟠 HIGH, OPEN): unit-test source set doesn't compile (mockito-kotlin used but undeclared), discovered while verifying #168's test. Net: CRITICAL Open 4→2 / Fixed 23→25; HIGH Open 11→12; TOTAL 221→222, Open 21→20, Fixed 143→145.
+> Prior refresh: **+#221** (clean-checkout build blocker, new 🔴). **#171 reclassified** ⬜ OPEN → ✅ RESOLVED-ON-HEAD (multiplayer UI exists & is wired — verified).
 
 ---
 
@@ -54,8 +55,8 @@ Curated, actionable slice of the issue list below, ordered by what blocks an **A
 
 ## P0 — Ship-blockers (must clear before any v1 build/submission)
 
-- [ ] **#221 — Android app does NOT build from a clean checkout** · `TrainvocClient/app/build.gradle.kts:7` applies `alias(libs.plugins.google.services)`, but `google-services.json` is gitignored (`.gitignore:9`) and absent. *Why*: the `com.google.gms.google-services` plugin fails the build when the file is missing → only the original dev's machine can build/CI. *Done when*: a fresh `git clone` + `./gradlew assembleDebug` succeeds with no Firebase file present (apply the plugin conditionally on file existence, OR commit a CI-safe template, OR gate Firebase Auth behind a build flag).
-- [ ] **#168 — "Story Mode" has NO story content** · `TrainvocClient/app/src/main/java/.../ui/screen/main/StoryScreen.kt` · It is a CEFR leaf-button level picker; `onLevelSelected` just calls `quizViewModel.startQuiz(...)` (`MainScreen.kt` ~L169). *Why*: ships a feature whose name + "learn through stories" marketing is false. *Done when*: EITHER real chapter/story content exists behind level selection, OR the feature + all marketing copy is renamed (e.g. "Learning Path / Levels") so no narrative is promised. (Blocks #177, #178, #204, #214 which all assume story structure.)
+- [x] **#221 — Android app does NOT build from a clean checkout** · `TrainvocClient/app/build.gradle.kts:7` applies `alias(libs.plugins.google.services)`, but `google-services.json` is gitignored (`.gitignore:9`) and absent. *Why*: the `com.google.gms.google-services` plugin fails the build when the file is missing → only the original dev's machine can build/CI. *Done when*: a fresh `git clone` + `./gradlew assembleDebug` succeeds with no Firebase file present (apply the plugin conditionally on file existence, OR commit a CI-safe template, OR gate Firebase Auth behind a build flag). **✅ FIXED 2026-06-05** (exec/p0-2026-06-05): the google-services plugin is now declared `apply false` and applied conditionally only when `app/google-services.json` exists; committed `app/google-services.json.sample` template. Verified: `:app:help` config resolves `BUILD SUCCESSFUL` both with the file absent (plugin skipped) and present (plugin applied).
+- [x] **#168 — "Story Mode" has NO story content** · `TrainvocClient/app/src/main/java/.../ui/screen/main/StoryScreen.kt` · It is a CEFR leaf-button level picker; `onLevelSelected` just calls `quizViewModel.startQuiz(...)` (`MainScreen.kt` ~L169). *Why*: ships a feature whose name + "learn through stories" marketing is false. *Done when*: EITHER real chapter/story content exists behind level selection, OR the feature + all marketing copy is renamed (e.g. "Learning Path / Levels") so no narrative is promised. (Blocks #177, #178, #204, #214 which all assume story structure.) **✅ FIXED 2026-06-05** (exec/p0-2026-06-05): chose the **rename** option (building branching narrative content is a large feature, out of scope for a safe P0). User-facing labels renamed "Story Mode"/"Learn through stories" → "Learning Path"/"Practice words by CEFR level" (EN) and "Öğrenme Yolu"/"Kelimeleri CEFR seviyesine göre çalışın" (TR); resource names kept stable. Added `StoryModeRenameTest` (pure-JVM JUnit, no emulator) guarding against narrative-promise regression. Internal route/VM/screen symbols left as-is (not user-visible). #177/#178/#204/#214 stay open as future content work.
 - [ ] **#219 — Start Google Play closed-testing clock** · Play Console · Production access DENIED 2026-01-25; Google requires **20+ testers active 14 consecutive days**. *Why*: non-technical hard wall, cannot be shortened — must run in parallel with all engineering. *Done when*: 20+ testers enrolled and the 14-day active window has elapsed.
 - [ ] **Keystore is a single point of failure** (tracked under Deployment Log) · keystore lives only at `D:\...\password.jks` on the dev's Windows box; release signing is env-gated (`build.gradle.kts` `signingConfigs.release`) so an env-less release build is **unsigned**. *Why*: losing it = the app can never be updated again. *Done when*: keystore is securely backed up off-machine AND the release pipeline reliably signs (env vars wired or documented).
 
@@ -112,11 +113,11 @@ Curated, actionable slice of the issue list below, ordered by what blocks an **A
 | 156 | Android | `ProfileScreen.kt:144-159` | 0m Study Time - now shows total time when today's time is 0 | ✅ FIXED 2026-01-25 |
 | 157 | Android | `StatsScreen.kt` | Stats inconsistency: Profile shows TODAY's quizzes, Stats shows TOTAL | ⚪ BY DESIGN |
 | 158 | Android | Navigation | No Login/Register access point visible in app - only Sign Out shown | ✅ FIXED 2026-01-25 (added Sign In button, connected Login/Register screens) |
-| 168 | Android | `StoryScreen.kt` | Story Mode has NO actual story content - just level selection screen, violates "Learn through stories" promise | ⬜ OPEN |
+| 168 | Android | `StoryScreen.kt` | Story Mode has NO actual story content - just level selection screen, violates "Learn through stories" promise | ✅ FIXED 2026-06-05 (renamed "Story Mode"→"Learning Path" + subtitle, EN+TR; no narrative promised; StoryModeRenameTest guards it. Real story content deferred to #177/#178.) |
 | 169 | Android | `FlipCardsScreen.kt:157` | Cards too small on 6x6 grid (~45dp) - unreadable for longer words, game essentially broken | ✅ FIXED 2026-01-27 (long-press popup, min touch target) |
 | 170 | Android | `QuizScreen.kt` | Streaks don't persist between sessions - resets every time user opens app, kills engagement | ✅ FIXED 2026-01-27 (validate streak in HomeViewModel) |
 | 171 | Android | `ui/multiplayer/*`, `navigation/MultiplayerNavigation.kt` | Multiplayer game UI was deleted from codebase - major feature missing | ✅ RESOLVED-ON-HEAD 2026-06-04 (restored in `fb6d0bc`; 6 screens — MultiplayerHome/CreateRoom/JoinRoom/Lobby/Game/GameResults — exist and are wired via `multiplayerNavGraph` → `Route.MULTIPLAYER_HOME`. Single-player games likewise restored under `ui/games/`. Stale claim.) |
-| 221 | Android | `app/build.gradle.kts:7` + `.gitignore:9` | Clean checkout does NOT build: `google.services` plugin applied unconditionally but `google-services.json` is gitignored/absent → only original dev/CI-with-secret can build | ⬜ OPEN |
+| 221 | Android | `app/build.gradle.kts:7` + `.gitignore:9` | Clean checkout does NOT build: `google.services` plugin applied unconditionally but `google-services.json` is gitignored/absent → only original dev/CI-with-secret can build | ✅ FIXED 2026-06-05 (plugin now `apply false` + applied conditionally on `app/google-services.json` presence; added `google-services.json.sample`; `:app:help` config resolves BUILD SUCCESSFUL with file absent and present) |
 | 172 | Android | `HomeScreen.kt:249-326` | Home screen has 6+ quick action buttons with flat hierarchy - causes decision paralysis, no clear CTA | ✅ FIXED 2026-01-28 (hero CTA button, 2x2 secondary grid) |
 | 173 | Android | `ProfileScreen.kt:102` | Auth state checked via SharedPreferences, should use AuthViewModel - causes sync issues on logout | ✅ FIXED 2026-01-27 (AuthViewModel integration) |
 
@@ -176,6 +177,7 @@ Curated, actionable slice of the issue list below, ordered by what blocks an **A
 | 193 | Android | `AuthRepository.kt` | No session timeout handling - no automatic logout on token expiration | ⬜ OPEN |
 | 194 | Android | `LeaderboardScreen.kt` | Leaderboard is placeholder "Coming Soon" - not functional | ⬜ OPEN |
 | 219 | Android | `QuizScreen.kt` | No visible exit/back button during quiz - bars hidden, user can only use system back gesture (not discoverable) | ✅ FIXED 2026-01-27 (X button added, exit dialog enhanced) |
+| 222 | Android | `app/src/test/.../viewmodel/*Test.kt`, `domain/usecase/*Test.kt` | Unit-test source set does NOT compile: ~11 test files use `org.mockito.kotlin` symbols (`whenever`/`any`/`eq`/`verify`/`never`) but **mockito-kotlin is not a declared test dependency** (project uses MockK); some also pass wrong ctor args (e.g. `WordViewModelTest`/`WordOfDayViewModelTest`). `./gradlew :app:testDebugUnitTest` fails at `compileDebugUnitTestKotlin` → no unit tests can run. Found 2026-06-05 while verifying #168's test. | ⬜ OPEN |
 
 ---
 
@@ -347,6 +349,8 @@ Curated, actionable slice of the issue list below, ordered by what blocks an **A
 
 | # | Component | Description | Fixed Date | Fixed By |
 |---|-----------|-------------|------------|----------|
+| 221 | Android | Clean-checkout build unblocked: `google-services` plugin declared `apply false` + applied conditionally on `app/google-services.json` presence; added `google-services.json.sample`. Verified `:app:help` config resolves BUILD SUCCESSFUL with the Firebase file absent and present. | 2026-06-05 | Claude (exec/p0) |
+| 168 | Android | Story Mode renamed to honest "Learning Path" (EN) / "Öğrenme Yolu" (TR) + subtitle, dropping the false "learn through stories" promise (no narrative content exists). Added pure-JVM `StoryModeRenameTest` regression guard. | 2026-06-05 | Claude (exec/p0) |
 | 001 | Web | WebSocket URL now uses VITE_WS_URL or derives from VITE_API_URL | 2026-01-25 | Claude |
 | 002 | Web | Contact form now opens email client with mailto: link | 2026-01-25 | Claude |
 | 003 | Web | API URL now warns in dev, uses origin in prod if env not set | 2026-01-25 | Claude |

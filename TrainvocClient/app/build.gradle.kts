@@ -4,8 +4,31 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kover)
-    alias(libs.plugins.google.services)
+    // Declared but NOT applied here (`apply false`): this puts the Google Services
+    // plugin on the build classpath without running it, so we can apply it
+    // conditionally below.
+    alias(libs.plugins.google.services) apply false
     id("com.google.devtools.ksp")
+}
+
+// Apply the Google Services (Firebase) Gradle plugin ONLY when a real
+// `google-services.json` is present. The file is gitignored (it carries API
+// keys), so a clean checkout / CI has none — applying the plugin unconditionally
+// would fail every build for anyone but the original developer (issue #221).
+//
+// Firebase Auth still compiles without it: the SDK classes are on the classpath
+// and `FirebaseAuth.getInstance()` is only touched at runtime, where its callers
+// already guard with try/catch. When the file is absent, Firebase-backed sign-in
+// is simply inert until a real config is dropped in (see google-services.json.sample).
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    logger.lifecycle("Trainvoc: google-services.json found — Firebase plugin applied.")
+} else {
+    logger.lifecycle(
+        "Trainvoc: google-services.json not found — Firebase plugin skipped " +
+            "(build is clean-checkout safe; Firebase sign-in inert). " +
+            "Add app/google-services.json to enable Firebase. See google-services.json.sample."
+    )
 }
 
 android {
