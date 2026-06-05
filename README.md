@@ -269,22 +269,57 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
 ## Roadmap
 
-### Current Status
+The full, phased plan lives in **[`ROADMAP.md`](./ROADMAP.md)**. In short:
 
-- [x] Core vocabulary learning (Android)
-- [x] 10 interactive games
-- [x] Gamification system
-- [x] Multiplayer web platform
-- [x] Real-time game server
-- [x] Offline mode
+### Shipped / done
+- [x] Core vocabulary learning (Android, offline-first)
+- [x] 11 single-player games + multiplayer UI
+- [x] Gamification system, stats, TTS
+- [x] Multiplayer web platform + real-time game server
+- [x] Clean-checkout build, honest "Learning Path", running unit-test suite
+- [x] Auth: email/password **+ Google Sign-In**, email verification, session timeout
+- [x] Leaderboard: local "Your Progress" (global board pending backend)
+- [x] Web: **0 known vulnerabilities**
 
-### Upcoming
+### Next (see ROADMAP for the full picture)
+- [ ] **Phase 0–2**: ship Android v1 to Google Play production (gated by the 14-day tester window — operator action)
+- [ ] **Phase 3**: deploy + harden the backend (DTOs, API versioning, pagination, auth enforcement)
+- [ ] **Phase 4**: launch the web app against the live API
+- [ ] **Phase 5**: iOS (Compose Multiplatform / KMP candidate)
+- [ ] **Phases 6–9**: learning depth, social, analytics, fair monetization
 
-- [ ] iOS application
-- [ ] Additional language pairs
-- [ ] Social features
-- [ ] Premium subscription
-- [ ] Advanced analytics
+---
+
+## Future / Professionalization
+
+Beyond feature work, this section tracks the engineering and product disciplines that take Trainvoc from "works" to "professional-grade". These are cross-referenced from each component's `CLAUDE.md` and expanded as phases in [`ROADMAP.md`](./ROADMAP.md).
+
+### Security & privacy
+- Enforce Firebase/JWT auth end-to-end on the backend; replace broad `permitAll` with least-privilege rules.
+- Keep dependency vulnerabilities at zero across all three components (`npm audit`, OWASP / Dependabot gates); scheduled windows for breaking major bumps.
+- Secrets discipline: keystore backed up off-machine and injected via CI; DB/SSL passwords only via `--env-file`, never committed.
+- A documented Data Safety posture (Play Console + a public privacy policy) that matches what the app actually collects.
+
+### Compliance & trust
+- GDPR/KVKK-aligned data export + deletion paths for any account-bound data once the backend stores it.
+- Transparent, honest feature copy — no "coming soon" feature pretending to be live (the discipline behind the #168 Story Mode rename).
+
+### Accessibility & internationalization
+- Maintain WCAG 2.x AA compliance already achieved on Android; extend the same bar to web.
+- Keep every user-facing string in `strings.xml` (EN + TR) and the web `locales/` — never hardcode UI text. Be ready to add language pairs.
+
+### Quality & reliability
+- CI gates per component: Android unit + lint, web `tsc`/vitest/build, backend JDK-24 build + tests; branch protection on `master`/`main`.
+- Drive the unit-test suite to fully green (close `#223`), add instrumentation/e2e for login, quiz, and multiplayer, and add API contract tests.
+- Reproducible, signed release pipelines (no manual local signing).
+
+### Operations & observability
+- First-class structured logging, metrics, traces, and alerting before users feel pain.
+- Crash/ANR reporting (Crashlytics) and error tracking (Sentry) wired into release builds.
+- Documented runbooks for deploy, rollback, cert renewal, and incident response.
+
+### Documentation as a product
+- Keep `CLAUDE.md` / `README` / `CHANGELOG` per component in lockstep with the code; treat doc updates as part of "done". Legacy docs have repeatedly mis-described this project — honesty here is a feature.
 
 ---
 

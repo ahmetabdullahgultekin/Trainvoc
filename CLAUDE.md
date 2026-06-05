@@ -194,33 +194,34 @@ cd TrainvocBackend
 
 ## Critical Information
 
-### Current Project Status
+### Current Project Status (refreshed 2026-06-05 — see `ROADMAP.md`)
 
 | Component | Build Status | Feature Completeness | Notes |
 |-----------|-------------|---------------------|-------|
-| **TrainvocClient** | Builds | ~70% | Games UI deleted, TTS not connected |
-| **TrainvocWeb** | Builds | ~80% | Multiplayer functional |
-| **TrainvocBackend** | Builds | ~85% | Dual DB setup working |
+| **TrainvocClient** | Builds (clean checkout, #221 fixed) | ~85% of v1 | Games + TTS present (legacy "deleted/unwired" claims were STALE); auth + leaderboard shipped |
+| **TrainvocWeb** | Builds; `npm audit` = **0 vulns** | ~80% | Multiplayer functional; security + safe dep bumps merged |
+| **TrainvocBackend** | Builds (needs JDK 24 toolchain) | ~85% | Dual DB working; not yet deployed/hardened |
 
-### Known Issues
+### Known Issues (corrected — prior entries here were stale)
 
-1. **TrainvocClient** (117 open issues in TODO.md)
-   - Game UI screens were deleted (recoverable from git)
-   - Backend sync is placeholder implementation
-   - Cloud backup shows "Coming Soon" (no provider yet)
-   - ~~Password hashing~~ ✅ FIXED - Uses SHA-256
-   - ~~Mock leaderboard data~~ ✅ FIXED - Shows "Coming Soon"
-   - ~~Hardcoded UI strings~~ ✅ FIXED - Uses stringResource
+> ⚠️ **Stale-claim corrections (2026-06-05):** the single-player games and multiplayer UI are **present and wired** (the "games UI deleted" note was false on HEAD), and **TTS is connected**. "Story Mode" was renamed to "Learning Path" so it no longer over-promises (#168). The unit-test suite now compiles and runs (#222). See `TODO.md` for the live issue list.
+
+1. **TrainvocClient**
+   - ✅ Clean-checkout build fixed (#221 — google-services plugin conditional).
+   - ✅ Auth: Google Sign-In (#192), email-verify UI (#191), session timeout (#193).
+   - ✅ Leaderboard: local "Your Progress" + honest "global coming soon" (#194).
+   - ⚠️ Cloud/Drive backup still local-only (honestly "coming soon").
+   - ⚠️ 30 pre-existing unit-test runtime failures tracked as #223 (Android-SDK/mock issues, not blockers).
 
 2. **TrainvocWeb**
-   - ~~Hard-coded backend URL~~ ✅ FIXED - Uses VITE_API_URL
-   - No authentication implementation
-   - ~~Limited error handling~~ ✅ FIXED - Error utilities added
+   - ✅ Security alerts resolved; `npm audit` = 0; safe Dependabot patches merged.
+   - No authentication implementation (by design until backend identity exists).
 
 3. **TrainvocBackend**
-   - SSL disabled for development
-   - No authentication/authorization
-   - Missing rate limiting
+   - SSL terminated at Nginx (disabled in-app by design).
+   - Auth wired (Firebase + JWT) but not yet enforced end-to-end.
+   - Rate limiting present (bucket4j); DTO layer / API versioning / pagination still deferred to backend-hardening phase.
+   - Never deployed — see `ROADMAP.md` Phase 3.
 
 ### Important Files to Know
 

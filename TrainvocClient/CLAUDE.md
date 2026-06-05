@@ -1,13 +1,30 @@
 # Claude AI Session Notes
 ## Trainvoc Android App Development
 
-**Last Updated:** January 21, 2026
-**Assistant:** Claude (Anthropic)
-**Model:** Claude Sonnet 4.5
+**Last Updated:** June 5, 2026
 
 ---
 
-## 📋 Session History
+## ⚡ Current State (2026-06-05) — READ FIRST
+
+> The session history below is kept for provenance but **much of it is stale**. The authoritative current picture is in the root [`ROADMAP.md`](../ROADMAP.md) and [`TODO.md`](../TODO.md). Corrections to long-standing false claims:
+
+- **Games are NOT deleted.** 11 single-player games (`ui/games/`) and the 6-screen multiplayer UI (`ui/multiplayer/`) are present and wired into navigation. The "games UI deleted" saga below is historical; they were restored.
+- **TTS IS connected** (`audio/TextToSpeechService.kt`, used by `WordViewModel`/`ListeningQuizViewModel`/`AudioButton`).
+- **Clean checkout builds** — the `google-services` plugin is applied conditionally on `app/google-services.json` presence (#221).
+- **"Story Mode" → "Learning Path"** — renamed so it no longer promises narrative content it doesn't have (#168).
+- **Unit tests compile and run** — `mockito-kotlin 5.4.0` is declared, drifted tests reconciled, and a `MainDispatcherRule` fixes the test scheduler defect (#222). `:app:testDebugUnitTest` runs 178 tests; 30 pre-existing Android-SDK/mock failures are tracked as #223.
+- **Auth surface (v1-ready)**: email/password **+ Google Sign-In** (`#192`, `FirebaseAuthRepository.signInWithGoogle`), email-verification banner (`#191`, `EmailVerificationBanner` on ProfileScreen), session-timeout handling (`#193`, `AuthRepository.validateSession()` + `SessionExpiredHandler`). Covered by `AuthViewModelTest`.
+- **Leaderboard**: shows the user's real local "Your Progress" stats via `LeaderboardViewModel`; the global cross-user board is honestly "coming soon" pending the backend (`#194`).
+
+**Build/test commands** (host has `/opt/android-sdk` + JDK 21; no emulator):
+- Compile: `./gradlew :app:compileDebugKotlin`
+- Unit tests: `./gradlew :app:testDebugUnitTest`
+- Lightest test-source compile check: `./gradlew :app:compileDebugUnitTestKotlin`
+
+---
+
+## 📋 Session History (historical — see Current State above)
 
 ### Session 2026-01-21 (This Session)
 

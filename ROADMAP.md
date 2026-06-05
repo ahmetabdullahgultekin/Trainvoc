@@ -1,128 +1,190 @@
 # TRAINVOC ROADMAP
 
-> **Purpose**: Strategic sequencing toward a shippable **Android v1** (production track on Google Play), then web and iOS. This complements `TODO.md` (the issue-level tracker) and folds in `MASTER_FIX_PLAN.md`.
-> **Last Updated**: 2026-06-04
-> **Grounded in**: HEAD of `master` (commit `1f020c3`), GitHub `ahmetabdullahgultekin/Trainvoc`.
-> **Convention**: This file is strategic ("what next, in what order, why"). For per-issue detail and done-conditions, see `TODO.md`.
+> **Purpose**: The long-range, production-grade plan for taking Trainvoc from "feature-complete-but-unshipped" to a launched, multi-platform, growing product. This is the strategic narrative — *what next, in what order, and why*. For per-issue detail and done-conditions, see [`TODO.md`](./TODO.md). The historical refactor checklist lives in [`MASTER_FIX_PLAN.md`](./MASTER_FIX_PLAN.md) and is folded into the phases below.
+>
+> **Last Updated**: 2026-06-05 (branch `dev/2026-06-05`)
+> **Grounded in**: HEAD of `master` + `dev/2026-06-05`, GitHub `ahmetabdullahgultekin/Trainvoc`.
+> **Convention**: Phases are sequenced by dependency and value. Phase 0 is the only thing standing between today and a shipped Android v1; everything after compounds on a live product.
 
 ---
 
-## TL;DR
+## TL;DR — where we are, where we're going
 
-Trainvoc is **much further along than legacy docs imply**, but **not shippable from a clean checkout** and **blocked from Google Play production by policy, not code**.
+Trainvoc is a three-component vocabulary-learning ecosystem (Android app, React web, Spring Boot backend) that is **much further along than the legacy docs imply** but **not yet shipped**. The single biggest blocker to launch is **non-technical**: Google Play requires 20+ testers active for 14 consecutive days before granting production access, and that clock must be started *now*.
 
-- The Android app is **already in Google Play closed testing** (v1.1.2 released, v1.2.0 submitted). Production access was **DENIED 2026-01-25** — Google requires 20+ testers active for 14 consecutive days. This is the single biggest ship-blocker and it is **non-technical**.
-- A **clean checkout of the Android app does NOT build**: the `com.google.gms.google-services` Gradle plugin is applied unconditionally but `google-services.json` is gitignored/absent. This is the #1 **technical** blocker.
-- Two legacy "critical" claims are **stale**: the multiplayer & single-player game UIs were deleted in Jan 2026 but have since been **fully restored and wired into navigation** (commit `fb6d0bc`). Issue #171 should be closed.
-- The one **genuine** product-critical gap remains: **"Story Mode" has no story content** (#168) — it is a CEFR level-picker that launches a normal quiz. Either build real story content or rename/reposition the feature before marketing it.
+The engineering is in good shape: the clean-checkout build blocker is fixed (#221), the unit-test suite compiles and runs again (#222), the "Story Mode" honesty problem is resolved (#168), the auth surface now has Google Sign-In, email verification, and session-timeout handling (#191/#192/#193), the leaderboard shows real local progress (#194), and the web frontend has **zero known vulnerabilities**.
 
----
-
-## Current State (honest completeness per component)
-
-### TrainvocClient (Android) — Kotlin 2.1, Compose, Room, Hilt — ~80% of v1 scope, **does not build clean**
-
-| Area | State | Evidence |
-|------|-------|----------|
-| Core learning (dictionary, quiz, word CRUD, offline Room) | ✅ Working | `ui/screen/dictionary`, `ui/screen/quiz`, `WordViewModel.kt` |
-| Single-player games (11 games) | ✅ Implemented + wired | `ui/games/*Screen.kt` (11 screens) + `navigation/GamesNavigation.kt` → reached via `Route.GAMES_MENU` |
-| Multiplayer UI (6 screens) | ✅ Implemented + wired | `ui/multiplayer/*` + `navigation/MultiplayerNavigation.kt` → reached via `Route.MULTIPLAYER_HOME`; **#171 is STALE** |
-| Story Mode | ⚠️ **Misnamed** — no narrative content | `ui/screen/main/StoryScreen.kt` is a leaf-button CEFR level picker; `onLevelSelected` just calls `quizViewModel.startQuiz(...)`. **#168 CONFIRMED** |
-| TTS / audio | ✅ Connected | `audio/TextToSpeechService.kt` used in `WordViewModel`, `ListeningQuizViewModel`, `AudioButton` (legacy "TTS not connected" note is stale) |
-| Auth (Firebase + email/password) | ⚠️ Partial | Login/Register screens exist; **no Google Sign-In button** (#192), no email-verification UI (#191), no session-timeout handling (#193) |
-| Cloud backup / sync | ⚠️ Local only | `sync/CloudBackupManager.kt` Drive upload/download are `TODO` (lines 437/459); local backup works |
-| Leaderboard | ⚠️ "Coming Soon" placeholder | `LeaderboardScreen.kt` (#194) |
-| Build from clean checkout | ❌ **Broken** | `app/build.gradle.kts:7` applies `google.services`; `google-services.json` is gitignored (`.gitignore:9`) and absent |
-| Release signing | ⚠️ Env-gated | `signingConfigs.release` only populates if `TRAINVOC_KEYSTORE_*` env vars set, else release build is **unsigned**; keystore lives only on dev's Windows box (`D:\...\password.jks`) |
-| Tests | ✅ Present | ~22 test files under `app/src/test` + `androidTest` |
-
-Released: versionCode 13, versionName 1.2.0, minSdk 24, targetSdk/compileSdk 35, jvmTarget 17, locales en+tr.
-
-### TrainvocWeb (React 19 + TS + Vite + MUI) — ~80% — builds, no auth
-
-| Area | State | Evidence |
-|------|-------|----------|
-| Pages (home, play, game menu, lobby, room, leaderboard, profile, legal) | ✅ Present | `src/pages/*` (18 pages incl. Privacy/Terms) |
-| API + WebSocket config | ✅ Env-driven | `src/api.ts`, `src/services/WebSocketService.ts` use `import.meta.env.VITE_API_URL`; `.env.example` complete (#001–003 fixed) |
-| i18n (en/tr) | ✅ Present | `src/locales`; incomplete ES/DE/FR/AR removed per BRANDING.md |
-| Auth | ❌ None | No login/session implementation (web is server-driven, anonymous) |
-| Dependency health | ❌ **Debt** | 22 open Dependabot PRs + security PR #32 (5 alerts) unmerged |
-| Tests | ✅ Present | ~14 vitest/playwright spec files |
-| Build | ✅ `tsc && vite build` | `package.json` |
-
-### TrainvocBackend (Java 24, Spring Boot 3.5, dual PostgreSQL, WebSocket, Security) — ~85% — builds, dev-grade security
-
-| Area | State | Evidence |
-|------|-------|----------|
-| REST controllers | ✅ 6 controllers | Quiz, Auth, Sync, Leaderboard, Game, Word |
-| WebSocket multiplayer | ✅ Working | room create/join persists (fixed via EntityManager tx control) |
-| Dual datasource | ✅ Configured | `application-prod.properties` primary + `spring.second-datasource` (trainvoc-words), env-var passwords |
-| Auth | ⚠️ Firebase + JWT wired, not enforced | `SecurityConfig.java`, `JwtTokenProvider.java`, `FirebaseConfig.java` (guarded by `firebaseEnabled` flag + try/catch — builds without creds) |
-| SSL | ⚠️ Disabled | `application-prod.properties:13 server.ssl.enabled=false` (terminate at Nginx per `SSL_SETUP.md`) |
-| Hardening | ❌ Gaps | No rate limiting, broad `permitAll`, no API versioning/pagination/DTO layer (all `⏳ Deferred` in MASTER_FIX_PLAN Phase 5) |
-| Deployment | ❌ Never deployed | `docker-compose.yml` + `SSL_SETUP.md` exist but no live env |
-| Tests | ✅ Present | ~19 Java test files |
-
-### Infrastructure — scaffolded, never run
-
-`docker-compose.yml` (Postgres + backend + nginx), `SSL_SETUP.md` (Let's Encrypt), `deploy.sh`, target domain `trainvoc.rollingcatsoftware.com` / `api.trainvoc.rollingcatsoftware.com`. No GCP VM provisioned; no DNS; no certs.
+**The plan, in one breath**: ship Android v1 standalone (Phase 0–2) → stand up and harden the backend (Phase 3) → launch the web app (Phase 4) → reach iOS (Phase 5) → then grow the product with more games, social, analytics, and monetization (Phases 6–9), all on a foundation of real observability, testing, and CI/CD (Phase 10, continuous).
 
 ---
 
-## Strategic Assessment
+## Current state — honest completeness per component
 
-**The web and multiplayer stack (web + backend + WebSocket) is NOT required for Android v1.** The Android app is offline-first (local Room DB) and its core loop — dictionary, quizzes, single-player games, stats, gamification — works without any backend. The fastest path to a shipped product is to **decouple Android v1 from the backend** and ship it standalone, deferring multiplayer/sync/leaderboard to a v1.x once the backend is actually deployed.
+### TrainvocClient (Android) — Kotlin 2.1, Compose, Room, Hilt — ~85% of v1 scope
 
-Two things gate Android v1:
-1. **Build reproducibility** (google-services blocker) and **honest feature scope** (Story Mode).
-2. **Google's testing policy** — a 14-day clock that should be started *now*, in parallel with everything else, because it cannot be shortened.
+| Area | State | Notes |
+|------|-------|-------|
+| Core learning (dictionary, quiz, word CRUD, offline Room) | ✅ Working | Offline-first; no backend required |
+| Single-player games (11) + multiplayer UI (6 screens) | ✅ Implemented + wired | `#171` was a stale claim — verified present |
+| Story Mode → **Learning Path** | ✅ Honest | Renamed; no false narrative promise (`#168`) |
+| TTS / audio, gamification, stats | ✅ Connected | |
+| Auth (Firebase email/password **+ Google Sign-In**) | ✅ v1-ready | Google Sign-In (`#192`), email-verify UI (`#191`), session timeout (`#193`) all shipped on `dev/2026-06-05` |
+| Leaderboard | ✅ Local "Your Progress" + honest "global coming soon" | `#194`; online board awaits backend |
+| Cloud sync / Drive backup | ⚠️ Local only | Drive upload/download are `TODO` — honestly "coming soon" for v1 |
+| Clean-checkout build | ✅ Fixed | google-services plugin now conditional (`#221`) |
+| Unit tests | ✅ Compile + run | 178 tests, 148 passing; 30 pre-existing Android-SDK/mock failures tracked as `#223` |
+| Release signing | ⚠️ Env-gated | Keystore lives only on dev's `D:\` — **back it up** (operator) |
+
+### TrainvocWeb (React 19 + TS + Vite + MUI) — ~80% — builds, **0 vulnerabilities**
+
+| Area | State | Notes |
+|------|-------|-------|
+| Pages, API/WebSocket config, i18n (en/tr) | ✅ Present | Env-driven; legacy hardcoded URLs fixed |
+| Auth | ❌ None | Server-driven, anonymous (by design until backend identity exists) |
+| Dependency health | ✅ Clean | Security alerts resolved + safe Dependabot patches merged (`dev/2026-06-05`); `npm audit` = 0 |
+| Tests | ✅ 118 vitest passing | + Playwright e2e specs |
+| Build | ✅ `tsc && vite build` | Verified green |
+
+### TrainvocBackend (Java 24, Spring Boot 3.5, dual PostgreSQL, WebSocket, Security) — ~85% — dev-grade security
+
+| Area | State | Notes |
+|------|-------|-------|
+| REST controllers (6) + WebSocket multiplayer | ✅ Working | Room create/join persists |
+| Dual datasource, Firebase+JWT auth wiring, rate limiting (bucket4j) | ✅ Configured | Auth not yet enforced end-to-end |
+| Hardening | ❌ Gaps | No DTO layer, API versioning, pagination, Swagger exposure, broad `permitAll` (MASTER_FIX_PLAN Phase 5 `⏳ Deferred`) |
+| Deployment | ❌ Never deployed | `docker-compose.yml` + `SSL_SETUP.md` exist; no live env, no DNS, no certs |
+| Dependencies | ✅ Safe patches merged | postgres/org.json/jjwt/firebase/caffeine bumped (`dev/2026-06-05`); **build not locally verifiable** (host lacks JDK 24 toolchain) — CI must confirm |
+| Tests | ✅ ~19 Java tests | |
 
 ---
 
-## Phases toward Android v1 ship
+## Strategic assessment
 
-### Phase 0 — Unblock the build & start the policy clock (Week 1) — **do these first, in parallel**
-- **P0-A Fix clean-checkout build**: make the `google-services` plugin optional (apply-conditionally on `google-services.json` presence, or commit a CI-safe template / move Firebase Auth behind a build flag). Without this nobody but the original dev can build. *(see TODO P0)*
-- **P0-B Resolve Story Mode (#168)**: decide build-content vs rename. Minimum-viable v1 = rename "Story Mode" → "Levels / Learning Path" and drop the "learn through stories" marketing claim, OR ship a thin first chapter. Do not ship a feature whose name lies.
-- **P0-C Start Play testing clock**: recruit 20+ closed testers, keep active 14 days (#219). This is the long pole — start day 1.
-- **P0-D Document the keystore** as a project secret (currently only on dev's `D:\` drive); back it up. Losing it = cannot update the app ever.
+**The web + multiplayer + backend stack is NOT required for Android v1.** The Android app is offline-first; its core loop (dictionary → quiz → games → stats → gamification) works with no network. The fastest path to a *shipped product* is to decouple Android v1 from the backend and ship it standalone, deferring online multiplayer/sync/global-leaderboard to a v1.x once the backend is actually deployed.
 
-### Phase 1 — Stabilize Android for standalone ship (Weeks 1–2)
-- Close stale issues: verify & close #171 (multiplayer UI exists), reconcile TODO statuses.
-- Gracefully hide/disable backend-dependent features for a standalone build via a feature flag: multiplayer, cloud sync, online leaderboard (#194) → present as "Coming Soon" honestly rather than broken.
-- Fix auth gaps that affect standalone UX or remove auth from the v1 surface: #191 (email-verify UI), #192 (Google Sign-In), #193 (session timeout).
-- Confirm release build is **signed** (wire keystore env vars into the release process; today an env-less release is unsigned).
-- Run the existing unit/instrumented tests green; capture screenshots + feature graphic (Play Store assets).
+Two things — and only two — gate Android v1:
+1. **Build reproducibility + honest scope** — both now **done** (`#221`, `#168`).
+2. **Google's 14-day testing wall** — a hard, non-engineering constraint that must be started immediately and run in parallel with everything else.
 
-### Phase 2 — Android v1 production submission (Week 2–3, after 14-day test window)
-- Re-apply for production access (#220) once the testing requirement is satisfied.
-- Complete Play Console: Data Safety form, content rating, store listing (assets in `TrainvocClient/store-listing/`).
-- Optional: migrate package id to `com.rollingcatsoftware.trainvoc` (note: changing applicationId on an already-published app means a **new listing** — decide before production).
+---
 
-### Phase 3 — Deploy backend & light up online features (post-v1)
-- Provision GCP VM (or equivalent), DNS, Let's Encrypt (`SSL_SETUP.md`), run `docker-compose.yml` with real secrets.
-- Merge the Dependabot/security backlog (PR #32 + Spring Boot/Postgres/JWT bumps) **before** exposing the backend publicly.
-- Enable real online leaderboard, cloud sync (Drive), and multiplayer end-to-end against the deployed backend; verify `wss://`.
-- Backend hardening from MASTER_FIX_PLAN Phase 5: rate limiting, tighten `permitAll`, DTO layer, API versioning, pagination, Swagger.
+# PHASES
 
-### Phase 4 — Web v1 (post-backend)
-- Merge web Dependabot backlog; ship web at `trainvoc.rollingcatsoftware.com` pointed at the live API.
-- Add a minimal auth/session story for web if multiplayer identity is needed.
+## Phase 0 — Unblock & start the clock (Week 1) — *do these in parallel, first*
 
-### Phase 5 — iOS (future)
-- Not started. Evaluate KMP/Compose Multiplatform reuse vs native SwiftUI. Out of scope until Android v1 + backend are live.
+Status: engineering items **largely complete on `dev/2026-06-05`**; the policy clock and keystore backup are **operator actions**.
+
+- ✅ **P0-A Clean-checkout build** — google-services plugin applied conditionally on `google-services.json` presence (`#221`).
+- ✅ **P0-B Story Mode honesty** — renamed to "Learning Path"; no narrative promised (`#168`).
+- ✅ **P0-C Test suite compiles + runs** — `mockito-kotlin` declared, drifted tests reconciled, scheduler defect fixed (`#222`).
+- ✅ **P0-E Auth gaps for v1** — Google Sign-In (`#192`), email-verify UI (`#191`), session timeout (`#193`).
+- ✅ **P0-F Leaderboard honesty + value** — local "Your Progress" + "global coming soon" (`#194`).
+- ⏳ **P0-C* Start Play closed-testing clock** *(operator)* — recruit **20+ testers**, keep active **14 consecutive days** (`#219` / `#220`). This is the long pole; nothing engineering can shorten it.
+- ⏳ **P0-D Back up the signing keystore** *(operator)* — currently only at `D:\…\password.jks`. Losing it = the app can never be updated. Store it in a secrets manager / encrypted off-machine backup, and wire `TRAINVOC_KEYSTORE_*` into CI so release builds are reliably signed.
+
+**Exit criteria**: a fresh `git clone` builds `assembleDebug`; Story Mode tells no lie; the test task runs; the 14-day tester window has *started*; the keystore is backed up.
+
+## Phase 1 — Stabilize Android for standalone ship (Weeks 1–2)
+
+- Drive remaining `#223` unit-test failures to green (Robolectric for `android.util.Log`/`DateFormat`/Play-Services static init; fix the genuine `UnfinishedStubbing` mock bug). Gate CI on `:app:testDebugUnitTest`.
+- Feature-flag backend-dependent surfaces for a clean standalone build: online multiplayer, cloud sync, **global** leaderboard — all presented honestly as "coming soon", never broken.
+- Finish the auth surface polish: surface email-verify / session-expiry on more entry points; add a "skip and play offline" fast path that never dead-ends.
+- Confirm the **release build is signed** (env vars wired) and shrunk (R8) without stripping needed classes; smoke-test the AAB.
+- Capture Play Store assets: 2–8 screenshots, 1024×500 feature graphic, short/long descriptions (EN + TR) — most copy already in `TrainvocClient/store-listing/`.
+
+## Phase 2 — Android v1 production submission (Weeks 2–3, after the 14-day window)
+
+- Re-apply for production access (`#220`) once the testing requirement is satisfied.
+- Complete Play Console: **Data Safety** form, content rating questionnaire, target-audience, store listing.
+- Decide the package-id question **before** production: staying on `com.gultekinahmetabdullah.trainvoc` vs migrating to `com.rollingcatsoftware.trainvoc` (a rename on a *published* app means a brand-new listing — decide once, decide early).
+- Staged rollout (e.g. 10% → 50% → 100%) with crash/ANR watch via Play vitals.
+
+**Milestone: Trainvoc Android v1 is live on Google Play production.**
+
+## Phase 3 — Deploy & harden the backend (post-v1, Weeks 3–6)
+
+This is where the online product comes alive. Sequencing matters: **deploy privately → harden → expose**.
+
+1. **Provision**: a small cloud VM (GCP Compute Engine or equivalent), DNS for `api.trainvoc.rollingcatsoftware.com`, Let's Encrypt certs per `SSL_SETUP.md`, `docker-compose.yml` with real secrets (`--env-file`, never committed).
+2. **Verify the build in CI with JDK 24** (the host used for `dev/2026-06-05` could not compile the backend) — make the Spring Boot build a required gate before any deploy.
+3. **Merge the dependency backlog before exposure**: the safe non-major bumps are in; schedule dedicated test-then-merge for the **held majors** — Spring Boot 4 (`#25`), springdoc 3 (`#23`), gradle 9 (`#16`).
+4. **Harden** (MASTER_FIX_PLAN Phase 5 backlog, now mandatory): introduce a **DTO layer**, **API versioning** (`/api/v1`), **pagination**, tighten `permitAll` to least-privilege, enforce Firebase/JWT auth end-to-end, finalize CORS allowlist, add **rate-limit tuning** + abuse protection, structured request/response logging, and a documented OpenAPI/Swagger surface (admin-gated).
+5. **Light up online features against the live API**: real global leaderboard, Google Drive cloud sync/backup (the `CloudBackupManager` TODOs), end-to-end multiplayer over `wss://` with reconnection logic.
+
+**Milestone: a hardened backend serves authenticated, versioned APIs over TLS.**
+
+## Phase 4 — Web v1 launch (post-backend, Weeks 6–8)
+
+- Point `trainvoc.rollingcatsoftware.com` at the live API; ship the web app.
+- Add a minimal web auth/session story (reuse the backend identity) so multiplayer identity is coherent across web and mobile.
+- Implement the deferred web items: WebSocket reconnection/backoff, error boundaries, richer loading states, and the Observer-pattern WebSocket refactor (MASTER_FIX_PLAN 3.2).
+- Lighthouse/perf budget, accessibility pass, PWA install polish.
+
+**Milestone: web and mobile share one live backend.**
+
+## Phase 5 — iOS (Weeks 8–14)
+
+- Evaluate **Compose Multiplatform / KMP** (reuse domain + data layers from Android) vs native SwiftUI. KMP is the leading candidate given the Kotlin codebase.
+- Port the offline-first core loop first (dictionary/quiz/games/stats), then auth, then online features.
+- App Store Connect setup, TestFlight beta, privacy nutrition labels, review submission.
+
+**Milestone: Trainvoc on iOS.**
+
+---
+
+# GROWTH PHASES (post-launch, value-ordered, parallelizable)
+
+## Phase 6 — Learning depth & engagement
+- **Adaptive difficulty** (`#179`): quizzes that respond to performance.
+- **Hint system** (`#181`): reveal-letter / eliminate-option.
+- **Quiz feedback & speed bonuses** (`#180`, `#199`, `#200`): audio cues, time-pressure scoring.
+- **Real chapter/story content** (`#177`, `#178`): build the narrative "Learning Path" that #168 deliberately deferred — themed word groupings, branching lessons, contextual usage.
+- **Spaced repetition tuning** (SM-2 already in `Word`): surface "due for review" queues prominently.
+- Flip-Cards readability (`#184`): pinch-zoom / manual enlarge.
+
+## Phase 7 — Social & multiplayer growth
+- **Friend system** (`#189`): add/view friends (needs deployed backend).
+- Real-time multiplayer matchmaking, room discovery, rematch flows, post-game social.
+- Shareable results, invite links, and (later) Firestore for social data (`#206`).
+- Cross-device sync of progress through the authenticated account.
+
+## Phase 8 — Analytics & data-driven iteration
+- **Google Analytics / Firebase Analytics events** (`#205`): funnel + retention instrumentation.
+- A/B testing harness for onboarding and difficulty curves.
+- Surface `lastAnswered` and other collected-but-unshown stats (`#217`); session-length recommendations (`#214`).
+- Backend metrics + dashboards (Prometheus/Grafana or hosted equivalent), error tracking (Sentry/Crashlytics).
+
+## Phase 9 — Monetization & sustainability
+- Billing client is already a dependency — design a **fair, non-predatory** model: optional "Trainvoc Plus" (advanced analytics, unlimited cloud sync, exclusive word packs/themes), one-time or subscription.
+- Server-side receipt validation; entitlement gating behind feature flags.
+- Keep the core learning loop free and complete — monetize *depth*, not access.
+
+## Phase 10 — Engineering excellence (continuous, underpins everything)
+- **CI/CD**: required gates per component (Android unit + lint; web `tsc`/vitest/build; backend JDK-24 build + tests); branch protection; reproducible release pipelines that sign the AAB from CI secrets.
+- **Test coverage**: drive `#223` to zero, add instrumentation/e2e for critical flows (login, quiz, multiplayer), contract tests for the API.
+- **Observability**: structured logs, traces, alerting before users notice.
+- **Dependency hygiene**: keep Dependabot current; scheduled major-bump windows; `npm audit` / OWASP gates kept at zero.
+- **Docs as a product**: keep `CLAUDE.md`/`README`/`CHANGELOG` per component in lockstep with the code (see the per-component guides).
 
 ---
 
 ## Folded-in MASTER_FIX_PLAN status
 
-Phases 1–6 of `MASTER_FIX_PLAN.md` are marked ✅ COMPLETED (security baseline, SOLID, design patterns, DRY, architecture, test infra), **but a large number of sub-items are `⏳ Deferred`** — notably backend DTO layer, API versioning, pagination, rate limiting, Swagger, and most architecture/state-management refactors. Treat those Deferred items as **Phase 3 (backend) hardening backlog**, not as done work. They are not v1-Android blockers.
+`MASTER_FIX_PLAN.md` Phases 1–6 are marked ✅ COMPLETED (security baseline, SOLID, design patterns, DRY, architecture, test infra), **but many sub-items are `⏳ Deferred`** — notably the backend DTO layer, API versioning, pagination, rate-limit tuning, Swagger exposure, and the web Observer-pattern WebSocket refactor. Those Deferred items are **not Android-v1 blockers**; they are absorbed into **Phase 3 (backend hardening)** and **Phase 4 (web)** above and become mandatory the moment those surfaces go public.
 
 ---
 
 ## Risks & watch-items
-- **Keystore single point of failure** — only on dev's Windows machine; back it up immediately.
-- **Stale documentation** — multiple legacy `.md` files (root CLAUDE.md, TrainvocClient/CLAUDE.md, GAMES_UI_INVESTIGATION.md) still claim games are deleted and TTS is unwired; both are false on HEAD. They mislead planning.
-- **33 open PRs** (22 currently open: Dependabot dep bumps across all three components + security PR #32). Unmerged security fixes are a liability the moment the backend/web go live.
-- **No live environment anywhere** — backend deployment is greenfield; budget real time for first deploy + TLS + DNS.
-- **Google production-access policy** is a hard 14-day wall, independent of engineering. Start it before anything else.
+
+- **Keystore is a single point of failure** — only on the dev's Windows box. Back it up *before* Phase 2. (operator)
+- **Google's 14-day testing wall** — a hard, non-engineering gate. Start it on day one. (operator)
+- **Backend build needs JDK 24** — not available on every host; make the CI toolchain authoritative and gate deploys on a green backend build.
+- **Held major bumps** (Spring Boot 4, springdoc 3, gradle 9, vite 8, @vitejs/plugin-react 6) — each needs a dedicated test-then-merge; don't let them rot, but don't rush them into a release either.
+- **No live environment anywhere yet** — the first backend deploy + TLS + DNS is greenfield; budget real time.
+- **Stale documentation drift** — legacy `.md` files have repeatedly mis-described the project (deleted games, unwired TTS, mockito vs MockK). Keep docs honest; treat doc updates as part of "done".
+
+---
+
+## See also: Future / Professionalization
+
+A dedicated section on raising Trainvoc to professional engineering standards — security, compliance, accessibility, internationalization, and operational maturity — lives at the end of [`README.md`](./README.md#future--professionalization) and is cross-referenced from each component's `CLAUDE.md`.

@@ -4,6 +4,8 @@
 
 **TrainvocBackend** is a Spring Boot-based game server providing REST API and WebSocket support for the Trainvoc multiplayer vocabulary game platform. It manages game rooms, players, quizzes, and real-time game state.
 
+> **Status (2026-06-05):** Safe non-major dependency bumps merged on `dev/2026-06-05` — postgresql 42.7.10, org.json 20251224, jjwt 0.13.0 (verified API-compatible with the existing fluent usage), firebase-admin 9.8.0, caffeine 3.2.3. **Held** breaking majors: Spring Boot 4 (#25), springdoc 3 (#23), gradle 9 (#16). **Build requires a JDK 24 toolchain** — it could not be compiled on the JDK-21 host used for that branch, so **CI must verify the build**. Not yet deployed/hardened — see `../ROADMAP.md` Phase 3 (DTO layer, API versioning, pagination, auth enforcement).
+
 ---
 
 ## Tech Stack
