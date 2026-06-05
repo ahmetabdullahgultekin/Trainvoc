@@ -2,8 +2,8 @@ package com.rollingcatsoftware.trainvocmultiplayerapplication.config;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
+import org.springframework.boot.hibernate.autoconfigure.HibernateProperties;
+import org.springframework.boot.jpa.autoconfigure.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,7 @@ public class SecondDataSourceConfig {
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(jpaProperties.getProperties());
-        properties.putAll(hibernateProperties.determineHibernateProperties(jpaProperties.getProperties(), new org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings()));
+        properties.putAll(hibernateProperties.determineHibernateProperties(jpaProperties.getProperties(), new org.springframework.boot.hibernate.autoconfigure.HibernateSettings()));
         em.setJpaPropertyMap(properties);
         return em;
     }
