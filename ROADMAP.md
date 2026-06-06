@@ -45,7 +45,7 @@ The engineering is in good shape: the clean-checkout build blocker is fixed (#22
 | Tests | ✅ 118 vitest passing | + Playwright e2e specs |
 | Build | ✅ `tsc && vite build` | Verified green |
 
-### TrainvocBackend (Java 24, Spring Boot 3.5, dual PostgreSQL, WebSocket, Security) — ~85% — dev-grade security
+### TrainvocBackend (Java 21 LTS, Spring Boot 4.0.6, dual PostgreSQL, WebSocket, Security) — ~85% — dev-grade security
 
 | Area | State | Notes |
 |------|-------|-------|
@@ -53,7 +53,7 @@ The engineering is in good shape: the clean-checkout build blocker is fixed (#22
 | Dual datasource, Firebase+JWT auth wiring, rate limiting (bucket4j) | ✅ Configured | Auth not yet enforced end-to-end |
 | Hardening | ❌ Gaps | No DTO layer, API versioning, pagination, Swagger exposure, broad `permitAll` (MASTER_FIX_PLAN Phase 5 `⏳ Deferred`) |
 | Deployment | ❌ Never deployed | `docker-compose.yml` + `SSL_SETUP.md` exist; no live env, no DNS, no certs |
-| Dependencies | ✅ Safe patches merged | postgres/org.json/jjwt/firebase/caffeine bumped (`dev/2026-06-05`); **build not locally verifiable** (host lacks JDK 24 toolchain) — CI must confirm |
+| Dependencies | ✅ Safe patches merged + **Spring Boot 4 migration** | postgres/org.json/jjwt/firebase/caffeine bumped (`dev/2026-06-05`); **Spring Boot 4.0.6 + Jackson 3 + springdoc 3 on JDK 21 LTS** (`migrate/backend-spring-boot-4-2026-06-05`) — drops EOL JDK 24, `clean build -x test` is SUCCESSFUL on the host. Closes held majors #25 + #23 |
 | Tests | ✅ ~19 Java tests | |
 
 ---
@@ -106,8 +106,8 @@ Status: engineering items **largely complete on `dev/2026-06-05`**; the policy c
 This is where the online product comes alive. Sequencing matters: **deploy privately → harden → expose**.
 
 1. **Provision**: a small cloud VM (GCP Compute Engine or equivalent), DNS for `api.trainvoc.rollingcatsoftware.com`, Let's Encrypt certs per `SSL_SETUP.md`, `docker-compose.yml` with real secrets (`--env-file`, never committed).
-2. **Verify the build in CI with JDK 24** (the host used for `dev/2026-06-05` could not compile the backend) — make the Spring Boot build a required gate before any deploy.
-3. **Merge the dependency backlog before exposure**: the safe non-major bumps are in; schedule dedicated test-then-merge for the **held majors** — Spring Boot 4 (`#25`), springdoc 3 (`#23`), gradle 9 (`#16`).
+2. **Verify the build in CI with JDK 21 LTS** (the backend now targets JDK 21 after the Spring Boot 4 migration; `clean build -x test` is SUCCESSFUL on the host) — make the Spring Boot build a required gate before any deploy.
+3. **Merge the dependency backlog before exposure**: the safe non-major bumps are in, and **Spring Boot 4 (`#25`) + springdoc 3 (`#23`) are migrated** on `migrate/backend-spring-boot-4-2026-06-05` (PR open for owner review). Remaining held major: gradle 9 (`#16`) — schedule a dedicated test-then-merge (wrapper is 8.14.2, which Boot 4 supports).
 4. **Harden** (MASTER_FIX_PLAN Phase 5 backlog, now mandatory): introduce a **DTO layer**, **API versioning** (`/api/v1`), **pagination**, tighten `permitAll` to least-privilege, enforce Firebase/JWT auth end-to-end, finalize CORS allowlist, add **rate-limit tuning** + abuse protection, structured request/response logging, and a documented OpenAPI/Swagger surface (admin-gated).
 5. **Light up online features against the live API**: real global leaderboard, Google Drive cloud sync/backup (the `CloudBackupManager` TODOs), end-to-end multiplayer over `wss://` with reconnection logic.
 
@@ -178,9 +178,9 @@ This is where the online product comes alive. Sequencing matters: **deploy priva
 
 - **Keystore is a single point of failure** — only on the dev's Windows box. Back it up *before* Phase 2. (operator)
 - **Google's 14-day testing wall** — a hard, non-engineering gate. Start it on day one. (operator)
-- **Backend build needs JDK 24** — not available on every host; make the CI toolchain authoritative and gate deploys on a green backend build.
+- **Backend now builds on JDK 21 LTS** (Spring Boot 4 migration dropped the EOL JDK 24 toolchain) — make the CI toolchain authoritative and gate deploys on a green backend build.
 - **Web major bumps LANDED 2026-06-05** (vite 6→8, @vitejs/plugin-react 4→6, @playwright/test 1.57→1.60, vitest 4.0→4.1) — verified green: `npm run build`, 118/118 unit, 22/23 backend-independent e2e on playwright 1.60 (the 1 fail needs the live Spring API). See `TrainvocWeb/`.
-- **Held major bumps** (Spring Boot 4, springdoc 3, gradle 9) — backend only; each needs a dedicated test-then-merge on a JDK that satisfies the toolchain (host JDK 21 cannot verify these yet). Don't let them rot, but don't rush them into a release either.
+- **Held major bumps** — Spring Boot 4 + springdoc 3 are **migrated** (`migrate/backend-spring-boot-4-2026-06-05`, PR open for owner review, verified on JDK 21); gradle 9 remains, backend-only, needs its own test-then-merge. Don't rush it into a release.
 - **No live environment anywhere yet** — the first backend deploy + TLS + DNS is greenfield; budget real time.
 - **Stale documentation drift** — legacy `.md` files have repeatedly mis-described the project (deleted games, unwired TTS, mockito vs MockK). Keep docs honest; treat doc updates as part of "done".
 

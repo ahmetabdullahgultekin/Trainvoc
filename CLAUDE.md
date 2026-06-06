@@ -25,7 +25,7 @@
 ├── TrainvocWeb/             # Web frontend (React, TypeScript, Vite)
 │   ├── CLAUDE.md            # Web development guide
 │   └── src/                 # React components and pages
-├── TrainvocBackend/         # Server (Spring Boot, Java 24)
+├── TrainvocBackend/         # Server (Spring Boot 4, Java 21 LTS)
 │   ├── CLAUDE.md            # Backend development guide
 │   └── src/                 # Controllers, services, models
 ├── TODO.md                  # ⭐ UNIFIED ISSUE TRACKER - Single source of truth
@@ -151,8 +151,8 @@ This is the **SINGLE SOURCE OF TRUTH** for all issues, bugs, TODOs, and improvem
 
 | Layer | TrainvocClient | TrainvocWeb | TrainvocBackend |
 |-------|---------------|-------------|-----------------|
-| **Language** | Kotlin 2.3.20 | TypeScript 5.8.3 | Java 24 |
-| **Framework** | Jetpack Compose | React 19.1.0 | Spring Boot 3.5.0 |
+| **Language** | Kotlin 2.3.20 | TypeScript 5.8.3 | Java 21 (LTS) |
+| **Framework** | Jetpack Compose | React 19.1.0 | Spring Boot 4.0.6 |
 | **Build** | Gradle (KTS) | Vite 8.0 | Gradle |
 | **Database** | Room/SQLite | N/A | PostgreSQL |
 | **State** | ViewModel/StateFlow | React State | Spring Session |
@@ -200,7 +200,7 @@ cd TrainvocBackend
 |-----------|-------------|---------------------|-------|
 | **TrainvocClient** | Builds (clean checkout, #221 fixed) | ~85% of v1 | Games + TTS present (legacy "deleted/unwired" claims were STALE); auth + leaderboard shipped |
 | **TrainvocWeb** | Builds; `npm audit` = **0 vulns** | ~80% | Multiplayer functional; security + safe dep bumps merged |
-| **TrainvocBackend** | Builds (needs JDK 24 toolchain) | ~85% | Dual DB working; not yet deployed/hardened |
+| **TrainvocBackend** | Builds on JDK 21 LTS (Spring Boot 4.0.6) | ~85% | Dual DB working; not yet deployed/hardened |
 
 ### Known Issues (corrected — prior entries here were stale)
 
@@ -305,7 +305,7 @@ Scopes: client, web, backend, root
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| JDK | 24+ | TrainvocBackend |
+| JDK | 21 (LTS) | TrainvocBackend |
 | Node.js | 18+ | TrainvocWeb |
 | Android Studio | Latest | TrainvocClient |
 | PostgreSQL | 15+ | TrainvocBackend database |
