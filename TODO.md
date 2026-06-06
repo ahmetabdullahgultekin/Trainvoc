@@ -1,7 +1,7 @@
 # Trainvoc - Unified Issue Tracker
 
 > **Purpose**: Single source of truth for ALL issues, TODOs, bugs, and improvements across the entire project.
-> **Last Updated**: 2026-06-04 (refreshed against HEAD `1f020c3`; statuses re-verified in code)
+> **Last Updated**: 2026-06-06 (SRS engine S1+S4 shipped on `feat/srs-engine`; Gradle 9.4.1 verified, PR #16 retired)
 > **Total Issues**: 221
 > **Strategic context**: see `ROADMAP.md` for phased path to Android v1 ship.
 
@@ -350,6 +350,9 @@ Curated, actionable slice of the issue list below, ordered by what blocks an **A
 
 | # | Component | Description | Fixed Date | Fixed By |
 |---|-----------|-------------|------------|----------|
+| SRS-S1 | Android | **FSRS-5 spaced-repetition algorithm** shipped (Phase 6, design doc + ADR-0001). Pure-Kotlin `srs/algorithm/`: `FsrsAlgorithm` (two-component stability+difficulty model, published universal weights), `FsrsCard`/`FsrsRating`/`FsrsState`, `Sm2ToFsrsMigrator` (SM-2→FSRS seeding for Room V18). 22 headless JVM unit tests green (`:app:testDebugUnitTest`, no emulator). UI (Review Queue S2) + quiz hook (S3) are the next slices; all behind `srs_engine_enabled` flag (default OFF). | 2026-06-06 | Claude (feat/srs-engine) |
+| SRS-S4 | Backend | **SRS cross-device sync endpoints** shipped: `POST /api/v1/srs/reviews` (batch upsert, last-write-wins on `clientUpdatedAt`) + `GET /api/v1/srs/schedule`. Additive `srs_schedule` table (`SrsSchedule` entity, primary DB, Hibernate ddl-auto — no existing table touched), `SrsService`, `SrsController`, auth-gated in `SecurityConfig`. 14 tests green on JDK 21 / Spring Boot 4. | 2026-06-06 | Claude (feat/srs-engine) |
+| 16 | Backend | **Gradle wrapper 8.14.2 → 9.4.1 verified + shipped** (Dependabot #16). SB4 backend `clean build` SUCCESSFUL on Gradle 9.4.1; full test suite behaves identically (same 20 pre-existing #222/#223 failures, 0 new). Upgrade lands on `feat/srs-engine`; stale conflicting PR #16 closed in favour of it. | 2026-06-06 | Claude (feat/srs-engine) |
 | 221 | Android | Clean-checkout build unblocked: `google-services` plugin declared `apply false` + applied conditionally on `app/google-services.json` presence; added `google-services.json.sample`. Verified `:app:help` config resolves BUILD SUCCESSFUL with the Firebase file absent and present. | 2026-06-05 | Claude (exec/p0) |
 | 168 | Android | Story Mode renamed to honest "Learning Path" (EN) / "Öğrenme Yolu" (TR) + subtitle, dropping the false "learn through stories" promise (no narrative content exists). Added pure-JVM `StoryModeRenameTest` regression guard. | 2026-06-05 | Claude (exec/p0) |
 | 001 | Web | WebSocket URL now uses VITE_WS_URL or derives from VITE_API_URL | 2026-01-25 | Claude |

@@ -364,7 +364,25 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: January 25, 2026 (Authentication & Firebase Integration)
+### Latest Session: June 6, 2026 (Spaced-Repetition / FSRS Engine — Phase 6)
+
+**Branch:** `feat/srs-engine` (off `master`)
+**Focus:** Build the SRS engine's first shippable slices per `docs/design/srs-spaced-repetition-engine.md` + ADR-0001 (FSRS over SM-2), and clear the last held dependency.
+
+**Shipped (all behind `srs_engine_enabled`, default OFF — flag wiring is S2/S3):**
+- **S1 — FSRS-5 algorithm (Android, pure Kotlin)**: `TrainvocClient/.../srs/algorithm/` — `FsrsAlgorithm` (two-component stability+difficulty memory model, published universal weights, forgetting curve, interval/retrievability), `FsrsCard`/`FsrsRating`/`FsrsState`, `Sm2ToFsrsMigrator` (SM-2→FSRS seeding for the future Room V18). **22 headless JVM unit tests green** (`:app:testDebugUnitTest`, no emulator needed). No UI yet — Review Queue (S2) + quiz auto-schedule hook (S3) are the next slices; Room V18 migration + `ReviewScheduleDao` are the remaining S1 persistence wiring.
+- **S4 — backend cross-device sync (Spring Boot 4 / JDK 21)**: `POST /api/v1/srs/reviews` (batch upsert, last-write-wins on `clientUpdatedAt`) + `GET /api/v1/srs/schedule`. `SrsSchedule` entity (**additive** `srs_schedule` table, primary DB, Hibernate ddl-auto — no existing table touched), `SrsService`, `SrsController`, `dto/srs/` records, auth-gated in `SecurityConfig`. **14 backend tests green**; full suite still 230 tests / 20 pre-existing failures (zero new).
+- **Dependabot #16 (Gradle 9.4.1)**: verified the SB4 backend builds + tests **identically** on Gradle 9.4.1 → shipped the wrapper bump on this branch; stale conflicting PR #16 retired.
+
+**Build/test commands used (host JDK 21, `/opt/android-sdk`, no emulator):**
+- Backend: `cd TrainvocBackend && ./gradlew test` (JDK 21; wrapper now 9.4.1).
+- Android SRS only: `cd TrainvocClient && ./gradlew :app:testDebugUnitTest --tests "com.gultekinahmetabdullah.trainvoc.srs.*"`.
+
+**Boundary noted:** the Android FSRS logic is pure Kotlin and fully unit-tested headless; the Review Queue UI + ViewModel + Room V18 persistence (S2/S3) require Compose/Room wiring that can only be end-to-end-verified on a device/emulator (none available here).
+
+---
+
+### Previous Session: January 25, 2026 (Authentication & Firebase Integration)
 
 **Branch:** `master`
 **Focus:** Firebase Authentication Integration + Issue Tracker Completion
