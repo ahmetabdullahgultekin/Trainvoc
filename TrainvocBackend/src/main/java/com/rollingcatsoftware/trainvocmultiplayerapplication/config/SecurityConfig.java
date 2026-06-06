@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         // Sync endpoints require authentication
                         .requestMatchers("/api/v1/sync/**").authenticated()
+                        // SRS (spaced-repetition) schedule sync requires authentication
+                        .requestMatchers("/api/v1/srs/**").authenticated()
                         // All other endpoints require authentication (for future use)
                         .anyRequest().permitAll()
                 )

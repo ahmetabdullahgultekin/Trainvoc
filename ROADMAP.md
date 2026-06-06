@@ -2,7 +2,7 @@
 
 > **Purpose**: The long-range, production-grade plan for taking Trainvoc from "feature-complete-but-unshipped" to a launched, multi-platform, growing product. This is the strategic narrative — *what next, in what order, and why*. For per-issue detail and done-conditions, see [`TODO.md`](./TODO.md). The historical refactor checklist lives in [`MASTER_FIX_PLAN.md`](./MASTER_FIX_PLAN.md) and is folded into the phases below.
 >
-> **Last Updated**: 2026-06-05 (branch `dev/2026-06-05`)
+> **Last Updated**: 2026-06-06 (branch `feat/srs-engine` — SRS engine S1+S4 shipped; Gradle 9 verified)
 > **Grounded in**: HEAD of `master` + `dev/2026-06-05`, GitHub `ahmetabdullahgultekin/Trainvoc`.
 > **Convention**: Phases are sequenced by dependency and value. Phase 0 is the only thing standing between today and a shipped Android v1; everything after compounds on a live product.
 
@@ -107,7 +107,7 @@ This is where the online product comes alive. Sequencing matters: **deploy priva
 
 1. **Provision**: a small cloud VM (GCP Compute Engine or equivalent), DNS for `api.trainvoc.rollingcatsoftware.com`, Let's Encrypt certs per `SSL_SETUP.md`, `docker-compose.yml` with real secrets (`--env-file`, never committed).
 2. **Verify the build in CI with JDK 21 LTS** (the backend now targets JDK 21 after the Spring Boot 4 migration; `clean build -x test` is SUCCESSFUL on the host) — make the Spring Boot build a required gate before any deploy.
-3. **Merge the dependency backlog before exposure**: the safe non-major bumps are in, and **Spring Boot 4 (`#25`) + springdoc 3 (`#23`) are migrated** on `migrate/backend-spring-boot-4-2026-06-05` (PR open for owner review). Remaining held major: gradle 9 (`#16`) — schedule a dedicated test-then-merge (wrapper is 8.14.2, which Boot 4 supports).
+3. **Merge the dependency backlog before exposure**: the safe non-major bumps are in, and **Spring Boot 4 (`#25`) + springdoc 3 (`#23`) are migrated** (merged to `master`). **Gradle 9.4.1 (`#16`) is now verified** (2026-06-06): the SB4 backend `clean build` is SUCCESSFUL and the full test suite behaves identically on Gradle 9 (same 20 pre-existing `#222`/`#223` failures, zero new) — the upgrade ships on `feat/srs-engine`; stale PR #16 is closed in favour of it.
 4. **Harden** (MASTER_FIX_PLAN Phase 5 backlog, now mandatory): introduce a **DTO layer**, **API versioning** (`/api/v1`), **pagination**, tighten `permitAll` to least-privilege, enforce Firebase/JWT auth end-to-end, finalize CORS allowlist, add **rate-limit tuning** + abuse protection, structured request/response logging, and a documented OpenAPI/Swagger surface (admin-gated).
 5. **Light up online features against the live API**: real global leaderboard, Google Drive cloud sync/backup (the `CloudBackupManager` TODOs), end-to-end multiplayer over `wss://` with reconnection logic.
 
@@ -139,7 +139,10 @@ This is where the online product comes alive. Sequencing matters: **deploy priva
 - **Hint system** (`#181`): reveal-letter / eliminate-option.
 - **Quiz feedback & speed bonuses** (`#180`, `#199`, `#200`): audio cues, time-pressure scoring.
 - **Real chapter/story content** (`#177`, `#178`): build the narrative "Learning Path" that #168 deliberately deferred — themed word groupings, branching lessons, contextual usage.
-- **Spaced repetition tuning** (SM-2 already in `Word`): surface "due for review" queues prominently.
+- **Spaced-repetition (SRS) engine — FSRS** *(now the active tier, started 2026-06-06 on `feat/srs-engine`)*: replacing the hidden SM-2 fields with a real, scientifically-grounded scheduler. Design doc `docs/design/srs-spaced-repetition-engine.md` + ADR-0001 (FSRS over SM-2). Ships as 4 vertical slices behind the `srs_engine_enabled` flag (default OFF):
+    - **S1 — FSRS-5 algorithm (DONE, 2026-06-06)**: pure-Kotlin `srs/algorithm/` (`FsrsAlgorithm`, `FsrsCard`, `FsrsRating`, `FsrsState`, `Sm2ToFsrsMigrator`) — two-component (stability + difficulty) memory model with the published universal weights. 22 headless JVM unit tests green (forgetting-curve, init stability/difficulty, grade ordering, lapse/relearn state machine, SM-2→FSRS seeding). No UI yet; the V18 Room migration + `ReviewScheduleDao` are the remaining S1 persistence wiring.
+    - **S4 — backend cross-device sync (DONE, 2026-06-06)**: `POST /api/v1/srs/reviews` (batch upsert, last-write-wins on `clientUpdatedAt`) + `GET /api/v1/srs/schedule` (seed a new device). `SrsSchedule` entity (additive `srs_schedule` table, primary DB, Hibernate `ddl-auto`), `SrsService`, `SrsController`, auth-gated in `SecurityConfig`. 14 backend tests green on JDK 21 / Spring Boot 4 (and verified identical on Gradle 9).
+    - **S2 — Review Queue screen** and **S3 — quiz-outcome → auto-schedule hook**: next; surface the "X due" badge + flip-card review session and wire `QuizViewModel`/`SrsSchedulerService`.
 - Flip-Cards readability (`#184`): pinch-zoom / manual enlarge.
 
 ## Phase 7 — Social & multiplayer growth
@@ -180,7 +183,7 @@ This is where the online product comes alive. Sequencing matters: **deploy priva
 - **Google's 14-day testing wall** — a hard, non-engineering gate. Start it on day one. (operator)
 - **Backend now builds on JDK 21 LTS** (Spring Boot 4 migration dropped the EOL JDK 24 toolchain) — make the CI toolchain authoritative and gate deploys on a green backend build.
 - **Web major bumps LANDED 2026-06-05** (vite 6→8, @vitejs/plugin-react 4→6, @playwright/test 1.57→1.60, vitest 4.0→4.1) — verified green: `npm run build`, 118/118 unit, 22/23 backend-independent e2e on playwright 1.60 (the 1 fail needs the live Spring API). See `TrainvocWeb/`.
-- **Held major bumps** — Spring Boot 4 + springdoc 3 are **migrated** (`migrate/backend-spring-boot-4-2026-06-05`, PR open for owner review, verified on JDK 21); gradle 9 remains, backend-only, needs its own test-then-merge. Don't rush it into a release.
+- **Held major bumps — all cleared.** Spring Boot 4 + springdoc 3 are **migrated** (merged to `master`, verified on JDK 21); **Gradle 9.4.1 is verified** (2026-06-06 — SB4 backend builds + tests identically) and ships on `feat/srs-engine`, retiring stale PR #16.
 - **No live environment anywhere yet** — the first backend deploy + TLS + DNS is greenfield; budget real time.
 - **Stale documentation drift** — legacy `.md` files have repeatedly mis-described the project (deleted games, unwired TTS, mockito vs MockK). Keep docs honest; treat doc updates as part of "done".
 
