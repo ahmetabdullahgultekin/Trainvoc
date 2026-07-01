@@ -1,0 +1,18 @@
+<en-GB>
+Major update with redesigned UI and improved UX:
+- Redesigned Home Screen and navigation
+- Full Turkish/English language support
+- Improved theme, dark mode, and responsive layout
+- Quiz exit button added for better usability
+- Multiplayer avatar and stats improvements
+- Bug fixes and performance optimizations
+</en-GB>
+<tr-TR>
+Yeniden tasarlanmış arayüz ve geliştirilmiş kullanıcı deneyimi:
+- Yeniden tasarlanmış Ana Ekran ve gezinme
+- Tam Türkçe/İngilizce dil desteği
+- İyileştirilmiş tema, karanlık mod ve duyarlı düzen
+- Daha iyi kullanılabilirlik için quiz çıkış butonu eklendi
+- Çok oyunculu avatar ve istatistik iyileştirmeleri
+- Hata düzeltmeleri ve performans optimizasyonları
+</tr-TR>
