@@ -75,7 +75,7 @@ class SrsControllerTest {
                     {
                       "reviews": [
                         {
-                          "wordId": "abandon",
+                          "wordId": 101,
                           "dueAt": 1749340800000,
                           "stability": 8.43,
                           "difficulty": 0.27,
@@ -115,11 +115,38 @@ class SrsControllerTest {
                     {
                       "reviews": [
                         {
-                          "wordId": "abandon",
+                          "wordId": 101,
                           "dueAt": 1749340800000,
                           "stability": 8.43,
                           "difficulty": 0.27,
                           "cardState": "BOGUS",
+                          "clientUpdatedAt": 1749254400000
+                        }
+                      ]
+                    }
+                    """;
+
+            mockMvc.perform(post("/api/v1/srs/reviews")
+                            .header("Authorization", BEARER)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isBadRequest());
+
+            verify(srsService, never()).upsertReviews(any(), any());
+        }
+
+        @Test
+        @DisplayName("returns 400 for a custom-word id (>= 1000000, not cross-device syncable)")
+        void rejectsCustomWordId() throws Exception {
+            String body = """
+                    {
+                      "reviews": [
+                        {
+                          "wordId": 1000000,
+                          "dueAt": 1749340800000,
+                          "stability": 8.43,
+                          "difficulty": 0.27,
+                          "cardState": "REVIEW",
                           "clientUpdatedAt": 1749254400000
                         }
                       ]
@@ -144,7 +171,7 @@ class SrsControllerTest {
                     {
                       "reviews": [
                         {
-                          "wordId": "abandon",
+                          "wordId": 101,
                           "dueAt": 1749340800000,
                           "stability": 8.43,
                           "difficulty": 0.27,
@@ -173,7 +200,7 @@ class SrsControllerTest {
         @DisplayName("returns 200 with the user's schedule and aggregates")
         void returnsSchedule() throws Exception {
             SrsReviewItem item = new SrsReviewItem(
-                    "abandon", 1749340800000L, 8.43, 0.27, 1749254400000L, "REVIEW", 1749254400000L);
+                    101L, 1749340800000L, 8.43, 0.27, 1749254400000L, "REVIEW", 1749254400000L, null, null);
             when(srsService.getSchedule(eq("42"), any()))
                     .thenReturn(new SrsScheduleResponse(List.of(item), 1L, 1749340800000L));
 
@@ -182,7 +209,7 @@ class SrsControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.totalDue").value(1))
                     .andExpect(jsonPath("$.nextDueAt").value(1749340800000L))
-                    .andExpect(jsonPath("$.schedule[0].wordId").value("abandon"))
+                    .andExpect(jsonPath("$.schedule[0].wordId").value(101))
                     .andExpect(jsonPath("$.schedule[0].cardState").value("REVIEW"));
         }
 

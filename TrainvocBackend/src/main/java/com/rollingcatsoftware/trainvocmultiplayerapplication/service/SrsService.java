@@ -96,7 +96,10 @@ public class SrsService {
                 s.getDifficulty(),
                 s.getLastReviewedAt() == null ? null : s.getLastReviewedAt().toEpochMilli(),
                 s.getCardState(),
-                s.getClientUpdatedAt().toEpochMilli()
+                s.getClientUpdatedAt().toEpochMilli(),
+                // lemma / languageCode: server stores no natural key, so nothing to echo.
+                null,
+                null
         );
     }
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface UserWordStatisticRepository extends JpaRepository<UserWordStatistic, Long> {
 
-    Optional<UserWordStatistic> findByUserAndWordId(User user, String wordId);
+    Optional<UserWordStatistic> findByUserAndWordId(User user, Long wordId);
 
     List<UserWordStatistic> findByUser(User user);
 
@@ -29,7 +29,7 @@ public interface UserWordStatisticRepository extends JpaRepository<UserWordStati
 
     List<UserWordStatistic> findByUserAndUpdatedAtAfter(User user, LocalDateTime since);
 
-    void deleteByUserAndWordId(User user, String wordId);
+    void deleteByUserAndWordId(User user, Long wordId);
 
     long countByUser(User user);
 

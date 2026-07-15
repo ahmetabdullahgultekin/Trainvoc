@@ -19,7 +19,7 @@ import java.util.Optional;
 @Repository
 public interface SrsScheduleRepository extends JpaRepository<SrsSchedule, SrsSchedule.SrsScheduleId> {
 
-    Optional<SrsSchedule> findByUserIdAndWordId(String userId, String wordId);
+    Optional<SrsSchedule> findByUserIdAndWordId(String userId, Long wordId);
 
     List<SrsSchedule> findByUserId(String userId);
 

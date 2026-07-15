@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface UserWordProgressRepository extends JpaRepository<UserWordProgress, Long> {
 
-    Optional<UserWordProgress> findByUserAndWord(User user, String word);
+    Optional<UserWordProgress> findByUserAndWordId(User user, Long wordId);
 
     List<UserWordProgress> findByUser(User user);
 
@@ -33,7 +33,7 @@ public interface UserWordProgressRepository extends JpaRepository<UserWordProgre
 
     List<UserWordProgress> findByUserAndUpdatedAtAfter(User user, LocalDateTime since);
 
-    void deleteByUserAndWord(User user, String word);
+    void deleteByUserAndWordId(User user, Long wordId);
 
     long countByUser(User user);
 
