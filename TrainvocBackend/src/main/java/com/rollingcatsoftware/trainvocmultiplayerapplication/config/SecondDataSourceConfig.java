@@ -38,7 +38,12 @@ public class SecondDataSourceConfig {
             HibernateProperties hibernateProperties) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("com.rollingcatsoftware.trainvocmultiplayerapplication.model");
+        // Words DB owns ONLY the words.model package. This must stay a sibling of `model`
+        // (not a subpackage): setPackagesToScan is recursive, so scanning `model` would
+        // otherwise map the word entities into BOTH persistence units — the ghost-table /
+        // double-validation hazard the v18 re-key exists to remove. The primary EMF keeps
+        // scanning `model`; the two entity sets no longer overlap.
+        em.setPackagesToScan("com.rollingcatsoftware.trainvocmultiplayerapplication.words.model");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(jpaProperties.getProperties());

@@ -1,0 +1,25 @@
+{
+  "manifestVersion": 1,
+  "dbVersion": 18,
+  "languages": [
+    { "id": 1, "code": "en", "name": "English" },
+    { "id": 2, "code": "tr", "name": "Türkçe" }
+  ],
+  "exams": ["YDS", "TOEFL"],
+  "words": [
+    { "id": 1, "lemma": "book", "lang": 1, "level": "A1", "note": null, "meaning": "kitap" },
+    { "id": 2, "lemma": "run", "lang": 1, "level": "A2", "note": "verb", "meaning": "koşmak" },
+    { "id": 5, "lemma": "kitap", "lang": 2, "level": null, "note": null, "meaning": "book" },
+    { "id": 6, "lemma": "koşmak", "lang": 2, "level": null, "note": null, "meaning": "run" }
+  ],
+  "translations": [
+    { "wordId": 1, "translatedWordId": 5, "senseIndex": 0, "note": null, "isPrimary": true },
+    { "wordId": 2, "translatedWordId": 6, "senseIndex": 1, "note": "informal", "isPrimary": false }
+  ],
+  "synonyms": [
+    { "wordId": 1, "synonymWordId": 2 }
+  ],
+  "wordExams": [
+    { "wordId": 2, "exam": "YDS" }
+  ]
+}

@@ -1,6 +1,6 @@
 package com.rollingcatsoftware.trainvocmultiplayerapplication.controller;
 
-import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Word;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.words.model.Word;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.word.WordRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

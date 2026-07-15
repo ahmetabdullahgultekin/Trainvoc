@@ -165,14 +165,36 @@ spring.second-datasource.password=<your-password>
 | `PlayerAnswer` | `player_answers` | Answer submissions |
 | `Question` | `questions` | Quiz questions per game |
 
-**Secondary Database (trainvoc-words):**
+**Secondary Database (trainvoc-words) — relational multilingual schema v18 (#96 PR-B):**
 
-| Entity | Table | Description |
-|--------|-------|-------------|
-| `Word` | `words` | Vocabulary words (EN-TR) |
-| `Exam` | `exams` | Exam categories |
-| `WordExamCrossRef` | `word_exam_cross_ref` | Word-Exam relations |
-| `Statistic` | `statistics` | Word statistics |
+Entities live in their OWN package `words.model` (a sibling of `model`, NOT a subpackage —
+`SecondDataSourceConfig.setPackagesToScan` is recursive, so a subpackage would map the word
+entities into BOTH persistence units, the ghost-table / double-validation hazard the re-key
+removes). `SecondDataSourceConfig` scans `words.model`; `PrimaryDataSourceConfig` keeps `model`.
+
+| Entity (`words.model`) | Table | Key | Description |
+|------------------------|-------|-----|-------------|
+| `Language` | `languages` | `Long id` (assigned) | Learning language; en=1, tr=2; `code` unique |
+| `Word` | `words` | `Long id` (assigned) | A lemma in one language; `UNIQUE(lemma, language_id)`; `meaning` is a display cache; every language is first-class (5,466 EN + 5,074 TR rows) |
+| `WordTranslation` | `word_translations` | `(word_id, translated_word_id, sense_index)` | Directed EN→TR sense-grouped edges |
+| `Synonym` | `synonyms` | `(word_id, synonym_word_id)` | Same-language pairs, stored once with `word_id < synonym_word_id` |
+| `Exam` | `exams` | `String exam` | Exam categories (TOEFL, IELTS, YDS, YÖKDİL, KPDS, Mixed) |
+| `WordExamCrossRef` | `word_exam_cross_ref` | `(Long word_id, String exam)` | Word↔exam membership (id-keyed; manifest ships YDS only) |
+
+Entities are deliberately `@ManyToOne`-free (plain FK columns) so `/api/words` JSON stays flat;
+real PostgreSQL FKs live in `sql-queries/trainvoc-words-db-for-postgre.sql` (DDL-only now — the
+old ~12k-line INSERT dump was retired). **Ids are opaque and permanent; holes are legal — never
+renumber or assume contiguity.** The dead `Statistic` entity + `Word.statId` were removed.
+
+**Seeding:** `service/seed/WordSeedImporter` (an `ApplicationRunner`) loads
+`classpath:seed/seed_v18.json` at boot (copied from the client asset by a Gradle
+`processResources` task — single source of truth, no committed copy), asserts
+`manifestVersion==1 && dbVersion==18`, then `WordSeedService` (transaction on
+`secondTransactionManager`) inserts in FK order: languages → exams → words → translations →
+synonyms → word-exam. **Idempotent** (fast-path skip when word+language counts already match) and
+**tolerant of an absent manifest** (a jar built without the client tree — e.g. the Docker build
+context is `./TrainvocBackend` only — logs a warning and skips; wiring the manifest into the
+compose deploy is a tracked follow-up).
 
 ---
 

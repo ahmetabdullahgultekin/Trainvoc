@@ -1,6 +1,6 @@
 package com.rollingcatsoftware.trainvocmultiplayerapplication.controller;
 
-import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Word;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.words.model.Word;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.word.WordRepository;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtAuthenticationFilter;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtTokenProvider;
@@ -45,12 +45,12 @@ class WordControllerTest {
     @BeforeEach
     void setUp() {
         testWord1 = new Word();
-        testWord1.setWord("apple");
+        testWord1.setLemma("apple");
         testWord1.setMeaning("elma");
         testWord1.setLevel("A1");
 
         testWord2 = new Word();
-        testWord2.setWord("book");
+        testWord2.setLemma("book");
         testWord2.setMeaning("kitap");
         testWord2.setLevel("A1");
     }
@@ -67,9 +67,9 @@ class WordControllerTest {
 
             mockMvc.perform(get("/api/words"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].word").value("apple"))
+                    .andExpect(jsonPath("$[0].lemma").value("apple"))
                     .andExpect(jsonPath("$[0].meaning").value("elma"))
-                    .andExpect(jsonPath("$[1].word").value("book"));
+                    .andExpect(jsonPath("$[1].lemma").value("book"));
 
             verify(wordRepository).findAll();
         }
@@ -163,7 +163,7 @@ class WordControllerTest {
             mockMvc.perform(get("/api/words/by-exam")
                             .param("exam", "YDS"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].word").value("apple"));
+                    .andExpect(jsonPath("$[0].lemma").value("apple"));
 
             verify(wordRepository).findByExam("YDS");
         }

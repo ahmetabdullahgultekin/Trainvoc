@@ -1,7 +1,7 @@
 package com.rollingcatsoftware.trainvocmultiplayerapplication.service;
 
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.QuizQuestion;
-import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Word;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.words.model.Word;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.word.WordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,22 +37,22 @@ class QuizServiceTest {
         testWords = new ArrayList<>();
 
         Word word1 = new Word();
-        word1.setWord("hello");
+        word1.setLemma("hello");
         word1.setMeaning("merhaba");
         word1.setLevel(TEST_LEVEL);
 
         Word word2 = new Word();
-        word2.setWord("goodbye");
+        word2.setLemma("goodbye");
         word2.setMeaning("hoşça kal");
         word2.setLevel(TEST_LEVEL);
 
         Word word3 = new Word();
-        word3.setWord("thank you");
+        word3.setLemma("thank you");
         word3.setMeaning("teşekkür ederim");
         word3.setLevel(TEST_LEVEL);
 
         Word word4 = new Word();
-        word4.setWord("please");
+        word4.setLemma("please");
         word4.setMeaning("lütfen");
         word4.setLevel(TEST_LEVEL);
 
@@ -87,7 +87,7 @@ class QuizServiceTest {
 
             QuizQuestion question = quizService.generateQuestion(TEST_LEVEL, OPTION_COUNT);
 
-            List<String> words = testWords.stream().map(Word::getWord).toList();
+            List<String> words = testWords.stream().map(Word::getLemma).toList();
             assertTrue(words.contains(question.getEnglish()));
         }
 
