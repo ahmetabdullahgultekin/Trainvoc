@@ -1,9 +1,6 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import {
-  Users, Trophy, Zap, Brain, Globe, Smartphone,
-  BarChart3, Gamepad2
-} from 'lucide-react'
+import { Users, Trophy, Zap, Brain, Globe, Smartphone, ChartColumn as BarChart3, Gamepad2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { staggerContainerVariants, staggerItemVariants } from '@/lib/animations'
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { Mail, MapPin, Globe, Send, CheckCircle } from 'lucide-react'
+import { Mail, MapPin, Globe, Send, CircleCheck as CheckCircle } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

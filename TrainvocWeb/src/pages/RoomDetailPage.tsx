@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { AlertCircle, Users, Wifi, WifiOff } from 'lucide-react'
+import { CircleAlert as AlertCircle, Users, Wifi, WifiOff } from 'lucide-react'
 import api from '../api'
 import { Card } from '@/components/ui/card'
 import { useWebSocket } from '../hooks/useWebSocket'

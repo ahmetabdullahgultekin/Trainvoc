@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
-import { AlertTriangle } from 'lucide-react'
+import { TriangleAlert as AlertTriangle } from 'lucide-react'
 import i18n from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
