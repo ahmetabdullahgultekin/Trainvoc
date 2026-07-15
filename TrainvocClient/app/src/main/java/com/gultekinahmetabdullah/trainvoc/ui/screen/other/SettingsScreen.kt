@@ -77,6 +77,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 import com.gultekinahmetabdullah.trainvoc.ui.animations.pressClickable
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
@@ -146,9 +147,9 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
         ) {
             // User Profile Card (fixes #196)
             item {
-                val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
-                val username = remember { prefs.getString("username", null) ?: "User" }
-                val userAvatar = remember { prefs.getString("avatar", null) ?: "🦊" }
+                val preferencesRepository = rememberPreferencesRepository()
+                val username = remember { preferencesRepository.getUsername() ?: "User" }
+                val userAvatar = remember { preferencesRepository.getAvatar() ?: "🦊" }
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),

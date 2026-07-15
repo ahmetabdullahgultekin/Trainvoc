@@ -1,7 +1,5 @@
 package com.gultekinahmetabdullah.trainvoc.ui.screen.welcome
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -39,6 +37,7 @@ import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.config.SplashConfig
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import kotlinx.coroutines.delay
 
 @Composable
@@ -46,9 +45,7 @@ fun SplashScreen(
     navController: NavController,
     onPreload: (LottieCompositionResult, Painter) -> Unit = { _, _ -> }
 ) {
-    val context = navController.context
-    val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val preferencesRepository = rememberPreferencesRepository()
 
     // Splash Lottie
     val splashComposition by rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_rolling_cat.json"))
@@ -73,7 +70,7 @@ fun SplashScreen(
     // Track whether navigation has already happened (to prevent double-navigate)
     var hasNavigated by remember { mutableStateOf(false) }
 
-    val username = remember { sharedPreferences.getString("username", null) }
+    val username = remember { preferencesRepository.getUsername() }
     val isReturningUser = !username.isNullOrEmpty()
     val destination = if (isReturningUser) Route.MAIN else Route.WELCOME
 

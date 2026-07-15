@@ -29,6 +29,7 @@ class PreferencesRepository @Inject constructor(
     companion object {
         private const val PREFS_NAME = "secure_user_prefs"
         private const val KEY_USERNAME = "username"
+        private const val KEY_AVATAR = "avatar"
         private const val KEY_THEME = "theme"
         private const val KEY_COLOR_PALETTE = "color_palette"
         private const val KEY_NOTIFICATIONS = "notifications"
@@ -58,7 +59,17 @@ class PreferencesRepository @Inject constructor(
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        ).also { secure ->
+            // Older versions wrote username/avatar to plain prefs files;
+            // pull those values in once so returning users are recognized.
+            LegacyPrefsMigrator.migrate(
+                secure,
+                listOf(
+                    context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE),
+                    context.getSharedPreferences("trainvoc_prefs", Context.MODE_PRIVATE)
+                )
+            )
+        }
     }
 
     override fun getUsername(): String? =
@@ -66,6 +77,13 @@ class PreferencesRepository @Inject constructor(
 
     override fun setUsername(username: String) {
         prefs.edit { putString(KEY_USERNAME, username) }
+    }
+
+    override fun getAvatar(): String? =
+        prefs.getString(KEY_AVATAR, null)
+
+    override fun setAvatar(avatar: String) {
+        prefs.edit { putString(KEY_AVATAR, avatar) }
     }
 
     override fun getTheme(): ThemePreference {

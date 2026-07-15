@@ -49,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,6 +57,7 @@ import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import kotlinx.coroutines.CoroutineScope
@@ -74,10 +74,9 @@ fun AppNavigationDrawerContent(
     navController: NavController,
     currentRoute: String?
 ) {
-    val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
-    val username = remember { prefs.getString("username", null) ?: "User" }
-    val userAvatar = remember { prefs.getString("avatar", null) ?: "🦊" }
+    val preferencesRepository = rememberPreferencesRepository()
+    val username = remember { preferencesRepository.getUsername() ?: "User" }
+    val userAvatar = remember { preferencesRepository.getAvatar() ?: "🦊" }
 
     ModalDrawerSheet(
         modifier = Modifier.width(300.dp),

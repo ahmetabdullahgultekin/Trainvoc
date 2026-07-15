@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.di.preferencesRepository
 import com.gultekinahmetabdullah.trainvoc.security.EncryptionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -610,9 +611,9 @@ class DataImporter(
      * Restore user preferences from backup
      */
     private fun restoreUserPreferences(preferences: UserPreferences) {
+        preferences.username?.let { preferencesRepository(context).setUsername(it) }
         val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         sharedPrefs.edit().apply {
-            preferences.username?.let { putString("username", it) }
             preferences.language?.let { putString("language", it) }
             preferences.theme?.let { putString("theme", it) }
             preferences.colorPalette?.let { putString("color_palette", it) }

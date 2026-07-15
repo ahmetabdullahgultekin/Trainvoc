@@ -46,6 +46,7 @@ import com.gultekinahmetabdullah.trainvoc.ui.components.StatsCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressIndicator
 import com.gultekinahmetabdullah.trainvoc.ui.animations.ShimmerBox
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.HomeViewModel
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.viewmodel.AuthViewModel
 import com.gultekinahmetabdullah.trainvoc.auth.AuthState
 import com.gultekinahmetabdullah.trainvoc.ui.theme.*
@@ -102,14 +103,18 @@ fun ProfileScreen(
         else -> 0.dp                     // Phones (sections have their own padding)
     }
 
-    // Get username and avatar from SharedPreferences (for display)
+    // Username/avatar live in PreferencesRepository (single source of truth)
+    val preferencesRepository = rememberPreferencesRepository()
     val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
-    val username = currentUser?.username ?: prefs.getString("username", null) ?: "User"
+    val username = currentUser?.username ?: preferencesRepository.getUsername() ?: "User"
     val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
     // Use AuthViewModel for login state (consistent with auth system)
     val isLoggedIn = authState is AuthState.Authenticated || authState is AuthState.AuthenticatedOffline
     var currentAvatar by remember {
-        mutableStateOf(prefs.getString("avatar", com.gultekinahmetabdullah.trainvoc.constants.Avatars.getRandomAvatar()) ?: "\uD83E\uDD8A")
+        mutableStateOf(
+            preferencesRepository.getAvatar()
+                ?: com.gultekinahmetabdullah.trainvoc.constants.Avatars.getRandomAvatar()
+        )
     }
 
     val showEditDialog = remember { mutableStateOf(false) }
@@ -295,11 +300,8 @@ fun ProfileScreen(
             currentAvatar = currentAvatar,
             onDismiss = { showEditDialog.value = false },
             onSave = { newUsername, newAvatar ->
-                // Save new username and avatar to SharedPreferences
-                prefs.edit()
-                    .putString("username", newUsername)
-                    .putString("avatar", newAvatar)
-                    .apply()
+                preferencesRepository.setUsername(newUsername)
+                preferencesRepository.setAvatar(newAvatar)
                 currentAvatar = newAvatar
                 showEditDialog.value = false
                 onEditProfile()
@@ -314,7 +316,7 @@ fun ProfileScreen(
             onDismiss = { showAvatarDialog.value = false },
             onSelect = { newAvatar ->
                 currentAvatar = newAvatar
-                prefs.edit().putString("avatar", newAvatar).apply()
+                preferencesRepository.setAvatar(newAvatar)
                 showAvatarDialog.value = false
             }
         )

@@ -22,6 +22,18 @@ interface IPreferencesRepository {
     fun setUsername(username: String)
 
     /**
+     * Get the stored avatar (emoji string).
+     * @return Avatar string, or null if not set
+     */
+    fun getAvatar(): String?
+
+    /**
+     * Set the avatar.
+     * @param avatar The avatar (emoji string) to store
+     */
+    fun setAvatar(avatar: String)
+
+    /**
      * Get the current theme preference.
      * @return ThemePreference enum value, defaults to SYSTEM
      */

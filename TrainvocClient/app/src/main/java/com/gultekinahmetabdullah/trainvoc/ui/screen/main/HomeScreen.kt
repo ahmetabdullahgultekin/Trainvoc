@@ -91,6 +91,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.data.UpdateNotesManager
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.ui.components.CircularProgressRing
 import com.gultekinahmetabdullah.trainvoc.ui.components.ElevatedCard
 import com.gultekinahmetabdullah.trainvoc.ui.components.FeatureCard
@@ -149,10 +150,10 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // Get username and avatar from SharedPreferences
-    val prefs = remember { context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE) }
-    val username = prefs.getString("username", null) ?: stringResource(id = R.string.username_placeholder)
-    val userAvatar = prefs.getString("avatar", null) ?: "🦊" // Default fox avatar
+    // Username/avatar live in PreferencesRepository (single source of truth)
+    val preferencesRepository = rememberPreferencesRepository()
+    val username = preferencesRepository.getUsername() ?: stringResource(id = R.string.username_placeholder)
+    val userAvatar = preferencesRepository.getAvatar() ?: "🦊" // Default fox avatar
 
     // Update Notes management
     val updateNotesManager = remember { UpdateNotesManager.getInstance(context) }

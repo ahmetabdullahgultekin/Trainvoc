@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.di.preferencesRepository
 import com.gultekinahmetabdullah.trainvoc.security.EncryptionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -339,7 +340,7 @@ class DataExporter(
     private fun getUserPreferences(): UserPreferences {
         val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         return UserPreferences(
-            username = sharedPrefs.getString("username", null),
+            username = preferencesRepository(context).getUsername(),
             language = sharedPrefs.getString("language", null),
             theme = sharedPrefs.getString("theme", null),
             colorPalette = sharedPrefs.getString("color_palette", null),
