@@ -29,9 +29,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.json:json:20251224'
+    implementation 'org.json:json:20260522'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.postgresql:postgresql:42.7.10'
+    implementation 'org.postgresql:postgresql:42.7.13'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // Rate limiting
@@ -43,11 +43,11 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
     // Firebase Admin SDK for authentication
-    implementation 'com.google.firebase:firebase-admin:9.8.0'
+    implementation 'com.google.firebase:firebase-admin:9.10.0'
 
     // Caching
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.3'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.4'
 
     // API Documentation
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
