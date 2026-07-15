@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "user_word_progress", indexes = {
     @Index(name = "idx_uwp_user_id", columnList = "user_id"),
-    @Index(name = "idx_uwp_word", columnList = "word"),
+    @Index(name = "idx_uwp_word_id", columnList = "word_id"),
     @Index(name = "idx_uwp_next_review", columnList = "next_review_date")
 }, uniqueConstraints = {
-    @UniqueConstraint(name = "uk_user_word", columnNames = {"user_id", "word"})
+    @UniqueConstraint(name = "uk_user_word", columnNames = {"user_id", "word_id"})
 })
 public class UserWordProgress {
 
@@ -25,8 +25,12 @@ public class UserWordProgress {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 100)
-    private String word;
+    /**
+     * Permanent numeric v18 word id (logical FK to the words DB's {@code words.id}).
+     * Re-keyed from the old String lemma in #96 PR-C.
+     */
+    @Column(name = "word_id", nullable = false)
+    private Long wordId;
 
     @Column(name = "last_reviewed")
     private LocalDateTime lastReviewed;
@@ -63,10 +67,10 @@ public class UserWordProgress {
         this.createdAt = LocalDateTime.now();
     }
 
-    public UserWordProgress(User user, String word) {
+    public UserWordProgress(User user, Long wordId) {
         this();
         this.user = user;
-        this.word = word;
+        this.wordId = wordId;
     }
 
     @PrePersist
@@ -86,8 +90,8 @@ public class UserWordProgress {
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
-    public String getWord() { return word; }
-    public void setWord(String word) { this.word = word; }
+    public Long getWordId() { return wordId; }
+    public void setWordId(Long wordId) { this.wordId = wordId; }
 
     public LocalDateTime getLastReviewed() { return lastReviewed; }
     public void setLastReviewed(LocalDateTime lastReviewed) { this.lastReviewed = lastReviewed; }

@@ -255,8 +255,18 @@ client is the source of truth). Timestamps in the wire contract are epoch-ms.
 
 Backed by `SrsController` → `SrsService` → `SrsScheduleRepository` (`SrsSchedule`
 entity, additive `srs_schedule` table in the **primary** DB, Hibernate `ddl-auto`).
-DTOs are records under `dto/srs/`. Tests: `SrsServiceTest` (8, Mockito) +
-`SrsControllerTest` (6, `@WebMvcTest` / `MockMvc`).
+DTOs are records under `dto/srs/`.
+
+**Word keys are the permanent numeric v18 word id (#96 PR-C re-key).** `SrsReviewItem.wordId`
+is a `Long` bounded to `[1, 999_999]`; client custom-word ids (`>= 1_000_000`) are per-device
+AUTOINCREMENT values (not globally unique) and are rejected with `400` — cross-device sync of
+custom words is deferred. `SrsReviewItem` also carries OPTIONAL `lemma` + `languageCode`
+defensive natural-key hints (accepted for forward reconciliation, currently neither stored nor
+echoed). The same re-key changed the primary-DB user tables from a String lemma to a numeric
+`word_id`: `UserWordProgress.word_id`, `UserWordStatistic.word_id`, and the `SrsSchedule`
+composite PK's `word_id` (its `user_id` stays a String). `SyncService.syncWord`/`syncStatistic`
+parse the numeric id from the sync `entityId` and **log-and-skip** non-numeric legacy payloads
+rather than failing the batch.
 
 ---
 

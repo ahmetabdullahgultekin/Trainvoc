@@ -35,9 +35,14 @@ import java.util.Objects;
 @IdClass(SrsSchedule.SrsScheduleId.class)
 public class SrsSchedule {
 
+    /**
+     * Permanent numeric v18 word id (logical FK to the words DB's {@code words.id}).
+     * Re-keyed from the old String lemma in #96 PR-C. {@code userId} stays a String —
+     * it holds the stringified primary-DB user id (see {@code SrsController}).
+     */
     @Id
-    @Column(name = "word_id", nullable = false, length = 128)
-    private String wordId;
+    @Column(name = "word_id", nullable = false)
+    private Long wordId;
 
     @Id
     @Column(name = "user_id", nullable = false, length = 128)
@@ -69,17 +74,17 @@ public class SrsSchedule {
         // JPA
     }
 
-    public SrsSchedule(String wordId, String userId) {
+    public SrsSchedule(Long wordId, String userId) {
         this.wordId = wordId;
         this.userId = userId;
         this.createdAt = Instant.now();
     }
 
-    public String getWordId() {
+    public Long getWordId() {
         return wordId;
     }
 
-    public void setWordId(String wordId) {
+    public void setWordId(Long wordId) {
         this.wordId = wordId;
     }
 
@@ -147,15 +152,15 @@ public class SrsSchedule {
         this.createdAt = createdAt;
     }
 
-    /** Composite primary key for {@link SrsSchedule}. */
+    /** Composite primary key for {@link SrsSchedule} ({@code wordId} numeric since #96 PR-C). */
     public static class SrsScheduleId implements Serializable {
-        private String wordId;
+        private Long wordId;
         private String userId;
 
         public SrsScheduleId() {
         }
 
-        public SrsScheduleId(String wordId, String userId) {
+        public SrsScheduleId(Long wordId, String userId) {
             this.wordId = wordId;
             this.userId = userId;
         }

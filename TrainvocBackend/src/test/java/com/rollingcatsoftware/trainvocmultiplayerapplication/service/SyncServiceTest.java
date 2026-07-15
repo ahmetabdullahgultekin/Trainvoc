@@ -86,9 +86,8 @@ class SyncServiceTest {
         void successfullySyncsWord() {
             SyncRequest request = createSyncRequest(
                 "word",
-                "word-123",
+                "101",
                 Map.of(
-                    "word", "hello",
                     "lastReviewed", 1234567890L,
                     "easinessFactor", 2.5f
                 )
@@ -98,7 +97,32 @@ class SyncServiceTest {
 
             assertTrue(result.success());
             assertEquals("word", result.entityType());
-            assertEquals("word-123", result.entityId());
+            assertEquals("101", result.entityId());
+        }
+
+        @Test
+        @DisplayName("skips a word with a non-numeric entityId (legacy lemma payload) instead of crashing")
+        void skipsWord_whenEntityIdNonNumeric() {
+            SyncRequest request = createSyncRequest("word", "abandon", Map.of("easinessFactor", 2.5f));
+
+            SyncResponse result = syncService.processSingleSync(request, testUser);
+
+            assertFalse(result.success());
+            assertEquals("word", result.entityType());
+            assertEquals("abandon", result.entityId());
+            assertTrue(result.message().toLowerCase().contains("numeric"));
+        }
+
+        @Test
+        @DisplayName("skips a statistic with a non-numeric entityId instead of crashing")
+        void skipsStatistic_whenEntityIdNonNumeric() {
+            SyncRequest request = createSyncRequest("statistic", "not-a-number", Map.of("correctCount", 5));
+
+            SyncResponse result = syncService.processSingleSync(request, testUser);
+
+            assertFalse(result.success());
+            assertEquals("statistic", result.entityType());
+            assertTrue(result.message().toLowerCase().contains("numeric"));
         }
 
         @Test
@@ -106,9 +130,8 @@ class SyncServiceTest {
         void successfullySyncsStatistic() {
             SyncRequest request = createSyncRequest(
                 "statistic",
-                "stat-123",
+                "123",
                 Map.of(
-                    "wordId", "word-123",
                     "correctCount", 10,
                     "wrongCount", 2
                 )
@@ -118,7 +141,7 @@ class SyncServiceTest {
 
             assertTrue(result.success());
             assertEquals("statistic", result.entityType());
-            assertEquals("stat-123", result.entityId());
+            assertEquals("123", result.entityId());
         }
 
         @Test
@@ -243,8 +266,8 @@ class SyncServiceTest {
         void handlesCaseInsensitiveEntityTypes() {
             SyncRequest request = createSyncRequest(
                 "WORD",
-                "word-123",
-                Map.of("word", "hello")
+                "101",
+                Map.of("easinessFactor", 2.5f)
             );
 
             SyncResponse result = syncService.processSingleSync(request, testUser);
@@ -262,9 +285,9 @@ class SyncServiceTest {
         @DisplayName("successfully processes batch of sync requests")
         void successfullyProcessesBatch() {
             List<SyncRequest> items = List.of(
-                createSyncRequest("word", "word-1", Map.of("word", "hello")),
-                createSyncRequest("word", "word-2", Map.of("word", "world")),
-                createSyncRequest("statistic", "stat-1", Map.of("correctCount", 5))
+                createSyncRequest("word", "1", Map.of("easinessFactor", 2.5f)),
+                createSyncRequest("word", "2", Map.of("easinessFactor", 2.5f)),
+                createSyncRequest("statistic", "3", Map.of("correctCount", 5))
             );
             BatchSyncRequest request = createBatchRequest(items);
 
@@ -280,9 +303,9 @@ class SyncServiceTest {
         @DisplayName("reports failures in batch results")
         void reportsFailuresInBatchResults() {
             List<SyncRequest> items = List.of(
-                createSyncRequest("word", "word-1", Map.of("word", "hello")),
+                createSyncRequest("word", "1", Map.of("easinessFactor", 2.5f)),
                 createSyncRequest("unknown", "unknown-1", Map.of()),
-                createSyncRequest("statistic", "stat-1", Map.of("correctCount", 5))
+                createSyncRequest("statistic", "3", Map.of("correctCount", 5))
             );
             BatchSyncRequest request = createBatchRequest(items);
 
@@ -342,7 +365,7 @@ class SyncServiceTest {
         @Test
         @DisplayName("returns word changes when word progress exists")
         void returnsWordChanges_whenWordProgressExists() {
-            UserWordProgress wordProgress = new UserWordProgress(testUser, "hello");
+            UserWordProgress wordProgress = new UserWordProgress(testUser, 101L);
             wordProgress.setEasinessFactor(2.5f);
             wordProgress.setIntervalDays(7);
             wordProgress.setRepetitions(3);
@@ -364,10 +387,10 @@ class SyncServiceTest {
 
             assertEquals(1, result.size());
             assertEquals("word", result.get(0).get("entityType"));
-            assertEquals("hello", result.get(0).get("entityId"));
+            assertEquals("101", result.get(0).get("entityId"));
             @SuppressWarnings("unchecked")
             Map<String, Object> data = (Map<String, Object>) result.get(0).get("data");
-            assertEquals("hello", data.get("word"));
+            assertEquals(101L, data.get("wordId"));
             assertEquals(2.5f, data.get("easinessFactor"));
             assertEquals(7, data.get("intervalDays"));
             assertEquals(true, data.get("isFavorite"));
@@ -376,11 +399,11 @@ class SyncServiceTest {
         @Test
         @DisplayName("returns multiple entity types when all have changes")
         void returnsMultipleEntityTypes_whenAllHaveChanges() {
-            UserWordProgress wordProgress = new UserWordProgress(testUser, "world");
+            UserWordProgress wordProgress = new UserWordProgress(testUser, 202L);
 
             UserWordStatistic statistic = new UserWordStatistic();
             statistic.setUser(testUser);
-            statistic.setWordId("stat-word-1");
+            statistic.setWordId(303L);
             statistic.setCorrectCount(10);
             statistic.setWrongCount(2);
             statistic.setSkippedCount(1);
@@ -416,8 +439,8 @@ class SyncServiceTest {
             assertEquals(4, result.size());
 
             Map<String, String> entityTypes = Map.of(
-                "word", "world",
-                "statistic", "stat-word-1",
+                "word", "202",
+                "statistic", "303",
                 "exam", "exam-1",
                 "achievement", "first_word"
             );

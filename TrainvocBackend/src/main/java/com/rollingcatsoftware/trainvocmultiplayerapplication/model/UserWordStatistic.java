@@ -23,8 +23,12 @@ public class UserWordStatistic {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "word_id", nullable = false, length = 100)
-    private String wordId;
+    /**
+     * Permanent numeric v18 word id (logical FK to the words DB's {@code words.id}).
+     * Re-keyed from the old String lemma in #96 PR-C.
+     */
+    @Column(name = "word_id", nullable = false)
+    private Long wordId;
 
     @Column(name = "correct_count", nullable = false)
     private int correctCount = 0;
@@ -49,7 +53,7 @@ public class UserWordStatistic {
         this.createdAt = LocalDateTime.now();
     }
 
-    public UserWordStatistic(User user, String wordId) {
+    public UserWordStatistic(User user, Long wordId) {
         this();
         this.user = user;
         this.wordId = wordId;
@@ -72,8 +76,8 @@ public class UserWordStatistic {
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
-    public String getWordId() { return wordId; }
-    public void setWordId(String wordId) { this.wordId = wordId; }
+    public Long getWordId() { return wordId; }
+    public void setWordId(Long wordId) { this.wordId = wordId; }
 
     public int getCorrectCount() { return correctCount; }
     public void setCorrectCount(int correctCount) { this.correctCount = correctCount; }

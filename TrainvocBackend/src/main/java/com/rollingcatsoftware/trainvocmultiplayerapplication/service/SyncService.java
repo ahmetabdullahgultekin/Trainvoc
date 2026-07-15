@@ -113,17 +113,26 @@ public class SyncService {
     private SyncResponse syncWord(SyncRequest request, User user) {
         log.info("Syncing word for user {}: {}", user.getId(), request.entityId());
 
+        // v18 re-key (#96 PR-C): progress is keyed by the permanent numeric word id, carried
+        // in entityId. Legacy lemma payloads (non-numeric) are skipped, not crashed on.
+        final Long wordId = parseWordId(request.entityId());
+        if (wordId == null) {
+            log.warn("Skipping word sync for user {}: non-numeric wordId '{}' "
+                    + "(v18 sync requires numeric word ids; legacy lemma payloads are not synced)",
+                    user.getId(), request.entityId());
+            return SyncResponse.failure(request.entityType(), request.entityId(),
+                    "Non-numeric wordId '" + request.entityId() + "'; v18 sync requires a numeric word id");
+        }
+
         Map<String, Object> data = request.data();
-        String wordFromData = (String) data.get("word");
-        final String word = (wordFromData != null) ? wordFromData : request.entityId();
 
         // Find existing or create new
         UserWordProgress progress = wordProgressRepository
-                .findByUserAndWord(user, word)
+                .findByUserAndWordId(user, wordId)
                 .orElseGet(() -> {
                     UserWordProgress newProgress = new UserWordProgress();
                     newProgress.setUser(user);
-                    newProgress.setWord(word);
+                    newProgress.setWordId(wordId);
                     return newProgress;
                 });
 
@@ -154,7 +163,7 @@ public class SyncService {
         }
 
         wordProgressRepository.save(progress);
-        log.debug("Word progress saved for user {} word {}", user.getId(), word);
+        log.debug("Word progress saved for user {} wordId {}", user.getId(), wordId);
 
         return SyncResponse.success(request.entityType(), request.entityId());
     }
@@ -165,8 +174,17 @@ public class SyncService {
     private SyncResponse syncStatistic(SyncRequest request, User user) {
         log.info("Syncing statistic for user {}: {}", user.getId(), request.entityId());
 
+        // v18 re-key (#96 PR-C): keyed by the permanent numeric word id from entityId.
+        final Long wordId = parseWordId(request.entityId());
+        if (wordId == null) {
+            log.warn("Skipping statistic sync for user {}: non-numeric wordId '{}' "
+                    + "(v18 sync requires numeric word ids; legacy lemma payloads are not synced)",
+                    user.getId(), request.entityId());
+            return SyncResponse.failure(request.entityType(), request.entityId(),
+                    "Non-numeric wordId '" + request.entityId() + "'; v18 sync requires a numeric word id");
+        }
+
         Map<String, Object> data = request.data();
-        String wordId = (String) data.getOrDefault("wordId", request.entityId());
 
         // Find existing or create new
         UserWordStatistic statistic = wordStatisticRepository
@@ -408,9 +426,9 @@ public class SyncService {
         for (UserWordProgress wp : wordChanges) {
             Map<String, Object> change = new HashMap<>();
             change.put("entityType", "word");
-            change.put("entityId", wp.getWord());
+            change.put("entityId", String.valueOf(wp.getWordId()));
             change.put("data", Map.of(
-                "word", wp.getWord(),
+                "wordId", wp.getWordId(),
                 "lastReviewed", toTimestamp(wp.getLastReviewed()),
                 "nextReviewDate", toTimestamp(wp.getNextReviewDate()),
                 "easinessFactor", wp.getEasinessFactor(),
@@ -428,7 +446,7 @@ public class SyncService {
         for (UserWordStatistic ws : statChanges) {
             Map<String, Object> change = new HashMap<>();
             change.put("entityType", "statistic");
-            change.put("entityId", ws.getWordId());
+            change.put("entityId", String.valueOf(ws.getWordId()));
             change.put("data", Map.of(
                 "wordId", ws.getWordId(),
                 "correctCount", ws.getCorrectCount(),
@@ -475,6 +493,22 @@ public class SyncService {
 
         log.info("Found {} server changes for user {} since {}", changes.size(), userId, sinceDateTime);
         return changes;
+    }
+
+    /**
+     * Parse a permanent numeric v18 word id from a sync {@code entityId}, or {@code null}
+     * if it is absent/non-numeric (a legacy lemma payload) so the caller can skip rather
+     * than crash the whole batch.
+     */
+    private Long parseWordId(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(raw.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**
