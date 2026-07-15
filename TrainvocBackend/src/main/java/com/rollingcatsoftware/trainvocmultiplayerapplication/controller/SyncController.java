@@ -199,6 +199,19 @@ public class SyncController {
             String expectedType) {
         try {
             User user = getUserFromToken(authHeader);
+            // Typed endpoints (/words, /statistics, ...) own their entity type: the
+            // client-declared entityType must match, otherwise a payload posted to the
+            // wrong endpoint would be silently routed by the service's type switch. On a
+            // mismatch we return a per-item failure (same shape as #114's legacy-payload
+            // skips) rather than trusting the body. The /batch endpoint passes no
+            // expectedType and is intentionally left to carry mixed types.
+            if (!expectedType.equalsIgnoreCase(request.entityType())) {
+                return ResponseEntity.ok(SyncResponse.failure(
+                        request.entityType(),
+                        request.entityId(),
+                        "Entity type mismatch: this endpoint expects '" + expectedType
+                                + "' but the payload declared '" + request.entityType() + "'"));
+            }
             SyncResponse response = syncService.processSingleSync(request, user);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
