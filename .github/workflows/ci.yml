@@ -2,12 +2,12 @@ name: Trainvoc CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master]
   pull_request:
-    branches: [main, develop]
+    branches: [master]
 
 env:
-  JAVA_VERSION: '24'
+  JAVA_VERSION: '21'
   NODE_VERSION: '20'
 
 jobs:
@@ -40,7 +40,6 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
-        continue-on-error: true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -78,6 +77,9 @@ jobs:
         env:
           VITE_API_URL: http://localhost:8080/
 
+      - name: Run unit tests
+        run: npm run test:run
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -99,10 +101,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: gradle
 
@@ -111,6 +113,20 @@ jobs:
 
       - name: Build debug APK
         run: ./gradlew assembleDebug
+
+      # TODO(#223): remove continue-on-error once the 30 pre-existing
+      # unit-test failures are fixed and the suite is green.
+      - name: Run unit tests
+        run: ./gradlew :app:testDebugUnitTest
+        continue-on-error: true
+
+      - name: Upload unit test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-unit-test-report
+          path: TrainvocClient/app/build/reports/tests/testDebugUnitTest
+          retention-days: 7
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
