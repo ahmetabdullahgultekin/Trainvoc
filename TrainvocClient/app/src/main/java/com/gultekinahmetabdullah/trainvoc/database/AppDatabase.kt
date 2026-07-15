@@ -18,6 +18,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordTranslation
 import com.gultekinahmetabdullah.trainvoc.database.migration.Migration17To18
+import com.gultekinahmetabdullah.trainvoc.database.migration.Migration18To19
 import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentence
 import com.gultekinahmetabdullah.trainvoc.features.database.FeatureUsageLog
 import com.gultekinahmetabdullah.trainvoc.features.database.GlobalFeatureFlag
@@ -66,9 +67,10 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
         QuizHistory::class,
         QuizQuestionResult::class,
         ApiCache::class,
-        Synonym::class
+        Synonym::class,
+        ReviewScheduleRow::class
     ],
-    version = 18
+    version = 19
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -87,6 +89,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun wordOfDayDao(): WordOfDayDao
     abstract fun quizHistoryDao(): QuizHistoryDao
     abstract fun dictionaryEnrichmentDao(): DictionaryEnrichmentDao
+    abstract fun reviewScheduleDao(): ReviewScheduleDao
 
     object DatabaseBuilder {
         private val DATABASE_NAME = DatabaseConfig.NAME
@@ -840,7 +843,10 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_16_17,
                 // v18 rebuilds the word tables relationally from the bundled
                 // seed manifest; it needs a Context to read the asset.
-                Migration17To18(context.applicationContext)
+                Migration17To18(context.applicationContext),
+                // v19 adds the FSRS review_schedule table + seeds it from the
+                // legacy SM-2 progress (additive; feature-flagged off).
+                Migration18To19()
             )
             .build()
     }

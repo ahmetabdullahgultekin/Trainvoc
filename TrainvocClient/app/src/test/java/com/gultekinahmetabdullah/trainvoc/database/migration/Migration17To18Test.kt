@@ -91,10 +91,11 @@ class Migration17To18Test {
         val context = ApplicationProvider.getApplicationContext<Context>()
         createV17Database(context)
 
-        // Opening through Room runs Migration17To18 and validates the
-        // resulting schema against the v18 entity definitions.
+        // Opening through Room runs the full migration chain to the current
+        // version (17->18 then 18->19) and validates the resulting schema
+        // against the entity definitions.
         val room = Room.databaseBuilder(context, AppDatabase::class.java, dbName)
-            .addMigrations(Migration17To18(context))
+            .addMigrations(Migration17To18(context), Migration18To19())
             .allowMainThreadQueries()
             .build()
         val db = room.openHelper.readableDatabase
@@ -171,10 +172,14 @@ class Migration17To18Test {
     }
 
     @Test
-    fun `fresh install asset db opens and validates at v18`() {
+    fun `fresh install asset db opens and validates`() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        // The asset is stamped v18; Room migrates it forward (18->19 adds the
+        // FSRS review_schedule table) before validating, so the migration must
+        // be registered here. Dictionary content is asserted unchanged below.
         val db = Room.databaseBuilder(context, AppDatabase::class.java, "asset-test.db")
             .createFromAsset("database/trainvoc-db.db")
+            .addMigrations(Migration18To19())
             .allowMainThreadQueries()
             .build()
         try {
