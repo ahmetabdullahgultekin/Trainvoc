@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
-import { AlertCircle, Loader2, Wifi, WifiOff } from 'lucide-react'
+import { CircleAlert as AlertCircle, LoaderCircle as Loader2, Wifi, WifiOff } from 'lucide-react'
 import api from '../api'
 import { Button } from '@/components/ui/button'
 import GameStartCountdown from '../components/GameStartCountdown'

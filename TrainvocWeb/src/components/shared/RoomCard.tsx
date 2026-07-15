@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Users, Clock, BookOpen, Loader2 } from 'lucide-react'
+import { Users, Clock, BookOpen, LoaderCircle as Loader2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'

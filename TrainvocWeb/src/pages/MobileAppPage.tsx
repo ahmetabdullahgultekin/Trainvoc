@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { Smartphone, Download, Star, Users, Gamepad2, CheckCircle } from 'lucide-react'
+import { Smartphone, Download, Star, Users, Gamepad2, CircleCheck as CheckCircle } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

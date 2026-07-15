@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Home, Settings, Users, Trophy, User } from 'lucide-react'
+import { ArrowLeft, House as Home, Settings, Users, Trophy, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
