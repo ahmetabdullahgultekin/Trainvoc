@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-07-15
+
+> First release carrying Room v19 (FSRS `review_schedule` + additive 18→19
+> migration, flag-off). Debug-signed like 1.3.x so far; the 18→19 upgrade is
+> Robolectric-verified (no production install base exists yet).
+
 ### 2026-07-15 (evening wave 2 — FSRS persistence + docs + data-source research)
 
 #### Added — TrainvocClient (#99 S1, #116)
