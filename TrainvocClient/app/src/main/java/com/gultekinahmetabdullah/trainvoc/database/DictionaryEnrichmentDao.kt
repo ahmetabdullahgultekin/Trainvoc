@@ -45,10 +45,20 @@ interface DictionaryEnrichmentDao {
     // ================== SYNONYMS ==================
 
     /**
-     * Get all synonyms for a word
+     * Get all synonym lemmas for a word id (schema v18: id-based pairs,
+     * stored once with word_id < synonym_word_id; follow both directions).
      */
-    @Query("SELECT synonym FROM synonyms WHERE word = :word ORDER BY added_at DESC")
-    suspend fun getSynonymsForWord(word: String): List<String>
+    @Query(
+        """
+        SELECT w.word FROM synonyms s JOIN words w ON w.id = s.synonym_word_id
+        WHERE s.word_id = :wordId
+        UNION
+        SELECT w.word FROM synonyms s JOIN words w ON w.id = s.word_id
+        WHERE s.synonym_word_id = :wordId
+        ORDER BY 1 ASC
+        """
+    )
+    suspend fun getSynonymsForWord(wordId: Long): List<String>
 
     /**
      * Insert synonyms for a word (bulk insert)
@@ -57,10 +67,10 @@ interface DictionaryEnrichmentDao {
     suspend fun insertSynonyms(synonyms: List<Synonym>)
 
     /**
-     * Delete all synonyms for a word
+     * Delete all synonym pairs touching a word id
      */
-    @Query("DELETE FROM synonyms WHERE word = :word")
-    suspend fun deleteSynonymsForWord(word: String)
+    @Query("DELETE FROM synonyms WHERE word_id = :wordId OR synonym_word_id = :wordId")
+    suspend fun deleteSynonymsForWord(wordId: Long)
 
     /**
      * Clear all synonyms

@@ -123,7 +123,18 @@ class WordRepository @Inject constructor(
 
     override fun getAllWords(): Flow<List<Word>> = wordDao.getAllWords()
 
-    override suspend fun insertWord(word: Word) = wordDao.insertWord(word)
+    override suspend fun insertWord(word: Word) {
+        // Schema v18: insertWord uses OnConflictStrategy.REPLACE and the PK is
+        // the autoGenerate id. Re-inserting an existing lemma with id=0 would
+        // REPLACE the old row (cascading away translation/synonym edges) and
+        // mint a new id — so resolve the existing id first and preserve it.
+        val toInsert = if (word.id == 0L) {
+            wordDao.getWord(word.word)?.let { existing -> word.copy(id = existing.id) } ?: word
+        } else {
+            word
+        }
+        wordDao.insertWord(toInsert)
+    }
 
     override suspend fun generateTenQuestions(
         quizType: QuizType, quizParameter: QuizParameter
@@ -184,7 +195,9 @@ class WordRepository @Inject constructor(
     override suspend fun getWordById(wordId: String): Word? = wordDao.getWord(wordId)
 
     override suspend fun getExamsForWord(wordId: String): List<String> {
-        return wordExamCrossRefDao.getExamNamesByWord(wordId)
+        // Cross-refs are id-based in schema v18; resolve the lemma first.
+        val id = wordDao.getWord(wordId)?.id ?: return emptyList()
+        return wordExamCrossRefDao.getExamNamesByWord(id)
     }
 
     override suspend fun markWordAsLearned(statId: Long) {

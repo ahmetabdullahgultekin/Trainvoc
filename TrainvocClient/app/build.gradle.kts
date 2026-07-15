@@ -193,7 +193,17 @@ android {
             // (e.g. android.util.Log, DateFormat) so pure-JVM unit tests don't throw
             // "Method ... not mocked". See #222 test-suite rehabilitation.
             isReturnDefaultValues = true
+            // Robolectric tests (Room migration/asset validation) need real
+            // resources + assets, including the seed DB and manifest.
+            isIncludeAndroidResources = true
         }
+    }
+
+    sourceSets {
+        // Exported Room schemas as test assets so MigrationTestHelper can
+        // build v17 databases and validate the 17->18 migration.
+        getByName("test").assets.srcDir("$projectDir/schemas")
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
     }
 }
 
@@ -286,6 +296,8 @@ dependencies {
     testImplementation("androidx.work:work-testing:2.10.1")
     testImplementation("org.robolectric:robolectric:4.14.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
+    // ApplicationProvider/InstrumentationRegistry for Robolectric Room tests
+    testImplementation("androidx.test:core:1.6.1")
     kspTest(libs.hilt.compiler)
 
     // MockK for mocking

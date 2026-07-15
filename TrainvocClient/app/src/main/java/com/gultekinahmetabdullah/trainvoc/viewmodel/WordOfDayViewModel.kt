@@ -73,8 +73,8 @@ class WordOfDayViewModel @Inject constructor(
                 }
 
                 if (wordOfDayEntry != null) {
-                    // Load the actual word details
-                    val word = wordDao.getWord(wordOfDayEntry.wordId)
+                    // Load the actual word details (wordId is words.id in schema v18)
+                    val word = wordDao.getWordById(wordOfDayEntry.wordId)
                     if (word != null) {
                         _wordOfDay.value = word
                         _isFavorite.value = word.isFavorite
@@ -87,7 +87,7 @@ class WordOfDayViewModel @Inject constructor(
                         // Word no longer exists, generate a new one
                         val newEntry = generateNewWordOfDay(today)
                         if (newEntry != null) {
-                            val newWord = wordDao.getWord(newEntry.wordId)
+                            val newWord = wordDao.getWordById(newEntry.wordId)
                             _wordOfDay.value = newWord
                             _isFavorite.value = newWord?.isFavorite ?: false
                         } else {
@@ -117,7 +117,7 @@ class WordOfDayViewModel @Inject constructor(
 
         return if (randomWord != null) {
             val newEntry = WordOfDay(
-                wordId = randomWord.word,
+                wordId = randomWord.id,
                 date = date,
                 wasViewed = false
             )

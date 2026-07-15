@@ -11,10 +11,13 @@ import com.gultekinahmetabdullah.trainvoc.billing.database.PurchaseRecord
 import com.gultekinahmetabdullah.trainvoc.billing.database.Subscription
 import com.gultekinahmetabdullah.trainvoc.classes.word.ApiCache
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
+import com.gultekinahmetabdullah.trainvoc.classes.word.Language
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Synonym
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordExamCrossRef
+import com.gultekinahmetabdullah.trainvoc.classes.word.WordTranslation
+import com.gultekinahmetabdullah.trainvoc.database.migration.Migration17To18
 import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentence
 import com.gultekinahmetabdullah.trainvoc.features.database.FeatureUsageLog
 import com.gultekinahmetabdullah.trainvoc.features.database.GlobalFeatureFlag
@@ -38,6 +41,8 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
 @Database(
     entities = [
         Word::class,
+        Language::class,
+        WordTranslation::class,
         Statistic::class,
         Exam::class,
         WordExamCrossRef::class,
@@ -63,7 +68,7 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
         ApiCache::class,
         Synonym::class
     ],
-    version = 17
+    version = 18
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -832,7 +837,10 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_13_14,
                 MIGRATION_14_15,
                 MIGRATION_15_16,
-                MIGRATION_16_17
+                MIGRATION_16_17,
+                // v18 rebuilds the word tables relationally from the bundled
+                // seed manifest; it needs a Context to read the asset.
+                Migration17To18(context.applicationContext)
             )
             .build()
     }

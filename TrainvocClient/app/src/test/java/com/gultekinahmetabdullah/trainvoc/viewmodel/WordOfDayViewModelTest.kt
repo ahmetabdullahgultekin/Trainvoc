@@ -48,7 +48,8 @@ class WordOfDayViewModelTest {
         word = "apple",
         meaning = "elma",
         level = WordLevel.A1,
-        isFavorite = false
+        isFavorite = false,
+        id = 42L
     )
 
     private val todayDate: String
@@ -88,12 +89,12 @@ class WordOfDayViewModelTest {
     fun `loads existing word of the day from database`() = runTest {
         // Arrange
         val existingEntry = WordOfDay(
-            wordId = "apple",
+            wordId = 42L,
             date = todayDate,
             wasViewed = false
         )
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(existingEntry)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
         viewModel = createViewModel()
@@ -110,12 +111,12 @@ class WordOfDayViewModelTest {
     fun `marks word as viewed when loaded`() = runTest {
         // Arrange
         val existingEntry = WordOfDay(
-            wordId = "apple",
+            wordId = 42L,
             date = todayDate,
             wasViewed = false
         )
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(existingEntry)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
         viewModel = createViewModel()
@@ -129,12 +130,12 @@ class WordOfDayViewModelTest {
     fun `does not mark as viewed if already viewed`() = runTest {
         // Arrange
         val existingEntry = WordOfDay(
-            wordId = "apple",
+            wordId = 42L,
             date = todayDate,
             wasViewed = true
         )
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(existingEntry)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
         viewModel = createViewModel()
@@ -149,7 +150,7 @@ class WordOfDayViewModelTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
         whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(testWord)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
         viewModel = createViewModel()
@@ -165,7 +166,7 @@ class WordOfDayViewModelTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
         whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(testWord)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
         viewModel = createViewModel()
@@ -208,12 +209,12 @@ class WordOfDayViewModelTest {
     fun `toggleFavorite updates favorite state`() = runTest {
         // Arrange
         val existingEntry = WordOfDay(
-            wordId = "apple",
+            wordId = 42L,
             date = todayDate,
             wasViewed = true
         )
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(existingEntry)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -234,12 +235,12 @@ class WordOfDayViewModelTest {
         // Arrange
         val favoriteWord = testWord.copy(isFavorite = true)
         val existingEntry = WordOfDay(
-            wordId = "apple",
+            wordId = 42L,
             date = todayDate,
             wasViewed = true
         )
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(existingEntry)
-        whenever(wordDao.getWord("apple")).thenReturn(favoriteWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(favoriteWord)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -277,9 +278,9 @@ class WordOfDayViewModelTest {
         // Arrange - first load fails
         whenever(wordOfDayDao.getWordOfDay(todayDate))
             .thenReturn(null)
-            .thenReturn(WordOfDay(wordId = "apple", date = todayDate, wasViewed = false))
+            .thenReturn(WordOfDay(wordId = 42L, date = todayDate, wasViewed = false))
         whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(null)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -300,7 +301,7 @@ class WordOfDayViewModelTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
         whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(testWord)
-        whenever(wordDao.getWord("apple")).thenReturn(testWord)
+        whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
         viewModel = createViewModel()

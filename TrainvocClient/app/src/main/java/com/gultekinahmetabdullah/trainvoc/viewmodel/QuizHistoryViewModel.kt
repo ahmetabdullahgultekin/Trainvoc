@@ -83,7 +83,7 @@ class QuizHistoryViewModel @Inject constructor(
         try {
             val incorrectWordIds = quizHistoryDao.getIncorrectWordIds(quizId)
             val words = incorrectWordIds.mapNotNull { wordId ->
-                wordDao.getWord(wordId) // Returns null if word not found
+                wordDao.getWordById(wordId) // Returns null if word not found
             }
             _missedWords.value = words
         } catch (e: Exception) {
@@ -114,7 +114,7 @@ class QuizHistoryViewModel @Inject constructor(
      * @param skippedQuestions Number of skipped questions
      * @param timeTaken Time taken to complete (formatted as "MM:SS")
      * @param quizType Type of quiz (e.g., "LEVEL_A1", "EXAM_TOEFL")
-     * @param questionResults List of pairs (wordId, isCorrect) for each question
+     * @param questionResults List of pairs (words.id, isCorrect) for each question
      */
     suspend fun saveQuizResult(
         totalQuestions: Int,
@@ -123,7 +123,7 @@ class QuizHistoryViewModel @Inject constructor(
         skippedQuestions: Int,
         timeTaken: String,
         quizType: String,
-        questionResults: List<Pair<String, Boolean>>
+        questionResults: List<Pair<Long, Boolean>>
     ): Long {
         val accuracy = if (totalQuestions > 0) {
             (correctAnswers.toFloat() / totalQuestions) * 100

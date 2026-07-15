@@ -592,11 +592,21 @@ class DataImporter(
                 onProgress?.invoke((index.toFloat() / (words.size + statistics.size)) * 0.5f)
             }
 
-            // Then import words with correct statId references
+            // Then import words with correct statId references.
+            // Schema v18: words.id is an autoGenerate PK and insertWord uses
+            // REPLACE. Re-inserting an existing lemma with id=0 would delete
+            // the old row (cascading away its translation/synonym edges) and
+            // mint a new id — so resolve the existing row by lemma first and
+            // preserve its id. Unknown lemmas insert as-is (id=0 → auto).
             var wordsImported = 0
             words.forEachIndexed { index, wordBackup ->
                 val newStatId = statisticIdMap[wordBackup.statId] ?: wordBackup.statId
-                val word = wordBackup.toWord().copy(statId = newStatId)
+                val existing = database.wordDao().getWord(wordBackup.word)
+                val word = if (existing != null) {
+                    wordBackup.toWord().copy(id = existing.id, statId = newStatId)
+                } else {
+                    wordBackup.toWord().copy(statId = newStatId)
+                }
                 database.wordDao().insertWord(word)
                 wordsImported++
 

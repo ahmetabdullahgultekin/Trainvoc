@@ -55,12 +55,12 @@ interface StatisticDao {
         SELECT SUM(CASE WHEN s.correct_count > (s.wrong_count + s.skipped_count) THEN 1 ELSE 0 END)
         AS words_with_higher_correct_count
         FROM words w JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE w.level = :level
+        WHERE w.level = :level AND w.language_id = 1
         """
     )
     suspend fun getLevelUnlockerWordCount(level: String): Int
 
-    @Query("SELECT COUNT(*) FROM words WHERE stat_id = :statId")
+    @Query("SELECT COUNT(*) FROM words WHERE stat_id = :statId AND language_id = 1")
     suspend fun getWordCountByStatId(statId: Int): Int
 
     @Query("SELECT * FROM statistics WHERE correct_count = :correctCount AND wrong_count = :wrongCount AND skipped_count = :skippedCount AND learned = 1 LIMIT 1")
@@ -76,7 +76,8 @@ interface StatisticDao {
         """
         SELECT SUM(s.correct_count) FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE date(w.last_reviewed/1000, 'unixepoch') = date('now', 'localtime')
+        WHERE w.language_id = 1
+        AND date(w.last_reviewed/1000, 'unixepoch') = date('now', 'localtime')
     """
     )
     suspend fun getDailyCorrectAnswers(): Int?
@@ -87,7 +88,8 @@ interface StatisticDao {
         """
         SELECT SUM(s.correct_count) FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE strftime('%W', w.last_reviewed/1000, 'unixepoch') = strftime('%W', 'now', 'localtime')
+        WHERE w.language_id = 1
+        AND strftime('%W', w.last_reviewed/1000, 'unixepoch') = strftime('%W', 'now', 'localtime')
         AND strftime('%Y', w.last_reviewed/1000, 'unixepoch') = strftime('%Y', 'now', 'localtime')
     """
     )

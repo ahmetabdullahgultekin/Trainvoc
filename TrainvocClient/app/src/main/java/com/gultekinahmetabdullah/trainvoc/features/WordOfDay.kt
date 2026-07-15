@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.Flow
     foreignKeys = [
         ForeignKey(
             entity = Word::class,
-            parentColumns = ["word"],
+            parentColumns = ["id"],
             childColumns = ["wordId"],
             onDelete = ForeignKey.CASCADE
         )
@@ -39,7 +39,7 @@ data class WordOfDay(
     val id: Int = 0,
 
     @ColumnInfo(name = "wordId")
-    val wordId: String,
+    val wordId: Long, // words.id (schema v18)
 
     @ColumnInfo(name = "date")
     val date: String, // Format: "YYYY-MM-DD"

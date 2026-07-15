@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
+import com.gultekinahmetabdullah.trainvoc.classes.word.TranslationRow
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
 import kotlinx.coroutines.flow.Flow
 
@@ -34,13 +35,13 @@ interface WordDao {
      */
 
     // --- WORD QUERIES ---
-    @Query("SELECT * FROM words WHERE word = :word LIMIT 1")
+    @Query("SELECT * FROM words WHERE word = :word AND language_id = 1 LIMIT 1")
     suspend fun getWord(word: String): Word?
 
-    @Query("SELECT * FROM words ORDER BY word ASC")
+    @Query("SELECT * FROM words WHERE language_id = 1 ORDER BY word ASC")
     fun getAllWords(): Flow<List<Word>>
 
-    @Query("SELECT * FROM words ORDER BY RANDOM() LIMIT 100")
+    @Query("SELECT * FROM words WHERE language_id = 1 ORDER BY RANDOM() LIMIT 100")
     suspend fun getAllWordsList(): List<Word>
 
     // Get word count of a specific level
@@ -118,7 +119,7 @@ interface WordDao {
     suspend fun getTotalAnswers(): Int
 
     // Get the total number of words
-    @Query("SELECT COUNT(*) FROM words")
+    @Query("SELECT COUNT(*) FROM words WHERE language_id = 1")
     suspend fun getWordCount(): Int
 
     // Get the number of learned words
@@ -208,6 +209,7 @@ interface WordDao {
         """
         SELECT w.level FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.language_id = 1
         GROUP BY w.level
         ORDER BY SUM(s.correct_count) DESC LIMIT 1
     """
@@ -218,7 +220,7 @@ interface WordDao {
     @Query(
         """
         SELECT COUNT(*) FROM words
-        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN word_exam_cross_ref ON words.id = word_exam_cross_ref.word_id
         JOIN exams ON word_exam_cross_ref.exam = exams.exam
         WHERE exams.exam = :exam
         """
@@ -229,7 +231,7 @@ interface WordDao {
     @Query(
         """
         SELECT COUNT(*) FROM words
-        JOIN word_exam_cross_ref ON words.word = word_exam_cross_ref.word
+        JOIN word_exam_cross_ref ON words.id = word_exam_cross_ref.word_id
         JOIN exams ON word_exam_cross_ref.exam = exams.exam
         JOIN statistics ON words.stat_id = statistics.stat_id
         WHERE exams.exam = :exam AND statistics.learned = 1
@@ -245,7 +247,8 @@ interface WordDao {
         """
         SELECT w.* FROM words w
         LEFT JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE (:includeLearned = 1 OR s.learned = 0 OR s.learned IS NULL)
+        WHERE w.language_id = 1
+        AND (:includeLearned = 1 OR s.learned = 0 OR s.learned IS NULL)
         AND (:level IS NULL OR w.level = :level)
         ORDER BY RANDOM()
         LIMIT 1
@@ -263,7 +266,8 @@ interface WordDao {
         """
         SELECT w.* FROM words w
         LEFT JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE (:includeLearned = 1 OR s.learned = 0 OR s.learned IS NULL)
+        WHERE w.language_id = 1
+        AND (:includeLearned = 1 OR s.learned = 0 OR s.learned IS NULL)
         AND w.level IN (:levels)
         ORDER BY RANDOM()
         LIMIT 1
@@ -354,7 +358,7 @@ interface WordDao {
     @Query(
         """
         SELECT COUNT(*) FROM words w
-        WHERE w.stat_id = 0
+        WHERE w.stat_id = 0 AND w.language_id = 1
         """
     )
     suspend fun getNotStartedWordCount(): Int
@@ -388,4 +392,41 @@ interface WordDao {
     suspend fun getLearnedWordCountByLevel(level: String): Int {
         return getLevelUnlockerWordCount(level)
     }
+    /**
+     * RELATIONAL QUERIES (schema v18)
+     */
+
+    @Query("SELECT * FROM words WHERE id = :id LIMIT 1")
+    suspend fun getWordById(id: Long): Word?
+
+    /**
+     * All translations of a word, following edges in both directions,
+     * grouped by sense via TranslationRow/groupBySense().
+     */
+    @Query(
+        """
+        SELECT w.*, t.sense_index, t.note AS translation_note, t.is_primary
+        FROM word_translations t JOIN words w ON w.id = t.translated_word_id
+        WHERE t.word_id = :wordId
+        UNION ALL
+        SELECT w.*, t.sense_index, t.note AS translation_note, t.is_primary
+        FROM word_translations t JOIN words w ON w.id = t.word_id
+        WHERE t.translated_word_id = :wordId
+        ORDER BY sense_index ASC, is_primary DESC
+        """
+    )
+    suspend fun getTranslationsForWord(wordId: Long): List<TranslationRow>
+
+    /** Same-language synonyms of a word (pairs are stored once). */
+    @Query(
+        """
+        SELECT w.* FROM synonyms s JOIN words w ON w.id = s.synonym_word_id
+        WHERE s.word_id = :wordId
+        UNION
+        SELECT w.* FROM synonyms s JOIN words w ON w.id = s.word_id
+        WHERE s.synonym_word_id = :wordId
+        ORDER BY word ASC
+        """
+    )
+    suspend fun getSynonymsForWord(wordId: Long): List<Word>
 }

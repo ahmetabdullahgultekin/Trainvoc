@@ -326,12 +326,10 @@ def build_db(manifest_path: pathlib.Path, schema_path: pathlib.Path,
         "INSERT INTO word_exam_cross_ref (word_id, exam) VALUES (?, ?)",
         [(x["wordId"], x["exam"]) for x in manifest["wordExams"]],
     )
-    # Keep AUTOINCREMENT counters above the manifest ids.
-    max_id = max(w["id"] for w in manifest["words"])
-    cur.execute(
-        "INSERT OR REPLACE INTO sqlite_sequence (name, seq) VALUES ('words', ?)",
-        (max_id,),
-    )
+    # Reserve ids >= 1_000_000 for user-added words (seed ids stay below),
+    # matching the Room 17->18 migration. AUTOINCREMENT already created the
+    # sqlite_sequence row for `words`, so UPDATE it (INSERT would duplicate).
+    cur.execute("UPDATE sqlite_sequence SET seq = 999999 WHERE name = 'words'")
 
     cur.execute(f"PRAGMA user_version = {manifest['dbVersion']}")
     con.commit()

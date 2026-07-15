@@ -42,12 +42,14 @@ object WordQueryBuilder {
             }
 
             if (needsExamJoin) {
-                append(" JOIN word_exam_cross_ref wec ON w.word = wec.word")
+                append(" JOIN word_exam_cross_ref wec ON w.id = wec.word_id")
                 append(" JOIN exams e ON wec.exam = e.exam")
             }
 
             // WHERE clause with parameterized queries
-            val whereConditions = mutableListOf<String>()
+            // Study words are English rows only (schema v18: Turkish words are
+            // rows in `words` with language_id = 2 and must never be quizzed).
+            val whereConditions = mutableListOf<String>("w.language_id = 1")
 
             // Level filter - use parameterized query to prevent SQL injection
             level?.let {

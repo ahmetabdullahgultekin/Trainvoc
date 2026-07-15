@@ -6,6 +6,7 @@ import com.gultekinahmetabdullah.trainvoc.api.toEnrichedData
 import com.gultekinahmetabdullah.trainvoc.classes.word.ApiCache
 import com.gultekinahmetabdullah.trainvoc.classes.word.Synonym
 import com.gultekinahmetabdullah.trainvoc.database.DictionaryEnrichmentDao
+import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentence
 import com.gultekinahmetabdullah.trainvoc.examples.ExampleSentenceDao
 import com.gultekinahmetabdullah.trainvoc.examples.ExampleDifficulty
@@ -29,7 +30,8 @@ import javax.inject.Singleton
 class DictionaryRepository @Inject constructor(
     private val dictionaryApiService: DictionaryApiService,
     private val dictionaryEnrichmentDao: DictionaryEnrichmentDao,
-    private val exampleSentenceDao: ExampleSentenceDao
+    private val exampleSentenceDao: ExampleSentenceDao,
+    private val wordDao: WordDao
 ) {
 
     /**
@@ -99,10 +101,13 @@ class DictionaryRepository @Inject constructor(
         try {
             val normalizedWord = word.lowercase().trim()
 
-            // Check database first
-            val cachedSynonyms = dictionaryEnrichmentDao.getSynonymsForWord(normalizedWord)
-            if (cachedSynonyms.isNotEmpty()) {
-                return@withContext cachedSynonyms
+            // Check database first (synonyms are id-based in schema v18)
+            val headwordId = wordDao.getWord(normalizedWord)?.id
+            if (headwordId != null) {
+                val cachedSynonyms = dictionaryEnrichmentDao.getSynonymsForWord(headwordId)
+                if (cachedSynonyms.isNotEmpty()) {
+                    return@withContext cachedSynonyms
+                }
             }
 
             // Fetch from API if not cached
@@ -156,7 +161,9 @@ class DictionaryRepository @Inject constructor(
         word: String,
         cached: ApiCache
     ): EnrichedDictionaryData {
-        val synonyms = dictionaryEnrichmentDao.getSynonymsForWord(word)
+        val headwordId = wordDao.getWord(word)?.id
+        val synonyms = headwordId?.let { dictionaryEnrichmentDao.getSynonymsForWord(it) }
+            ?: emptyList()
         val exampleSentences = exampleSentenceDao.getExamplesForWord(word)
         val examples = exampleSentences.map { it.sentence }
 
@@ -186,16 +193,27 @@ class DictionaryRepository @Inject constructor(
         )
         dictionaryEnrichmentDao.insertCachedData(apiCache)
 
-        // Cache synonyms (bulk insert)
+        // Cache synonyms (bulk insert; schema v18: id-based same-language pairs,
+        // stored once with word_id < synonym_word_id). Synonym strings that do
+        // not resolve to an existing EN word row are silently skipped.
         if (data.synonyms.isNotEmpty()) {
-            val synonymEntities = data.synonyms.map { synonym ->
-                Synonym(
-                    word = word,
-                    synonym = synonym,
-                    addedAt = System.currentTimeMillis()
-                )
+            val headwordId = wordDao.getWord(word)?.id
+            if (headwordId != null) {
+                val synonymEntities = data.synonyms.mapNotNull { synonym ->
+                    val synonymId = wordDao.getWord(synonym.lowercase().trim())?.id
+                    if (synonymId == null || synonymId == headwordId) {
+                        null
+                    } else {
+                        Synonym(
+                            wordId = minOf(headwordId, synonymId),
+                            synonymWordId = maxOf(headwordId, synonymId)
+                        )
+                    }
+                }
+                if (synonymEntities.isNotEmpty()) {
+                    dictionaryEnrichmentDao.insertSynonyms(synonymEntities)
+                }
             }
-            dictionaryEnrichmentDao.insertSynonyms(synonymEntities)
         }
 
         // Cache examples (using ExampleSentence entity)
