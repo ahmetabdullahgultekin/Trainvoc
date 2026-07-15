@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 2026-07-15 (night — SRS UI + backend hardening; post-1.3.2)
+
+#### Added — TrainvocClient (#99 S2+S3, #120)
+- FSRS Review Queue (flip card, Again/Hard/Good/Easy, empty state, session
+  summary) reachable only via a flag-gated Home CTA; quiz outcomes now feed
+  the FSRS scheduler (fire-and-forget, no-op when off). One shared
+  flag-gated write path (`SrsSchedulerService`) over the v19
+  `review_schedule` store. All dark behind `srs_engine_enabled` (default
+  OFF; flag-off behavior byte-identical). Suite 265 -> 279 green. Device
+  checklist before flipping the flag lives in the PR body.
+
+#### Changed — TrainvocBackend (#100 hardening, #118)
+- `sql-queries/trainvoc-mp-db-for-postgre.sql` regenerated DDL-only from the
+  current 12 entities (14 tables incl. users/progress/srs; validated against
+  a real postgres:16); typed sync endpoints now enforce their entity type
+  (mismatch -> per-item failure); `GET /api/words` gains opt-in pagination
+  (default 50, max 500, stable id sort) with the no-param full dump
+  preserved. Suite 248 -> 261 green.
+
+#### Pending review — Arabic candidate batch (#97, draft PR #119)
+- `dictgen` gains `ar-candidate`/`ar-promote` (kaikki CC BY-SA source, MSA
+  filter, Leipzig CC BY ranking): 2,000-headword candidate with 6,634 AR->EN
+  edges as review artifacts only — ids.lock/seed untouched until the owner
+  signs off.
+
 ## [1.3.2] - 2026-07-15
 
 > First release carrying Room v19 (FSRS `review_schedule` + additive 18→19
