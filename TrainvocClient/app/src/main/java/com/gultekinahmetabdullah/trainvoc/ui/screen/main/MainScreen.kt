@@ -162,6 +162,8 @@ fun MainScreen(
                         onNavigateToMultiplayer = { navController.navigate(Route.MULTIPLAYER_HOME) },
                         // Phase 5 - Update Notes & Changelog
                         onNavigateToChangelog = { navController.navigate(Route.CHANGELOG) },
+                        // FSRS Review Queue (#99 S2) — gated in HomeScreen by the flag
+                        onNavigateToReviewQueue = { navController.navigate(Route.REVIEW_QUEUE) },
                         // Menu access for unified header
                         onOpenMenu = { coroutineScope.launch { drawerState.open() } }
                     )
@@ -370,6 +372,14 @@ fun MainScreen(
                 composable(Route.WORD_PROGRESS) {
                     com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordProgressScreen(
                         onBackClick = { navController.popBackStack() }
+                    )
+                }
+
+                // FSRS Review Queue (#99 S2). The route is only entered from the
+                // Home CTA, which is gated by srs_engine_enabled.
+                composable(Route.REVIEW_QUEUE) {
+                    com.gultekinahmetabdullah.trainvoc.ui.review.ReviewQueueScreen(
+                        onExit = { navController.popBackStack() }
                     )
                 }
 

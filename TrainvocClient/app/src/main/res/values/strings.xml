@@ -1105,4 +1105,26 @@
     <string name="learning_language_description">The dictionary you are studying. More languages are on the way!</string>
     <string name="learning_language_active">English → Turkish</string>
     <string name="language_coming_soon_chip">%1$s (Coming Soon)</string>
+    <!-- SRS Review Queue (#99 S2) -->
+    <string name="review_queue_title">Review</string>
+    <string name="review_due_card_title">Reviews due</string>
+    <string name="review_due_count">%1$d cards due</string>
+    <string name="review_start_action">Start review</string>
+    <string name="review_progress_remaining">%1$d left</string>
+    <string name="review_show_answer">Show answer</string>
+    <string name="review_tap_hint">Tap the card to reveal its meaning</string>
+    <string name="review_rating_again">Again</string>
+    <string name="review_rating_hard">Hard</string>
+    <string name="review_rating_good">Good</string>
+    <string name="review_rating_easy">Easy</string>
+    <string name="review_skip">Skip</string>
+    <string name="review_card_front_desc">Word to review: %1$s. Tap to reveal its meaning.</string>
+    <string name="review_card_back_desc">Meaning of %1$s</string>
+    <string name="review_empty_title">All caught up!</string>
+    <string name="review_empty_subtitle">No cards are due right now. Come back later to keep your memory fresh.</string>
+    <string name="review_summary_title">Session complete</string>
+    <string name="review_summary_reviewed">%1$d reviewed</string>
+    <string name="review_summary_retention">%1$d%% recalled</string>
+    <string name="review_summary_done">Done</string>
+    <string name="review_close_desc">Close review</string>
 </resources>

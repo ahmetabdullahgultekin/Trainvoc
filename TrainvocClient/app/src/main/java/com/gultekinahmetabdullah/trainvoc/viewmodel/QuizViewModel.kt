@@ -17,6 +17,7 @@ import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
+import com.gultekinahmetabdullah.trainvoc.srs.domain.ISrsSchedulerService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -41,6 +42,7 @@ class QuizViewModel @Inject constructor(
     private val progressService: IProgressService,
     private val quizHistoryDao: QuizHistoryDao,
     private val gamificationManager: GamificationManager,
+    private val srsScheduler: ISrsSchedulerService,
     private val savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider
 ) : ViewModel() {
@@ -325,6 +327,8 @@ class QuizViewModel @Inject constructor(
             correctCount++
             // Track for history
             questionResults.add(Pair(currentQuestion.correctWord.id, true))
+            // Feed the FSRS scheduler (S3 hook; no-op unless srs_engine_enabled).
+            scheduleReview(currentQuestion.correctWord.id, wasCorrect = true)
             // Update the entity stats in the database
             viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
@@ -340,6 +344,8 @@ class QuizViewModel @Inject constructor(
             wrongCount++
             // Track for history
             questionResults.add(Pair(currentQuestion.correctWord.id, false))
+            // Feed the FSRS scheduler (S3 hook; no-op unless srs_engine_enabled).
+            scheduleReview(currentQuestion.correctWord.id, wasCorrect = false)
             viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
@@ -349,6 +355,22 @@ class QuizViewModel @Inject constructor(
                 )
             }
             return false
+        }
+    }
+
+    /**
+     * S3 quiz-outcome → SRS auto-schedule hook (design doc §4). Fires on a
+     * background coroutine so it never blocks or alters the quiz timer/UI, and
+     * is a no-op unless `srs_engine_enabled` is on (gated inside the service),
+     * so the quiz behaves byte-identically to today while the flag is OFF.
+     */
+    private fun scheduleReview(wordId: Long, wasCorrect: Boolean) {
+        viewModelScope.launch(dispatchers.io) {
+            try {
+                srsScheduler.onQuizAnswer(wordId, wasCorrect)
+            } catch (e: Exception) {
+                Log.e(TAG, "SRS auto-schedule failed for word $wordId: ${e.message}", e)
+            }
         }
     }
 

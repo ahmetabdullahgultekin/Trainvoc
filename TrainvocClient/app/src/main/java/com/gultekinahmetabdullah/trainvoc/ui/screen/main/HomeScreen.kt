@@ -142,6 +142,7 @@ fun HomeScreen(
     onNavigateToGames: () -> Unit = {},
     onNavigateToMultiplayer: () -> Unit = {},
     onNavigateToChangelog: () -> Unit = {},
+    onNavigateToReviewQueue: () -> Unit = {},
     onOpenMenu: () -> Unit = {},
     preloadLottie: LottieComposition? = null,
     preloadBg: Painter? = null,
@@ -262,6 +263,17 @@ fun HomeScreen(
                         accuracy = lastQuiz.accuracy,
                         timestamp = lastQuiz.timestamp,
                         onClick = onNavigateToQuiz
+                    )
+                }
+            }
+
+            // 3.5. REVIEW DUE (FSRS #99 S2) — only when the engine flag is on and
+            // cards are due. Hidden (byte-identical to today) while flag is OFF.
+            if (uiState.showReviewDueCard) {
+                item {
+                    ReviewDueCard(
+                        dueCount = uiState.dueReviewCount,
+                        onClick = onNavigateToReviewQueue
                     )
                 }
             }
@@ -979,6 +991,60 @@ private fun HeroCTAButton(
                 imageVector = Icons.Default.PlayArrow,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+    }
+}
+
+/**
+ * "Reviews due" CTA (FSRS #99 S2) — the Home entry point into the Review Queue.
+ * Only rendered when `srs_engine_enabled` is on and cards are due (design doc §4);
+ * the count doubles as the design doc's "X cards due" badge.
+ */
+@Composable
+private fun ReviewDueCard(
+    dueCount: Int,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp),
+        shape = RoundedCornerShape(CornerRadius.large),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "🔁",
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Column {
+                Text(
+                    text = stringResource(id = R.string.review_due_card_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Text(
+                    text = stringResource(id = R.string.review_due_count, dueCount),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                )
+            }
+            Spacer(modifier = Modifier.width(Spacing.md))
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.size(28.dp)
             )
         }

@@ -12,6 +12,7 @@ import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
 import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
+import com.gultekinahmetabdullah.trainvoc.srs.domain.ISrsSchedulerService
 import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.test.util.TestDispatcherProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,8 +23,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 
 /**
@@ -46,6 +50,7 @@ class QuizViewModelTest {
     private lateinit var progressService: IProgressService
     private lateinit var quizHistoryDao: QuizHistoryDao
     private lateinit var gamificationManager: GamificationManager
+    private lateinit var srsScheduler: ISrsSchedulerService
     private lateinit var savedStateHandle: SavedStateHandle
     private lateinit var dispatchers: TestDispatcherProvider
     private lateinit var viewModel: QuizViewModel
@@ -81,6 +86,7 @@ class QuizViewModelTest {
         progressService = mock()
         quizHistoryDao = mock()
         gamificationManager = mock()
+        srsScheduler = mock()
         savedStateHandle = SavedStateHandle()
         dispatchers = TestDispatcherProvider()
     }
@@ -92,6 +98,7 @@ class QuizViewModelTest {
             progressService = progressService,
             quizHistoryDao = quizHistoryDao,
             gamificationManager = gamificationManager,
+            srsScheduler = srsScheduler,
             savedStateHandle = savedStateHandle,
             dispatchers = dispatchers
         )
@@ -186,6 +193,63 @@ class QuizViewModelTest {
 
         // Assert
         assertNull(result)
+    }
+
+    @Test
+    fun `correct answer feeds the SRS scheduler a correct outcome (S3 hook)`() = runTest {
+        // Arrange
+        setupQuizServiceMock()
+        whenever(wordStatisticsService.getWordStats(any())).thenReturn(testStats)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.startQuiz(QuizParameter.Level(WordLevel.A1), Quiz.Random)
+        advanceUntilIdle()
+
+        // Act
+        viewModel.checkAnswer(testWord)
+        advanceUntilIdle()
+
+        // Assert — the question's word is auto-scheduled as a correct review.
+        verifyBlocking(srsScheduler) { onQuizAnswer(eq(testWord.id), eq(true), any()) }
+    }
+
+    @Test
+    fun `wrong answer feeds the SRS scheduler an incorrect outcome (S3 hook)`() = runTest {
+        // Arrange
+        setupQuizServiceMock()
+        whenever(wordStatisticsService.getWordStats(any())).thenReturn(testStats)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.startQuiz(QuizParameter.Level(WordLevel.A1), Quiz.Random)
+        advanceUntilIdle()
+
+        // Act
+        viewModel.checkAnswer(wrongWord)
+        advanceUntilIdle()
+
+        // Assert — the correct word (not the chosen wrong one) is scheduled as a lapse.
+        verifyBlocking(srsScheduler) { onQuizAnswer(eq(testWord.id), eq(false), any()) }
+    }
+
+    @Test
+    fun `skipped answer never touches the SRS scheduler (S3 hook)`() = runTest {
+        // Arrange
+        setupQuizServiceMock()
+        whenever(wordStatisticsService.getWordStats(any())).thenReturn(testStats)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.startQuiz(QuizParameter.Level(WordLevel.A1), Quiz.Random)
+        advanceUntilIdle()
+
+        // Act — skip (null choice)
+        viewModel.checkAnswer(null)
+        advanceUntilIdle()
+
+        // Assert — skips carry no recall signal, so nothing is scheduled.
+        verifyBlocking(srsScheduler, never()) { onQuizAnswer(any(), any(), any()) }
     }
 
     @Test

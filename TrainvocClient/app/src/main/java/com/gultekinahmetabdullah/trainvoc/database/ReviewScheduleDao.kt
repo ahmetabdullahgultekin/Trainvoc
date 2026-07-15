@@ -41,6 +41,26 @@ interface ReviewScheduleDao {
         limit: Int = 50
     ): Flow<List<ReviewScheduleRow>>
 
+    /**
+     * One-shot snapshot of the due queue for a Review Queue session (soonest
+     * first). Unlike [getDueFlow] this does not re-emit as cards are rated, so a
+     * session iterates a stable ordered list instead of a queue that reshuffles
+     * under it after each persisted review.
+     */
+    @Query(
+        """
+        SELECT * FROM review_schedule
+        WHERE user_id = :userId AND due_at <= :now
+        ORDER BY due_at ASC
+        LIMIT :limit
+        """
+    )
+    suspend fun getDue(
+        now: Long,
+        userId: String = ReviewScheduleRow.DEFAULT_USER_ID,
+        limit: Int = 50
+    ): List<ReviewScheduleRow>
+
     /** Live due-count for the Home badge (design doc §4). */
     @Query("SELECT COUNT(*) FROM review_schedule WHERE user_id = :userId AND due_at <= :now")
     fun getDueCountFlow(

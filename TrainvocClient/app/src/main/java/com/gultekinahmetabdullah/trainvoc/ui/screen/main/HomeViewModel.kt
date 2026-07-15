@@ -3,7 +3,10 @@ package com.gultekinahmetabdullah.trainvoc.ui.screen.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
+import com.gultekinahmetabdullah.trainvoc.database.ReviewScheduleDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
+import com.gultekinahmetabdullah.trainvoc.features.FeatureFlag
+import com.gultekinahmetabdullah.trainvoc.features.FeatureFlagManager
 import com.gultekinahmetabdullah.trainvoc.gamification.DailyGoal
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
 import com.gultekinahmetabdullah.trainvoc.gamification.StreakTracking
@@ -35,7 +38,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val gamificationDao: GamificationDao,
     private val wordDao: WordDao,
-    private val quizHistoryDao: QuizHistoryDao
+    private val quizHistoryDao: QuizHistoryDao,
+    private val reviewScheduleDao: ReviewScheduleDao,
+    private val featureFlags: FeatureFlagManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -134,6 +139,17 @@ class HomeViewModel @Inject constructor(
                     thisMonth = wordDao.getWordsToReviewInRange(weekEnd, monthEnd)
                 )
 
+                // FSRS Review Queue badge (#99 S2) — only when the engine flag is on.
+                // A flag-read failure falls back to disabled, so the badge is hidden.
+                val srsEnabled = try {
+                    featureFlags.isEnabled(FeatureFlag.SRS_ENGINE)
+                } catch (_: Exception) {
+                    false
+                }
+                val dueReviewCount = if (srsEnabled) {
+                    reviewScheduleDao.getDueCount(System.currentTimeMillis())
+                } else 0
+
                 _uiState.value = HomeUiState(
                     isLoading = false,
                     currentStreak = validatedCurrentStreak,
@@ -156,7 +172,9 @@ class HomeViewModel @Inject constructor(
                     totalStudyTimeMinutes = totalStudyTimeMinutes,
                     totalCorrectAnswers = totalCorrect,
                     totalQuizzesAllTime = totalQuizzesAllTime,
-                    lastQuizResult = lastQuiz
+                    lastQuizResult = lastQuiz,
+                    srsEnabled = srsEnabled,
+                    dueReviewCount = dueReviewCount
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -241,8 +259,15 @@ data class HomeUiState(
     val totalQuizzesAllTime: Int = 0,
 
     // Last quiz result (for "continue where you left off" - fixes #187)
-    val lastQuizResult: QuizHistory? = null
+    val lastQuizResult: QuizHistory? = null,
+
+    // FSRS Review Queue (#99 S2) — gated by srs_engine_enabled (default OFF)
+    val srsEnabled: Boolean = false,
+    val dueReviewCount: Int = 0
 ) {
+    /** Whether to surface the Home "Reviews due" CTA (flag on AND cards due). */
+    val showReviewDueCard: Boolean get() = srsEnabled && dueReviewCount > 0
+
     // Computed properties for daily tasks
     val quizzesCompleted: Int get() = dailyGoal?.quizzesToday ?: 0
     val quizzesGoal: Int get() = dailyGoal?.quizzesGoal ?: 3
