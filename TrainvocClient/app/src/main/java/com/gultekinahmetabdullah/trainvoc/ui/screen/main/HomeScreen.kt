@@ -150,10 +150,13 @@ fun HomeScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // Username/avatar live in PreferencesRepository (single source of truth)
+    // Username/avatar live in PreferencesRepository (single source of truth).
+    // remember{}: EncryptedSharedPreferences reads do real crypto work — do
+    // not repeat them on every recomposition of an animating screen.
     val preferencesRepository = rememberPreferencesRepository()
-    val username = preferencesRepository.getUsername() ?: stringResource(id = R.string.username_placeholder)
-    val userAvatar = preferencesRepository.getAvatar() ?: "🦊" // Default fox avatar
+    val username = remember { preferencesRepository.getUsername() }
+        ?: stringResource(id = R.string.username_placeholder)
+    val userAvatar = remember { preferencesRepository.getAvatar() ?: "🦊" } // Default fox avatar
 
     // Update Notes management
     val updateNotesManager = remember { UpdateNotesManager.getInstance(context) }

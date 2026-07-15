@@ -158,12 +158,13 @@ fun WordDetailScreen(
                     examples = wordViewModel.getExamples(wordText)
                 }
                 launch {
-                    // Relational synonyms first; API strings as fallback/extras
+                    // Relational synonyms first; hit the API path only when
+                    // the relational table has nothing (avoids a duplicate
+                    // query + needless network round trip per screen open).
                     val relational = wordDbId
                         ?.let { wordViewModel.getSynonymWords(it).map { w -> w.word } }
                         .orEmpty()
-                    val api = wordViewModel.getSynonyms(wordText)
-                    synonyms = (relational + api).distinct()
+                    synonyms = relational.ifEmpty { wordViewModel.getSynonyms(wordText) }
                 }
                 launch {
                     wordDbId?.let { senses = wordViewModel.getSenses(it) }

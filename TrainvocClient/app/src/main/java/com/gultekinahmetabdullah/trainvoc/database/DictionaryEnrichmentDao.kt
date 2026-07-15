@@ -44,21 +44,8 @@ interface DictionaryEnrichmentDao {
 
     // ================== SYNONYMS ==================
 
-    /**
-     * Get all synonym lemmas for a word id (schema v18: id-based pairs,
-     * stored once with word_id < synonym_word_id; follow both directions).
-     */
-    @Query(
-        """
-        SELECT w.word FROM synonyms s JOIN words w ON w.id = s.synonym_word_id
-        WHERE s.word_id = :wordId
-        UNION
-        SELECT w.word FROM synonyms s JOIN words w ON w.id = s.word_id
-        WHERE s.synonym_word_id = :wordId
-        ORDER BY 1 ASC
-        """
-    )
-    suspend fun getSynonymsForWord(wordId: Long): List<String>
+    // NOTE: synonym reads live in WordDao.getSynonymsForWord (single owner
+    // of the both-directions UNION over id pairs); map .word at call sites.
 
     /**
      * Insert synonyms for a word (bulk insert)

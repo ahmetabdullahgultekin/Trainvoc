@@ -77,7 +77,7 @@ interface StatisticDao {
         SELECT SUM(s.correct_count) FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
         WHERE w.language_id = 1
-        AND date(w.last_reviewed/1000, 'unixepoch') = date('now', 'localtime')
+        AND date(w.last_reviewed/1000, 'unixepoch', 'localtime') = date('now', 'localtime')
     """
     )
     suspend fun getDailyCorrectAnswers(): Int?
@@ -89,8 +89,8 @@ interface StatisticDao {
         SELECT SUM(s.correct_count) FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
         WHERE w.language_id = 1
-        AND strftime('%W', w.last_reviewed/1000, 'unixepoch') = strftime('%W', 'now', 'localtime')
-        AND strftime('%Y', w.last_reviewed/1000, 'unixepoch') = strftime('%Y', 'now', 'localtime')
+        AND strftime('%W', w.last_reviewed/1000, 'unixepoch', 'localtime') = strftime('%W', 'now', 'localtime')
+        AND strftime('%Y', w.last_reviewed/1000, 'unixepoch', 'localtime') = strftime('%Y', 'now', 'localtime')
     """
     )
     suspend fun getWeeklyCorrectAnswers(): Int?

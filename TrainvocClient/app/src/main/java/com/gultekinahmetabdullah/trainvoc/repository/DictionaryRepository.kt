@@ -104,7 +104,7 @@ class DictionaryRepository @Inject constructor(
             // Check database first (synonyms are id-based in schema v18)
             val headwordId = wordDao.getWord(normalizedWord)?.id
             if (headwordId != null) {
-                val cachedSynonyms = dictionaryEnrichmentDao.getSynonymsForWord(headwordId)
+                val cachedSynonyms = wordDao.getSynonymsForWord(headwordId).map { it.word }
                 if (cachedSynonyms.isNotEmpty()) {
                     return@withContext cachedSynonyms
                 }
@@ -162,7 +162,7 @@ class DictionaryRepository @Inject constructor(
         cached: ApiCache
     ): EnrichedDictionaryData {
         val headwordId = wordDao.getWord(word)?.id
-        val synonyms = headwordId?.let { dictionaryEnrichmentDao.getSynonymsForWord(it) }
+        val synonyms = headwordId?.let { id -> wordDao.getSynonymsForWord(id).map { it.word } }
             ?: emptyList()
         val exampleSentences = exampleSentenceDao.getExamplesForWord(word)
         val examples = exampleSentences.map { it.sentence }

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.Transaction
+import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
@@ -38,6 +39,15 @@ interface WordDao {
     @Query("SELECT * FROM words WHERE word = :word AND language_id = 1 LIMIT 1")
     suspend fun getWord(word: String): Word?
 
+    /**
+     * Lemma lookup tolerant of casing/whitespace drift (the pre-v18 seed was
+     * capitalized, the v18 seed is lowercase; NOCASE covers ASCII EN lemmas).
+     */
+    @Query(
+        "SELECT * FROM words WHERE word = :word COLLATE NOCASE AND language_id = 1 LIMIT 1"
+    )
+    suspend fun getWordByLemma(word: String): Word?
+
     @Query("SELECT * FROM words WHERE language_id = 1 ORDER BY word ASC")
     fun getAllWords(): Flow<List<Word>>
 
@@ -45,11 +55,33 @@ interface WordDao {
     suspend fun getAllWordsList(): List<Word>
 
     // Get word count of a specific level
-    @Query("SELECT COUNT(*) FROM words WHERE level = :level")
+    @Query("SELECT COUNT(*) FROM words WHERE level = :level AND language_id = 1")
     suspend fun getWordCountByLevel(level: String): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWord(word: Word)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertWordIgnore(word: Word): Long
+
+    @Update
+    suspend fun updateWord(word: Word)
+
+    /**
+     * Insert-or-update WITHOUT SQLite REPLACE. REPLACE deletes the
+     * conflicting row before re-inserting, which fires ON DELETE CASCADE on
+     * word_translations/synonyms/word_of_day/quiz_question_results — wiping
+     * the word's relational data even when the id is preserved (v18 FKs).
+     * Existing rows are resolved case-insensitively by lemma and UPDATEd in
+     * place so their id and edges survive.
+     */
+    @Transaction
+    suspend fun insertWord(word: Word) {
+        val lemma = word.word.trim()
+        val existing = if (word.id != 0L) getWordById(word.id) else getWordByLemma(lemma)
+        if (existing == null) {
+            insertWordIgnore(word.copy(word = lemma))
+        } else {
+            updateWord(word.copy(id = existing.id, word = existing.word))
+        }
+    }
 
     // Insert words, if the words already exist, return the word
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -77,7 +109,7 @@ interface WordDao {
         COUNT(*) AS learned_word_count
     FROM words w
     JOIN statistics s ON w.stat_id = s.stat_id
-    WHERE w.level = :level AND s.learned = 1
+    WHERE w.language_id = 1 AND w.level = :level AND s.learned = 1
     """
     )
     suspend fun getLevelUnlockerWordCount(level: String): Int
@@ -126,7 +158,7 @@ interface WordDao {
     @Query("""
         SELECT COUNT(*) FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE s.learned = 1
+        WHERE w.language_id = 1 AND s.learned = 1
     """)
     suspend fun getLearnedWordCount(): Int
 
@@ -152,24 +184,24 @@ interface WordDao {
 
     // Get all the word with exams
     @Transaction
-    @Query("SELECT * FROM words")
+    @Query("SELECT * FROM words WHERE language_id = 1")
     suspend fun getAllWordsWithExams(): List<WordAskedInExams>
 
     // Get the exams of a word
     @Transaction
-    @Query("SELECT * FROM words WHERE word = :word")
+    @Query("SELECT * FROM words WHERE word = :word AND language_id = 1")
     suspend fun getExamsOfWord(word: String): List<WordAskedInExams>
 
     // Get the total time spent on the words
-    @Query("SELECT SUM(seconds_spent) FROM words")
+    @Query("SELECT SUM(seconds_spent) FROM words WHERE language_id = 1")
     suspend fun getTotalTimeSpent(): Int
 
     // Get the time spent on a specific word
-    @Query("SELECT seconds_spent FROM words WHERE word = :word")
+    @Query("SELECT seconds_spent FROM words WHERE word = :word AND language_id = 1")
     suspend fun getTimeSpent(word: String): Int
 
     // Get the last time the word was answered
-    @Query("SELECT last_reviewed FROM words WHERE word = :word")
+    @Query("SELECT last_reviewed FROM words WHERE word = :word AND language_id = 1")
     suspend fun getLastAnswered(word: String): Long
 
     // Get the last time any word was answered
@@ -177,15 +209,15 @@ interface WordDao {
     suspend fun getLastAnswered(): Long
 
     // Update the last time the word was answered
-    @Query("UPDATE words SET last_reviewed = :time WHERE word = :word")
+    @Query("UPDATE words SET last_reviewed = :time WHERE word = :word AND language_id = 1")
     suspend fun updateLastReviewed(word: String, time: Long = System.currentTimeMillis())
 
     // Update the seconds spent on the word
-    @Query("UPDATE words SET seconds_spent = seconds_spent + :secondsSpent WHERE word = :word")
+    @Query("UPDATE words SET seconds_spent = seconds_spent + :secondsSpent WHERE word = :word AND language_id = 1")
     suspend fun updateSecondsSpent(secondsSpent: Int, word: String)
 
     // Update the word stat id
-    @Query("UPDATE words SET stat_id = :statId WHERE word = :word")
+    @Query("UPDATE words SET stat_id = :statId WHERE word = :word AND language_id = 1")
     suspend fun updateWordStatId(statId: Int, word: String)
 
     @Query("UPDATE words SET stat_id = 0")
@@ -199,6 +231,7 @@ interface WordDao {
         """
         SELECT w.word FROM words w
         JOIN statistics s ON w.stat_id = s.stat_id
+        WHERE w.language_id = 1
         ORDER BY s.wrong_count DESC LIMIT 1
     """
     )
@@ -285,7 +318,7 @@ interface WordDao {
     /**
      * Get all favorite words
      */
-    @Query("SELECT * FROM words WHERE isFavorite = 1 ORDER BY favoritedAt DESC")
+    @Query("SELECT * FROM words WHERE isFavorite = 1 AND language_id = 1 ORDER BY favoritedAt DESC")
     fun getFavoriteWords(): Flow<List<Word>>
 
     /**
@@ -294,7 +327,7 @@ interface WordDao {
     @Query(
         """
         SELECT * FROM words
-        WHERE isFavorite = 1
+        WHERE isFavorite = 1 AND language_id = 1
         AND (word LIKE '%' || :query || '%' OR meaning LIKE '%' || :query || '%')
         ORDER BY favoritedAt DESC
         """
@@ -304,13 +337,13 @@ interface WordDao {
     /**
      * Toggle favorite status for a word
      */
-    @Query("UPDATE words SET isFavorite = :isFavorite, favoritedAt = :timestamp WHERE word = :wordId")
+    @Query("UPDATE words SET isFavorite = :isFavorite, favoritedAt = :timestamp WHERE word = :wordId AND language_id = 1")
     suspend fun setFavorite(wordId: String, isFavorite: Boolean, timestamp: Long?)
 
     /**
      * Get favorite count
      */
-    @Query("SELECT COUNT(*) FROM words WHERE isFavorite = 1")
+    @Query("SELECT COUNT(*) FROM words WHERE isFavorite = 1 AND language_id = 1")
     suspend fun getFavoriteCount(): Int
 
     /**
@@ -330,7 +363,7 @@ interface WordDao {
         """
         SELECT COUNT(*) FROM words w
         LEFT JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE s.learned = 1 AND s.correct_count >= 5
+        WHERE w.language_id = 1 AND s.learned = 1 AND s.correct_count >= 5
         """
     )
     suspend fun getMasteredWordCount(): Int
@@ -339,7 +372,8 @@ interface WordDao {
         """
         SELECT COUNT(*) FROM words w
         LEFT JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE (s.correct_count + s.wrong_count + s.skipped_count) > 0
+        WHERE w.language_id = 1
+        AND (s.correct_count + s.wrong_count + s.skipped_count) > 0
         AND s.learned = 0
         AND s.correct_count >= s.wrong_count
         """
@@ -350,7 +384,7 @@ interface WordDao {
         """
         SELECT COUNT(*) FROM words w
         LEFT JOIN statistics s ON w.stat_id = s.stat_id
-        WHERE s.wrong_count > s.correct_count AND s.learned = 0
+        WHERE w.language_id = 1 AND s.wrong_count > s.correct_count AND s.learned = 0
         """
     )
     suspend fun getStrugglingWordCount(): Int

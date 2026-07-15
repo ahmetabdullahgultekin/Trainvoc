@@ -39,6 +39,9 @@ import java.util.Locale
  */
 class Migration17To18(private val context: Context) : Migration(17, 18) {
 
+    /** The join key between legacy rows and new ids — the migration's contract. */
+    private fun lemmaKey(s: String): String = s.trim().lowercase(Locale.ROOT)
+
     override fun migrate(db: SupportSQLiteDatabase) {
         val manifest = JSONObject(
             context.assets.open("database/seed_v18.json")
@@ -119,22 +122,28 @@ class Migration17To18(private val context: Context) : Migration(17, 18) {
             insertTranslation.executeInsert()
         }
 
+        val insertSynonym = db.compileStatement(
+            "INSERT OR IGNORE INTO synonyms (word_id, synonym_word_id) VALUES (?, ?)"
+        )
         val synonyms = manifest.getJSONArray("synonyms")
         for (i in 0 until synonyms.length()) {
             val s = synonyms.getJSONObject(i)
-            db.execSQL(
-                "INSERT OR IGNORE INTO synonyms (word_id, synonym_word_id) VALUES (?, ?)",
-                arrayOf(s.getLong("wordId"), s.getLong("synonymWordId"))
-            )
+            insertSynonym.clearBindings()
+            insertSynonym.bindLong(1, s.getLong("wordId"))
+            insertSynonym.bindLong(2, s.getLong("synonymWordId"))
+            insertSynonym.executeInsert()
         }
 
+        val insertCrossRef = db.compileStatement(
+            "INSERT OR IGNORE INTO word_exam_cross_ref (word_id, exam) VALUES (?, ?)"
+        )
         val wordExams = manifest.getJSONArray("wordExams")
         for (i in 0 until wordExams.length()) {
             val x = wordExams.getJSONObject(i)
-            db.execSQL(
-                "INSERT OR IGNORE INTO word_exam_cross_ref (word_id, exam) VALUES (?, ?)",
-                arrayOf(x.getLong("wordId"), x.getString("exam"))
-            )
+            insertCrossRef.clearBindings()
+            insertCrossRef.bindLong(1, x.getLong("wordId"))
+            insertCrossRef.bindString(2, x.getString("exam"))
+            insertCrossRef.executeInsert()
         }
 
         // ---- 5. Carry user progress over by lemma -------------------------
@@ -156,8 +165,12 @@ class Migration17To18(private val context: Context) : Migration(17, 18) {
         )
         val legacyIdByLemma = HashMap<String, Long>()
         for (old in oldWords) {
-            val key = old.word.trim().lowercase(Locale.ROOT)
-            var newId = enIdByLemma[key]
+            val key = lemmaKey(old.word)
+            // Fall back to already-inserted customs: two legacy rows that
+            // differ only by case/whitespace map to ONE new row (the old PK
+            // was the raw string, so such near-duplicates could coexist and
+            // a second plain INSERT would violate UNIQUE(word, language_id)).
+            var newId = enIdByLemma[key] ?: legacyIdByLemma[key]
             if (newId == null) {
                 // Custom word: re-insert (auto id >= 1_000_000), then unpack
                 // its packed meaning into TR rows + translation edges.
@@ -183,38 +196,48 @@ class Migration17To18(private val context: Context) : Migration(17, 18) {
         }
 
         // ---- 6. Remap legacy relational rows -------------------------------
+        fun resolveId(lemma: String): Long? =
+            legacyIdByLemma[lemmaKey(lemma)] ?: enIdByLemma[lemmaKey(lemma)]
+
         for ((word, exam) in oldCrossRefs) {
-            val id = legacyIdByLemma[word.trim().lowercase(Locale.ROOT)] ?: continue
-            db.execSQL(
-                "INSERT OR IGNORE INTO word_exam_cross_ref (word_id, exam) VALUES (?, ?)",
-                arrayOf<Any?>(id, exam)
-            )
+            val id = resolveId(word) ?: continue
+            insertCrossRef.clearBindings()
+            insertCrossRef.bindLong(1, id)
+            insertCrossRef.bindString(2, exam)
+            insertCrossRef.executeInsert()
         }
         for ((a, b) in oldSynonyms) {
-            val idA = legacyIdByLemma[a.trim().lowercase(Locale.ROOT)]
-                ?: enIdByLemma[a.trim().lowercase(Locale.ROOT)] ?: continue
-            val idB = legacyIdByLemma[b.trim().lowercase(Locale.ROOT)]
-                ?: enIdByLemma[b.trim().lowercase(Locale.ROOT)] ?: continue
+            val idA = resolveId(a) ?: continue
+            val idB = resolveId(b) ?: continue
             if (idA == idB) continue
-            db.execSQL(
-                "INSERT OR IGNORE INTO synonyms (word_id, synonym_word_id) VALUES (?, ?)",
-                arrayOf(minOf(idA, idB), maxOf(idA, idB))
-            )
+            insertSynonym.clearBindings()
+            insertSynonym.bindLong(1, minOf(idA, idB))
+            insertSynonym.bindLong(2, maxOf(idA, idB))
+            insertSynonym.executeInsert()
         }
+        val insertWordOfDay = db.compileStatement(
+            "INSERT INTO word_of_day (id, wordId, date, wasViewed) VALUES (?, ?, ?, ?)"
+        )
         for (row in oldWordOfDay) {
-            val id = legacyIdByLemma[row.word.trim().lowercase(Locale.ROOT)] ?: continue
-            db.execSQL(
-                "INSERT INTO word_of_day (id, wordId, date, wasViewed) VALUES (?, ?, ?, ?)",
-                arrayOf<Any?>(row.id, id, row.date, row.wasViewed)
-            )
+            val id = resolveId(row.word) ?: continue
+            insertWordOfDay.clearBindings()
+            insertWordOfDay.bindLong(1, row.id)
+            insertWordOfDay.bindLong(2, id)
+            insertWordOfDay.bindString(3, row.date)
+            insertWordOfDay.bindLong(4, row.wasViewed)
+            insertWordOfDay.executeInsert()
         }
+        val insertQuizResult = db.compileStatement(
+            "INSERT INTO quiz_question_results (id, quizId, wordId, isCorrect) VALUES (?, ?, ?, ?)"
+        )
         for (row in oldQuizResults) {
-            val id = legacyIdByLemma[row.word.trim().lowercase(Locale.ROOT)] ?: continue
-            db.execSQL(
-                "INSERT INTO quiz_question_results (id, quizId, wordId, isCorrect) " +
-                    "VALUES (?, ?, ?, ?)",
-                arrayOf(row.id, row.quizId, id, row.isCorrect)
-            )
+            val id = resolveId(row.word) ?: continue
+            insertQuizResult.clearBindings()
+            insertQuizResult.bindLong(1, row.id)
+            insertQuizResult.bindLong(2, row.quizId)
+            insertQuizResult.bindLong(3, id)
+            insertQuizResult.bindLong(4, row.isCorrect)
+            insertQuizResult.executeInsert()
         }
 
         // ---- 7. srs_cards word ids meant nothing before v18 ----------------
@@ -397,16 +420,33 @@ class Migration17To18(private val context: Context) : Migration(17, 18) {
         old: OldWord,
         trIdByLemma: HashMap<String, Long>
     ): Long {
-        val stmt = db.compileStatement(
-            "INSERT INTO words (word, language_id, meaning, level, part_of_speech, " +
-                "stat_id, seconds_spent, easiness_factor, interval_days, " +
-                "repetitions, isFavorite) VALUES (?, 1, ?, ?, ?, 0, 0, 2.5, 0, 0, 0)"
-        )
-        stmt.bindString(1, old.word.trim())
+        val stmt = customWordStmt ?: db.compileStatement(
+            // OR IGNORE: the old string PK allowed near-duplicates (case or
+            // whitespace variants); after trimming, a second variant must not
+            // abort the whole migration with a UNIQUE(word, language_id) hit.
+            "INSERT OR IGNORE INTO words (word, language_id, meaning, level, " +
+                "part_of_speech, stat_id, seconds_spent, easiness_factor, " +
+                "interval_days, repetitions, isFavorite) " +
+                "VALUES (?, 1, ?, ?, ?, 0, 0, 2.5, 0, 0, 0)"
+        ).also { customWordStmt = it }
+        val customLemma = old.word.trim()
+        stmt.clearBindings()
+        stmt.bindString(1, customLemma)
         stmt.bindString(2, old.meaning)
         if (old.level == null) stmt.bindNull(3) else stmt.bindString(3, old.level)
         if (old.partOfSpeech == null) stmt.bindNull(4) else stmt.bindString(4, old.partOfSpeech)
-        val newId = stmt.executeInsert()
+        var newId = stmt.executeInsert()
+        if (newId == -1L) {
+            // Ignored: the row already exists — resolve and reuse its id.
+            db.query(
+                "SELECT id FROM words WHERE word = ? AND language_id = 1",
+                arrayOf(customLemma)
+            ).use { c ->
+                check(c.moveToFirst()) { "custom word '$customLemma' neither inserted nor found" }
+                newId = c.getLong(0)
+            }
+            return newId
+        }
 
         // Unpack the packed meaning into TR rows + translation edges so
         // custom words participate in the relational model too.
@@ -415,25 +455,38 @@ class Migration17To18(private val context: Context) : Migration(17, 18) {
             sense.lemmas.forEachIndexed { pos, lemma ->
                 val key = MeaningParser.turkishLower(lemma)
                 val trId = trIdByLemma.getOrPut(key) {
-                    val trStmt = db.compileStatement(
+                    val trStmt = customTrStmt ?: db.compileStatement(
                         "INSERT INTO words (word, language_id, meaning, stat_id, " +
                             "seconds_spent, easiness_factor, interval_days, " +
                             "repetitions, isFavorite) VALUES (?, 2, ?, 0, 0, 2.5, 0, 0, 0)"
-                    )
+                    ).also { customTrStmt = it }
+                    trStmt.clearBindings()
                     trStmt.bindString(1, key)
-                    trStmt.bindString(2, old.word.trim().lowercase(Locale.ROOT))
+                    trStmt.bindString(2, lemmaKey(old.word))
                     trStmt.executeInsert()
                 }
-                db.execSQL(
+                val edgeStmt = customEdgeStmt ?: db.compileStatement(
                     "INSERT OR IGNORE INTO word_translations (word_id, " +
                         "translated_word_id, sense_index, note, is_primary) " +
-                        "VALUES (?, ?, ?, ?, ?)",
-                    arrayOf<Any?>(newId, trId, senseIndex, sense.note, if (senseIndex == 0 && pos == 0) 1 else 0)
-                )
+                        "VALUES (?, ?, ?, ?, ?)"
+                ).also { customEdgeStmt = it }
+                edgeStmt.clearBindings()
+                edgeStmt.bindLong(1, newId)
+                edgeStmt.bindLong(2, trId)
+                edgeStmt.bindLong(3, senseIndex.toLong())
+                if (sense.note == null) edgeStmt.bindNull(4) else edgeStmt.bindString(4, sense.note)
+                edgeStmt.bindLong(5, if (senseIndex == 0 && pos == 0) 1L else 0L)
+                edgeStmt.executeInsert()
             }
         }
         return newId
     }
+
+    // Prepared once, reused for every custom word (statement compilation is
+    // ~10-50x the cost of bind+step; users can have hundreds of customs).
+    private var customWordStmt: androidx.sqlite.db.SupportSQLiteStatement? = null
+    private var customTrStmt: androidx.sqlite.db.SupportSQLiteStatement? = null
+    private var customEdgeStmt: androidx.sqlite.db.SupportSQLiteStatement? = null
 
     private fun readPairs(db: SupportSQLiteDatabase, sql: String): List<Pair<String, String>> {
         val result = mutableListOf<Pair<String, String>>()

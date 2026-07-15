@@ -15,6 +15,10 @@ object LegacyPrefsMigrator {
 
     const val KEY_MIGRATED = "legacy_prefs_migrated"
 
+    /** Legacy plain prefs files older app versions wrote profile data to. */
+    const val LEGACY_USER_PREFS = "user_prefs"
+    const val LEGACY_TRAINVOC_PREFS = "trainvoc_prefs"
+
     /** Keys that may exist in the legacy plain stores. */
     private val LEGACY_KEYS = listOf("username", "avatar")
 

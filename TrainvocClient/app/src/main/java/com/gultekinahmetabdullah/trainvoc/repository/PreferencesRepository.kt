@@ -66,8 +66,12 @@ class PreferencesRepository @Inject constructor(
             LegacyPrefsMigrator.migrate(
                 secure,
                 listOf(
-                    context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE),
-                    context.getSharedPreferences("trainvoc_prefs", Context.MODE_PRIVATE)
+                    context.getSharedPreferences(
+                        LegacyPrefsMigrator.LEGACY_USER_PREFS, Context.MODE_PRIVATE
+                    ),
+                    context.getSharedPreferences(
+                        LegacyPrefsMigrator.LEGACY_TRAINVOC_PREFS, Context.MODE_PRIVATE
+                    )
                 )
             )
         }

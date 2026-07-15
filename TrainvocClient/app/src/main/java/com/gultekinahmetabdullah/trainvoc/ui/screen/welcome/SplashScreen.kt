@@ -38,7 +38,9 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.config.SplashConfig
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Alpha
 import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SplashScreen(
@@ -70,24 +72,32 @@ fun SplashScreen(
     // Track whether navigation has already happened (to prevent double-navigate)
     var hasNavigated by remember { mutableStateOf(false) }
 
-    val username = remember { preferencesRepository.getUsername() }
-    val isReturningUser = !username.isNullOrEmpty()
-    val destination = if (isReturningUser) Route.MAIN else Route.WELCOME
+    // The first EncryptedSharedPreferences access does Keystore + file I/O
+    // work (plus the one-time legacy-prefs migration) — keep it OFF the main
+    // thread. null = still loading; the splash delay easily covers the read.
+    var isReturningUser by remember { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(Unit) {
+        isReturningUser = withContext(Dispatchers.IO) {
+            !preferencesRepository.getUsername().isNullOrEmpty()
+        }
+    }
 
-    // Navigate helper (prevents double navigation)
-    val navigateAway: () -> Unit = remember(destination) {
-        {
-            if (!hasNavigated) {
-                hasNavigated = true
-                navController.navigate(destination)
-            }
+    // Navigate helper (prevents double navigation; waits for the prefs read)
+    val navigateAway: () -> Unit = {
+        val returning = isReturningUser
+        if (!hasNavigated && returning != null) {
+            hasNavigated = true
+            navController.navigate(if (returning) Route.MAIN else Route.WELCOME)
         }
     }
 
     // Launch effect to navigate after animation (auto-skip timer)
-    LaunchedEffect(true) {
+    LaunchedEffect(isReturningUser) {
+        val returning = isReturningUser ?: return@LaunchedEffect
         // Shorter splash for returning users, full animation for new users
-        val splashDuration = if (isReturningUser) SplashConfig.RETURNING_USER_DURATION_MS else SplashConfig.NEW_USER_DURATION_MS
+        val splashDuration =
+            if (returning) SplashConfig.RETURNING_USER_DURATION_MS
+            else SplashConfig.NEW_USER_DURATION_MS
         delay(splashDuration)
         navigateAway()
     }

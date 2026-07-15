@@ -10,8 +10,6 @@ app's Room v18 schema from the legacy packed word data.
   strings (`"(1) terk etmek (= leave) (2) vazgeçmek"`) are unpacked by
   `meaning_parser.py` into separate senses, Turkish lemmas, synonym hints
   and usage notes.
-- `data/yds_words.json` — kept for provenance; its content is identical to
-  the `YDS` group of `all_words.json` and is not read.
 - `ids.lock.json` — **committed ID ledger** mapping `lang|lemma` → word id.
   Regeneration never renumbers existing words; new lemmas append after the
   max id. Do not edit or delete this file: word ids are referenced by user

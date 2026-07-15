@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -173,18 +172,35 @@ class WordDaoRelationalTest {
     }
 
     @Test
-    fun `raw REPLACE insert of an existing lemma mints a new id`() = runTest {
-        // Documents the sharp edge WordRepository.insertWord guards against:
-        // REPLACE on the unique(word, language_id) index deletes the old row
-        // (cascading its relational edges) and assigns a fresh id.
+    fun `re-inserting an existing lemma keeps its id and relational edges`() = runTest {
+        // insertWord is a true upsert (UPDATE, never REPLACE): SQLite REPLACE
+        // would delete the conflicting row first, firing ON DELETE CASCADE on
+        // word_translations/synonyms even when the id is preserved.
         dao.insertWord(TestData.word(word = "run", meaning = "koşmak"))
         val originalId = dao.getWord("run")!!.id
+        dao.insertWord(TestData.turkishWord(word = "koşmak", id = 900L))
+        link(wordId = originalId, translatedId = 900L, sense = 0, primary = true)
 
         dao.insertWord(TestData.word(word = "run", meaning = "updated"))
 
-        val replaced = dao.getWord("run")!!
-        assertNotEquals(originalId, replaced.id)
-        assertEquals("updated", replaced.meaning)
+        val updated = dao.getWord("run")!!
+        assertEquals(originalId, updated.id)
+        assertEquals("updated", updated.meaning)
+        assertEquals(1, dao.getWordCount())
+        // The translation edge survived the upsert.
+        assertEquals(1, dao.getTranslationsForWord(originalId).size)
+    }
+
+    @Test
+    fun `upsert matches existing lemmas case-insensitively`() = runTest {
+        dao.insertWord(TestData.word(word = "run", meaning = "koşmak"))
+        val originalId = dao.getWord("run")!!.id
+
+        dao.insertWord(TestData.word(word = " Run ", meaning = "updated"))
+
+        val updated = dao.getWord("run")!!
+        assertEquals(originalId, updated.id)
+        assertEquals("updated", updated.meaning)
         assertEquals(1, dao.getWordCount())
     }
 

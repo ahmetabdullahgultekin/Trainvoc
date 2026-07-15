@@ -593,17 +593,23 @@ class DataImporter(
             }
 
             // Then import words with correct statId references.
-            // Schema v18: words.id is an autoGenerate PK and insertWord uses
-            // REPLACE. Re-inserting an existing lemma with id=0 would delete
-            // the old row (cascading away its translation/synonym edges) and
-            // mint a new id — so resolve the existing row by lemma first and
-            // preserve its id. Unknown lemmas insert as-is (id=0 → auto).
+            // Schema v18: resolve existing rows case-insensitively (pre-v18
+            // backups carry capitalized lemmas, the v18 seed is lowercase) and
+            // keep the fields the backup doesn't know about (language, note)
+            // so the relational dictionary data survives a restore. The DAO's
+            // insertWord is a true upsert (UPDATE, never REPLACE), so
+            // translation/synonym edges are never cascade-deleted.
             var wordsImported = 0
             words.forEachIndexed { index, wordBackup ->
                 val newStatId = statisticIdMap[wordBackup.statId] ?: wordBackup.statId
-                val existing = database.wordDao().getWord(wordBackup.word)
+                val existing = database.wordDao().getWordByLemma(wordBackup.word.trim())
                 val word = if (existing != null) {
-                    wordBackup.toWord().copy(id = existing.id, statId = newStatId)
+                    wordBackup.toWord().copy(
+                        id = existing.id,
+                        statId = newStatId,
+                        languageId = existing.languageId,
+                        note = existing.note
+                    )
                 } else {
                     wordBackup.toWord().copy(statId = newStatId)
                 }
@@ -621,12 +627,29 @@ class DataImporter(
      * Restore user preferences from backup
      */
     private fun restoreUserPreferences(preferences: UserPreferences) {
-        preferences.username?.let { preferencesRepository(context).setUsername(it) }
+        // Username/language/theme/palette live in the encrypted repository
+        // store — writing them to the plain file would be a silent no-op
+        // (nothing reads them from there anymore).
+        val repo = preferencesRepository(context)
+        preferences.username?.let { repo.setUsername(it) }
+        preferences.language?.let { code ->
+            com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference.entries
+                .find { it.code == code }?.let(repo::setLanguage)
+        }
+        preferences.theme?.let { name ->
+            runCatching {
+                com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference.valueOf(name)
+            }.getOrNull()?.let(repo::setTheme)
+        }
+        preferences.colorPalette?.let { key ->
+            repo.setColorPalette(
+                com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference.fromKey(key)
+            )
+        }
+        // Notification flags are owned by the plain-prefs notification stack
+        // (NotificationPreferences/workers read them from user_prefs).
         val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         sharedPrefs.edit().apply {
-            preferences.language?.let { putString("language", it) }
-            preferences.theme?.let { putString("theme", it) }
-            preferences.colorPalette?.let { putString("color_palette", it) }
             putBoolean("notifications", preferences.notificationsEnabled)
             putBoolean("daily_reminders_enabled", preferences.dailyRemindersEnabled)
             putBoolean("streak_alerts_enabled", preferences.streakAlertsEnabled)

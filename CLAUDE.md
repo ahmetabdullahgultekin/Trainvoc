@@ -211,7 +211,7 @@ cd TrainvocBackend
    - ✅ Auth: Google Sign-In (#192), email-verify UI (#191), session timeout (#193).
    - ✅ Leaderboard: local "Your Progress" + honest "global coming soon" (#194).
    - ⚠️ Cloud/Drive backup still local-only (honestly "coming soon").
-   - ⚠️ 30 pre-existing unit-test runtime failures tracked as #223 (Android-SDK/mock issues, not blockers).
+   - ✅ Unit-test suite fully green (246 tests, 0 failures) — #223 fixed on 2026-07-15.
 
 2. **TrainvocWeb**
    - ✅ Security alerts resolved; `npm audit` = 0; safe Dependabot patches merged.

@@ -211,12 +211,10 @@ def emit_manifest(manifest_path: pathlib.Path, report: list[str]) -> dict:
                     report.append(f"UNRESOLVED_SYN {lemma!r} -> {hint!r}")
 
     # 3. TR word rows (meaning cache = the EN lemmas they translate).
+    en_by_id = {w["id"]: w["lemma"] for w in words}
     tr_meanings: dict[int, list[str]] = {}
     for t in translations:
-        tr_meanings.setdefault(t["translatedWordId"], [])
-    en_by_id = {w["id"]: w["lemma"] for w in words}
-    for t in translations:
-        lemmas = tr_meanings[t["translatedWordId"]]
+        lemmas = tr_meanings.setdefault(t["translatedWordId"], [])
         en_lemma = en_by_id[t["wordId"]]
         if en_lemma not in lemmas:
             lemmas.append(en_lemma)

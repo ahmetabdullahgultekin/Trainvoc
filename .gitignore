@@ -77,3 +77,7 @@ TrainvocClient/app/build/
 TrainvocClient/.gradle/
 *.apk
 *.aab
+
+# Python bytecode
+__pycache__/
+*.pyc

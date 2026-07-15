@@ -322,50 +322,18 @@ class WordRepositoryTest {
         }
     }
 
-    // ========== insertWord Tests (schema v18 id preservation) ==========
+    // ========== insertWord Tests (schema v18 upsert delegation) ==========
+    // Id preservation and cascade safety live in WordDao.insertWord (a
+    // @Transaction upsert: UPDATE, never REPLACE) and are covered end-to-end
+    // by WordDaoRelationalTest; the repository is a straight pass-through.
 
     @Test
-    fun `insertWord should preserve the existing row id when re-inserting a known lemma`() =
-        runTest {
-            // Given: the lemma already exists with a permanent id. A REPLACE
-            // insert with id=0 would delete that row (cascading translation
-            // and synonym edges) and mint a new id, so the repository must
-            // resolve and reuse the existing id first.
-            val incoming = createSampleWord(word = "run") // id = 0 (unset)
-            val existing = incoming.copy(id = 42L, meaning = "old meaning")
-            coEvery { mockWordDao.getWord("run") } returns existing
+    fun `insertWord delegates to the DAO upsert unchanged`() = runTest {
+        val incoming = createSampleWord(word = "run") // id = 0 (unset)
 
-            // When
-            repository.insertWord(incoming)
+        repository.insertWord(incoming)
 
-            // Then: inserted with the existing id, keeping the new content
-            coVerify {
-                mockWordDao.insertWord(
-                    match { it.id == 42L && it.word == "run" && it.meaning == incoming.meaning }
-                )
-            }
-        }
-
-    @Test
-    fun `insertWord should let Room auto-generate the id for a brand new lemma`() = runTest {
-        // Given: no existing row for this lemma
-        coEvery { mockWordDao.getWord("brandnew") } returns null
-
-        // When
-        repository.insertWord(createSampleWord(word = "brandnew"))
-
-        // Then: inserted unchanged with id = 0 so Room assigns a fresh id
-        coVerify { mockWordDao.insertWord(match { it.id == 0L && it.word == "brandnew" }) }
-    }
-
-    @Test
-    fun `insertWord should not look up the lemma when the caller already set an id`() = runTest {
-        // When: the caller provides an explicit id (e.g. seed import)
-        repository.insertWord(createSampleWord(word = "seeded").copy(id = 7L))
-
-        // Then: no redundant lookup, the id is trusted as-is
-        coVerify(exactly = 0) { mockWordDao.getWord(any()) }
-        coVerify { mockWordDao.insertWord(match { it.id == 7L }) }
+        coVerify(exactly = 1) { mockWordDao.insertWord(incoming) }
     }
 
     // ========== resetProgress Tests ==========

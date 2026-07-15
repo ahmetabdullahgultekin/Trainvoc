@@ -66,9 +66,18 @@ jobs:
 
       - name: Collect APKs
         id: apk
+        env:
+          SIGNED: ${{ steps.keystore.outputs.signed }}
         run: |
           mkdir -p out
           find app/build/outputs/apk -name "*.apk" -exec cp {} out/ \;
+          # Guard against publishing an unsigned APK labeled as signed: the
+          # gradle signing config silently skips signing when any TRAINVOC_*
+          # variable is missing and emits app-release-unsigned.apk.
+          if [ "$SIGNED" = "true" ] && ls out/ | grep -q "unsigned"; then
+            echo "::error::Keystore secrets are set but gradle produced an UNSIGNED APK — check RELEASE_KEYSTORE_PASSWORD/RELEASE_KEY_ALIAS/RELEASE_KEY_PASSWORD secrets."
+            exit 1
+          fi
           for f in out/*.apk; do
             mv "$f" "${f%.apk}-${GITHUB_REF_NAME}.apk"
           done

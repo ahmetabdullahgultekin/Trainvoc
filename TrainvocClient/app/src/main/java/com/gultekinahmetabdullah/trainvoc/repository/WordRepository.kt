@@ -126,16 +126,10 @@ class WordRepository @Inject constructor(
     override fun getAllWords(): Flow<List<Word>> = wordDao.getAllWords()
 
     override suspend fun insertWord(word: Word) {
-        // Schema v18: insertWord uses OnConflictStrategy.REPLACE and the PK is
-        // the autoGenerate id. Re-inserting an existing lemma with id=0 would
-        // REPLACE the old row (cascading away translation/synonym edges) and
-        // mint a new id — so resolve the existing id first and preserve it.
-        val toInsert = if (word.id == 0L) {
-            wordDao.getWord(word.word)?.let { existing -> word.copy(id = existing.id) } ?: word
-        } else {
-            word
-        }
-        wordDao.insertWord(toInsert)
+        // WordDao.insertWord is a true upsert: existing lemmas (matched
+        // case-insensitively) are UPDATEd in place — never REPLACEd — so the
+        // word's id and its translation/synonym edges always survive.
+        wordDao.insertWord(word)
     }
 
     override suspend fun generateTenQuestions(
