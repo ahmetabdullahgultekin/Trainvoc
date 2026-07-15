@@ -30,10 +30,10 @@ configurations.all {
 // keys), so a clean checkout / CI has none — applying the plugin unconditionally
 // would fail every build for anyone but the original developer (issue #221).
 //
-// Firebase Auth still compiles without it: the SDK classes are on the classpath
-// and `FirebaseAuth.getInstance()` is only touched at runtime, where its callers
-// already guard with try/catch. When the file is absent, Firebase-backed sign-in
-// is simply inert until a real config is dropped in (see google-services.json.sample).
+// Firebase Auth still compiles without it: the SDK classes are on the classpath,
+// and FirebaseAuthRepository resolves `FirebaseAuth.getInstance()` lazily behind
+// a guard (#103), so builds without the file run with Firebase-backed sign-in
+// inert until a real config is dropped in (see google-services.json.sample).
 if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
     logger.lifecycle("Trainvoc: google-services.json found — Firebase plugin applied.")
@@ -53,8 +53,8 @@ android {
         applicationId = "com.gultekinahmetabdullah.trainvoc"
         minSdk = 24
         targetSdk = 35
-        versionCode = 14
-        versionName = "1.3.0"
+        versionCode = 15
+        versionName = "1.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
