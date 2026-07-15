@@ -17,7 +17,7 @@ interface GamesDao {
      */
     @Query("""
         SELECT * FROM words
-        WHERE level >= :minLevel AND level <= :maxLevel
+        WHERE language_id = 1 AND level >= :minLevel AND level <= :maxLevel
         ORDER BY RANDOM()
         LIMIT :limit
     """)

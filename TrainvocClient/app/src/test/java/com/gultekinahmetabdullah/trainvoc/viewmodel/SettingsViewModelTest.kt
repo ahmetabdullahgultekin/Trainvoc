@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.viewmodel
 
+import app.cash.turbine.test
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
@@ -266,19 +267,15 @@ class SettingsViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        var eventReceived = false
-        val job = backgroundScope.launch {
-            viewModel.languageChanged.collect {
-                eventReceived = true
-            }
+        // Turbine subscribes to the zero-replay SharedFlow before setLanguage
+        // runs, so the emission cannot be dropped for lack of a collector.
+        viewModel.languageChanged.test {
+            // Act
+            viewModel.setLanguage(LanguagePreference.TURKISH)
+
+            // Assert - the recreation event is emitted
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
         }
-
-        // Act
-        viewModel.setLanguage(LanguagePreference.TURKISH)
-        advanceUntilIdle()
-
-        // Assert
-        assertTrue(eventReceived)
-        job.cancel()
     }
 }

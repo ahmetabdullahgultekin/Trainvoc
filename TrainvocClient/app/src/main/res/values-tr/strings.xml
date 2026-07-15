@@ -1085,4 +1085,10 @@
     <string name="played_count_single">Oynandı: %1$d kez</string>
     <string name="played_count_plural">Oynandı: %1$d kez</string>
     <string name="not_played_yet">Henüz oynanmadı</string>
+    <!-- İlişkisel sözlük (şema v18) -->
+    <string name="meanings_title">Anlamlar</string>
+    <string name="learning_language">Öğrenme Dili</string>
+    <string name="learning_language_description">Çalıştığınız sözlük. Daha fazla dil yolda!</string>
+    <string name="learning_language_active">İngilizce → Türkçe</string>
+    <string name="language_coming_soon_chip">%1$s (Yakında)</string>
 </resources>

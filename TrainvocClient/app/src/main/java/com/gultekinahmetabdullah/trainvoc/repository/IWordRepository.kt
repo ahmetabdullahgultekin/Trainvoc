@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.repository
 
+import com.gultekinahmetabdullah.trainvoc.classes.word.SenseGroup
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
@@ -28,6 +29,12 @@ interface IWordRepository {
     suspend fun insertWord(word: Word)
     suspend fun getWordById(wordId: String): Word?
     suspend fun getExamsForWord(wordId: String): List<String>
+
+    /** Sense-grouped translations of a word (schema v18), both directions. */
+    suspend fun getSenses(wordId: Long): List<SenseGroup>
+
+    /** Same-language synonyms of a word (schema v18). */
+    suspend fun getSynonymWords(wordId: Long): List<Word>
 
     // Statistic Operations
     suspend fun getAllStatistics(): List<Statistic>

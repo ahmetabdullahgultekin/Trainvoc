@@ -43,13 +43,16 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,6 +61,7 @@ import androidx.navigation.NavController
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.quiz.QuizScreenExitHandler
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import kotlinx.coroutines.CoroutineScope
@@ -74,10 +78,18 @@ fun AppNavigationDrawerContent(
     navController: NavController,
     currentRoute: String?
 ) {
-    val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
-    val username = remember { prefs.getString("username", null) ?: "User" }
-    val userAvatar = remember { prefs.getString("avatar", null) ?: "🦊" }
+    val preferencesRepository = rememberPreferencesRepository()
+    // The drawer lives for the whole session (it wraps the NavHost), so a
+    // plain remember{} would pin the first value forever. Re-read whenever
+    // the drawer opens so a profile rename/avatar change shows up.
+    var username by remember { mutableStateOf("User") }
+    var userAvatar by remember { mutableStateOf("🦊") }
+    LaunchedEffect(drawerState.isOpen) {
+        if (drawerState.isOpen) {
+            username = preferencesRepository.getUsername() ?: "User"
+            userAvatar = preferencesRepository.getAvatar() ?: "🦊"
+        }
+    }
 
     ModalDrawerSheet(
         modifier = Modifier.width(300.dp),

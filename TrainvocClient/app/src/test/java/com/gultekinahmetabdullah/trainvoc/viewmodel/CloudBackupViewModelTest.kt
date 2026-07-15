@@ -9,12 +9,14 @@ import com.gultekinahmetabdullah.trainvoc.cloud.DriveBackupResult
 import com.gultekinahmetabdullah.trainvoc.cloud.DriveBackupService
 import com.gultekinahmetabdullah.trainvoc.cloud.DriveRestoreResult
 import com.gultekinahmetabdullah.trainvoc.cloud.GoogleAuthManager
+import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -32,6 +34,15 @@ import org.mockito.kotlin.whenever
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class CloudBackupViewModelTest {
+
+    /**
+     * Without this rule, viewModelScope silently falls back to a real
+     * background dispatcher (Dispatchers.Main is not installed in unit
+     * tests), so advanceUntilIdle() controls nothing and every assertion
+     * races the ViewModel's coroutines — the historical #223 flakiness.
+     */
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var context: Context
     private lateinit var authManager: GoogleAuthManager

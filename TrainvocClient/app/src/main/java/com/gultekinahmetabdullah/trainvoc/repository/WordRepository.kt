@@ -6,9 +6,11 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
+import com.gultekinahmetabdullah.trainvoc.classes.word.SenseGroup
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
+import com.gultekinahmetabdullah.trainvoc.classes.word.groupBySense
 import com.gultekinahmetabdullah.trainvoc.database.ExamDao
 import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
@@ -123,7 +125,12 @@ class WordRepository @Inject constructor(
 
     override fun getAllWords(): Flow<List<Word>> = wordDao.getAllWords()
 
-    override suspend fun insertWord(word: Word) = wordDao.insertWord(word)
+    override suspend fun insertWord(word: Word) {
+        // WordDao.insertWord is a true upsert: existing lemmas (matched
+        // case-insensitively) are UPDATEd in place — never REPLACEd — so the
+        // word's id and its translation/synonym edges always survive.
+        wordDao.insertWord(word)
+    }
 
     override suspend fun generateTenQuestions(
         quizType: QuizType, quizParameter: QuizParameter
@@ -184,8 +191,16 @@ class WordRepository @Inject constructor(
     override suspend fun getWordById(wordId: String): Word? = wordDao.getWord(wordId)
 
     override suspend fun getExamsForWord(wordId: String): List<String> {
-        return wordExamCrossRefDao.getExamNamesByWord(wordId)
+        // Cross-refs are id-based in schema v18; resolve the lemma first.
+        val id = wordDao.getWord(wordId)?.id ?: return emptyList()
+        return wordExamCrossRefDao.getExamNamesByWord(id)
     }
+
+    override suspend fun getSenses(wordId: Long): List<SenseGroup> =
+        wordDao.getTranslationsForWord(wordId).groupBySense()
+
+    override suspend fun getSynonymWords(wordId: Long): List<Word> =
+        wordDao.getSynonymsForWord(wordId)
 
     override suspend fun markWordAsLearned(statId: Long) {
         statisticDao.markLearned(statId)

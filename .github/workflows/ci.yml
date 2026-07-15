@@ -2,12 +2,12 @@ name: Trainvoc CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master]
   pull_request:
-    branches: [main, develop]
+    branches: [master]
 
 env:
-  JAVA_VERSION: '24'
+  JAVA_VERSION: '21'
   NODE_VERSION: '20'
 
 jobs:
@@ -38,6 +38,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
+      # Non-blocking: the backend suite has ~20 pre-existing failures (and
+      # needs PostgreSQL not present on the runner). Make blocking once the
+      # backend test debt is paid — tracked in the repo hygiene issue.
       - name: Run tests
         run: ./gradlew test
         continue-on-error: true
@@ -78,6 +81,9 @@ jobs:
         env:
           VITE_API_URL: http://localhost:8080/
 
+      - name: Run unit tests
+        run: npm run test:run
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -99,10 +105,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: gradle
 
@@ -111,6 +117,18 @@ jobs:
 
       - name: Build debug APK
         run: ./gradlew assembleDebug
+
+      # Suite is fully green since #223 was fixed (246 tests) — blocking.
+      - name: Run unit tests
+        run: ./gradlew :app:testDebugUnitTest
+
+      - name: Upload unit test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-unit-test-report
+          path: TrainvocClient/app/build/reports/tests/testDebugUnitTest
+          retention-days: 7
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

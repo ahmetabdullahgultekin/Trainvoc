@@ -129,7 +129,7 @@ class QuizViewModel @Inject constructor(
 
     // Quiz history tracking
     private var quizStartTime: Long = 0L
-    private val questionResults = mutableListOf<Pair<String, Boolean>>() // wordId, isCorrect
+    private val questionResults = mutableListOf<Pair<Long, Boolean>>() // words.id, isCorrect
     private var correctCount = 0
     private var wrongCount = 0
     private var skippedCount = 0
@@ -324,7 +324,7 @@ class QuizViewModel @Inject constructor(
             _score.value++
             correctCount++
             // Track for history
-            questionResults.add(Pair(currentQuestion.correctWord.word, true))
+            questionResults.add(Pair(currentQuestion.correctWord.id, true))
             // Update the entity stats in the database
             viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
@@ -339,7 +339,7 @@ class QuizViewModel @Inject constructor(
             // Wrong answer
             wrongCount++
             // Track for history
-            questionResults.add(Pair(currentQuestion.correctWord.word, false))
+            questionResults.add(Pair(currentQuestion.correctWord.id, false))
             viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(

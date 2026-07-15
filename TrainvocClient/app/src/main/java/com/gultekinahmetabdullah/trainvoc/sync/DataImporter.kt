@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.di.preferencesRepository
 import com.gultekinahmetabdullah.trainvoc.security.EncryptionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -591,11 +592,27 @@ class DataImporter(
                 onProgress?.invoke((index.toFloat() / (words.size + statistics.size)) * 0.5f)
             }
 
-            // Then import words with correct statId references
+            // Then import words with correct statId references.
+            // Schema v18: resolve existing rows case-insensitively (pre-v18
+            // backups carry capitalized lemmas, the v18 seed is lowercase) and
+            // keep the fields the backup doesn't know about (language, note)
+            // so the relational dictionary data survives a restore. The DAO's
+            // insertWord is a true upsert (UPDATE, never REPLACE), so
+            // translation/synonym edges are never cascade-deleted.
             var wordsImported = 0
             words.forEachIndexed { index, wordBackup ->
                 val newStatId = statisticIdMap[wordBackup.statId] ?: wordBackup.statId
-                val word = wordBackup.toWord().copy(statId = newStatId)
+                val existing = database.wordDao().getWordByLemma(wordBackup.word.trim())
+                val word = if (existing != null) {
+                    wordBackup.toWord().copy(
+                        id = existing.id,
+                        statId = newStatId,
+                        languageId = existing.languageId,
+                        note = existing.note
+                    )
+                } else {
+                    wordBackup.toWord().copy(statId = newStatId)
+                }
                 database.wordDao().insertWord(word)
                 wordsImported++
 
@@ -610,12 +627,29 @@ class DataImporter(
      * Restore user preferences from backup
      */
     private fun restoreUserPreferences(preferences: UserPreferences) {
+        // Username/language/theme/palette live in the encrypted repository
+        // store — writing them to the plain file would be a silent no-op
+        // (nothing reads them from there anymore).
+        val repo = preferencesRepository(context)
+        preferences.username?.let { repo.setUsername(it) }
+        preferences.language?.let { code ->
+            com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference.entries
+                .find { it.code == code }?.let(repo::setLanguage)
+        }
+        preferences.theme?.let { name ->
+            runCatching {
+                com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference.valueOf(name)
+            }.getOrNull()?.let(repo::setTheme)
+        }
+        preferences.colorPalette?.let { key ->
+            repo.setColorPalette(
+                com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference.fromKey(key)
+            )
+        }
+        // Notification flags are owned by the plain-prefs notification stack
+        // (NotificationPreferences/workers read them from user_prefs).
         val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         sharedPrefs.edit().apply {
-            preferences.username?.let { putString("username", it) }
-            preferences.language?.let { putString("language", it) }
-            preferences.theme?.let { putString("theme", it) }
-            preferences.colorPalette?.let { putString("color_palette", it) }
             putBoolean("notifications", preferences.notificationsEnabled)
             putBoolean("daily_reminders_enabled", preferences.dailyRemindersEnabled)
             putBoolean("streak_alerts_enabled", preferences.streakAlertsEnabled)

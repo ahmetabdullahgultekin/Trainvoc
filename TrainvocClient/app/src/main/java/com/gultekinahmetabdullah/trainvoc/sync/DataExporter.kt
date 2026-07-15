@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.gultekinahmetabdullah.trainvoc.BuildConfig
 import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.di.preferencesRepository
 import com.gultekinahmetabdullah.trainvoc.security.EncryptionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -337,12 +338,15 @@ class DataExporter(
      * Get user preferences from SharedPreferences
      */
     private fun getUserPreferences(): UserPreferences {
+        // Username/language/theme/palette live in the encrypted repository
+        // store; the plain file only mirrors the locale for attachBaseContext.
+        val repo = preferencesRepository(context)
         val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         return UserPreferences(
-            username = sharedPrefs.getString("username", null),
-            language = sharedPrefs.getString("language", null),
-            theme = sharedPrefs.getString("theme", null),
-            colorPalette = sharedPrefs.getString("color_palette", null),
+            username = repo.getUsername(),
+            language = repo.getLanguage().code,
+            theme = repo.getTheme().name,
+            colorPalette = repo.getColorPalette().key,
             notificationsEnabled = sharedPrefs.getBoolean("notifications", true),
             dailyRemindersEnabled = sharedPrefs.getBoolean("daily_reminders_enabled", true),
             streakAlertsEnabled = sharedPrefs.getBoolean("streak_alerts_enabled", true),

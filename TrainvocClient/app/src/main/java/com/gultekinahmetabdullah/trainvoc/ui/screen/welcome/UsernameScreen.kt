@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -30,35 +29,14 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.gultekinahmetabdullah.trainvoc.R
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
-import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
-
-/**
- * Hilt entry point for accessing PreferencesRepository in Compose UI.
- * This allows us to inject the repository without a ViewModel.
- */
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface PreferencesRepositoryEntryPoint {
-    fun preferencesRepository(): IPreferencesRepository
-}
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 
 @Composable
 fun UsernameScreen(navController: NavController) {
     var username by remember { mutableStateOf(TextFieldValue("")) }
-    val context = LocalContext.current
 
-    // Get PreferencesRepository through Hilt's entry point
-    val preferencesRepository = remember {
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            PreferencesRepositoryEntryPoint::class.java
-        ).preferencesRepository()
-    }
+    val preferencesRepository = rememberPreferencesRepository()
 
     val composition by
     rememberLottieComposition(LottieCompositionSpec.Asset("animations/anime_typing.json"))

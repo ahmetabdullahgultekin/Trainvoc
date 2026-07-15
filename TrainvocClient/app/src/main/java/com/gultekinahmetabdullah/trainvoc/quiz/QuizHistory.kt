@@ -68,7 +68,7 @@ data class QuizHistory(
         ),
         ForeignKey(
             entity = Word::class,
-            parentColumns = ["word"],
+            parentColumns = ["id"],
             childColumns = ["wordId"],
             onDelete = ForeignKey.CASCADE
         )
@@ -87,7 +87,7 @@ data class QuizQuestionResult(
     val quizId: Int,
 
     @ColumnInfo(name = "wordId")
-    val wordId: String,
+    val wordId: Long, // words.id (schema v18)
 
     @ColumnInfo(name = "isCorrect")
     val isCorrect: Boolean
@@ -140,7 +140,7 @@ interface QuizHistoryDao {
      * Get incorrect word IDs for a specific quiz
      */
     @Query("SELECT wordId FROM quiz_question_results WHERE quizId = :quizId AND isCorrect = 0")
-    suspend fun getIncorrectWordIds(quizId: Int): List<String>
+    suspend fun getIncorrectWordIds(quizId: Int): List<Long>
 
     /**
      * Get total quiz count

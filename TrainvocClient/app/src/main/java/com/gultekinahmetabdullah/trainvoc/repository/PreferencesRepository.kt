@@ -29,10 +29,12 @@ class PreferencesRepository @Inject constructor(
     companion object {
         private const val PREFS_NAME = "secure_user_prefs"
         private const val KEY_USERNAME = "username"
+        private const val KEY_AVATAR = "avatar"
         private const val KEY_THEME = "theme"
         private const val KEY_COLOR_PALETTE = "color_palette"
         private const val KEY_NOTIFICATIONS = "notifications"
         private const val KEY_LANGUAGE = "language"
+        private const val KEY_LEARNING_LANGUAGE = "learning_language"
         // Accessibility keys
         private const val KEY_HIGH_CONTRAST = "high_contrast"
         private const val KEY_COLOR_BLIND_MODE = "color_blind_mode"
@@ -58,7 +60,21 @@ class PreferencesRepository @Inject constructor(
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        ).also { secure ->
+            // Older versions wrote username/avatar to plain prefs files;
+            // pull those values in once so returning users are recognized.
+            LegacyPrefsMigrator.migrate(
+                secure,
+                listOf(
+                    context.getSharedPreferences(
+                        LegacyPrefsMigrator.LEGACY_USER_PREFS, Context.MODE_PRIVATE
+                    ),
+                    context.getSharedPreferences(
+                        LegacyPrefsMigrator.LEGACY_TRAINVOC_PREFS, Context.MODE_PRIVATE
+                    )
+                )
+            )
+        }
     }
 
     override fun getUsername(): String? =
@@ -66,6 +82,20 @@ class PreferencesRepository @Inject constructor(
 
     override fun setUsername(username: String) {
         prefs.edit { putString(KEY_USERNAME, username) }
+    }
+
+    override fun getAvatar(): String? =
+        prefs.getString(KEY_AVATAR, null)
+
+    override fun setAvatar(avatar: String) {
+        prefs.edit { putString(KEY_AVATAR, avatar) }
+    }
+
+    override fun getLearningLanguage(): String =
+        prefs.getString(KEY_LEARNING_LANGUAGE, "en") ?: "en"
+
+    override fun setLearningLanguage(code: String) {
+        prefs.edit { putString(KEY_LEARNING_LANGUAGE, code) }
     }
 
     override fun getTheme(): ThemePreference {

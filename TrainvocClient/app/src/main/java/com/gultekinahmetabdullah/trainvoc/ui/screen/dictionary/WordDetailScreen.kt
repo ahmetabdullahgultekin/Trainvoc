@@ -131,6 +131,11 @@ fun WordDetailScreen(
     var examples by remember { mutableStateOf<List<String>>(emptyList()) }
     var synonyms by remember { mutableStateOf<List<String>>(emptyList()) }
 
+    // Relational senses/synonyms (schema v18)
+    var senses by remember {
+        mutableStateOf<List<com.gultekinahmetabdullah.trainvoc.classes.word.SenseGroup>>(emptyList())
+    }
+
     LaunchedEffect(wordId) {
         coroutineScope.launch {
             val detail = wordViewModel.getWordFullDetail(wordId)
@@ -141,6 +146,7 @@ fun WordDetailScreen(
 
             // Phase 7: Fetch enriched dictionary data in parallel
             val wordText = detail?.word?.word
+            val wordDbId = detail?.word?.id
             if (wordText != null) {
                 launch {
                     ipa = wordViewModel.getIPAPronunciation(wordText)
@@ -152,7 +158,16 @@ fun WordDetailScreen(
                     examples = wordViewModel.getExamples(wordText)
                 }
                 launch {
-                    synonyms = wordViewModel.getSynonyms(wordText)
+                    // Relational synonyms first; hit the API path only when
+                    // the relational table has nothing (avoids a duplicate
+                    // query + needless network round trip per screen open).
+                    val relational = wordDbId
+                        ?.let { wordViewModel.getSynonymWords(it).map { w -> w.word } }
+                        .orEmpty()
+                    synonyms = relational.ifEmpty { wordViewModel.getSynonyms(wordText) }
+                }
+                launch {
+                    wordDbId?.let { senses = wordViewModel.getSenses(it) }
                 }
             }
 
@@ -249,10 +264,19 @@ fun WordDetailScreen(
                     )
                 )
             ) {
-                DefinitionSection(
-                    partOfSpeech = partOfSpeech ?: "noun", // Fallback to "noun"
-                    definition = currentWord.meaning
-                )
+                if (senses.isNotEmpty()) {
+                    SensesSection(
+                        partOfSpeech = partOfSpeech ?: currentWord.partOfSpeech ?: "",
+                        senses = senses,
+                        onTranslationClick = { lemma -> wordViewModel.speakWord(lemma, "tr") }
+                    )
+                } else {
+                    // Fallback: denormalized meaning cache (custom/legacy words)
+                    DefinitionSection(
+                        partOfSpeech = partOfSpeech ?: "noun", // Fallback to "noun"
+                        definition = currentWord.meaning
+                    )
+                }
             }
         }
 
@@ -499,6 +523,85 @@ fun HeroWordSection(
                     },
                     modifier = Modifier.padding(horizontal = Spacing.xs)
                 )
+            }
+        }
+    }
+}
+
+/**
+ * Numbered sense groups from the relational schema (v18): each sense shows
+ * its Turkish translations as tappable chips (tap = TTS) plus the usage
+ * note ("birini", "matematikte", ...) when present.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SensesSection(
+    partOfSpeech: String,
+    senses: List<com.gultekinahmetabdullah.trainvoc.classes.word.SenseGroup>,
+    onTranslationClick: (String) -> Unit
+) {
+    ElevatedCard(
+        elevation = Elevation.level1
+    ) {
+        Column(
+            modifier = Modifier.padding(Spacing.md)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.BookmarkBorder,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(IconSize.medium)
+                )
+                Spacer(modifier = Modifier.width(Spacing.sm))
+                Text(
+                    text = stringResource(id = R.string.meanings_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            if (partOfSpeech.isNotBlank()) {
+                Spacer(modifier = Modifier.height(Spacing.sm))
+                Text(
+                    text = partOfSpeech,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            senses.forEachIndexed { index, sense ->
+                Spacer(modifier = Modifier.height(Spacing.md))
+                Row(verticalAlignment = Alignment.Top) {
+                    Text(
+                        text = "${index + 1}.",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(Spacing.sm))
+                    Column {
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
+                        ) {
+                            sense.translations.forEach { translation ->
+                                SuggestionChip(
+                                    onClick = { onTranslationClick(translation.word) },
+                                    label = { Text(translation.word) }
+                                )
+                            }
+                        }
+                        sense.note?.let { note ->
+                            Text(
+                                text = "($note)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
         }
     }

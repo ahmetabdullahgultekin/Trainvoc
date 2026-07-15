@@ -322,6 +322,20 @@ class WordRepositoryTest {
         }
     }
 
+    // ========== insertWord Tests (schema v18 upsert delegation) ==========
+    // Id preservation and cascade safety live in WordDao.insertWord (a
+    // @Transaction upsert: UPDATE, never REPLACE) and are covered end-to-end
+    // by WordDaoRelationalTest; the repository is a straight pass-through.
+
+    @Test
+    fun `insertWord delegates to the DAO upsert unchanged`() = runTest {
+        val incoming = createSampleWord(word = "run") // id = 0 (unset)
+
+        repository.insertWord(incoming)
+
+        coVerify(exactly = 1) { mockWordDao.insertWord(incoming) }
+    }
+
     // ========== resetProgress Tests ==========
 
     @Test

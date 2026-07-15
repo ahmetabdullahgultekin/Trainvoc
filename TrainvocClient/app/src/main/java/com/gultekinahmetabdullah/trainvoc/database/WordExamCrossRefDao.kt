@@ -14,12 +14,12 @@ interface WordExamCrossRefDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWordExamCrossRefs(crossRefs: List<WordExamCrossRef>)
 
-    @Query("SELECT * FROM word_exam_cross_ref WHERE word = :word")
-    suspend fun getCrossRefsByWord(word: String): List<WordExamCrossRef>
+    @Query("SELECT * FROM word_exam_cross_ref WHERE word_id = :wordId")
+    suspend fun getCrossRefsByWord(wordId: Long): List<WordExamCrossRef>
 
     @Query("SELECT * FROM word_exam_cross_ref WHERE exam = :exam")
     suspend fun getCrossRefsByExam(exam: String): List<WordExamCrossRef>
 
-    @Query("SELECT exam FROM word_exam_cross_ref WHERE word = :word")
-    suspend fun getExamNamesByWord(word: String): List<String>
+    @Query("SELECT exam FROM word_exam_cross_ref WHERE word_id = :wordId")
+    suspend fun getExamNamesByWord(wordId: Long): List<String>
 }

@@ -44,11 +44,8 @@ interface DictionaryEnrichmentDao {
 
     // ================== SYNONYMS ==================
 
-    /**
-     * Get all synonyms for a word
-     */
-    @Query("SELECT synonym FROM synonyms WHERE word = :word ORDER BY added_at DESC")
-    suspend fun getSynonymsForWord(word: String): List<String>
+    // NOTE: synonym reads live in WordDao.getSynonymsForWord (single owner
+    // of the both-directions UNION over id pairs); map .word at call sites.
 
     /**
      * Insert synonyms for a word (bulk insert)
@@ -57,10 +54,10 @@ interface DictionaryEnrichmentDao {
     suspend fun insertSynonyms(synonyms: List<Synonym>)
 
     /**
-     * Delete all synonyms for a word
+     * Delete all synonym pairs touching a word id
      */
-    @Query("DELETE FROM synonyms WHERE word = :word")
-    suspend fun deleteSynonymsForWord(word: String)
+    @Query("DELETE FROM synonyms WHERE word_id = :wordId OR synonym_word_id = :wordId")
+    suspend fun deleteSynonymsForWord(wordId: Long)
 
     /**
      * Clear all synonyms

@@ -77,6 +77,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.LanguagePreference
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
+import com.gultekinahmetabdullah.trainvoc.ui.util.rememberPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 import com.gultekinahmetabdullah.trainvoc.ui.animations.pressClickable
 import com.gultekinahmetabdullah.trainvoc.ui.animations.rememberHapticPerformer
@@ -87,7 +88,10 @@ import com.gultekinahmetabdullah.trainvoc.ui.theme.Spacing
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    androidx.compose.foundation.layout.ExperimentalLayoutApi::class
+)
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
     val context = LocalContext.current
@@ -146,9 +150,9 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
         ) {
             // User Profile Card (fixes #196)
             item {
-                val prefs = remember { context.getSharedPreferences("trainvoc_prefs", android.content.Context.MODE_PRIVATE) }
-                val username = remember { prefs.getString("username", null) ?: "User" }
-                val userAvatar = remember { prefs.getString("avatar", null) ?: "🦊" }
+                val preferencesRepository = rememberPreferencesRepository()
+                val username = remember { preferencesRepository.getUsername() ?: "User" }
+                val userAvatar = remember { preferencesRepository.getAvatar() ?: "🦊" }
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -260,6 +264,50 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel) {
                                 onClick = { viewModel.setColorPalette(palette) }
                             )
                         }
+                    }
+                }
+            }
+
+            // Learning (dictionary) Language Section — schema v18 is
+            // multilingual; EN→TR is live, other dictionaries are on the way.
+            item {
+                SettingSectionCard(
+                    icon = Icons.Default.Language,
+                    title = stringResource(id = R.string.learning_language)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.learning_language_description),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.height(Spacing.small))
+
+                    androidx.compose.foundation.layout.FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(Spacing.small)
+                    ) {
+                        // Active dictionary (selected, not changeable yet)
+                        androidx.compose.material3.FilterChip(
+                            selected = true,
+                            onClick = { /* only available dictionary for now */ },
+                            label = { Text(stringResource(id = R.string.learning_language_active)) }
+                        )
+                        // Draft languages — honest "coming soon", disabled
+                        listOf("العربية", "Deutsch", "Português", "Español", "Français")
+                            .forEach { lang ->
+                                androidx.compose.material3.FilterChip(
+                                    selected = false,
+                                    enabled = false,
+                                    onClick = {},
+                                    label = {
+                                        Text(
+                                            stringResource(
+                                                id = R.string.language_coming_soon_chip, lang
+                                            )
+                                        )
+                                    }
+                                )
+                            }
                     }
                 }
             }

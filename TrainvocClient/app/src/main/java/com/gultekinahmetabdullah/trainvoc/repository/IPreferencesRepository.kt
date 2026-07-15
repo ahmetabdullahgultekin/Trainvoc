@@ -22,6 +22,31 @@ interface IPreferencesRepository {
     fun setUsername(username: String)
 
     /**
+     * Get the stored avatar (emoji string).
+     * @return Avatar string, or null if not set
+     */
+    fun getAvatar(): String?
+
+    /**
+     * Set the avatar.
+     * @param avatar The avatar (emoji string) to store
+     */
+    fun setAvatar(avatar: String)
+
+    /**
+     * Get the learning (dictionary) language code, e.g. "en".
+     * This is the language being studied, not the app UI language.
+     * @return ISO 639-1 code, defaults to "en"
+     */
+    fun getLearningLanguage(): String
+
+    /**
+     * Set the learning (dictionary) language code.
+     * @param code ISO 639-1 code of an available dictionary language
+     */
+    fun setLearningLanguage(code: String)
+
+    /**
      * Get the current theme preference.
      * @return ThemePreference enum value, defaults to SYSTEM
      */

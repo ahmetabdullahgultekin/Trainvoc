@@ -3,8 +3,9 @@
 # Multi-stage build for optimized image size
 # ============================================
 
-# Build stage
-FROM eclipse-temurin:24-jdk-alpine AS builder
+# Build stage — JDK 21 LTS (the backend dropped EOL JDK 24 in PR #40;
+# a 24-based image can't provision the Java 21 toolchain Gradle needs)
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
@@ -29,7 +30,7 @@ RUN ./gradlew bootJar --no-daemon -x test
 # ============================================
 # Runtime stage
 # ============================================
-FROM eclipse-temurin:24-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 LABEL maintainer="Trainvoc Team"
 LABEL description="Trainvoc Multiplayer Backend API"
