@@ -1,5 +1,9 @@
 # Trainvoc Pre-Production Test Report
 
+> **⚠️ Historical snapshot — January 24, 2026. Superseded; kept for provenance.**
+> This report describes a point-in-time test run and is **no longer maintained**; current suite sizes are Android 255, backend 248 (blocking in CI), plus web Vitest + Playwright.
+> For current status see the root `README.md`, `CLAUDE.md`, and GitHub Issues & Milestones: https://github.com/ahmetabdullahgultekin/Trainvoc/issues
+
 **Date:** 2026-01-24
 **Environment:** Docker Compose (Development Configuration)
 **Tester:** Claude AI

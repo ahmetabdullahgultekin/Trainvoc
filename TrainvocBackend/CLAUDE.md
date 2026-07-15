@@ -4,7 +4,7 @@
 
 **TrainvocBackend** is a Spring Boot-based game server providing REST API and WebSocket support for the Trainvoc multiplayer vocabulary game platform. It manages game rooms, players, quizzes, and real-time game state.
 
-> **Status (2026-06-05):** **Spring Boot 4.1.0 (Hibernate ORM 7.4.1, #110) + Jackson 3 + springdoc 3 on JDK 21 LTS, Gradle wrapper 9.6.1 (#109)** (originally migrated to 4.0.6) (`migrate/backend-spring-boot-4-2026-06-05`) — drops the EOL JDK 24 toolchain (Spring Boot 3.5 OSS support ends 2026-06-30) and makes the build verifiable on the JDK-21 host. `./gradlew clean build -x test` is **BUILD SUCCESSFUL** and the bootJar assembles; **the test suite is fully green since 2026-07-15 (PR #106): 230 tests / 0 failures / 10 skipped (@Disabled integration/performance tags) and the suite is BLOCKING in CI** (the former 20 pre-existing failures — unwired EntityManagerFactory mocks in RoomServiceTest, missing @MockitoBean's in GameControllerTest, one assertion drift in QuizControllerTest — are fixed). This closes held majors **Spring Boot 4 (#25)** and **springdoc 3 (#23)**. **Gradle wrapper 9.4.1 (#16) verified + shipped 2026-06-06** on `feat/srs-engine` — SB4 `clean build` is SUCCESSFUL on Gradle 9.4.1 and the full test suite behaves identically (same 20 pre-existing failures, 0 new); stale conflicting PR #16 retired. Safe non-major bumps already merged on `dev/2026-06-05` — postgresql 42.7.10, org.json 20251224, jjwt 0.13.0, firebase-admin 9.8.0, caffeine 3.2.3. Not yet deployed/hardened — see `../ROADMAP.md` Phase 3 (DTO layer, API versioning, pagination, auth enforcement).
+> **Status (2026-06-05):** **Spring Boot 4.1.0 (Hibernate ORM 7.4.1, #110) + Jackson 3 + springdoc 3 on JDK 21 LTS, Gradle wrapper 9.6.1 (#109)** (originally migrated to 4.0.6) (`migrate/backend-spring-boot-4-2026-06-05`) — drops the EOL JDK 24 toolchain (Spring Boot 3.5 OSS support ends 2026-06-30) and makes the build verifiable on the JDK-21 host. `./gradlew clean build -x test` is **BUILD SUCCESSFUL** and the bootJar assembles; **the test suite is fully green since 2026-07-15 (PR #106) and has grown with the v18 mirror + re-key work (#108/#110/#114): 248 tests / 0 failures / 10 skipped (@Disabled integration/performance tags) and the suite is BLOCKING in CI** (the former 20 pre-existing failures — unwired EntityManagerFactory mocks in RoomServiceTest, missing @MockitoBean's in GameControllerTest, one assertion drift in QuizControllerTest — are fixed). This closes held majors **Spring Boot 4 (#25)** and **springdoc 3 (#23)**. **Gradle wrapper 9.4.1 (#16) verified + shipped 2026-06-06** on `feat/srs-engine` — SB4 `clean build` is SUCCESSFUL on Gradle 9.4.1 and the full test suite behaves identically (same 20 pre-existing failures, 0 new); stale conflicting PR #16 retired. Safe non-major bumps already merged on `dev/2026-06-05` — postgresql 42.7.10, org.json 20251224, jjwt 0.13.0, firebase-admin 9.8.0, caffeine 3.2.3. Not yet deployed/hardened — remaining hardening (DTO layer, API versioning, pagination, auth enforcement) is tracked in GitHub Issues (see #100).
 >
 > **Spring Boot 4 package moves applied** (verified against the resolved 4.0.6 jars): `JpaProperties` → `org.springframework.boot.jpa.autoconfigure`; `HibernateProperties`/`HibernateSettings` → `org.springframework.boot.hibernate.autoconfigure`; `ConfigurableServletWebServerFactory` → `org.springframework.boot.web.server.servlet`. Tests: `@WebMvcTest`/`@AutoConfigureMockMvc` → `org.springframework.boot.webmvc.test.autoconfigure.*` (needs the new `spring-boot-starter-webmvc-test` test dependency); `@MockBean` → `@MockitoBean` (`org.springframework.test.context.bean.override.mockito`). Jackson annotations (`@JsonManagedReference`/`@JsonBackReference`) stay on `com.fasterxml.jackson.annotation` (the jackson-annotations module is the documented exception to the `tools.jackson` rename), so no source change was needed for them.
 
@@ -14,9 +14,9 @@
 
 | Category | Technology | Version |
 |----------|------------|---------|
-| **Framework** | Spring Boot | 4.0.6 |
+| **Framework** | Spring Boot | 4.1.0 |
 | **Language** | Java | 21 (LTS) |
-| **Build Tool** | Gradle | 9.4.1 (wrapper) |
+| **Build Tool** | Gradle | 9.6.1 (wrapper) |
 | **Database** | PostgreSQL | 15+ |
 | **ORM** | Spring Data JPA / Hibernate | Latest |
 | **Security** | Spring Security | Latest |
@@ -600,7 +600,7 @@ Services are split by responsibility:
 | Java Classes | 55+ |
 | Configuration | 8 |
 | SQL Scripts | 4+ |
-| Test Classes | 1 |
+| Test Classes | 25 |
 
 ---
 

@@ -28,7 +28,7 @@ Trainvoc is a multi-platform vocabulary learning ecosystem consisting of three m
 │  │   (Android Application)     │    │    (React Application)      │        │
 │  │                             │    │                             │        │
 │  │  ┌───────────────────────┐  │    │  ┌───────────────────────┐  │        │
-│  │  │    Jetpack Compose    │  │    │  │     React + MUI       │  │        │
+│  │  │    Jetpack Compose    │  │    │  │   React + Tailwind    │  │        │
 │  │  │    Material 3 UI      │  │    │  │    TypeScript UI      │  │        │
 │  │  └───────────────────────┘  │    │  └───────────────────────┘  │        │
 │  │  ┌───────────────────────┐  │    │  ┌───────────────────────┐  │        │
@@ -256,7 +256,7 @@ User Action → ViewModel → Use Case → Repository → Room DB
 ### Why React for Web?
 
 - **Component reusability**: Efficient UI development
-- **Large ecosystem**: MUI, Axios, i18next
+- **Large ecosystem**: Radix UI, Tailwind CSS, Axios, i18next
 - **TypeScript support**: Type safety
 - **Fast development**: Vite hot reload
 

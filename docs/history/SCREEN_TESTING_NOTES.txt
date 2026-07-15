@@ -1,3 +1,9 @@
+*** HISTORICAL SNAPSHOT — January 25, 2026. Superseded; kept for provenance. ***
+*** These manual screen-testing notes are a point-in-time record and are NO   ***
+*** LONGER MAINTAINED; many observations are stale. For current status see the ***
+*** root README.md / CLAUDE.md and GitHub Issues & Milestones:                 ***
+*** https://github.com/ahmetabdullahgultekin/Trainvoc/issues                   ***
+
 ================================================================================
                         TRAINVOC MOBILE APP - SCREEN TESTING NOTES
 ================================================================================

@@ -1,5 +1,9 @@
 # Trainvoc Codebase Investigation Report
 
+> **⚠️ Historical snapshot — January 22, 2026. Superseded; kept for provenance.**
+> This report describes the codebase at its original date and is **no longer maintained**; several findings are now stale (e.g. games/TTS have since been restored/wired, the test suites run and are green).
+> For current status see the root `README.md`, `ARCHITECTURE.md`, `CLAUDE.md`, and GitHub Issues & Milestones: https://github.com/ahmetabdullahgultekin/Trainvoc/issues
+
 ## Executive Summary
 
 This report presents a comprehensive analysis of the Trainvoc multi-platform vocabulary learning ecosystem. The investigation covered all three components (TrainvocClient, TrainvocWeb, TrainvocBackend) across code quality, architecture, security, performance, testing, and modernization dimensions.

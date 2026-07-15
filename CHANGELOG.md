@@ -271,4 +271,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-*For detailed progress tracking, see [MASTER_FIX_PLAN.md](./MASTER_FIX_PLAN.md)*
+*For detailed progress tracking, see [docs/history/MASTER_FIX_PLAN.md](./docs/history/MASTER_FIX_PLAN.md)*

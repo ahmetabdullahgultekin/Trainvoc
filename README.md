@@ -28,7 +28,7 @@
 |-----------|-------------|------------|
 | **TrainvocClient** | Android mobile app with offline support, gamification, and 10+ learning games | Kotlin, Jetpack Compose, Room |
 | **TrainvocWeb** | Web platform for real-time multiplayer vocabulary games | React, TypeScript, Vite |
-| **TrainvocBackend** | Game server with REST API and WebSocket support | Java 24, Spring Boot, PostgreSQL |
+| **TrainvocBackend** | Game server with REST API and WebSocket support | Java 21, Spring Boot 4, PostgreSQL |
 
 ---
 
@@ -111,7 +111,7 @@ For detailed architecture documentation, see [ARCHITECTURE.md](ARCHITECTURE.md).
 | Tool | Version | Component |
 |------|---------|-----------|
 | Android Studio | Latest | TrainvocClient |
-| JDK | 24+ | TrainvocBackend |
+| JDK | 21 (LTS) | TrainvocBackend |
 | Node.js | 18+ | TrainvocWeb |
 | PostgreSQL | 15+ | TrainvocBackend |
 
@@ -202,7 +202,7 @@ Trainvoc/
 
 | Category | Technology |
 |----------|------------|
-| Language | Kotlin 2.1.10 |
+| Language | Kotlin 2.3.20 |
 | UI | Jetpack Compose |
 | Architecture | MVVM + Clean Architecture |
 | DI | Hilt |
@@ -214,10 +214,10 @@ Trainvoc/
 
 | Category | Technology |
 |----------|------------|
-| Language | TypeScript 5.8.3 |
+| Language | TypeScript 6.0.3 |
 | Framework | React 19.1.0 |
-| Build | Vite 6.3.5 |
-| UI | Material-UI 7.1.2 |
+| Build | Vite 8.0 |
+| UI | Tailwind CSS 4 + Radix UI |
 | HTTP | Axios |
 | i18n | i18next |
 
@@ -225,8 +225,8 @@ Trainvoc/
 
 | Category | Technology |
 |----------|------------|
-| Language | Java 24 |
-| Framework | Spring Boot 3.5.0 |
+| Language | Java 21 (LTS) |
+| Framework | Spring Boot 4.1.0 |
 | Database | PostgreSQL |
 | ORM | Spring Data JPA |
 | Real-time | Spring WebSocket |
@@ -242,7 +242,7 @@ Trainvoc/
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
 | [CLAUDE.md](CLAUDE.md) | AI-assisted development guide |
 | [TrainvocClient/README.md](TrainvocClient/README.md) | Android app documentation |
-| [INVESTIGATION_REPORT.md](INVESTIGATION_REPORT.md) | Codebase analysis |
+| [docs/history/INVESTIGATION_REPORT.md](docs/history/INVESTIGATION_REPORT.md) | Codebase analysis (historical snapshot, Jan 2026) |
 
 ---
 
@@ -269,7 +269,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
 ## Roadmap
 
-The full, phased plan lives in **[`ROADMAP.md`](./ROADMAP.md)**. In short:
+The phased plan is tracked in GitHub **[Milestones](https://github.com/ahmetabdullahgultekin/Trainvoc/milestones)** and the **[project board](https://github.com/users/ahmetabdullahgultekin/projects/7)**. In short:
 
 ### Shipped / done
 - [x] Core vocabulary learning (Android, offline-first)
@@ -281,7 +281,7 @@ The full, phased plan lives in **[`ROADMAP.md`](./ROADMAP.md)**. In short:
 - [x] Leaderboard: local "Your Progress" (global board pending backend)
 - [x] Web: **0 known vulnerabilities**
 
-### Next (see ROADMAP for the full picture)
+### Next (see the GitHub Milestones for the full picture)
 - [ ] **Phase 0–2**: ship Android v1 to Google Play production (gated by the 14-day tester window — operator action)
 - [ ] **Phase 3**: deploy + harden the backend (DTOs, API versioning, pagination, auth enforcement)
 - [ ] **Phase 4**: launch the web app against the live API
@@ -292,7 +292,7 @@ The full, phased plan lives in **[`ROADMAP.md`](./ROADMAP.md)**. In short:
 
 ## Future / Professionalization
 
-Beyond feature work, this section tracks the engineering and product disciplines that take Trainvoc from "works" to "professional-grade". These are cross-referenced from each component's `CLAUDE.md` and expanded as phases in [`ROADMAP.md`](./ROADMAP.md).
+Beyond feature work, this section tracks the engineering and product disciplines that take Trainvoc from "works" to "professional-grade". These are cross-referenced from each component's `CLAUDE.md` and tracked as [GitHub Milestones](https://github.com/ahmetabdullahgultekin/Trainvoc/milestones).
 
 ### Security & privacy
 - Enforce Firebase/JWT auth end-to-end on the backend; replace broad `permitAll` with least-privilege rules.
@@ -309,7 +309,7 @@ Beyond feature work, this section tracks the engineering and product disciplines
 - Keep every user-facing string in `strings.xml` (EN + TR) and the web `locales/` — never hardcode UI text. Be ready to add language pairs.
 
 ### Quality & reliability
-- CI gates per component: Android unit + lint, web `tsc`/vitest/build, backend JDK-24 build + tests; branch protection on `master`/`main`.
+- CI gates per component: Android unit + lint, web `tsc`/vitest/build, backend JDK-21 build + tests; branch protection on `master`/`main`.
 - Drive the unit-test suite to fully green (close `#223`), add instrumentation/e2e for login, quiz, and multiplayer, and add API contract tests.
 - Reproducible, signed release pipelines (no manual local signing).
 

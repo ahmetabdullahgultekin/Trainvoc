@@ -1,5 +1,9 @@
 # Trainvoc System Architecture Analysis
 
+> **⚠️ Historical snapshot — January 22, 2026. Superseded; kept for provenance.**
+> This analysis describes the codebase at its original date and is **no longer maintained**; some details are stale (e.g. the web stack is Tailwind + Radix, not MUI; games are present, not deleted; versions have moved on). It also predates the Hostinger→Hetzner hosting move.
+> For current architecture see the root `ARCHITECTURE.md`; for status see `README.md`, `CLAUDE.md`, and GitHub Issues & Milestones: https://github.com/ahmetabdullahgultekin/Trainvoc/issues
+
 > **Document Version:** 1.0
 > **Date:** January 22, 2026
 > **Purpose:** Comprehensive analysis for production deployment on Hostinger VPS

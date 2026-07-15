@@ -1,5 +1,9 @@
 # Trainvoc Master Fix Plan
 
+> **⚠️ Historical snapshot — January 22, 2026. Superseded; kept for provenance.**
+> This plan describes the fix work planned/executed at its original date and is **no longer maintained**. Forward-looking items are now tracked as GitHub Issues & Milestones, not here.
+> For current status see the root `README.md`, `ARCHITECTURE.md`, `CLAUDE.md`, and GitHub Issues & Milestones: https://github.com/ahmetabdullahgultekin/Trainvoc/issues
+
 > **Version:** 1.1
 > **Date:** January 22, 2026
 > **Last Updated:** January 22, 2026
