@@ -1,0 +1,97 @@
+{
+  "comment": "Shared parser fixtures. Both meaning_parser.py and the Kotlin MeaningParser must produce these results. lemmas/synHints are per sense, in order.",
+  "cases": [
+    {
+      "name": "single simple gloss",
+      "input": "yetenek",
+      "senses": [{ "lemmas": ["yetenek"], "synHints": [], "note": null }],
+      "wordNote": null
+    },
+    {
+      "name": "comma separated lemmas in one sense",
+      "input": "bolluk, bereket",
+      "senses": [{ "lemmas": ["bolluk", "bereket"], "synHints": [], "note": null }],
+      "wordNote": null
+    },
+    {
+      "name": "numbered senses with synonym hints and leading note",
+      "input": "(1) (birini) terk etmek (= leave) (2) bir şeyden vazgeçmek (= give up)",
+      "senses": [
+        { "lemmas": ["terk etmek"], "synHints": ["leave"], "note": "birini" },
+        { "lemmas": ["bir şeyden vazgeçmek"], "synHints": ["give up"], "note": null }
+      ],
+      "wordNote": null
+    },
+    {
+      "name": "slash separator, placeholder and exclamation",
+      "input": "(alkol, ilaç vb) --- den sakınmak/ uzak durmak (=avoid from) !",
+      "senses": [
+        {
+          "lemmas": ["den sakınmak", "uzak durmak"],
+          "synHints": ["avoid from"],
+          "note": "alkol, ilaç vb"
+        }
+      ],
+      "wordNote": null
+    },
+    {
+      "name": "trailing word-level note after ***",
+      "input": "hızlandırmak, ivme kazandırmak *** accelerator = gaz pedalı",
+      "senses": [
+        { "lemmas": ["hızlandırmak", "ivme kazandırmak"], "synHints": [], "note": null }
+      ],
+      "wordNote": "accelerator = gaz pedalı"
+    },
+    {
+      "name": "inline example fragment is dropped",
+      "input": "(1) eşlik etmek, arkadaşlık etmek (= escort) (2) beraber bulunmak (* Pain and fever accompany illness)",
+      "senses": [
+        { "lemmas": ["eşlik etmek", "arkadaşlık etmek"], "synHints": ["escort"], "note": null },
+        { "lemmas": ["beraber bulunmak"], "synHints": [], "note": null }
+      ],
+      "wordNote": null
+    },
+    {
+      "name": "mid-sense parenthetical note",
+      "input": "(1) kısaltmak, özetlemek (2) (matematikte) sadeleştirmek",
+      "senses": [
+        { "lemmas": ["kısaltmak", "özetlemek"], "synHints": [], "note": null },
+        { "lemmas": ["sadeleştirmek"], "synHints": [], "note": "matematikte" }
+      ],
+      "wordNote": null
+    },
+    {
+      "name": "placeholder inside sense text",
+      "input": "(1) kabul etmek, --- olarak tanımak (2) (mektup, mesaj vb) aldığını gönderen kişiye bildirmek",
+      "senses": [
+        { "lemmas": ["kabul etmek", "olarak tanımak"], "synHints": [], "note": null },
+        {
+          "lemmas": ["aldığını gönderen kişiye bildirmek"],
+          "synHints": [],
+          "note": "mektup, mesaj vb"
+        }
+      ],
+      "wordNote": null
+    },
+    {
+      "name": "empty input",
+      "input": "   ",
+      "senses": [],
+      "wordNote": null
+    },
+    {
+      "name": "unclosed example fragment at end of string",
+      "input": "eşlik etmek (* Pain and fever accompany i",
+      "senses": [{ "lemmas": ["eşlik etmek"], "synHints": [], "note": null }],
+      "wordNote": null
+    },
+    {
+      "name": "collocation note in parentheses",
+      "input": "(önlem, tedbir vb) almak (adopt measure)",
+      "senses": [
+        { "lemmas": ["almak"], "synHints": [], "note": "önlem, tedbir vb; adopt measure" }
+      ],
+      "wordNote": null
+    }
+  ]
+}
