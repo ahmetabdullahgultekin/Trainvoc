@@ -8,6 +8,8 @@ import com.rollingcatsoftware.trainvocmultiplayerapplication.model.GameState;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Player;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.security.JwtAuthenticationFilter;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.service.GameService;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.service.PlayerService;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.service.RoomService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,6 +48,14 @@ class GameControllerTest {
 
     @MockitoBean
     private GameMapper gameMapper;
+
+    // GameController also injects these services; without the mocks the
+    // @WebMvcTest slice fails with NoSuchBeanDefinitionException.
+    @MockitoBean
+    private PlayerService playerService;
+
+    @MockitoBean
+    private RoomService roomService;
 
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;

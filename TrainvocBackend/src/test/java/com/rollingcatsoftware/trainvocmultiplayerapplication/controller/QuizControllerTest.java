@@ -144,7 +144,10 @@ class QuizControllerTest {
                             .param("level", "A1")
                             .param("optionCount", "4"))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.error").value("Not enough words"));
+                    // The controller intentionally hides internal exception
+                    // messages from clients (information disclosure).
+                    .andExpect(jsonPath("$.error")
+                            .value("An unexpected error occurred while generating the question."));
         }
     }
 
