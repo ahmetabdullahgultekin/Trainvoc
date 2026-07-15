@@ -11,6 +11,12 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// Export Room schemas so migrations are testable (MigrationTestHelper) and
+// the dictgen seed builder can reuse Room's exact DDL (tools/dictgen).
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 // Hilt 2.57.x ships with kotlin-metadata-jvm 2.2.x which cannot read Kotlin 2.3.x
 // class metadata. Since Hilt 2.57+ unshades this dependency, we can force a newer
 // version so Hilt's annotation processor works with Kotlin 2.3.20.
