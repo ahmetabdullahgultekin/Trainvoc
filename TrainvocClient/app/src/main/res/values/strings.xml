@@ -1099,4 +1099,10 @@
     <string name="played_count_single">Played: %1$d time</string>
     <string name="played_count_plural">Played: %1$d times</string>
     <string name="not_played_yet">Not played yet</string>
+    <!-- Relational dictionary (schema v18) -->
+    <string name="meanings_title">Meanings</string>
+    <string name="learning_language">Learning Language</string>
+    <string name="learning_language_description">The dictionary you are studying. More languages are on the way!</string>
+    <string name="learning_language_active">English → Turkish</string>
+    <string name="language_coming_soon_chip">%1$s (Coming Soon)</string>
 </resources>

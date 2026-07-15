@@ -191,6 +191,12 @@ class WordViewModel @Inject constructor(
         return WordFullDetail(word, statistic, exams)
     }
 
+    /** Sense-grouped translations from the relational schema (v18). */
+    suspend fun getSenses(wordId: Long) = repository.getSenses(wordId)
+
+    /** Same-language synonym words from the relational schema (v18). */
+    suspend fun getSynonymWords(wordId: Long) = repository.getSynonymWords(wordId)
+
     /**
      * Toggle favorite status for a word.
      * @param wordId The word ID to toggle

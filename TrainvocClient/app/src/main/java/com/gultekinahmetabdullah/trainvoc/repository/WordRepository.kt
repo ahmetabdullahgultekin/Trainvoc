@@ -6,9 +6,11 @@ import com.gultekinahmetabdullah.trainvoc.classes.enums.WordLevel
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Question
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Exam
+import com.gultekinahmetabdullah.trainvoc.classes.word.SenseGroup
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.classes.word.WordAskedInExams
+import com.gultekinahmetabdullah.trainvoc.classes.word.groupBySense
 import com.gultekinahmetabdullah.trainvoc.database.ExamDao
 import com.gultekinahmetabdullah.trainvoc.database.StatisticDao
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
@@ -199,6 +201,12 @@ class WordRepository @Inject constructor(
         val id = wordDao.getWord(wordId)?.id ?: return emptyList()
         return wordExamCrossRefDao.getExamNamesByWord(id)
     }
+
+    override suspend fun getSenses(wordId: Long): List<SenseGroup> =
+        wordDao.getTranslationsForWord(wordId).groupBySense()
+
+    override suspend fun getSynonymWords(wordId: Long): List<Word> =
+        wordDao.getSynonymsForWord(wordId)
 
     override suspend fun markWordAsLearned(statId: Long) {
         statisticDao.markLearned(statId)

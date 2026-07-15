@@ -239,6 +239,9 @@ class FavoritesViewModelTest {
     fun `searchQuery StateFlow updates correctly`() = runTest {
         // Arrange
         whenever(repository.getFavoriteWords()).thenReturn(flowOf(testFavorites))
+        // The debounced pipeline fires during runTest cleanup; without this
+        // stub searchFavoriteWords returns null and the collector NPEs.
+        whenever(repository.searchFavoriteWords(any())).thenReturn(flowOf(emptyList()))
         viewModel = FavoritesViewModel(repository)
 
         // Assert initial state

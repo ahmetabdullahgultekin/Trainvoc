@@ -34,6 +34,7 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_COLOR_PALETTE = "color_palette"
         private const val KEY_NOTIFICATIONS = "notifications"
         private const val KEY_LANGUAGE = "language"
+        private const val KEY_LEARNING_LANGUAGE = "learning_language"
         // Accessibility keys
         private const val KEY_HIGH_CONTRAST = "high_contrast"
         private const val KEY_COLOR_BLIND_MODE = "color_blind_mode"
@@ -84,6 +85,13 @@ class PreferencesRepository @Inject constructor(
 
     override fun setAvatar(avatar: String) {
         prefs.edit { putString(KEY_AVATAR, avatar) }
+    }
+
+    override fun getLearningLanguage(): String =
+        prefs.getString(KEY_LEARNING_LANGUAGE, "en") ?: "en"
+
+    override fun setLearningLanguage(code: String) {
+        prefs.edit { putString(KEY_LEARNING_LANGUAGE, code) }
     }
 
     override fun getTheme(): ThemePreference {

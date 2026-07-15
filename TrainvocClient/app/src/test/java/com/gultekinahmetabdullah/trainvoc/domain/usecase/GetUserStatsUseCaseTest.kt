@@ -10,8 +10,10 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests for GetUserStatsUseCase
@@ -22,7 +24,13 @@ import org.mockito.kotlin.whenever
  * - Testing ratio calculations
  * - Testing error handling
  * - Using TestDispatcherProvider for deterministic tests
+ *
+ * Runs under Robolectric because the use case formats non-zero timestamps
+ * with android.icu.text.DateFormat; on the plain JVM that returns null
+ * (isReturnDefaultValues), the resulting NPE is caught by the use case and
+ * every non-zero-timestamp path surfaces as AppResult.Error.
  */
+@RunWith(RobolectricTestRunner::class)
 class GetUserStatsUseCaseTest {
 
     @get:Rule

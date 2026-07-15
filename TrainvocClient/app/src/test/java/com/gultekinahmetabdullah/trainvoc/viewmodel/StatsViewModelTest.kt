@@ -10,8 +10,10 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.robolectric.RobolectricTestRunner
 
 /**
  * Unit tests for StatsViewModel
@@ -23,8 +25,13 @@ import org.mockito.kotlin.whenever
  * - Testing init block execution
  * - Testing ratio calculations in ViewModel
  * - Testing data aggregation
+ *
+ * Runs under Robolectric because StatsViewModel formats timestamps with
+ * android.icu.text.DateFormat; on the plain JVM that static call returns
+ * null (isReturnDefaultValues) and NPEs mid-coroutine, killing fillStats.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(RobolectricTestRunner::class)
 class StatsViewModelTest {
 
     @get:Rule
@@ -241,14 +248,16 @@ class StatsViewModelTest {
      * Helper to setup other analytics mocks (non-answer counts)
      */
     private suspend fun setupOtherAnalyticsMocks() {
+        // Read the already-stubbed answer counts BEFORE any new stubbing:
+        // invoking a mock inside a thenReturn(...) argument runs while the
+        // outer stubbing is still open and throws UnfinishedStubbingException.
+        val totalAnswers = analyticsService.getCorrectAnswers() +
+                analyticsService.getWrongAnswers() +
+                analyticsService.getSkippedAnswers()
+
         whenever(analyticsService.getTotalTimeSpent()).thenReturn(600)
         whenever(analyticsService.getLastAnswered()).thenReturn(1642345678000L)
-        whenever(analyticsService.getTotalQuizCount()).thenReturn(
-            // Calculate from answer counts
-            analyticsService.getCorrectAnswers() +
-                    analyticsService.getWrongAnswers() +
-                    analyticsService.getSkippedAnswers()
-        )
+        whenever(analyticsService.getTotalQuizCount()).thenReturn(totalAnswers)
         whenever(analyticsService.getDailyCorrectAnswers()).thenReturn(10)
         whenever(analyticsService.getWeeklyCorrectAnswers()).thenReturn(50)
         whenever(analyticsService.getMostWrongWord()).thenReturn("test")

@@ -95,6 +95,53 @@ class LegacyPrefsMigratorTest {
 
         assertEquals("Real", secure.getString("username", null))
     }
+
+    @Test
+    fun `each key resolves independently across stores`() {
+        // username only in the second store, avatar only in the first:
+        // resolution is per key, not per store.
+        trainvocPrefs.edit().putString("username", "Ahmet").apply()
+        userPrefs.edit().putString("avatar", "🦊").apply()
+
+        migrate()
+
+        assertEquals("Ahmet", secure.getString("username", null))
+        assertEquals("🦊", secure.getString("avatar", null))
+    }
+
+    @Test
+    fun `value present in both stores is removed from both`() {
+        userPrefs.edit().putString("username", "First").apply()
+        trainvocPrefs.edit().putString("username", "Second").apply()
+
+        migrate()
+
+        // Single source of truth afterwards: every legacy copy is gone.
+        assertNull(userPrefs.getString("username", null))
+        assertNull(trainvocPrefs.getString("username", null))
+        assertEquals("First", secure.getString("username", null))
+    }
+
+    @Test
+    fun `secure value wins but legacy copies are still cleared`() {
+        secure.edit().putString("username", "SecureName").apply()
+        userPrefs.edit().putString("username", "StaleA").apply()
+        trainvocPrefs.edit().putString("username", "StaleB").apply()
+
+        migrate()
+
+        assertEquals("SecureName", secure.getString("username", null))
+        assertNull(userPrefs.getString("username", null))
+        assertNull(trainvocPrefs.getString("username", null))
+    }
+
+    @Test
+    fun `migration flag is set even when there is nothing to migrate`() {
+        migrate()
+
+        assertTrue(secure.getBoolean(LegacyPrefsMigrator.KEY_MIGRATED, false))
+        assertNull(secure.getString("username", null))
+    }
 }
 
 /** Minimal in-memory SharedPreferences for pure-JVM tests. */

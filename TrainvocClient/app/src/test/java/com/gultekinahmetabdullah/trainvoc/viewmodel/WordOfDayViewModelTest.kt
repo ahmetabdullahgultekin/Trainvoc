@@ -15,6 +15,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -74,7 +76,7 @@ class WordOfDayViewModelTest {
     fun `initial state is loading`() = runTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(any())).thenReturn(null)
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(null)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(null)
 
         // Act
         viewModel = createViewModel()
@@ -149,7 +151,7 @@ class WordOfDayViewModelTest {
     fun `generates new word of the day when none exists`() = runTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(testWord)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(testWord)
         whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
@@ -165,7 +167,7 @@ class WordOfDayViewModelTest {
     fun `cleans up old entries after generating new word`() = runTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(testWord)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(testWord)
         whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
@@ -180,7 +182,7 @@ class WordOfDayViewModelTest {
     fun `shows error when no word can be loaded`() = runTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(null)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(null)
 
         // Act
         viewModel = createViewModel()
@@ -253,14 +255,14 @@ class WordOfDayViewModelTest {
 
         // Assert
         assertFalse(viewModel.isFavorite.value)
-        verify(repository).setFavorite(eq("apple"), eq(false), any())
+        verify(repository).setFavorite(eq("apple"), eq(false), isNull())
     }
 
     @Test
     fun `toggleFavorite does nothing when no word is loaded`() = runTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(null)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(null)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -270,7 +272,7 @@ class WordOfDayViewModelTest {
         advanceUntilIdle()
 
         // Assert - no crash, no interaction with repository
-        verify(repository, never()).setFavorite(any(), any(), any())
+        verify(repository, never()).setFavorite(any(), any(), anyOrNull())
     }
 
     @Test
@@ -279,7 +281,7 @@ class WordOfDayViewModelTest {
         whenever(wordOfDayDao.getWordOfDay(todayDate))
             .thenReturn(null)
             .thenReturn(WordOfDay(wordId = 42L, date = todayDate, wasViewed = false))
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(null)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(null)
         whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         viewModel = createViewModel()
@@ -300,7 +302,7 @@ class WordOfDayViewModelTest {
     fun `currentDate is formatted correctly`() = runTest {
         // Arrange
         whenever(wordOfDayDao.getWordOfDay(todayDate)).thenReturn(null)
-        whenever(wordDao.getRandomWordForNotification(any(), any())).thenReturn(testWord)
+        whenever(wordDao.getRandomWordForNotification(any(), anyOrNull())).thenReturn(testWord)
         whenever(wordDao.getWordById(42L)).thenReturn(testWord)
 
         // Act
