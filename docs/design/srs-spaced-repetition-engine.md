@@ -436,6 +436,22 @@ Each slice is independently shippable behind the `srs_engine_enabled` flag.
 
 ---
 
+### S2 + S3 — implementation status (2026-07-15, behind `srs_engine_enabled`, default OFF)
+
+Built on the merged v19 persistence (S1, PR #116). Headless-verifiable; device end-to-end deferred (no emulator on the build host). Deviations from the draft above, kept intentional and documented (as S1 did):
+
+- **Shared write path.** Both the Review Queue (S2) and the quiz hook (S3) persist through one `ISrsSchedulerService.rate` / `onQuizAnswer` — FSRS (`FsrsAlgorithm`) applied to `ReviewScheduleDao` (the v19 `review_schedule` table keyed by numeric `word_id`), not the draft's `srs_cards` FSRS columns. `SrsSchedulerService` gates every mutating call on the flag, so with the flag OFF the quiz is byte-identical to today.
+- **Flag lives in the `FeatureFlag` enum, not a migration.** `srs_engine_enabled` is registered as `SRS_ENGINE` (`defaultEnabled = false`, `adminOnly`), seeded by the existing `initializeFeatureFlags()` and read null-safe (a missing global row ⇒ false, per R5). No migration seeds it — the v19 schema is frozen (issue #99 hard invariant).
+- **Developer-only toggle.** Enabled via the existing Admin feature-flag screen (design doc §8 dev-dogfood), not a user Settings switch — the doc does not call for a user toggle at this stage.
+- **Home entry + badge.** A gated "Reviews due" CTA on `HomeScreen` (shown only when the flag is on AND cards are due) is the sole navigation into `ReviewQueueScreen`, so the surface is unreachable while OFF. The badge count is a one-shot `getDueCount` read consistent with `HomeViewModel`'s existing one-shot load (not a live Flow).
+- **Session queue is a stable snapshot.** A session snapshots the due queue once (`ReviewScheduleDao.getDue`, added additively) so rating a card does not reshuffle the list under the user.
+- **Gamification `reviews_today`/streak increment on review completion is NOT wired here** (the draft S2 "Done" lists it) — it needs the gamification manager on the review path and is best verified live; tracked as a follow-up. Quiz-side streak/goal tracking is unchanged.
+- **Cold-start weakest-word seeding (R2)** is not implemented — out of S2/S3 scope.
+
+Coverage (headless, `:app:testDebugUnitTest`): `SrsSchedulerServiceTest` (flag-off no-op + null-safe fallback, quiz correct→Good→REVIEW / incorrect→Again→LEARNING with a longer correct interval, in-place reps advance, due-count), `ReviewQueueViewModelTest` (due-queue load with the lemma+senses join, reveal, each rating persists the FSRS-advanced row and advances, end-of-session summary + retention, skip = no persist, empty state), and `QuizViewModelTest` (correct/incorrect feed the scheduler with the right outcome, skip does not). Suite 265 → **279**, 0 failures.
+
+---
+
 ### S4 — Backend sync (1 sprint, requires backend deployed per ROADMAP Phase 3)
 
 **Scope**: `SrsBackendSyncService` batches dirty `review_schedule` rows and POST them to `/api/v1/srs/reviews`. On login, GET `/api/v1/srs/schedule` seeds the local table. `WorkManager` periodic sync every 6 hours on WiFi.

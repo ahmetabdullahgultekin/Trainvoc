@@ -23,6 +23,9 @@ object Route {
     const val FEATURE_FLAGS_USER = "feature_flags_user"
     const val GAMES_MENU = "games_menu"
 
+    // SRS engine (#99 S2) — gated behind the srs_engine_enabled flag
+    const val REVIEW_QUEUE = "review_queue"
+
     // Phase 1 - New Routes
     const val PROFILE = "profile"
     const val WORD_OF_DAY = "word_of_day"

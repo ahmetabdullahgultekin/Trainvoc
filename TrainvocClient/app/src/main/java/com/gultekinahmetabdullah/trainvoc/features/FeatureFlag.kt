@@ -31,6 +31,24 @@ enum class FeatureFlag(
         isPremium = true
     ),
 
+    /**
+     * FSRS review engine (#99). Gates the Review Queue surface (S2) and the
+     * quiz-outcome auto-schedule hook (S3). Default OFF and `adminOnly` so it
+     * ships dark and dogfoods via the admin flag screen only (design doc §8) —
+     * distinct from [SPACED_REPETITION], which is the legacy SM-2 progress store.
+     * A missing global row falls back to `defaultEnabled` (= false), so a
+     * never-seeded flag reads as disabled (design doc R5).
+     */
+    SRS_ENGINE(
+        key = "srs_engine_enabled",
+        displayName = "FSRS Review Engine",
+        description = "Spaced-repetition review queue + quiz auto-scheduling (FSRS)",
+        category = FeatureCategory.CORE_LEARNING,
+        isPremium = false,
+        defaultEnabled = false,
+        adminOnly = true
+    ),
+
     GAMIFICATION(
         key = "gamification",
         displayName = "Gamification",

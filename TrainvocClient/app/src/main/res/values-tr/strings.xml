@@ -1091,4 +1091,26 @@
     <string name="learning_language_description">Çalıştığınız sözlük. Daha fazla dil yolda!</string>
     <string name="learning_language_active">İngilizce → Türkçe</string>
     <string name="language_coming_soon_chip">%1$s (Yakında)</string>
+    <!-- SRS Tekrar Kuyruğu (#99 S2) -->
+    <string name="review_queue_title">Tekrar</string>
+    <string name="review_due_card_title">Tekrar zamanı</string>
+    <string name="review_due_count">%1$d kart hazır</string>
+    <string name="review_start_action">Tekrara başla</string>
+    <string name="review_progress_remaining">%1$d kaldı</string>
+    <string name="review_show_answer">Cevabı göster</string>
+    <string name="review_tap_hint">Anlamını görmek için karta dokun</string>
+    <string name="review_rating_again">Tekrar</string>
+    <string name="review_rating_hard">Zor</string>
+    <string name="review_rating_good">İyi</string>
+    <string name="review_rating_easy">Kolay</string>
+    <string name="review_skip">Atla</string>
+    <string name="review_card_front_desc">Tekrar edilecek kelime: %1$s. Anlamını görmek için dokun.</string>
+    <string name="review_card_back_desc">%1$s kelimesinin anlamı</string>
+    <string name="review_empty_title">Hepsi tamam!</string>
+    <string name="review_empty_subtitle">Şu anda tekrar edilecek kart yok. Belleğini taze tutmak için sonra tekrar gel.</string>
+    <string name="review_summary_title">Oturum tamamlandı</string>
+    <string name="review_summary_reviewed">%1$d tekrar edildi</string>
+    <string name="review_summary_retention">%%%1$d hatırlandı</string>
+    <string name="review_summary_done">Bitti</string>
+    <string name="review_close_desc">Tekrarı kapat</string>
 </resources>

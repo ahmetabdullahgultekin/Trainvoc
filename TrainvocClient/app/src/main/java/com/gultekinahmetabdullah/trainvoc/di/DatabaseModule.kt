@@ -95,6 +95,11 @@ object DatabaseModule {
     }
 
     @Provides
+    fun provideReviewScheduleDao(database: AppDatabase): com.gultekinahmetabdullah.trainvoc.database.ReviewScheduleDao {
+        return database.reviewScheduleDao()
+    }
+
+    @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): androidx.work.WorkManager {
         return androidx.work.WorkManager.getInstance(context)
