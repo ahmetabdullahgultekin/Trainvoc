@@ -1,7 +1,7 @@
 package com.rollingcatsoftware.trainvocmultiplayerapplication.service;
 
 import com.rollingcatsoftware.trainvocmultiplayerapplication.model.QuizQuestion;
-import com.rollingcatsoftware.trainvocmultiplayerapplication.model.Word;
+import com.rollingcatsoftware.trainvocmultiplayerapplication.words.model.Word;
 import com.rollingcatsoftware.trainvocmultiplayerapplication.repository.word.WordRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class QuizService {
         for (Word w : words) options.add(w.getMeaning());
         Collections.shuffle(options);
 
-        return new QuizQuestion(questionWord.getWord(), questionWord.getMeaning(), options);
+        return new QuizQuestion(questionWord.getLemma(), questionWord.getMeaning(), options);
     }
 
     public List<QuizQuestion> generateQuestions(String level, int optionCount, int totalQuestionCount) {

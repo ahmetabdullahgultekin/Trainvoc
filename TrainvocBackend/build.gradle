@@ -63,6 +63,17 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// Bring the client's v18 seed manifest into the backend build resources as the single source
+// of truth for the words DB. Lands at classpath:seed/seed_v18.json; WordSeedImporter reads it at
+// boot. settings.gradle rootDir is TrainvocBackend, so the client asset is one level up. When the
+// client tree is not on disk (e.g. the Docker build context is ./TrainvocBackend only) the source
+// is absent — Gradle silently skips a missing copy source and the importer tolerates the gap.
+processResources {
+    from("${projectDir}/../TrainvocClient/app/src/main/assets/database/seed_v18.json") {
+        into 'seed'
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform {
         // Exclude integration tests by default (require database)

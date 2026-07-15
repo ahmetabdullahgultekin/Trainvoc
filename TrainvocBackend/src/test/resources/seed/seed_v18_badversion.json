@@ -1,0 +1,12 @@
+{
+  "manifestVersion": 1,
+  "dbVersion": 17,
+  "languages": [
+    { "id": 1, "code": "en", "name": "English" }
+  ],
+  "exams": [],
+  "words": [],
+  "translations": [],
+  "synonyms": [],
+  "wordExams": []
+}
