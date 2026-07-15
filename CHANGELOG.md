@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-07-15
+
+#### Fixed — TrainvocClient (P0: CI-built APKs crashed at startup, #103)
+- The published v1.3.0 APK crashed on every launch: CI builds have no
+  `google-services.json` (gitignored), so no default `FirebaseApp` exists,
+  and `FirebaseAuthRepository` called `FirebaseAuth.getInstance()` in a
+  field initializer during Hilt graph creation. The handle is now lazy +
+  guarded; without Firebase config every auth operation degrades gracefully
+  (null user / error result) instead of crashing. Regression-covered by
+  `FirebaseAuthRepositoryNoFirebaseTest` (9 Robolectric tests); suite now
+  255 green. (#104)
+
+#### Fixed — TrainvocWeb (security)
+- Bumped transitive `form-data` 4.0.5 → 4.0.6 (CVE-2026-12143, HIGH
+  Dependabot alert — CRLF injection); `npm audit` back to 0. (#102)
+
+#### Changed — CI/CD
+- `release.yml` can restore `google-services.json` from the optional
+  `GOOGLE_SERVICES_JSON_BASE64` secret so released APKs ship with Firebase
+  sign-in active. (#105)
+- Backend test suite fixed to fully green (was 20 pre-existing failures:
+  RoomServiceTest/GameControllerTest/QuizControllerTest) and made
+  **blocking** in CI. (#106)
+
+## [1.3.0] - 2026-07-15
+
+> ⚠️ The published v1.3.0 APK crashes at startup (#103) — superseded by 1.3.1.
+
 ### 2026-07-15 (branch `claude/trainvoc-login-database-l0covn`)
 
 #### Fixed — TrainvocClient (onboarding bug: name asked on every launch)

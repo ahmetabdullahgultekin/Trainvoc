@@ -364,7 +364,17 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: July 15, 2026 (Onboarding Bug + Relational Multilingual Dictionary v18)
+### Latest Session: July 15, 2026 — afternoon (v1.3.0/v1.3.1 releases + hotfix + backend green baseline)
+
+**Shipped (all via squash-merged PRs, CI green):**
+- **v1.3.0 released** via `release.yml` (debug-signed; no keystore secrets yet) — then found to **crash at startup on every device** (#103): CI builds carry no `google-services.json`, so no default `FirebaseApp` exists, and `FirebaseAuthRepository` called `FirebaseAuth.getInstance()` in a field initializer during Hilt graph creation. Verified by `aapt2 dump resources` on the published APK (no `google_app_id`).
+- **v1.3.1 released** (versionCode 15) with the guard fix (#104): `FirebaseAuth` handle lazy + nullable; auth degrades gracefully without Firebase config; +9 Robolectric regression tests (suite 255 green). v1.3.0 release notes carry a CAUTION pointing to v1.3.1.
+- **HIGH Dependabot alert fixed** (#102): transitive `form-data` 4.0.5→4.0.6 (CVE-2026-12143); `npm audit` = 0.
+- **`release.yml`**: optional `GOOGLE_SERVICES_JSON_BASE64` secret restores `google-services.json` for Firebase-enabled release APKs (#105). Release-signing secrets still pending (keystore only on the dev machine — see #100 comment for the exact `gh secret set` commands).
+- **Backend test suite green + blocking** (#106): fixed the 20 pre-existing failures (RoomServiceTest EMF/transaction stubs, GameControllerTest missing @MockitoBean's, QuizControllerTest assertion drift); `ci.yml` backend tests no longer `continue-on-error`. This is PR-A of the 3-PR plan on **#96** (backend v18 alignment — full plan + source maps in the issue comments).
+- Device/emulator QA impossible on the Hetzner host (no KVM) — v17→v18 upgrade QA remains manual on a real device.
+
+### Previous Session: July 15, 2026 (Onboarding Bug + Relational Multilingual Dictionary v18)
 
 **Branch:** `claude/trainvoc-login-database-l0covn`
 **Focus:** Fix the "asks for name every launch" bug; redesign the word database into a relational, multilingual, numeric-id schema.
