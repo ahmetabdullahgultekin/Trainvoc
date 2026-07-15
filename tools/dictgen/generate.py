@@ -28,8 +28,10 @@ com.gultekinahmetabdullah.trainvoc.database.AppDatabase/18.json
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import pathlib
+import random
 import sqlite3
 import sys
 from collections import OrderedDict
@@ -39,6 +41,7 @@ from meaning_parser import parse_meaning, turkish_lower
 HERE = pathlib.Path(__file__).parent
 DATA = HERE / "data" / "all_words.json"
 IDS_LOCK = HERE / "ids.lock.json"
+REVIEW_DIR = HERE / "review"
 DEFAULT_MANIFEST = (
     HERE / ".." / ".." / "TrainvocClient" / "app" / "src" / "main" / "assets"
     / "database" / "seed_v18.json"
@@ -46,7 +49,7 @@ DEFAULT_MANIFEST = (
 DEFAULT_DB = DEFAULT_MANIFEST.parent / "trainvoc-db.db"
 
 CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"]
-LANG_EN, LANG_TR = 1, 2
+LANG_EN, LANG_TR, LANG_AR = 1, 2, 3
 DB_VERSION = 18
 
 
@@ -428,6 +431,225 @@ def validate(manifest_path: pathlib.Path) -> int:
 
 
 # --------------------------------------------------------------------------
+# Arabic candidate batch (data pending human review — see review/README.md)
+# --------------------------------------------------------------------------
+
+_IMPORT_WORD_KEYS = ("id", "lemma", "lang", "level", "note", "meaning")
+_IMPORT_EDGE_KEYS = ("wordId", "translatedWordId", "senseIndex", "note", "isPrimary")
+
+
+def _sha256(path: pathlib.Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _validate_candidate(words, translations, en_id_values, min_id) -> list[str]:
+    """Self-check the AR candidate: unique fresh ids, well-formed edges."""
+    errors: list[str] = []
+    ar_ids: set[int] = set()
+    seen_lemma: set[str] = set()
+    for w in words:
+        if w["id"] in ar_ids:
+            errors.append(f"duplicate AR id {w['id']}")
+        if w["id"] < min_id:
+            errors.append(f"AR id {w['id']} collides with existing id space")
+        ar_ids.add(w["id"])
+        if w["lemma"] in seen_lemma:
+            errors.append(f"duplicate AR lemma {w['lemma']!r}")
+        seen_lemma.add(w["lemma"])
+        if not w["note"]:
+            errors.append(f"AR word {w['id']} missing romanization")
+    edge_pks: set[tuple[int, int, int]] = set()
+    with_edge: set[int] = set()
+    for t in translations:
+        pk = (t["wordId"], t["translatedWordId"], t["senseIndex"])
+        if pk in edge_pks:
+            errors.append(f"duplicate translation PK {pk}")
+        edge_pks.add(pk)
+        if t["wordId"] not in ar_ids:
+            errors.append(f"edge from unknown AR id {t['wordId']}")
+        if t["translatedWordId"] not in en_id_values:
+            errors.append(f"edge to unknown EN id {t['translatedWordId']}")
+        with_edge.add(t["wordId"])
+    for wid in ar_ids - with_edge:
+        errors.append(f"AR word {wid} has no translation edge")
+    return errors
+
+
+def ar_candidate(kaikki_path: pathlib.Path, leipzig_path: pathlib.Path,
+                 sources: dict, limit: int, out_dir: pathlib.Path,
+                 manifest_path: pathlib.Path = DEFAULT_MANIFEST) -> dict:
+    """Build the reviewable AR candidate WITHOUT touching ids.lock/seed.
+
+    Provisional ids are allocated through the real ledger (append-after-max) so
+    they equal what promotion will assign, but the ledger is never saved — the
+    permanent commitment happens only at `ar-promote`, after human sign-off.
+    """
+    import ar_ingest
+
+    ledger = IdLedger(IDS_LOCK)
+    # EN match targets come from the *seed's real word rows*, not the ledger:
+    # a handful of ledger ids (e.g. "the") were allocated but dropped from the
+    # seed for lack of a parseable sense, so matching against the ledger would
+    # attach AR edges to non-existent word rows. Keyed by the same normalized
+    # lemma the ledger uses.
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    en_ids = {w["lemma"]: w["id"] for w in manifest["words"] if w["lang"] == LANG_EN}
+    en_id_values = set(en_ids.values())
+    min_ar_id = ledger._next
+
+    freq = ar_ingest.load_frequency(leipzig_path.read_text(encoding="utf-8"))
+    with open(kaikki_path, encoding="utf-8") as f:
+        entries = list(ar_ingest.iter_entries(f))
+
+    words, translations, stats = ar_ingest.build_candidate(
+        entries, en_ids, freq, lambda w: ledger.get("ar", w), limit
+    )
+    errors = _validate_candidate(words, translations, en_id_values, min_ar_id)
+    if errors:
+        for e in errors[:40]:
+            print("CANDIDATE ERROR:", e)
+        raise SystemExit(f"{len(errors)} candidate validation errors")
+
+    provisional = {
+        k: v for k, v in sorted(ledger.ids.items(), key=lambda kv: kv[1])
+        if k.startswith("ar|")
+    }
+    ar_id_list = [w["id"] for w in words]
+    candidate = {
+        "generatedFor": "#97 Arabic dictgen — DATA PENDING HUMAN REVIEW; ids "
+                        "become permanent only when this batch is promoted+merged",
+        "dbVersion": DB_VERSION,
+        "language": {"id": LANG_AR, "code": "ar", "name": "العربية"},
+        "sources": sources,
+        "idRange": {
+            "first": min(ar_id_list) if ar_id_list else None,
+            "last": max(ar_id_list) if ar_id_list else None,
+            "count": len(ar_id_list),
+            "allocatedAfterExistingMax": min_ar_id - 1,
+        },
+        "stats": stats,
+        "words": words,
+        "translations": translations,
+        "provisionalIds": provisional,
+    }
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "ar_candidate_manifest.json").write_text(
+        json.dumps(candidate, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
+    (out_dir / "ar_ids.candidate.json").write_text(
+        json.dumps(provisional, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
+    (out_dir / "ar_review_sample.md").write_text(
+        _render_review_sample(candidate), encoding="utf-8"
+    )
+    print(
+        f"AR candidate: {stats['arWords']} words, {stats['translations']} edges, "
+        f"ids {candidate['idRange']['first']}..{candidate['idRange']['last']} "
+        f"(pending review; ids.lock.json + seed untouched)"
+    )
+    print("POS:", stats["posDistribution"])
+    return candidate
+
+
+def _render_review_sample(candidate: dict, n: int = 100, seed: int = 97) -> str:
+    words = candidate["words"]
+    sample = sorted(
+        random.Random(seed).sample(words, min(n, len(words))),
+        key=lambda w: (w["_freqRank"] is None, w["_freqRank"] or 0, w["id"]),
+    )
+    s = candidate["sources"]
+    lines = [
+        "# Arabic candidate — human review sample",
+        "",
+        "**DATA PENDING HUMAN REVIEW.** Word ids are provisional until this "
+        "batch is promoted and merged. Nothing here has landed in "
+        "`ids.lock.json` or `seed_v18.json`.",
+        "",
+        f"- Batch size: **{candidate['stats']['arWords']}** AR headwords, "
+        f"**{candidate['stats']['translations']}** AR→EN edges.",
+        f"- Provisional id range: **{candidate['idRange']['first']}–"
+        f"{candidate['idRange']['last']}** (allocated after existing max "
+        f"{candidate['idRange']['allocatedAfterExistingMax']}).",
+        f"- Source (senses/romanization): kaikki.org Arabic extract "
+        f"`{s['kaikki']['file']}` (sha256 `{s['kaikki']['sha256'][:16]}…`, "
+        f"downloaded {s['kaikki']['downloaded']}).",
+        f"- Source (frequency rank): Leipzig `{s['leipzig']['file']}` "
+        f"(sha256 `{s['leipzig']['sha256'][:16]}…`).",
+        "",
+        f"Showing {min(n, len(words))} of {len(words)} entries "
+        "(random, seed=97; sorted by frequency rank).",
+        "",
+        "Reviewer checklist per row: diacritics correct? MSA (not dialect)? "
+        "romanization matches? EN gloss faithful? RTL renders?",
+        "",
+        "| # | AR (vocalized) | Romanization | POS | EN gloss(es) | Freq rank | Src line |",
+        "|---|----------------|--------------|-----|--------------|-----------|----------|",
+    ]
+    for i, w in enumerate(sample, start=1):
+        glosses = " ⏐ ".join(g.replace("|", "/") for g in w["_senseGlosses"][:3])
+        pos = ", ".join(w["_pos"])
+        rank = w["_freqRank"] if w["_freqRank"] is not None else "—"
+        lines.append(
+            f"| {i} | {w['lemma']} | `{w['note']}` | {pos} | {glosses} | "
+            f"{rank} | {w['_sourceLine']} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def ar_promote(candidate_path: pathlib.Path, manifest_path: pathlib.Path) -> int:
+    """Fold a REVIEWED AR candidate into ids.lock.json + the seed manifest.
+
+    Run only after human sign-off. Re-allocates AR ids through the live ledger
+    in candidate order and aborts if they drift from the reviewed provisional
+    ids, so exactly the reviewed data lands. Idempotent: re-running is a no-op.
+    """
+    candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+    ledger = IdLedger(IDS_LOCK)
+    for w in candidate["words"]:
+        got = ledger.get("ar", w["lemma"])
+        if got != w["id"]:
+            raise SystemExit(
+                f"ledger drift for {w['lemma']!r}: candidate id {w['id']} != "
+                f"ledger id {got}; regenerate the candidate before promoting"
+            )
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not any(l["id"] == LANG_AR for l in manifest["languages"]):
+        manifest["languages"].append(candidate["language"])
+    existing_word_ids = {w["id"] for w in manifest["words"]}
+    for w in candidate["words"]:
+        if w["id"] not in existing_word_ids:
+            manifest["words"].append({k: w[k] for k in _IMPORT_WORD_KEYS})
+    manifest["words"].sort(key=lambda w: w["id"])
+    existing_edges = {
+        (t["wordId"], t["translatedWordId"], t["senseIndex"])
+        for t in manifest["translations"]
+    }
+    for t in candidate["translations"]:
+        pk = (t["wordId"], t["translatedWordId"], t["senseIndex"])
+        if pk not in existing_edges:
+            manifest["translations"].append({k: t[k] for k in _IMPORT_EDGE_KEYS})
+
+    ledger.save()
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    print(
+        f"promoted {len(candidate['words'])} AR words + "
+        f"{len(candidate['translations'])} edges into {manifest_path.name}; "
+        f"ids.lock.json updated. Now: build-db + validate."
+    )
+    return 0
+
+
+# --------------------------------------------------------------------------
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
@@ -444,6 +666,30 @@ def main() -> int:
 
     p_val = sub.add_parser("validate", help="integrity-check the manifest")
     p_val.add_argument("--manifest", type=pathlib.Path, default=DEFAULT_MANIFEST)
+
+    p_arc = sub.add_parser(
+        "ar-candidate",
+        help="build the reviewable Arabic batch (writes review/, NOT ids.lock/seed)",
+    )
+    p_arc.add_argument("--kaikki", type=pathlib.Path, required=True,
+                       help="kaikki.org English-edition Arabic JSONL extract")
+    p_arc.add_argument("--leipzig", type=pathlib.Path, required=True,
+                       help="Leipzig Arabic *-words.txt frequency list (CC BY)")
+    p_arc.add_argument("--limit", type=int, default=2000,
+                       help="cap on AR headwords in the first batch")
+    p_arc.add_argument("--out", type=pathlib.Path, default=REVIEW_DIR)
+    p_arc.add_argument("--kaikki-url", default="")
+    p_arc.add_argument("--leipzig-url", default="")
+    p_arc.add_argument("--downloaded", default="",
+                       help="ISO date the sources were downloaded (provenance)")
+
+    p_arp = sub.add_parser(
+        "ar-promote",
+        help="fold a REVIEWED review/ar_candidate_manifest.json into ids.lock + seed",
+    )
+    p_arp.add_argument("--candidate", type=pathlib.Path,
+                       default=REVIEW_DIR / "ar_candidate_manifest.json")
+    p_arp.add_argument("--manifest", type=pathlib.Path, default=DEFAULT_MANIFEST)
 
     args = ap.parse_args()
 
@@ -465,6 +711,29 @@ def main() -> int:
         return 0
     if args.cmd == "validate":
         return validate(args.manifest)
+    if args.cmd == "ar-candidate":
+        sources = {
+            "kaikki": {
+                "file": args.kaikki.name,
+                "sha256": _sha256(args.kaikki),
+                "url": args.kaikki_url,
+                "downloaded": args.downloaded,
+                "license": "CC BY-SA 4.0 (+GFDL); comply via CC BY-SA 4.0",
+                "attribution": "English Wiktionary via kaikki.org / wiktextract",
+            },
+            "leipzig": {
+                "file": args.leipzig.name,
+                "sha256": _sha256(args.leipzig),
+                "url": args.leipzig_url,
+                "downloaded": args.downloaded,
+                "license": "CC BY 4.0",
+                "attribution": "Leipzig Corpora Collection, Universität Leipzig",
+            },
+        }
+        ar_candidate(args.kaikki, args.leipzig, sources, args.limit, args.out)
+        return 0
+    if args.cmd == "ar-promote":
+        return ar_promote(args.candidate, args.manifest)
     return 2
 
 
