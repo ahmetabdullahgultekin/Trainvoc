@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 2026-07-15 (post-1.3.1 — backend v18 mirror + dependency modernization)
 
+#### Added — TrainvocBackend (#96 COMPLETE: PR-B #108 + PR-C #114; deployability #113)
+- **#96 PR-C (#114):** primary-DB user tables re-keyed to the permanent numeric
+  v18 word ids (`user_word_progress`, `user_word_statistics`, `srs_schedule`
+  String→BIGINT); SRS wire contract is numeric with `[1, 999,999]` bounds
+  (per-device custom-word ids ≥1M rejected — cross-device custom-word sync
+  deferred) plus optional `lemma`/`languageCode` natural-key hints; SyncService
+  reports legacy non-numeric payloads as per-item failures. Suite 248 green.
+- **Deployability (#113):** prod profile env names aligned to compose
+  (`DB_PRIMARY_*`/`DB_SECONDARY_*`, fail-fast passwords, `jdbc-url` keys);
+  backend image builds from the monorepo root so the Docker-built jar embeds
+  `seed_v18.json` (verified inside the image); root `.dockerignore` allowlist.
+
 #### Added — TrainvocBackend (#96 PR-B, #108)
 - Words DB now mirrors the client's relational multilingual v18 schema:
   `languages` / `words` (permanent numeric ids) / `word_translations` /
