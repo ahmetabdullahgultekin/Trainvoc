@@ -364,7 +364,14 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: July 15, 2026 — afternoon (v1.3.0/v1.3.1 releases + hotfix + backend green baseline)
+### Latest Session: July 15, 2026 — evening (backend v18 mirror + full dependency modernization)
+
+**Shipped (all squash-merged, CI green; open PRs = 0, open Dependabot alerts = 0):**
+- **#96 PR-B (#108):** backend words DB mirrors the client v18 relational schema (entities in `words.model` — sibling package per persistence unit, fixing the dual-EMF ghost-table hazard), `WordSeedImporter` boots from the client's `seed_v18.json` (idempotent, absent-manifest-tolerant; Docker-context seeding gap tracked in the PR), words SQL script is DDL-only with real FKs. Backend suite 244 green. **PR-C (primary-DB progress/SRS re-key) remains — see #96 plan.**
+- **Majors (planned via 3-agent research, plans on the superseded PRs):** Spring Boot **4.1.0** (#110; Hibernate 7.4.1 + `GameRoomFetchJoinH2Test` guard, suite 245), TypeScript **6.0.3** + react-i18next **16.6.6** (#111; 15.x's `typescript ^5` peer breaks every npm install on TS6 — remember this class of failure), lucide-react **1.24.0** (#112; brand icons removed → Footer inline SVGs + aria-labels; deprecated icon names aliased in imports).
+- **Dependabot backlog cleared:** patch/minor batches #107 (web ×8) + #109 (backend ×4 + Gradle wrapper 9.6.1); all 16 Dependabot PRs closed as superseded; alert count 0.
+
+### Previous Session: July 15, 2026 — afternoon (v1.3.0/v1.3.1 releases + hotfix + backend green baseline)
 
 **Shipped (all via squash-merged PRs, CI green):**
 - **v1.3.0 released** via `release.yml` (debug-signed; no keystore secrets yet) — then found to **crash at startup on every device** (#103): CI builds carry no `google-services.json`, so no default `FirebaseApp` exists, and `FirebaseAuthRepository` called `FirebaseAuth.getInstance()` in a field initializer during Hilt graph creation. Verified by `aapt2 dump resources` on the published APK (no `google_app_id`).

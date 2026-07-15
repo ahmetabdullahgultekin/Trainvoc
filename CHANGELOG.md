@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 2026-07-15 (post-1.3.1 — backend v18 mirror + dependency modernization)
+
+#### Added — TrainvocBackend (#96 PR-B, #108)
+- Words DB now mirrors the client's relational multilingual v18 schema:
+  `languages` / `words` (permanent numeric ids) / `word_translations` /
+  `synonyms` / id-keyed `word_exam_cross_ref`, in a dedicated `words.model`
+  entity package per persistence unit (removes the dual-EMF ghost-table
+  hazard). Seeded at boot by `WordSeedImporter` from the client's
+  `seed_v18.json` (single source of truth, idempotent); the old ~12k-line
+  INSERT dump was replaced by a DDL-only script with real foreign keys.
+
+#### Changed — dependencies
+- Spring Boot 4.0.6 → **4.1.0** (Hibernate ORM 7.4.1; new fetch-join
+  `getSingleResult` regression guard) (#110); backend patch/minors:
+  postgresql 42.7.13, firebase-admin 9.10.0, caffeine 3.2.4,
+  org.json 20260522, Gradle wrapper **9.6.1** (#109).
+- TypeScript 5.9.3 → **6.0.3** (deprecated `baseUrl` removed) +
+  react-i18next **16.6.6** (TS6 peer range) (#111); lucide-react 0.563 →
+  **1.24.0** (Footer brand icons → inline SVGs + aria-labels; deprecated
+  icon names aliased in imports) (#112); web patch/minors: radix-ui ×5,
+  @types/node, @types/react, sharp (#107).
+- All 16 open Dependabot PRs resolved (batched or superseded); **0 open
+  Dependabot alerts**.
+
 ## [1.3.1] - 2026-07-15
 
 #### Fixed — TrainvocClient (P0: CI-built APKs crashed at startup, #103)
