@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 2026-07-15 (evening wave 2 — FSRS persistence + docs + data-source research)
+
+#### Added — TrainvocClient (#99 S1, #116)
+- FSRS spaced-repetition state is now persisted: Room v19 adds
+  `review_schedule` (composite PK word_id+user_id, FK->words.id CASCADE,
+  full FsrsCard state + sync flag) with `ReviewScheduleDao`; MIGRATION_18_19
+  is additive and seeds from legacy SM-2 history via `Sm2ToFsrsMigrator`
+  (lazy: only ever-reviewed words). The prepopulated asset and seed manifest
+  stay at v18 (fresh installs migrate 18->19 on first open — proven by a
+  Robolectric fresh-install test), so `tools/dictgen` outputs and the
+  backend importer are untouched. `srs_engine_enabled` stays OFF; Review
+  Queue UI (S2) + quiz hook (S3) need a device and remain open on #99.
+  Client suite 255 -> 265 green.
+
+#### Changed — repo/docs (#100, #115)
+- Root docs consolidated to the GitHub-native layout: tracking docs stubbed,
+  six historical analyses moved to `docs/history/`, root CLAUDE.md's issue
+  workflow rewritten (Issues/Milestones/Board #7), stale version claims
+  corrected across README/CLAUDE.md files.
+
+#### Research — dictionary data (#97, #98)
+- License-verified source studies posted to the issues: kaikki.org
+  (CC BY-SA 4.0) is the practical AR and EN/TR enrichment source with a
+  separate-pack posture + drop-in attribution text; Leipzig Corpora (CC BY)
+  for frequency ranks; WikDict has no EN-AR pair; KELLY/SUBTLEX are
+  non-commercial and unusable.
+
 ### 2026-07-15 (post-1.3.1 — backend v18 mirror + dependency modernization)
 
 #### Added — TrainvocBackend (#96 COMPLETE: PR-B #108 + PR-C #114; deployability #113)
