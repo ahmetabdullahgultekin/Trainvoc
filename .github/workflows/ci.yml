@@ -114,11 +114,9 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug
 
-      # TODO(#223): remove continue-on-error once the 30 pre-existing
-      # unit-test failures are fixed and the suite is green.
+      # Suite is fully green since #223 was fixed (247 tests) — blocking.
       - name: Run unit tests
         run: ./gradlew :app:testDebugUnitTest
-        continue-on-error: true
 
       - name: Upload unit test report
         if: always()
