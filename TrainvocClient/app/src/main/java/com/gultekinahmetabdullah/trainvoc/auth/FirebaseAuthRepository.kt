@@ -1,5 +1,6 @@
 package com.gultekinahmetabdullah.trainvoc.auth
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
@@ -18,24 +19,41 @@ import javax.inject.Singleton
 @Singleton
 class FirebaseAuthRepository @Inject constructor() {
 
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    // Builds without google-services.json (every CI build — the file is
+    // gitignored) skip the google-services plugin, so no default FirebaseApp
+    // exists at runtime and FirebaseAuth.getInstance() throws. Resolving the
+    // handle lazily and tolerating the missing app keeps the whole auth
+    // surface inert in those builds instead of crashing Hilt singleton-graph
+    // creation at app startup (#103).
+    private val firebaseAuth: FirebaseAuth? by lazy {
+        try {
+            FirebaseAuth.getInstance()
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "Default FirebaseApp is not initialized; Firebase sign-in is disabled", e)
+            null
+        }
+    }
 
     /**
      * Observes the current Firebase user state.
      * Emits the current user when authentication state changes.
      */
     val currentUser: Flow<FirebaseUser?> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser)
+        val auth = firebaseAuth
+        if (auth == null) {
+            trySend(null)
+            awaitClose { }
+        } else {
+            val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser) }
+            auth.addAuthStateListener(listener)
+            awaitClose { auth.removeAuthStateListener(listener) }
         }
-        firebaseAuth.addAuthStateListener(listener)
-        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
     }
 
     /**
      * Gets the current Firebase user synchronously.
      */
-    fun getCurrentUser(): FirebaseUser? = firebaseAuth.currentUser
+    fun getCurrentUser(): FirebaseUser? = firebaseAuth?.currentUser
 
     /**
      * Signs in with email and password.
@@ -45,8 +63,9 @@ class FirebaseAuthRepository @Inject constructor() {
      * @return FirebaseAuthResult indicating success or failure
      */
     suspend fun signInWithEmailAndPassword(email: String, password: String): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
-            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val result = auth.signInWithEmailAndPassword(email, password).await()
             val user = result.user
             if (user != null) {
                 FirebaseAuthResult.Success(user)
@@ -68,8 +87,9 @@ class FirebaseAuthRepository @Inject constructor() {
      * @return FirebaseAuthResult indicating success or failure
      */
     suspend fun createUserWithEmailAndPassword(email: String, password: String): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
-            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
             if (user != null) {
                 FirebaseAuthResult.Success(user)
@@ -91,9 +111,10 @@ class FirebaseAuthRepository @Inject constructor() {
      * @return FirebaseAuthResult indicating success or failure
      */
     suspend fun signInWithGoogle(idToken: String): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
-            val result = firebaseAuth.signInWithCredential(credential).await()
+            val result = auth.signInWithCredential(credential).await()
             val user = result.user
             if (user != null) {
                 FirebaseAuthResult.Success(user)
@@ -114,8 +135,9 @@ class FirebaseAuthRepository @Inject constructor() {
      * @return FirebaseAuthResult indicating success or failure
      */
     suspend fun sendPasswordResetEmail(email: String): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
-            firebaseAuth.sendPasswordResetEmail(email).await()
+            auth.sendPasswordResetEmail(email).await()
             FirebaseAuthResult.PasswordResetSent
         } catch (e: FirebaseAuthException) {
             FirebaseAuthResult.Error(mapFirebaseError(e.errorCode))
@@ -128,7 +150,7 @@ class FirebaseAuthRepository @Inject constructor() {
      * Signs out the current user.
      */
     fun signOut() {
-        firebaseAuth.signOut()
+        firebaseAuth?.signOut()
     }
 
     /**
@@ -139,7 +161,7 @@ class FirebaseAuthRepository @Inject constructor() {
      */
     suspend fun getIdToken(forceRefresh: Boolean = false): String? {
         return try {
-            firebaseAuth.currentUser?.getIdToken(forceRefresh)?.await()?.token
+            firebaseAuth?.currentUser?.getIdToken(forceRefresh)?.await()?.token
         } catch (e: Exception) {
             null
         }
@@ -149,9 +171,10 @@ class FirebaseAuthRepository @Inject constructor() {
      * Reloads the current user's data from Firebase.
      */
     suspend fun reloadUser(): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
-            firebaseAuth.currentUser?.reload()?.await()
-            val user = firebaseAuth.currentUser
+            auth.currentUser?.reload()?.await()
+            val user = auth.currentUser
             if (user != null) {
                 FirebaseAuthResult.Success(user)
             } else {
@@ -166,8 +189,9 @@ class FirebaseAuthRepository @Inject constructor() {
      * Sends email verification to the current user.
      */
     suspend fun sendEmailVerification(): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
-            firebaseAuth.currentUser?.sendEmailVerification()?.await()
+            auth.currentUser?.sendEmailVerification()?.await()
             FirebaseAuthResult.EmailVerificationSent
         } catch (e: Exception) {
             FirebaseAuthResult.Error(e.message ?: "Failed to send verification email")
@@ -180,12 +204,13 @@ class FirebaseAuthRepository @Inject constructor() {
      * @param displayName New display name
      */
     suspend fun updateDisplayName(displayName: String): FirebaseAuthResult {
+        val auth = firebaseAuth ?: return FirebaseAuthResult.Error(NOT_CONFIGURED_ERROR)
         return try {
             val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build()
-            firebaseAuth.currentUser?.updateProfile(profileUpdates)?.await()
-            FirebaseAuthResult.Success(firebaseAuth.currentUser!!)
+            auth.currentUser?.updateProfile(profileUpdates)?.await()
+            FirebaseAuthResult.Success(auth.currentUser!!)
         } catch (e: Exception) {
             FirebaseAuthResult.Error(e.message ?: "Failed to update display name")
         }
@@ -208,6 +233,12 @@ class FirebaseAuthRepository @Inject constructor() {
             "ERROR_NETWORK_REQUEST_FAILED" -> "Network error. Please check your connection"
             else -> "Authentication failed: $errorCode"
         }
+    }
+
+    private companion object {
+        const val TAG = "FirebaseAuthRepository"
+        const val NOT_CONFIGURED_ERROR =
+            "Firebase authentication is not available in this build"
     }
 }
 
