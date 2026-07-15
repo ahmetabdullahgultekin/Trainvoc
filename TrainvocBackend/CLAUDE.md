@@ -14,9 +14,9 @@
 
 | Category | Technology | Version |
 |----------|------------|---------|
-| **Framework** | Spring Boot | 4.0.6 |
+| **Framework** | Spring Boot | 4.1.0 |
 | **Language** | Java | 21 (LTS) |
-| **Build Tool** | Gradle | 9.4.1 (wrapper) |
+| **Build Tool** | Gradle | 9.6.1 (wrapper) |
 | **Database** | PostgreSQL | 15+ |
 | **ORM** | Spring Data JPA / Hibernate | Latest |
 | **Security** | Spring Security | Latest |
@@ -600,7 +600,7 @@ Services are split by responsibility:
 | Java Classes | 55+ |
 | Configuration | 8 |
 | SQL Scripts | 4+ |
-| Test Classes | 1 |
+| Test Classes | 25 |
 
 ---
 

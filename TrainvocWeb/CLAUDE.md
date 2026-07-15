@@ -15,14 +15,14 @@
 | Category | Technology | Version |
 |----------|------------|---------|
 | **Framework** | React | 19.1.0 |
-| **Build Tool** | Vite | 6.3.5 |
-| **Language** | TypeScript | 5.8.3 |
-| **UI Library** | Material-UI (MUI) | 7.1.2 |
-| **Styling** | Emotion | 11.14.0 |
+| **Build Tool** | Vite | 8.0.1 |
+| **Language** | TypeScript | 6.0.3 |
+| **UI Primitives** | Radix UI | 1.x / 2.x |
+| **Styling** | Tailwind CSS | 4.2.2 |
 | **Routing** | React Router DOM | 7.6.2 |
-| **HTTP Client** | Axios | 1.10.0 |
-| **i18n** | i18next | 25.2.1 |
-| **Animations** | Lottie React | 2.4.1 |
+| **HTTP Client** | Axios | 1.13.6 |
+| **i18n** | i18next / react-i18next | 25.8.20 / 16.6.6 |
+| **Animations** | Framer Motion / Lottie React | 12.x / 2.4.1 |
 
 ---
 
@@ -224,14 +224,16 @@ const { nick, setNick, isValid } = useNick();
 const { profile, updateProfile, isLoading } = useProfile();
 ```
 
-### Material-UI Theming
+### Styling (Tailwind CSS + Radix UI)
 
-Uses MUI 7 with default theme. Components use `sx` prop for styling.
+Uses Tailwind CSS 4 utility classes for styling, Radix UI primitives for
+accessible components, and `class-variance-authority` + `tailwind-merge` for
+variant composition. There is no MUI/Emotion dependency.
 
-```typescript
-<Button sx={{ backgroundColor: 'primary.main', px: 4 }}>
+```tsx
+<button className="bg-primary px-4 py-2 rounded-md text-primary-foreground">
     Start Game
-</Button>
+</button>
 ```
 
 ---
@@ -299,12 +301,11 @@ src/locales/
 
 ### Low
 
-7. **No Unit Tests**
-   - No test files present
-   - Should add Jest + React Testing Library
+7. **Test coverage gaps**
+   - Vitest unit suite + Playwright e2e are wired (`npm run test:run`, `npm run test:e2e`)
+   - Coverage is still partial; extend around game/multiplayer flows
 
 8. **Console Warnings**
-   - Some MUI deprecation warnings
    - Missing key props in some lists
 
 ---

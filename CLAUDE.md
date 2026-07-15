@@ -28,12 +28,13 @@
 ├── TrainvocBackend/         # Server (Spring Boot 4, Java 21 LTS)
 │   ├── CLAUDE.md            # Backend development guide
 │   └── src/                 # Controllers, services, models
-├── TODO.md                  # ⭐ UNIFIED ISSUE TRACKER - Single source of truth
+├── TODO.md / ROADMAP.md     # Stubs → work tracked in GitHub Issues/Milestones/Project #7
 ├── README.md                # Public repository README
 ├── ARCHITECTURE.md          # System architecture documentation
+├── CHANGELOG.md             # Version history
 ├── CONTRIBUTING.md          # Contribution guidelines
 ├── LICENSE                  # MIT License
-└── INVESTIGATION_REPORT.md  # Codebase analysis and recommendations
+└── docs/history/            # Superseded analyses/reports (Jan 2026 snapshots)
 ```
 
 ### Component-Specific Guides
@@ -46,45 +47,33 @@ Each module has its own `CLAUDE.md` with detailed information:
 
 ---
 
-## 🚨 CRITICAL: Issue Tracking Workflow
+## Issue Tracking Workflow (GitHub-native)
 
-### TODO.md - Unified Issue Tracker
+Work is tracked **GitHub-natively** — in Issues, Milestones, Labels, and the
+Project board — **not** in markdown tracking docs. The old `TODO.md` "single
+source of truth" workflow was retired when the tracking docs were migrated to
+GitHub (2026-06-23); `TODO.md` and `ROADMAP.md` are now stubs that point here.
 
-**Location:** `/TODO.md` (root of repository)
+**Where things live:**
+- **Issues:** https://github.com/ahmetabdullahgultekin/Trainvoc/issues (migrated
+  items carry the `from:md-migration` label)
+- **Milestones:** https://github.com/ahmetabdullahgultekin/Trainvoc/milestones
+- **Project board:** https://github.com/users/ahmetabdullahgultekin/projects/7
 
-This is the **SINGLE SOURCE OF TRUTH** for all issues, bugs, TODOs, and improvements across the entire project.
+**When you find an issue:** open a GitHub Issue (`gh issue create -R
+ahmetabdullahgultekin/Trainvoc`). Apply the right labels — priority
+(`priority:P0`…`P3`), type (`type:bug`/`type:feature`/`type:chore`), and area
+(`client`/`web`/`backend`/`area:infra`) — and attach a milestone when it belongs
+to a planned phase.
 
-### Claude AI Session Rules
+**When you fix an issue:** reference it from the PR so it auto-closes on merge —
+put `Fixes #N` (or `Part of #N` for partial work) in the PR body. Do not track
+status back in markdown.
 
-#### When You Find an Issue:
-1. **IMMEDIATELY add it to TODO.md** with the next available number
-2. Use the correct severity level (🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW, ⚪ INFO)
-3. Include: Component, File:Line, Description, Status (⬜ OPEN)
-4. Do NOT fix the issue in the same session (unless explicitly requested)
-
-#### When You Fix an Issue:
-1. Mark the issue in TODO.md with ✅ FIXED and add the date
-2. Add your entry to the "Recently Fixed" section
-3. Update the Quick Stats counts
-4. Never delete issues - keep for history
-
-#### Issue Format:
-```markdown
-| #ID | Component | File:Line | Description | Status |
-| 151 | Android | `SomeFile.kt:42` | Description of the issue | ⬜ OPEN |
-```
-
-#### Session Types:
-- **Discovery Session**: Find issues → Add to TODO.md → Do NOT fix
-- **Fix Session**: Read TODO.md → Fix issues → Mark as ✅ FIXED
-- **Mixed Session**: User explicitly requests both
-
-### Priority Order for Fixes:
-1. 🔴 CRITICAL - Production blockers, security, crashes
-2. 🟠 HIGH - Major features broken
-3. 🟡 MEDIUM - Features work but have issues
-4. 🟢 LOW - Polish and improvements
-5. ⚪ INFO - Documentation and cleanup
+**Reference docs** (evergreen guides like this file, `ARCHITECTURE.md`,
+`CONTRIBUTING.md`, `BRANDING.md`) stay in the repo. Point-in-time analyses and
+reports live under `docs/history/`. Inline `TODO`/`FIXME` code markers stay in
+the code.
 
 ---
 
@@ -151,8 +140,8 @@ This is the **SINGLE SOURCE OF TRUTH** for all issues, bugs, TODOs, and improvem
 
 | Layer | TrainvocClient | TrainvocWeb | TrainvocBackend |
 |-------|---------------|-------------|-----------------|
-| **Language** | Kotlin 2.3.20 | TypeScript 5.8.3 | Java 21 (LTS) |
-| **Framework** | Jetpack Compose | React 19.1.0 | Spring Boot 4.0.6 |
+| **Language** | Kotlin 2.3.20 | TypeScript 6.0.3 | Java 21 (LTS) |
+| **Framework** | Jetpack Compose | React 19.1.0 | Spring Boot 4.1.0 |
 | **Build** | Gradle (KTS) | Vite 8.0 | Gradle |
 | **Database** | Room/SQLite | N/A | PostgreSQL |
 | **State** | ViewModel/StateFlow | React State | Spring Session |
@@ -194,24 +183,24 @@ cd TrainvocBackend
 
 ## Critical Information
 
-### Current Project Status (refreshed 2026-06-05 — see `ROADMAP.md`)
+### Current Project Status (refreshed 2026-07-15 — see GitHub [Milestones](https://github.com/ahmetabdullahgultekin/Trainvoc/milestones))
 
 | Component | Build Status | Feature Completeness | Notes |
 |-----------|-------------|---------------------|-------|
-| **TrainvocClient** | Builds (clean checkout, #221 fixed) | ~85% of v1 | Games + TTS present (legacy "deleted/unwired" claims were STALE); auth + leaderboard shipped |
-| **TrainvocWeb** | Builds; `npm audit` = **0 vulns** | ~80% | Multiplayer functional; security + safe dep bumps merged |
-| **TrainvocBackend** | Builds on JDK 21 LTS (Spring Boot 4.0.6) | ~85% | Dual DB working; not yet deployed/hardened |
+| **TrainvocClient** | Builds (clean checkout, #221 fixed) | ~85% of v1 | Games + TTS present (legacy "deleted/unwired" claims were STALE); auth + leaderboard shipped; unit suite 255 green |
+| **TrainvocWeb** | Builds; `npm audit` = **0 vulns** | ~80% | Multiplayer functional; security + safe dep bumps merged; Vitest + Playwright wired |
+| **TrainvocBackend** | Builds on JDK 21 LTS (Spring Boot 4.1.0) | ~85% | Dual DB working; test suite 248 green + blocking in CI (#106/#114); not yet deployed/hardened |
 
 ### Known Issues (corrected — prior entries here were stale)
 
-> ⚠️ **Stale-claim corrections (2026-06-05):** the single-player games and multiplayer UI are **present and wired** (the "games UI deleted" note was false on HEAD), and **TTS is connected**. "Story Mode" was renamed to "Learning Path" so it no longer over-promises (#168). The unit-test suite now compiles and runs (#222). See `TODO.md` for the live issue list.
+> ⚠️ **Stale-claim corrections (2026-06-05):** the single-player games and multiplayer UI are **present and wired** (the "games UI deleted" note was false on HEAD), and **TTS is connected**. "Story Mode" was renamed to "Learning Path" so it no longer over-promises (#168). The unit-test suite now compiles and runs (#222). See GitHub [Issues](https://github.com/ahmetabdullahgultekin/Trainvoc/issues) for the live issue list.
 
 1. **TrainvocClient**
    - ✅ Clean-checkout build fixed (#221 — google-services plugin conditional).
    - ✅ Auth: Google Sign-In (#192), email-verify UI (#191), session timeout (#193).
    - ✅ Leaderboard: local "Your Progress" + honest "global coming soon" (#194).
    - ⚠️ Cloud/Drive backup still local-only (honestly "coming soon").
-   - ✅ Unit-test suite fully green (246 tests, 0 failures) — #223 fixed on 2026-07-15.
+   - ✅ Unit-test suite fully green (255 tests, 0 failures) — #223 + v1.3.1 regression tests (#104).
 
 2. **TrainvocWeb**
    - ✅ Security alerts resolved; `npm audit` = 0; safe Dependabot patches merged.
@@ -221,7 +210,7 @@ cd TrainvocBackend
    - SSL terminated at Nginx (disabled in-app by design).
    - Auth wired (Firebase + JWT) but not yet enforced end-to-end.
    - Rate limiting present (bucket4j); DTO layer / API versioning / pagination still deferred to backend-hardening phase.
-   - Never deployed — see `ROADMAP.md` Phase 3.
+   - Not yet deployed — see the deployment milestone in GitHub [Milestones](https://github.com/ahmetabdullahgultekin/Trainvoc/milestones).
 
 ### Important Files to Know
 
@@ -229,11 +218,12 @@ cd TrainvocBackend
 - `README.md` - Public repository information
 - `ARCHITECTURE.md` - System architecture details
 - `CONTRIBUTING.md` - How to contribute
-- `INVESTIGATION_REPORT.md` - Detailed analysis and recommendations
+- `CHANGELOG.md` - Version history
+- `docs/history/` - Superseded analyses/reports (incl. the Jan 2026 `INVESTIGATION_REPORT.md`)
 
-**TrainvocClient:**
-- `NON_IMPLEMENTED_COMPONENTS_AUDIT.md` - 55 incomplete features
-- `GAMES_UI_INVESTIGATION.md` - Deleted games recovery plan
+**TrainvocClient** (historical Jan 2026 snapshots — many items since resolved):
+- `NON_IMPLEMENTED_COMPONENTS_AUDIT.md` - Historical audit (games since restored, TTS wired)
+- `GAMES_UI_INVESTIGATION.md` - Historical investigation (games are present, not deleted)
 - `RECOMMENDED_HOOKS_GUIDE.md` - Development workflow hooks
 
 ---
@@ -346,8 +336,8 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 1. Start with this file (root `CLAUDE.md`)
 2. Read component-specific `CLAUDE.md`
-3. Check `INVESTIGATION_REPORT.md` for analysis
-4. Review `ARCHITECTURE.md` for system design
+3. Review `ARCHITECTURE.md` for system design
+4. Check `docs/history/` for superseded analyses (historical context only)
 
 ### Key Documentation
 
@@ -358,7 +348,8 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 | Web CLAUDE.md | `/TrainvocWeb/CLAUDE.md` | React details |
 | Backend CLAUDE.md | `/TrainvocBackend/CLAUDE.md` | Spring Boot details |
 | Architecture | `/ARCHITECTURE.md` | System design |
-| Investigation | `/INVESTIGATION_REPORT.md` | Analysis & recommendations |
+| Changelog | `/CHANGELOG.md` | Version history |
+| History | `/docs/history/` | Superseded analyses/reports (Jan 2026 snapshots) |
 
 ---
 

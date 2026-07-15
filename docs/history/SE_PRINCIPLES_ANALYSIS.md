@@ -1,5 +1,9 @@
 # Software Engineering Principles Violation Analysis
 
+> **⚠️ Historical snapshot — January 22, 2026. Superseded; kept for provenance.**
+> This analysis describes the codebase at its original date and is **no longer maintained**; several cited violations have since been fixed.
+> For current status see the root `README.md`, `ARCHITECTURE.md`, `CLAUDE.md`, and GitHub Issues & Milestones: https://github.com/ahmetabdullahgultekin/Trainvoc/issues
+
 > **Document Version:** 1.0
 > **Date:** January 22, 2026
 > **Purpose:** Comprehensive analysis of SOLID, Design Patterns, DRY, YAGNI, KISS, and other SE principle violations

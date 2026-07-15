@@ -48,7 +48,7 @@ Violations may result in temporary or permanent bans from the project. Report is
 |-----------|-------------|
 | **TrainvocClient** | Android Studio, JDK 17+, Android SDK 35 |
 | **TrainvocWeb** | Node.js 18+, npm |
-| **TrainvocBackend** | JDK 24+, PostgreSQL 15+ |
+| **TrainvocBackend** | JDK 21 (LTS), PostgreSQL 15+ |
 
 ### Fork and Clone
 
@@ -450,8 +450,8 @@ Include:
 - Extract reusable logic to custom hooks
 
 **Styling**:
-- Use MUI `sx` prop
-- Follow Material 3 design
+- Use Tailwind CSS utility classes
+- Use Radix UI primitives for accessible components
 - Support dark/light themes
 
 **State**:
