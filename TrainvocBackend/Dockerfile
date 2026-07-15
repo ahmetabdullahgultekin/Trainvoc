@@ -5,15 +5,21 @@
 
 # Build stage — JDK 21 LTS (the backend dropped EOL JDK 24 in PR #40;
 # a 24-based image can't provision the Java 21 toolchain Gradle needs)
+#
+# BUILD CONTEXT IS THE MONOREPO ROOT (compose/CI pass context: . with this
+# dockerfile) so the client's seed_v18.json can ride into the jar: gradle's
+# processResources copies it from ../TrainvocClient relative to the backend
+# projectDir, and without it the words DB boots empty (importer skips). The
+# root .dockerignore allowlists only the backend tree + that one manifest.
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
 # Copy Gradle files first for better layer caching
-COPY gradle gradle
-COPY gradlew .
-COPY build.gradle .
-COPY settings.gradle .
+COPY TrainvocBackend/gradle gradle
+COPY TrainvocBackend/gradlew .
+COPY TrainvocBackend/build.gradle .
+COPY TrainvocBackend/settings.gradle .
 
 # Make gradlew executable
 RUN chmod +x gradlew
@@ -22,7 +28,10 @@ RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon || true
 
 # Copy source code
-COPY src src
+COPY TrainvocBackend/src src
+
+# Seed manifest: projectDir is /app, so gradle resolves ../TrainvocClient → /TrainvocClient
+COPY TrainvocClient/app/src/main/assets/database/seed_v18.json /TrainvocClient/app/src/main/assets/database/seed_v18.json
 
 # Build the application
 RUN ./gradlew bootJar --no-daemon -x test
