@@ -75,8 +75,10 @@ services:
   # ==========================================
   backend:
     build:
-      context: ./TrainvocBackend
-      dockerfile: Dockerfile
+      # Root context so the Dockerfile can embed the client's seed_v18.json
+      # (see TrainvocBackend/Dockerfile + root .dockerignore allowlist).
+      context: .
+      dockerfile: TrainvocBackend/Dockerfile
     image: trainvoc-backend:latest
     container_name: trainvoc-backend
     restart: unless-stopped

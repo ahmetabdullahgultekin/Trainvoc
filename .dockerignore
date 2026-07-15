@@ -1,0 +1,9 @@
+# The backend image builds from the MONOREPO ROOT context (see
+# TrainvocBackend/Dockerfile) so the client's seed_v18.json can be embedded.
+# Allowlist style: exclude everything, then re-include only what that build
+# needs — keeps the context tiny (no node_modules, .git, Android tree, docs).
+*
+!TrainvocBackend/**
+!TrainvocClient/app/src/main/assets/database/seed_v18.json
+TrainvocBackend/build
+TrainvocBackend/.gradle
