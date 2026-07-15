@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 2026-07-15 (branch `claude/trainvoc-login-database-l0covn`)
+
+#### Fixed — TrainvocClient (onboarding bug: name asked on every launch)
+- **Root cause**: onboarding saved the username via `PreferencesRepository`
+  into the encrypted `secure_user_prefs` file, but `SplashScreen` decided
+  returning-vs-new user from the plain `user_prefs` file (always empty), so
+  every launch showed the Welcome/Username flow. Avatar had the same split.
+- All username/avatar reads and writes now go through `PreferencesRepository`
+  (`SplashScreen`, `HomeScreen`, `AppNavigationDrawer`, `SettingsScreen`,
+  `ProfileScreen`, `DataImporter/Exporter`); `LegacyPrefsMigrator` moves
+  values from the old plain files once, so existing users are recognized
+  after updating. Covered by `LegacyPrefsMigratorTest`.
+
+#### Changed — TrainvocClient (relational multilingual dictionary, Room v18)
+- Word primary key is now a permanent **numeric id**; every word in every
+  language is a first-class row (`languages`: en=1, tr=2 — 5,466 EN +
+  5,074 TR words). Meanings are sense-grouped M:N `word_translations`
+  edges ("take" → sense 0 almak, sense 1 götürmek…); `synonyms` are
+  id-based same-language pairs; `word_exam_cross_ref`, `word_of_day`,
+  `quiz_question_results` re-keyed to `words.id` with real FKs.
+- `MIGRATION_17_18` rebuilds from the bundled seed manifest and carries all
+  user progress (SM-2, favorites, stats, time) over by lemma; user-added
+  custom words survive with ids ≥ 1,000,000 and their packed meanings are
+  unpacked relationally (`MeaningParser`).
+- New `tools/dictgen` generator (Python, stdlib): parses the legacy packed
+  glosses, emits `seed_v18.json` + the prepopulated DB from Room's exported
+  DDL; `ids.lock.json` pins word ids forever. Adding a language (Arabic…)
+  is now data-only.
+- Word detail screen shows numbered senses with translation chips and
+  relational synonyms; Settings gains a **Learning Language** section
+  (EN→TR active; Arabic/German/Portuguese/Spanish/French honestly
+  "coming soon").
+
+#### CI / repo
+- `ci.yml` actually runs now (triggers were `[main, develop]` but the
+  default branch is `master`); JDK 21 everywhere; backend tests blocking;
+  Android/web test steps added. New PR/issue templates + CODEOWNERS.
+- New `release.yml`: pushing a `v*` tag builds the APK and publishes a
+  GitHub Release (signed when keystore secrets are configured; debug-signed
+  fallback until then).
+
 ### 2026-06-05 (branch `dev/2026-06-05`)
 
 #### Added — TrainvocClient (auth + leaderboard)

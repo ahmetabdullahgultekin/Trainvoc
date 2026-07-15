@@ -364,7 +364,27 @@ psql -d trainvoc-words -f TrainvocBackend/sql-queries/trainvoc-words-db-for-post
 
 ## Session Notes
 
-### Latest Session: June 6, 2026 (Spaced-Repetition / FSRS Engine — Phase 6)
+### Latest Session: July 15, 2026 (Onboarding Bug + Relational Multilingual Dictionary v18)
+
+**Branch:** `claude/trainvoc-login-database-l0covn`
+**Focus:** Fix the "asks for name every launch" bug; redesign the word database into a relational, multilingual, numeric-id schema.
+
+**Shipped:**
+- **Onboarding bug fixed:** username was written to encrypted `secure_user_prefs` but Splash read plain `user_prefs` → always treated as new user. Single source of truth = `PreferencesRepository` + one-time `LegacyPrefsMigrator`; all reader/writer sites unified (Splash/Home/Drawer/Settings/Profile/Importer/Exporter). Avatar had the same split and is fixed too.
+- **Room v18 relational schema:** `languages` (en=1, tr=2), `words` with numeric autoincrement PK + `UNIQUE(word, language_id)`, `word_translations` (sense-grouped cross-lingual M:N), id-based `synonyms`, id-keyed exam/word-of-day/quiz-results tables with real FKs. Turkish words are first-class rows (5,074 TR + 5,466 EN). `meaning` column kept as a display cache (drop planned v19).
+- **MIGRATION_17_18** rebuilds from the bundled `seed_v18.json` manifest; user progress carried by lemma; custom words get ids ≥ 1,000,000; validated by Robolectric tests (progress carry-over + fresh-install asset validation).
+- **tools/dictgen** (Python stdlib): packed-gloss parser (shared fixtures with Kotlin `MeaningParser`), manifest emitter, DB builder that executes Room's exported 18.json DDL verbatim, `ids.lock.json` permanent id ledger.
+- **UI:** Word detail shows numbered senses + translation chips + relational synonyms; Settings has a Learning Language section (EN→TR active; AR/DE/PT/ES/FR "coming soon").
+- **CI fixed** (was dead: triggered on `[main, develop]`, default branch is `master`); JDK 21; `release.yml` publishes APKs to GitHub Releases on `v*` tags.
+
+**Key invariants for future sessions:**
+- Word ids are permanent; regeneration must go through `tools/dictgen` (never renumber; `ids.lock.json` is authoritative).
+- Adding a language is data-only (languages row + word rows + translation edges).
+- The prepopulated asset DB must be rebuilt with `generate.py build-db --schema .../18.json` whenever entities change (DDL comes from Room's export, never hand-written).
+
+---
+
+### Previous Session: June 6, 2026 (Spaced-Repetition / FSRS Engine — Phase 6)
 
 **Branch:** `feat/srs-engine` (off `master`)
 **Focus:** Build the SRS engine's first shippable slices per `docs/design/srs-spaced-repetition-engine.md` + ADR-0001 (FSRS over SM-2), and clear the last held dependency.
