@@ -86,7 +86,21 @@
       "Bash(echo:*)",
       "Bash(timeout 60 \"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat \"*:E\")",
       "Bash(\"C:/Users/ahabg/AppData/Local/Android/Sdk/platform-tools/adb.exe\" logcat -d)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(keytool -list:*)",
+      "Bash(for pw in \"Aag1453\" \"Aag2003\" \"AAG1453\" \"AAG2003\" \"aag1453!\" \"aag2003!\" \"password\" \"123456\")",
+      "Bash(break)",
+      "Bash(done)",
+      "Bash(for pw in \"Aag1453\" \"Aag2003\" \"AAG1453\" \"AAG2003\" \"aag1453!\" \"aag2003!\" \"password\" \"password1\" \"123456\")",
+      "Bash(set \"TRAINVOC_KEYSTORE_PATH=D:\\\\Belge\\\\Private\\\\password1.jks\")",
+      "Bash(set \"TRAINVOC_KEYSTORE_PASSWORD=123456\")",
+      "Bash(set \"TRAINVOC_KEY_ALIAS=key0\")",
+      "Bash(set \"TRAINVOC_KEY_PASSWORD=123456\")",
+      "Bash(gradlew bundleRelease:*)",
+      "Bash(ls:*)",
+      "Bash(TRAINVOC_KEYSTORE_PATH=\"D:\\\\Belge\\\\Private\\\\password1.jks\" TRAINVOC_KEYSTORE_PASSWORD=\"123456\" TRAINVOC_KEY_ALIAS=\"key0\" TRAINVOC_KEY_PASSWORD=\"123456\" ./gradlew:*)",
+      "Bash(cmd.exe /c \"dir /s /b D:\\\\*.jks D:\\\\*.keystore 2>nul\")",
+      "Bash(cmd.exe /c \"dir /s /b C:\\\\Users\\\\ahabg\\\\*.jks C:\\\\Users\\\\ahabg\\\\*.keystore 2>nul\")"
     ]
   }
 }
