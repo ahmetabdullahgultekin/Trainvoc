@@ -6,6 +6,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.io.File
 
 /**
@@ -16,6 +17,7 @@ import java.io.File
  * Robolectric runner is only used for org.json (android stub otherwise).
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class MeaningParserTest {
 
     private fun fixtures(): JSONObject {

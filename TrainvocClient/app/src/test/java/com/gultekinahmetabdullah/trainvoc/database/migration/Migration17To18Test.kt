@@ -12,6 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.io.File
 
 /**
@@ -28,6 +29,7 @@ import java.io.File
  * slightly from device SQLite; a device smoke test is still worthwhile.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class Migration17To18Test {
 
     private val dbName = "migration-test.db"

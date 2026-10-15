@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Unit tests for StatsViewModel
@@ -32,6 +33,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class StatsViewModelTest {
 
     @get:Rule

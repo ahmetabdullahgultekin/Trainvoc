@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Unit tests for GetUserStatsUseCase
@@ -31,6 +32,7 @@ import org.robolectric.RobolectricTestRunner
  * every non-zero-timestamp path surfaces as AppResult.Error.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class GetUserStatsUseCaseTest {
 
     @get:Rule
