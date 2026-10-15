@@ -2,8 +2,10 @@ package com.gultekinahmetabdullah.trainvoc.notification
 
 import android.content.Context
 import android.content.SharedPreferences
-
 import com.gultekinahmetabdullah.trainvoc.repository.PreferencesRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Manages notification preferences
@@ -11,7 +13,10 @@ import com.gultekinahmetabdullah.trainvoc.repository.PreferencesRepository
  * Provides a centralized way to access and update notification settings.
  * All preferences are stored in encrypted SharedPreferences.
  */
-class NotificationPreferences(context: Context) {
+@Singleton
+class NotificationPreferences @Inject constructor(
+    @ApplicationContext context: Context
+) {
 
     private val prefs: SharedPreferences =
         try {

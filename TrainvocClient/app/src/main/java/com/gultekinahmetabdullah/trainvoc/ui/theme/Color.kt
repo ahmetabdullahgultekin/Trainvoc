@@ -457,3 +457,16 @@ val ColorScheme.tierDiamond: Color
     @Composable
     @ReadOnlyComposable
     get() = if (isSystemInDarkTheme()) TierColors.diamondDark else TierColors.diamondLight
+
+/**
+ * Exam category colors for quiz category selection and progress display
+ */
+val ExamColors = mapOf(
+    "TOEFL" to Color(0xFF4CAF50),
+    "IELTS" to Color(0xFF2196F3),
+    "YDS" to Color(0xFF9C27B0),
+    "YÖKDİL" to Color(0xFFE91E63),
+    "KPDS" to Color(0xFFFFC107),
+    "Mixed" to Color(0xFFFF9800)
+)
+

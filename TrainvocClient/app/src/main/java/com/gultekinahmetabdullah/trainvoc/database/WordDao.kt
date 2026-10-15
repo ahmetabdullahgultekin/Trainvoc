@@ -154,6 +154,10 @@ interface WordDao {
     @Query("SELECT COUNT(*) FROM words WHERE language_id = 1")
     suspend fun getWordCount(): Int
 
+    // Get a single word at offset for memory-efficient pagination / word-of-the-day selection
+    @Query("SELECT * FROM words WHERE language_id = 1 ORDER BY id ASC LIMIT 1 OFFSET :offset")
+    suspend fun getWordAtOffset(offset: Int): Word?
+
     // Get the number of learned words
     @Query("""
         SELECT COUNT(*) FROM words w

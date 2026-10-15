@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class QuizMenuViewModel @Inject constructor(
-    private val quizHistoryDao: QuizHistoryDao
+    private val quizHistoryRepository: IQuizHistoryRepository
 ) : ViewModel() {
 
     companion object {
@@ -42,7 +42,7 @@ class QuizMenuViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // Check if user has any quiz history
-                val totalCount = quizHistoryDao.getTotalQuizCount()
+                val totalCount = quizHistoryRepository.getTotalQuizCount()
                 _hasAnyQuizHistory.value = totalCount > 0
 
                 // Load stats for each quiz type
@@ -67,7 +67,7 @@ class QuizMenuViewModel @Inject constructor(
      */
     private suspend fun calculateQuizTypeStats(quizType: String): QuizTypeStats {
         return try {
-            val quizHistory = quizHistoryDao.getQuizHistoryByType(quizType)
+            val quizHistory = quizHistoryRepository.getQuizHistoryByType(quizType)
 
             if (quizHistory.isEmpty()) {
                 QuizTypeStats(

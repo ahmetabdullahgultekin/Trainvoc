@@ -8,7 +8,7 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
 import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
 import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
@@ -48,7 +48,7 @@ class QuizViewModelTest {
     private lateinit var quizService: IQuizService
     private lateinit var wordStatisticsService: IWordStatisticsService
     private lateinit var progressService: IProgressService
-    private lateinit var quizHistoryDao: QuizHistoryDao
+    private lateinit var quizHistoryRepository: IQuizHistoryRepository
     private lateinit var gamificationManager: GamificationManager
     private lateinit var srsScheduler: ISrsSchedulerService
     private lateinit var savedStateHandle: SavedStateHandle
@@ -84,7 +84,7 @@ class QuizViewModelTest {
         quizService = mock()
         wordStatisticsService = mock()
         progressService = mock()
-        quizHistoryDao = mock()
+        quizHistoryRepository = mock()
         gamificationManager = mock()
         srsScheduler = mock()
         savedStateHandle = SavedStateHandle()
@@ -96,7 +96,7 @@ class QuizViewModelTest {
             quizService = quizService,
             wordStatisticsService = wordStatisticsService,
             progressService = progressService,
-            quizHistoryDao = quizHistoryDao,
+            quizHistoryRepository = quizHistoryRepository,
             gamificationManager = gamificationManager,
             srsScheduler = srsScheduler,
             savedStateHandle = savedStateHandle,

@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
 import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +26,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class QuizHistoryViewModel @Inject constructor(
-    private val quizHistoryDao: QuizHistoryDao,
+    private val quizHistoryRepository: IQuizHistoryRepository,
     private val wordDao: WordDao
 ) : ViewModel() {
 
@@ -61,7 +61,7 @@ class QuizHistoryViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val result = quizHistoryDao.getLastQuizResult()
+                val result = quizHistoryRepository.getLastQuizResult()
                 _lastQuizResult.value = result
 
                 // Load missed words if quiz exists
@@ -81,7 +81,7 @@ class QuizHistoryViewModel @Inject constructor(
      */
     private suspend fun loadMissedWords(quizId: Int) {
         try {
-            val incorrectWordIds = quizHistoryDao.getIncorrectWordIds(quizId)
+            val incorrectWordIds = quizHistoryRepository.getIncorrectWordIds(quizId)
             val words = incorrectWordIds.mapNotNull { wordId ->
                 wordDao.getWordById(wordId) // Returns null if word not found
             }
@@ -97,8 +97,8 @@ class QuizHistoryViewModel @Inject constructor(
     private fun loadStatistics() {
         viewModelScope.launch {
             try {
-                _totalQuizCount.value = quizHistoryDao.getTotalQuizCount()
-                _averageAccuracy.value = quizHistoryDao.getAverageAccuracy() ?: 0f
+                _totalQuizCount.value = quizHistoryRepository.getTotalQuizCount()
+                _averageAccuracy.value = quizHistoryRepository.getAverageAccuracy() ?: 0f
             } catch (e: Exception) {
                 // Statistics are optional, don't show error
             }
@@ -142,7 +142,7 @@ class QuizHistoryViewModel @Inject constructor(
             accuracy = accuracy
         )
 
-        val quizId = quizHistoryDao.insertQuizHistory(quizHistory)
+        val quizId = quizHistoryRepository.insertQuizHistory(quizHistory)
 
         // Save individual question results
         val results = questionResults.map { (wordId, isCorrect) ->
@@ -152,7 +152,7 @@ class QuizHistoryViewModel @Inject constructor(
                 isCorrect = isCorrect
             )
         }
-        quizHistoryDao.insertQuestionResults(results)
+        quizHistoryRepository.insertQuestionResults(results)
 
         // Refresh the last quiz result
         loadLastQuizResult()

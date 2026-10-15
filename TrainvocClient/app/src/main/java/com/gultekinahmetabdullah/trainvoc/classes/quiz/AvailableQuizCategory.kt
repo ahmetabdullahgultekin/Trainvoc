@@ -62,8 +62,8 @@ sealed class AvailableQuizCategory(
             "Mixed" -> R.string.exam_mixed
             else -> R.string.exam_generic
         },
-        color = Exam.Companion.examColors.entries.firstOrNull { it.key == exam.exam }?.value
-            ?: Color.Companion.Unspecified,
+        color = com.gultekinahmetabdullah.trainvoc.ui.theme.ExamColors[exam.exam]
+            ?: Color.Unspecified,
         onClickParam = QuizParameter.ExamType(exam),
         enabled = enabled
     )

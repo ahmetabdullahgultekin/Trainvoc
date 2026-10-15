@@ -62,6 +62,9 @@ class WordOfDayViewModelTest {
         wordOfDayDao = mock()
         wordDao = mock()
         repository = mock()
+        kotlinx.coroutines.runBlocking {
+            whenever(wordDao.getWordCount()).thenReturn(0)
+        }
     }
 
     private fun createViewModel(): WordOfDayViewModel {

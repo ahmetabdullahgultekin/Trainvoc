@@ -2,7 +2,7 @@ package com.gultekinahmetabdullah.trainvoc.viewmodel
 
 import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
 import com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule
 import com.gultekinahmetabdullah.trainvoc.testing.TestData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +31,7 @@ class QuizHistoryViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var quizHistoryDao: QuizHistoryDao
+    private lateinit var quizHistoryRepository: IQuizHistoryRepository
     private lateinit var wordDao: WordDao
     private lateinit var viewModel: QuizHistoryViewModel
 
@@ -49,24 +49,24 @@ class QuizHistoryViewModelTest {
 
     @Before
     fun setup() {
-        quizHistoryDao = mock()
+        quizHistoryRepository = mock()
         wordDao = mock()
     }
 
     private suspend fun stubEmptyHistory() {
-        whenever(quizHistoryDao.getLastQuizResult()).thenReturn(null)
-        whenever(quizHistoryDao.getTotalQuizCount()).thenReturn(0)
-        whenever(quizHistoryDao.getAverageAccuracy()).thenReturn(null)
+        whenever(quizHistoryRepository.getLastQuizResult()).thenReturn(null)
+        whenever(quizHistoryRepository.getTotalQuizCount()).thenReturn(0)
+        whenever(quizHistoryRepository.getAverageAccuracy()).thenReturn(null)
     }
 
-    private fun createViewModel() = QuizHistoryViewModel(quizHistoryDao, wordDao)
+    private fun createViewModel() = QuizHistoryViewModel(quizHistoryRepository, wordDao)
 
     @Test
     fun `init loads the last quiz result and its missed words by word id`() = runTest {
-        whenever(quizHistoryDao.getLastQuizResult()).thenReturn(lastQuiz)
-        whenever(quizHistoryDao.getIncorrectWordIds(7)).thenReturn(listOf(42L, 99L))
-        whenever(quizHistoryDao.getTotalQuizCount()).thenReturn(3)
-        whenever(quizHistoryDao.getAverageAccuracy()).thenReturn(75f)
+        whenever(quizHistoryRepository.getLastQuizResult()).thenReturn(lastQuiz)
+        whenever(quizHistoryRepository.getIncorrectWordIds(7)).thenReturn(listOf(42L, 99L))
+        whenever(quizHistoryRepository.getTotalQuizCount()).thenReturn(3)
+        whenever(quizHistoryRepository.getAverageAccuracy()).thenReturn(75f)
         val missed = TestData.word(word = "apple", meaning = "elma", id = 42L)
         whenever(wordDao.getWordById(42L)).thenReturn(missed)
         whenever(wordDao.getWordById(99L)).thenReturn(null) // word deleted since the quiz
@@ -84,8 +84,8 @@ class QuizHistoryViewModelTest {
     @Test
     fun `init loads overall statistics`() = runTest {
         stubEmptyHistory()
-        whenever(quizHistoryDao.getTotalQuizCount()).thenReturn(12)
-        whenever(quizHistoryDao.getAverageAccuracy()).thenReturn(66.5f)
+        whenever(quizHistoryRepository.getTotalQuizCount()).thenReturn(12)
+        whenever(quizHistoryRepository.getAverageAccuracy()).thenReturn(66.5f)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -110,7 +110,7 @@ class QuizHistoryViewModelTest {
     @Test
     fun `saveQuizResult computes accuracy and persists per-question word ids`() = runTest {
         stubEmptyHistory()
-        whenever(quizHistoryDao.insertQuizHistory(any())).thenReturn(55L)
+        whenever(quizHistoryRepository.insertQuizHistory(any())).thenReturn(55L)
         viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -126,11 +126,11 @@ class QuizHistoryViewModelTest {
         advanceUntilIdle()
 
         assertEquals(55L, quizId)
-        verify(quizHistoryDao).insertQuizHistory(argThat {
+        verify(quizHistoryRepository).insertQuizHistory(argThat {
             totalQuestions == 4 && correctAnswers == 3 &&
                     quizType == "EXAM_TOEFL" && accuracy == 75f
         })
-        verify(quizHistoryDao).insertQuestionResults(argThat {
+        verify(quizHistoryRepository).insertQuestionResults(argThat {
             size == 2 &&
                     this[0].quizId == 55 && this[0].wordId == 42L && this[0].isCorrect &&
                     this[1].wordId == 99L && !this[1].isCorrect
@@ -140,7 +140,7 @@ class QuizHistoryViewModelTest {
     @Test
     fun `saveQuizResult with zero questions stores zero accuracy`() = runTest {
         stubEmptyHistory()
-        whenever(quizHistoryDao.insertQuizHistory(any())).thenReturn(1L)
+        whenever(quizHistoryRepository.insertQuizHistory(any())).thenReturn(1L)
         viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -155,15 +155,15 @@ class QuizHistoryViewModelTest {
         )
         advanceUntilIdle()
 
-        verify(quizHistoryDao).insertQuizHistory(argThat { accuracy == 0f })
+        verify(quizHistoryRepository).insertQuizHistory(argThat { accuracy == 0f })
     }
 
     @Test
     fun `dao failure surfaces as error state instead of crashing`() = runTest {
-        whenever(quizHistoryDao.getLastQuizResult())
+        whenever(quizHistoryRepository.getLastQuizResult())
             .thenThrow(RuntimeException("disk I/O error"))
-        whenever(quizHistoryDao.getTotalQuizCount()).thenReturn(0)
-        whenever(quizHistoryDao.getAverageAccuracy()).thenReturn(null)
+        whenever(quizHistoryRepository.getTotalQuizCount()).thenReturn(0)
+        whenever(quizHistoryRepository.getAverageAccuracy()).thenReturn(null)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -174,10 +174,10 @@ class QuizHistoryViewModelTest {
 
     @Test
     fun `clearError resets the error state`() = runTest {
-        whenever(quizHistoryDao.getLastQuizResult())
+        whenever(quizHistoryRepository.getLastQuizResult())
             .thenThrow(RuntimeException("boom"))
-        whenever(quizHistoryDao.getTotalQuizCount()).thenReturn(0)
-        whenever(quizHistoryDao.getAverageAccuracy()).thenReturn(null)
+        whenever(quizHistoryRepository.getTotalQuizCount()).thenReturn(0)
+        whenever(quizHistoryRepository.getAverageAccuracy()).thenReturn(null)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -196,10 +196,10 @@ class QuizHistoryViewModelTest {
         assertNull(viewModel.lastQuizResult.value)
 
         // A quiz was completed elsewhere; refresh must pick it up.
-        whenever(quizHistoryDao.getLastQuizResult()).thenReturn(lastQuiz)
-        whenever(quizHistoryDao.getIncorrectWordIds(7)).thenReturn(emptyList())
-        whenever(quizHistoryDao.getTotalQuizCount()).thenReturn(1)
-        whenever(quizHistoryDao.getAverageAccuracy()).thenReturn(80f)
+        whenever(quizHistoryRepository.getLastQuizResult()).thenReturn(lastQuiz)
+        whenever(quizHistoryRepository.getIncorrectWordIds(7)).thenReturn(emptyList())
+        whenever(quizHistoryRepository.getTotalQuizCount()).thenReturn(1)
+        whenever(quizHistoryRepository.getAverageAccuracy()).thenReturn(80f)
 
         viewModel.refresh()
         advanceUntilIdle()

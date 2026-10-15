@@ -275,77 +275,87 @@ object NotificationHelper {
         CoroutineScope(Dispatchers.IO).launch {
             val db = AppDatabase.DatabaseBuilder.getInstance(context)
             val prefs = NotificationPreferences.getInstance(context)
-
-            // Get enabled levels from preferences
-            val enabledLevels = prefs.enabledLevels.toList()
-            val includeLearned = prefs.includeLearnedWords
-
-            // Get a random word based on filters
-            val word = if (enabledLevels.isNotEmpty()) {
-                db.wordDao().getRandomWordFromLevels(enabledLevels, includeLearned)
-            } else {
-                db.wordDao().getRandomWordForNotification(includeLearned)
-            }
-
-            if (word == null) return@launch
-
-            val notificationId = System.currentTimeMillis().toInt()
-
-            // Create action intents
-            val iKnowIntent = Intent(context, NotificationActionReceiver::class.java).apply {
-                action = NotificationActionReceiver.ACTION_I_KNOW
-                putExtra(NotificationActionReceiver.EXTRA_WORD, word.word)
-                putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
-                putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
-            }
-
-            val showAnswerIntent = Intent(context, NotificationActionReceiver::class.java).apply {
-                action = NotificationActionReceiver.ACTION_SHOW_ANSWER
-                putExtra(NotificationActionReceiver.EXTRA_WORD, word.word)
-                putExtra(NotificationActionReceiver.EXTRA_MEANING, word.meaning)
-                putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
-                putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
-            }
-
-            val skipIntent = Intent(context, NotificationActionReceiver::class.java).apply {
-                action = NotificationActionReceiver.ACTION_SKIP
-                putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
-                putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
-            }
-
-            // Build notification with action buttons
-            val notification = NotificationCompat.Builder(context, CHANNEL_WORD_QUIZ)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(context.getString(R.string.word_quiz_title))
-                .setContentText(context.getString(R.string.word_quiz_question))
-                .setStyle(
-                    NotificationCompat.BigTextStyle()
-                        .bigText(context.getString(R.string.word_quiz_question) + "\n\n\"${word.word.uppercase()}\"")
-                )
-                // Use unique request codes per notification to avoid PendingIntent collisions
-                // when multiple notifications are shown simultaneously
-                .addAction(
-                    R.drawable.ic_launcher_foreground,
-                    context.getString(R.string.i_know_it),
-                    PendingIntent.getBroadcast(context, notificationId * 10 + 0, iKnowIntent, FLAGS)
-                )
-                .addAction(
-                    R.drawable.ic_launcher_foreground,
-                    context.getString(R.string.show_answer),
-                    PendingIntent.getBroadcast(context, notificationId * 10 + 1, showAnswerIntent, FLAGS)
-                )
-                .addAction(
-                    R.drawable.ic_launcher_foreground,
-                    context.getString(R.string.skip),
-                    PendingIntent.getBroadcast(context, notificationId * 10 + 2, skipIntent, FLAGS)
-                )
-                .setAutoCancel(false)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .build()
-
-            val manager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.notify(notificationId, notification)
+            sendWordQuizNotificationAsync(context, db.wordDao(), prefs)
         }
+    }
+
+    /**
+     * Structured-concurrency suspend variant for WorkManager / CoroutineWorker callers.
+     */
+    suspend fun sendWordQuizNotificationAsync(
+        context: Context,
+        wordDao: com.gultekinahmetabdullah.trainvoc.database.WordDao,
+        prefs: NotificationPreferences
+    ) {
+        // Get enabled levels from preferences
+        val enabledLevels = prefs.enabledLevels.toList()
+        val includeLearned = prefs.includeLearnedWords
+
+        // Get a random word based on filters
+        val word = if (enabledLevels.isNotEmpty()) {
+            wordDao.getRandomWordFromLevels(enabledLevels, includeLearned)
+        } else {
+            wordDao.getRandomWordForNotification(includeLearned)
+        }
+
+        if (word == null) return
+
+        val notificationId = System.currentTimeMillis().toInt()
+
+        // Create action intents
+        val iKnowIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+            action = NotificationActionReceiver.ACTION_I_KNOW
+            putExtra(NotificationActionReceiver.EXTRA_WORD, word.word)
+            putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
+            putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+        }
+
+        val showAnswerIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+            action = NotificationActionReceiver.ACTION_SHOW_ANSWER
+            putExtra(NotificationActionReceiver.EXTRA_WORD, word.word)
+            putExtra(NotificationActionReceiver.EXTRA_MEANING, word.meaning)
+            putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
+            putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+        }
+
+        val skipIntent = Intent(context, NotificationActionReceiver::class.java).apply {
+            action = NotificationActionReceiver.ACTION_SKIP
+            putExtra(NotificationActionReceiver.EXTRA_STAT_ID, word.statId)
+            putExtra(NotificationActionReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+        }
+
+        // Build notification with action buttons
+        val notification = NotificationCompat.Builder(context, CHANNEL_WORD_QUIZ)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.word_quiz_title))
+            .setContentText(context.getString(R.string.word_quiz_question))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(context.getString(R.string.word_quiz_question) + "\n\n\"${word.word.uppercase()}\"")
+            )
+            // Use unique request codes per notification to avoid PendingIntent collisions
+            // when multiple notifications are shown simultaneously
+            .addAction(
+                R.drawable.ic_launcher_foreground,
+                context.getString(R.string.i_know_it),
+                PendingIntent.getBroadcast(context, notificationId * 10 + 0, iKnowIntent, FLAGS)
+            )
+            .addAction(
+                R.drawable.ic_launcher_foreground,
+                context.getString(R.string.show_answer),
+                PendingIntent.getBroadcast(context, notificationId * 10 + 1, showAnswerIntent, FLAGS)
+            )
+            .addAction(
+                R.drawable.ic_launcher_foreground,
+                context.getString(R.string.skip),
+                PendingIntent.getBroadcast(context, notificationId * 10 + 2, skipIntent, FLAGS)
+            )
+            .setAutoCancel(false)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        val manager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(notificationId, notification)
     }
 }

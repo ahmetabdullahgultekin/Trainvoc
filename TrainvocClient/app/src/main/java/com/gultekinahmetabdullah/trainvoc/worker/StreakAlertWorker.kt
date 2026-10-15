@@ -2,9 +2,12 @@ package com.gultekinahmetabdullah.trainvoc.worker
 
 import android.content.Context
 import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import java.util.Calendar
 
 /**
@@ -19,9 +22,11 @@ import java.util.Calendar
  * - Returns Result.failure() on permanent failures
  * - Logs all errors for debugging
  */
-class StreakAlertWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class StreakAlertWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val notificationPrefs: com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 ) : CoroutineWorker(context, params) {
 
     companion object {
@@ -33,8 +38,6 @@ class StreakAlertWorker(
         return try {
             Log.d(TAG, "Starting streak alert worker")
 
-            val notificationPrefs =
-                com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(applicationContext)
             val streakAlertsEnabled = notificationPrefs.streakAlertsEnabled
 
             if (!streakAlertsEnabled) {

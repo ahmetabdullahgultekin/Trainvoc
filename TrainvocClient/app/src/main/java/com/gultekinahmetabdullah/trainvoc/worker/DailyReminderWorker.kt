@@ -2,9 +2,12 @@ package com.gultekinahmetabdullah.trainvoc.worker
 
 import android.content.Context
 import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 /**
  * Worker for daily reminder notifications
@@ -17,9 +20,11 @@ import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
  * - Returns Result.failure() on permanent failures
  * - Logs all errors for debugging
  */
-class DailyReminderWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class DailyReminderWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val notificationPreferences: com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
 ) : CoroutineWorker(context, params) {
 
     companion object {
@@ -32,8 +37,6 @@ class DailyReminderWorker(
             Log.d(TAG, "Starting daily reminder worker")
 
             // Check if daily reminders are enabled
-            val notificationPreferences =
-                com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(applicationContext)
             if (!notificationPreferences.dailyRemindersEnabled) {
                 Log.i(TAG, "Daily reminders disabled, skipping")
                 return Result.success()
