@@ -341,17 +341,17 @@ class DataExporter(
         // Username/language/theme/palette live in the encrypted repository
         // store; the plain file only mirrors the locale for attachBaseContext.
         val repo = preferencesRepository(context)
-        val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val notifPrefs = com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(context)
         return UserPreferences(
             username = repo.getUsername(),
             language = repo.getLanguage().code,
             theme = repo.getTheme().name,
             colorPalette = repo.getColorPalette().key,
-            notificationsEnabled = sharedPrefs.getBoolean("notifications", true),
-            dailyRemindersEnabled = sharedPrefs.getBoolean("daily_reminders_enabled", true),
-            streakAlertsEnabled = sharedPrefs.getBoolean("streak_alerts_enabled", true),
-            wordOfDayEnabled = sharedPrefs.getBoolean("word_of_day_enabled", true),
-            notificationTime = sharedPrefs.getString("notification_time", null)
+            notificationsEnabled = repo.isNotificationsEnabled(),
+            dailyRemindersEnabled = notifPrefs.dailyRemindersEnabled,
+            streakAlertsEnabled = notifPrefs.streakAlertsEnabled,
+            wordOfDayEnabled = notifPrefs.wordOfDayEnabled,
+            notificationTime = notifPrefs.notificationTime
         )
     }
 

@@ -103,11 +103,19 @@ fun ProfileScreen(
         else -> 0.dp                     // Phones (sections have their own padding)
     }
 
-    // Username/avatar live in PreferencesRepository (single source of truth)
+    // Username/avatar/accountCreated live in PreferencesRepository (single source of truth)
     val preferencesRepository = rememberPreferencesRepository()
-    val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
     val username = currentUser?.username ?: preferencesRepository.getUsername() ?: "User"
-    val accountCreatedDate = prefs.getLong("account_created", System.currentTimeMillis())
+    val accountCreatedDate = remember {
+        val storedDate = preferencesRepository.getAccountCreatedDate()
+        if (storedDate > 0L) {
+            storedDate
+        } else {
+            val now = System.currentTimeMillis()
+            preferencesRepository.setAccountCreatedDate(now)
+            now
+        }
+    }
     // Use AuthViewModel for login state (consistent with auth system)
     val isLoggedIn = authState is AuthState.Authenticated || authState is AuthState.AuthenticatedOffline
     var currentAvatar by remember {
@@ -122,11 +130,15 @@ fun ProfileScreen(
     val showLogoutConfirmDialog = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Check auth state when screen loads, and validate the session is still
-    // alive (#193) so an expired token routes the user back to login.
+    // Check auth state when screen loads; only validate live session if user is authenticated (#193)
+    // so offline/guest users are not locked out by the SessionExpiredHandler dialog.
     LaunchedEffect(Unit) {
         authViewModel.checkAuthState()
-        authViewModel.validateSession()
+    }
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            authViewModel.validateSession()
+        }
     }
 
     // Session-expiry handler (#193): shows a blocking dialog and routes to login.

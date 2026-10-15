@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.gultekinahmetabdullah.trainvoc.srs.algorithm.FsrsState
 import com.gultekinahmetabdullah.trainvoc.testing.TestData
+import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -12,9 +13,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * ReviewScheduleDao (SRS engine S1) against a real in-memory Room database under
@@ -24,7 +27,11 @@ import org.robolectric.RobolectricTestRunner
  * Rows FK into `words(id)`, so each schedule row's parent word is inserted first.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class ReviewScheduleDaoTest {
+
+    @get:Rule
+    val mainDispatcherRule = com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule()
 
     private lateinit var db: AppDatabase
     private lateinit var dao: ReviewScheduleDao
@@ -34,14 +41,20 @@ class ReviewScheduleDaoTest {
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        val executor = mainDispatcherRule.testDispatcher.asExecutor()
         db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
+            .setQueryExecutor(executor)
+            .setTransactionExecutor(executor)
             .build()
         dao = db.reviewScheduleDao()
     }
 
     @After
-    fun tearDown() = db.close()
+    fun tearDown() {
+        org.robolectric.shadows.ShadowLooper.idleMainLooper()
+        db.close()
+    }
 
     /** Insert the parent word so the review_schedule FK is satisfied. */
     private suspend fun seedWord(id: Long) {

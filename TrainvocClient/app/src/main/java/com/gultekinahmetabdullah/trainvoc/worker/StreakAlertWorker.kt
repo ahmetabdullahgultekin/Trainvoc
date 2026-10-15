@@ -33,9 +33,9 @@ class StreakAlertWorker(
         return try {
             Log.d(TAG, "Starting streak alert worker")
 
-            val sharedPreferences =
-                applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-            val streakAlertsEnabled = sharedPreferences.getBoolean("streak_alerts_enabled", true)
+            val notificationPrefs =
+                com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(applicationContext)
+            val streakAlertsEnabled = notificationPrefs.streakAlertsEnabled
 
             if (!streakAlertsEnabled) {
                 Log.i(TAG, "Streak alerts disabled, skipping")
@@ -43,8 +43,8 @@ class StreakAlertWorker(
             }
 
             // Get current streak data
-            val currentStreak = sharedPreferences.getInt("current_streak", 0)
-            val lastPracticeDate = sharedPreferences.getLong("last_practice_date", 0)
+            val currentStreak = notificationPrefs.currentStreak
+            val lastPracticeDate = notificationPrefs.lastPracticeDate
 
             if (currentStreak > 0) {
                 val calendar = Calendar.getInstance()

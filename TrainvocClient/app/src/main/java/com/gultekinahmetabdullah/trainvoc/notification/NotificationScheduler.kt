@@ -42,12 +42,12 @@ object NotificationScheduler {
      * Runs once per day at the user's preferred time
      */
     fun scheduleDailyReminder(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val isEnabled = sharedPreferences.getBoolean("daily_reminders_enabled", true)
+        val prefs = NotificationPreferences.getInstance(context)
+        val isEnabled = prefs.dailyRemindersEnabled
 
         if (isEnabled) {
             // Calculate initial delay to run at preferred time (default 9 AM)
-            val preferredHour = sharedPreferences.getInt("reminder_hour", 9)
+            val preferredHour = prefs.reminderHour
             val initialDelay = calculateInitialDelay(preferredHour)
 
             val workRequest = PeriodicWorkRequestBuilder<DailyReminderWorker>(
@@ -71,8 +71,8 @@ object NotificationScheduler {
      * Checks twice per day (morning and evening)
      */
     fun scheduleStreakAlert(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val isEnabled = sharedPreferences.getBoolean("streak_alerts_enabled", true)
+        val prefs = NotificationPreferences.getInstance(context)
+        val isEnabled = prefs.streakAlertsEnabled
 
         if (isEnabled) {
             // Check every 12 hours for streak status
@@ -95,12 +95,12 @@ object NotificationScheduler {
      * Runs once per day at a specific time
      */
     fun scheduleWordOfDay(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val isEnabled = sharedPreferences.getBoolean("word_of_day_enabled", true)
+        val prefs = NotificationPreferences.getInstance(context)
+        val isEnabled = prefs.wordOfDayEnabled
 
         if (isEnabled) {
             // Default to 8 AM for word of the day
-            val wordOfDayHour = sharedPreferences.getInt("word_of_day_hour", 8)
+            val wordOfDayHour = prefs.wordOfDayHour
             val initialDelay = calculateInitialDelay(wordOfDayHour)
 
             val workRequest = PeriodicWorkRequestBuilder<WordOfDayWorker>(
@@ -214,9 +214,9 @@ object NotificationScheduler {
      * Call this after each quiz session
      */
     fun updateStreakData(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val lastPracticeDate = sharedPreferences.getLong("last_practice_date", 0)
-        val currentStreak = sharedPreferences.getInt("current_streak", 0)
+        val prefs = NotificationPreferences.getInstance(context)
+        val lastPracticeDate = prefs.lastPracticeDate
+        val currentStreak = prefs.currentStreak
 
         val calendar = Calendar.getInstance()
         val today = calendar.timeInMillis
@@ -231,10 +231,11 @@ object NotificationScheduler {
             else -> 1 // Streak broken, restart
         }
 
-        sharedPreferences.edit()
-            .putInt("current_streak", newStreak)
-            .putLong("last_practice_date", today)
-            .apply()
+        prefs.currentStreak = newStreak
+        prefs.lastPracticeDate = today
+        if (newStreak > prefs.longestStreak) {
+            prefs.longestStreak = newStreak
+        }
 
         // If this is a milestone (7, 14, 30 days), show immediate notification
         if (newStreak in listOf(7, 14, 30, 60, 90, 365)) {

@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
     private final GameWebSocketHandler handler;
 
-    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:3000,https://trainvoc.rollingcatsoftware.com}")
+    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:3000,https://trainvoc.rollingcatsoftware.com,https://api.trainvoc.rollingcatsoftware.com,https://trainvoc.com,https://api.trainvoc.com}")
     private String allowedOrigins;
 
     public WebSocketConfig(GameWebSocketHandler handler) {

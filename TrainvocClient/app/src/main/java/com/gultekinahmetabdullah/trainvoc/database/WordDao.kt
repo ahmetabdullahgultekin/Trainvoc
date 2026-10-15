@@ -439,11 +439,11 @@ interface WordDao {
      */
     @Query(
         """
-        SELECT w.*, t.sense_index, t.note AS translation_note, t.is_primary
+        SELECT w.*, t.sense_index AS sense_index, t.note AS translation_note, t.is_primary AS is_primary
         FROM word_translations t JOIN words w ON w.id = t.translated_word_id
         WHERE t.word_id = :wordId
         UNION ALL
-        SELECT w.*, t.sense_index, t.note AS translation_note, t.is_primary
+        SELECT w.*, t.sense_index AS sense_index, t.note AS translation_note, t.is_primary AS is_primary
         FROM word_translations t JOIN words w ON w.id = t.word_id
         WHERE t.translated_word_id = :wordId
         ORDER BY sense_index ASC, is_primary DESC

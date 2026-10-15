@@ -38,11 +38,9 @@ class WordOfDayWorker(
         try {
             Log.d(TAG, "Starting word of the day worker")
 
-            val sharedPreferences =
-                applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-            val wordOfDayEnabled = sharedPreferences.getBoolean("word_of_day_enabled", true)
-
-            if (!wordOfDayEnabled) {
+            val notificationPrefs =
+                com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(applicationContext)
+            if (!notificationPrefs.wordOfDayEnabled) {
                 Log.i(TAG, "Word of the day disabled, skipping")
                 return@withContext Result.success()
             }
@@ -75,11 +73,9 @@ class WordOfDayWorker(
                 wordOfDay.level?.ordinal ?: 0
             )
 
-            // Save the word of the day in shared preferences
-            sharedPreferences.edit()
-                .putString("last_word_of_day", wordOfDay.word)
-                .putLong("word_of_day_timestamp", System.currentTimeMillis())
-                .apply()
+            // Save the word of the day in preferences
+            notificationPrefs.lastWordOfDay = wordOfDay.word
+            notificationPrefs.wordOfDayTimestamp = System.currentTimeMillis()
 
             Log.d(TAG, "Word of the day notification sent successfully")
             Result.success()

@@ -32,11 +32,9 @@ class DailyReminderWorker(
             Log.d(TAG, "Starting daily reminder worker")
 
             // Check if daily reminders are enabled
-            val sharedPreferences =
-                applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-            val dailyRemindersEnabled = sharedPreferences.getBoolean("daily_reminders_enabled", true)
-
-            if (!dailyRemindersEnabled) {
+            val notificationPreferences =
+                com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(applicationContext)
+            if (!notificationPreferences.dailyRemindersEnabled) {
                 Log.i(TAG, "Daily reminders disabled, skipping")
                 return Result.success()
             }
