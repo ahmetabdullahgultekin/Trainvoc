@@ -12,11 +12,14 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import kotlinx.coroutines.asExecutor
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Relational (schema v18) WordDao queries against a real in-memory Room
@@ -25,7 +28,11 @@ import org.robolectric.RobolectricTestRunner
  * index, and English-only (language_id = 1) scoping of the study queries.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class WordDaoRelationalTest {
+
+    @get:Rule
+    val mainDispatcherRule = com.gultekinahmetabdullah.trainvoc.test.util.MainDispatcherRule()
 
     private lateinit var db: AppDatabase
     private lateinit var dao: WordDao
@@ -40,9 +47,7 @@ class WordDaoRelationalTest {
     }
 
     @After
-    fun tearDown() {
-        db.close()
-    }
+    fun tearDown() = db.close()
 
     // ---- fixtures -----------------------------------------------------
 

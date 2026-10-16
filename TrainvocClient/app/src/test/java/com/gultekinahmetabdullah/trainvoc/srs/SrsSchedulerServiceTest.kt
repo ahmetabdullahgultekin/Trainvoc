@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * [SrsSchedulerService] (SRS engine S3) against a real in-memory Room DB and the
@@ -30,6 +31,7 @@ import org.robolectric.RobolectricTestRunner
  * that a correct answer schedules a longer interval than an incorrect one.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class SrsSchedulerServiceTest {
 
     private lateinit var db: AppDatabase

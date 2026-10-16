@@ -27,7 +27,7 @@ class PreferencesRepository @Inject constructor(
 ) : IPreferencesRepository {
 
     companion object {
-        private const val PREFS_NAME = "secure_user_prefs"
+        const val PREFS_NAME = "secure_user_prefs"
         private const val KEY_USERNAME = "username"
         private const val KEY_AVATAR = "avatar"
         private const val KEY_THEME = "theme"
@@ -35,6 +35,7 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_NOTIFICATIONS = "notifications"
         private const val KEY_LANGUAGE = "language"
         private const val KEY_LEARNING_LANGUAGE = "learning_language"
+        private const val KEY_ACCOUNT_CREATED = "account_created"
         // Accessibility keys
         private const val KEY_HIGH_CONTRAST = "high_contrast"
         private const val KEY_COLOR_BLIND_MODE = "color_blind_mode"
@@ -45,36 +46,50 @@ class PreferencesRepository @Inject constructor(
         private const val KEY_AUTH_TOKEN = "auth_token"
         private const val KEY_REFRESH_TOKEN = "refresh_token"
         private const val KEY_DEVICE_ID = "device_id"
+
+        @Volatile
+        private var encryptedPrefsInstance: SharedPreferences? = null
+
+        /**
+         * Returns a shared EncryptedSharedPreferences instance using Android Keystore,
+         * running LegacyPrefsMigrator once on creation so all callers (including
+         * NotificationPreferences) see migrated data and share the same instance.
+         */
+        fun getEncryptedSharedPreferences(context: Context): SharedPreferences {
+            val appContext = context.applicationContext ?: context
+            return encryptedPrefsInstance ?: synchronized(this) {
+                encryptedPrefsInstance ?: run {
+                    val masterKey = MasterKey.Builder(appContext)
+                        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                        .build()
+
+                    EncryptedSharedPreferences.create(
+                        appContext,
+                        PREFS_NAME,
+                        masterKey,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    ).also { secure ->
+                        LegacyPrefsMigrator.migrate(
+                            secure,
+                            listOf(
+                                appContext.getSharedPreferences(
+                                    LegacyPrefsMigrator.LEGACY_USER_PREFS, Context.MODE_PRIVATE
+                                ),
+                                appContext.getSharedPreferences(
+                                    LegacyPrefsMigrator.LEGACY_TRAINVOC_PREFS, Context.MODE_PRIVATE
+                                )
+                            )
+                        )
+                        encryptedPrefsInstance = secure
+                    }
+                }
+            }
+        }
     }
 
     private val prefs: SharedPreferences by lazy {
-        // Create or retrieve MasterKey for encryption
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-
-        // Create EncryptedSharedPreferences
-        EncryptedSharedPreferences.create(
-            context,
-            PREFS_NAME,
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        ).also { secure ->
-            // Older versions wrote username/avatar to plain prefs files;
-            // pull those values in once so returning users are recognized.
-            LegacyPrefsMigrator.migrate(
-                secure,
-                listOf(
-                    context.getSharedPreferences(
-                        LegacyPrefsMigrator.LEGACY_USER_PREFS, Context.MODE_PRIVATE
-                    ),
-                    context.getSharedPreferences(
-                        LegacyPrefsMigrator.LEGACY_TRAINVOC_PREFS, Context.MODE_PRIVATE
-                    )
-                )
-            )
-        }
+        getEncryptedSharedPreferences(context)
     }
 
     override fun getUsername(): String? =
@@ -150,11 +165,35 @@ class PreferencesRepository @Inject constructor(
     }
 
     override fun clearAll() {
-        prefs.edit { clear() }
+        val deviceId = prefs.getString(KEY_DEVICE_ID, null)
+        prefs.edit {
+            clear()
+            putBoolean(LegacyPrefsMigrator.KEY_MIGRATED, true)
+            if (deviceId != null) {
+                putString(KEY_DEVICE_ID, deviceId)
+            }
+        }
+    }
+
+    override fun clearUserSession() {
+        prefs.edit {
+            remove(KEY_USERNAME)
+            remove(KEY_AVATAR)
+            remove(KEY_ACCOUNT_CREATED)
+            remove(KEY_AUTH_TOKEN)
+            remove(KEY_REFRESH_TOKEN)
+        }
     }
 
     override fun clearUsername() {
         prefs.edit { remove(KEY_USERNAME) }
+    }
+
+    override fun getAccountCreatedDate(): Long =
+        prefs.getLong(KEY_ACCOUNT_CREATED, 0L)
+
+    override fun setAccountCreatedDate(timestamp: Long) {
+        prefs.edit { putLong(KEY_ACCOUNT_CREATED, timestamp) }
     }
 
     // Accessibility Settings Implementation

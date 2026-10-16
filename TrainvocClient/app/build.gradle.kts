@@ -117,8 +117,8 @@ android {
 
             // Backend API configuration - production
             // Can be overridden via environment variable for deployment flexibility
-            val apiBaseUrl = System.getenv("TRAINVOC_API_BASE_URL") ?: "https://api.trainvoc.com/"
-            val wsBaseUrl = System.getenv("TRAINVOC_WS_BASE_URL") ?: "wss://api.trainvoc.com"
+            val apiBaseUrl = System.getenv("TRAINVOC_API_BASE_URL") ?: "https://api.trainvoc.rollingcatsoftware.com/"
+            val wsBaseUrl = System.getenv("TRAINVOC_WS_BASE_URL") ?: "wss://api.trainvoc.rollingcatsoftware.com"
             buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
             buildConfigField("String", "WS_BASE_URL", "\"$wsBaseUrl\"")
         }

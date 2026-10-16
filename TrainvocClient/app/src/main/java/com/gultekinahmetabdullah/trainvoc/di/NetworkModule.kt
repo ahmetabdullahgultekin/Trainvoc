@@ -11,7 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -108,21 +108,20 @@ object NetworkModule {
         val authInterceptor = Interceptor { chain ->
             val originalRequest = chain.request()
 
-            // Skip auth for public endpoints
+            // Skip auth for public endpoints or requests that already carry an explicit Authorization header
             val path = originalRequest.url.encodedPath
-            val requiresAuth = !path.contains("/api/v1/auth/login") &&
+            val requiresAuth = originalRequest.header("Authorization") == null &&
+                    !path.contains("/api/v1/auth/login") &&
                     !path.contains("/api/v1/auth/register") &&
                     !path.contains("/api/v1/auth/check-")
 
             val request = if (requiresAuth) {
-                // Get Firebase ID token (blocking call, but interceptor is on IO thread)
-                val token = runBlocking {
-                    firebaseAuthRepository.getIdToken()
-                }
+                // Get Firebase ID token synchronously with safe timeout
+                val token = firebaseAuthRepository.getIdTokenBlocking()
 
                 if (token != null) {
                     originalRequest.newBuilder()
-                        .addHeader("Authorization", "Bearer $token")
+                        .header("Authorization", "Bearer $token")
                         .build()
                 } else {
                     originalRequest
@@ -134,9 +133,41 @@ object NetworkModule {
             chain.proceed(request)
         }
 
+        // Automatic 401 token refresh authenticator
+        val tokenAuthenticator = Authenticator { _, response ->
+            val path = response.request.url.encodedPath
+            if (path.contains("/api/v1/auth/login") ||
+                path.contains("/api/v1/auth/register") ||
+                path.contains("/api/v1/auth/refresh")
+            ) {
+                return@Authenticator null
+            }
+
+            // Count prior 401 responses (ignoring 3xx redirects) to avoid infinite retry loops
+            var prior401Count = 0
+            var prior = response.priorResponse
+            while (prior != null) {
+                if (prior.code == 401) prior401Count++
+                prior = prior.priorResponse
+            }
+            if (prior401Count >= 1) {
+                return@Authenticator null
+            }
+
+            val freshToken = firebaseAuthRepository.getIdTokenBlocking(forceRefresh = true)
+            if (freshToken != null) {
+                response.request.newBuilder()
+                    .header("Authorization", "Bearer $freshToken")
+                    .build()
+            } else {
+                null
+            }
+        }
+
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
+            .authenticator(tokenAuthenticator)
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

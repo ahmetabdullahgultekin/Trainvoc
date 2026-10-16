@@ -95,14 +95,32 @@ interface IPreferencesRepository {
     fun setLanguage(language: LanguagePreference)
 
     /**
-     * Clear all preferences (used for reset/logout).
+     * Clear all preferences (used for full app reset).
      */
     fun clearAll()
+
+    /**
+     * Clear only user-session identity and authentication keys on sign-out,
+     * preserving global app/device settings (theme, language, device_id, migration flag).
+     */
+    fun clearUserSession()
 
     /**
      * Remove the username (logout).
      */
     fun clearUsername()
+
+    /**
+     * Get account creation timestamp in milliseconds.
+     * @return Epoch millisecond timestamp, or 0 if not set
+     */
+    fun getAccountCreatedDate(): Long
+
+    /**
+     * Set account creation timestamp in milliseconds.
+     * @param timestamp Epoch millisecond timestamp
+     */
+    fun setAccountCreatedDate(timestamp: Long)
 
     // Accessibility Settings
 

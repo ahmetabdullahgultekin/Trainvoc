@@ -32,24 +32,29 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import com.gultekinahmetabdullah.trainvoc.classes.enums.Route
 import com.gultekinahmetabdullah.trainvoc.classes.enums.ThemePreference
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationScheduler
+import com.gultekinahmetabdullah.trainvoc.repository.IPreferencesRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.main.MainScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.SplashScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.UsernameScreen
 import com.gultekinahmetabdullah.trainvoc.ui.screen.welcome.WelcomeScreen
 import com.gultekinahmetabdullah.trainvoc.ui.theme.TrainvocTheme
-import com.gultekinahmetabdullah.trainvoc.viewmodel.QuizViewModel
 import com.gultekinahmetabdullah.trainvoc.viewmodel.SettingsViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.StatsViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.StoryViewModel
-import com.gultekinahmetabdullah.trainvoc.viewmodel.WordViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var preferencesRepository: IPreferencesRepository
 
     /**
      * Override attachBaseContext to apply locale configuration when activity is created.
@@ -117,12 +122,8 @@ class MainActivity : ComponentActivity() {
          * and set up the navigation graph.
          */
         setContent {
-            // Initialize ViewModels using Hilt
-            val quizViewModel: QuizViewModel = hiltViewModel()
-            val wordViewModel: WordViewModel = hiltViewModel()
-            val statsViewModel: StatsViewModel = hiltViewModel()
+            // SettingsViewModel for application theme and global preferences
             val settingsViewModel: SettingsViewModel = hiltViewModel()
-            val storyViewModel: StoryViewModel = hiltViewModel()
 
             /**
              * Set the theme based on user preference.
@@ -131,8 +132,8 @@ class MainActivity : ComponentActivity() {
              * If the preference is not set,
              * we use the system default theme.
              */
-            val themePref by settingsViewModel.theme.collectAsState()
-            val colorPalettePref by settingsViewModel.colorPalette.collectAsState()
+            val themePref by settingsViewModel.theme.collectAsStateWithLifecycle()
+            val colorPalettePref by settingsViewModel.colorPalette.collectAsStateWithLifecycle()
 
             val darkTheme = when (themePref) {
                 ThemePreference.LIGHT -> false
@@ -204,11 +205,12 @@ class MainActivity : ComponentActivity() {
         // Create notification channels (required for Android 8.0+)
         NotificationHelper.createNotificationChannels(this)
 
-        // Schedule all enabled notifications
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val notificationsEnabled = sharedPreferences.getBoolean("notifications", true)
-        if (notificationsEnabled) {
-            NotificationScheduler.scheduleAllNotifications(this)
+        // Schedule all enabled notifications off the main thread so Android Keystore
+        // and EncryptedSharedPreferences initialization never block UI startup.
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (preferencesRepository.isNotificationsEnabled()) {
+                NotificationScheduler.scheduleAllNotifications(this@MainActivity)
+            }
         }
 
         // Request notification permission for Android 13+

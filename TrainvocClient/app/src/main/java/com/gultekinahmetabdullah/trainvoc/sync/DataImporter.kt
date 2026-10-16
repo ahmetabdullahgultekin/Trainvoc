@@ -646,16 +646,12 @@ class DataImporter(
                 com.gultekinahmetabdullah.trainvoc.classes.enums.ColorPalettePreference.fromKey(key)
             )
         }
-        // Notification flags are owned by the plain-prefs notification stack
-        // (NotificationPreferences/workers read them from user_prefs).
-        val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        sharedPrefs.edit().apply {
-            putBoolean("notifications", preferences.notificationsEnabled)
-            putBoolean("daily_reminders_enabled", preferences.dailyRemindersEnabled)
-            putBoolean("streak_alerts_enabled", preferences.streakAlertsEnabled)
-            putBoolean("word_of_day_enabled", preferences.wordOfDayEnabled)
-            preferences.notificationTime?.let { putString("notification_time", it) }
-        }.apply()
+        repo.setNotificationsEnabled(preferences.notificationsEnabled)
+        val notifPrefs = com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(context)
+        notifPrefs.dailyRemindersEnabled = preferences.dailyRemindersEnabled
+        notifPrefs.streakAlertsEnabled = preferences.streakAlertsEnabled
+        notifPrefs.wordOfDayEnabled = preferences.wordOfDayEnabled
+        preferences.notificationTime?.let { notifPrefs.notificationTime = it }
     }
 
     /**

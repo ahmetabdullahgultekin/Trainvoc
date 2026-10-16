@@ -142,6 +142,48 @@ class LegacyPrefsMigratorTest {
         assertTrue(secure.getBoolean(LegacyPrefsMigrator.KEY_MIGRATED, false))
         assertNull(secure.getString("username", null))
     }
+
+    @Test
+    fun `streaks and notification settings in user_prefs are migrated to secure store`() {
+        userPrefs.edit()
+            .putInt("current_streak", 14)
+            .putInt("longest_streak", 21)
+            .putLong("last_practice_date", 1_700_000_000_000L)
+            .putInt("reminder_hour", 19)
+            .putBoolean("daily_reminders_enabled", false)
+            .putBoolean("quiet_hours_enabled", true)
+            .putFloat("text_size_scale", 1.25f)
+            .putStringSet("notification_levels", mutableSetOf("B1", "B2"))
+            .putString("notification_time", "19:00")
+            .apply()
+
+        migrate()
+
+        assertEquals(14, secure.getInt("current_streak", 0))
+        assertEquals(21, secure.getInt("longest_streak", 0))
+        assertEquals(1_700_000_000_000L, secure.getLong("last_practice_date", 0L))
+        assertEquals(19, secure.getInt("reminder_hour", 9))
+        assertEquals(false, secure.getBoolean("daily_reminders_enabled", true))
+        assertEquals(true, secure.getBoolean("quiet_hours_enabled", false))
+        assertEquals(1.25f, secure.getFloat("text_size_scale", 1.0f), 0.001f)
+        assertEquals(setOf("B1", "B2"), secure.getStringSet("notification_levels", null))
+        assertEquals("19:00", secure.getString("notification_time", null))
+
+        // Legacy copies are removed after migration
+        assertTrue(!userPrefs.contains("current_streak"))
+        assertTrue(!userPrefs.contains("longest_streak"))
+        assertTrue(!userPrefs.contains("daily_reminders_enabled"))
+    }
+
+    @Test
+    fun `language key is migrated to secure store and preserved in user_prefs for attachBaseContext`() {
+        userPrefs.edit().putString("language", "tr").apply()
+
+        migrate()
+
+        assertEquals("tr", secure.getString("language", null))
+        assertEquals("tr", userPrefs.getString("language", null))
+    }
 }
 
 /** Minimal in-memory SharedPreferences for pure-JVM tests. */

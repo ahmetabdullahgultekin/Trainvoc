@@ -168,6 +168,25 @@ class FirebaseAuthRepository @Inject constructor() {
     }
 
     /**
+     * Gets the current user's ID token synchronously with a timeout.
+     * Safe to call from background threads such as OkHttp interceptors and authenticators.
+     */
+    fun getIdTokenBlocking(forceRefresh: Boolean = false, timeoutSeconds: Long = 10): String? {
+        val user = firebaseAuth?.currentUser ?: return null
+        return try {
+            val task = user.getIdToken(forceRefresh)
+            com.google.android.gms.tasks.Tasks.await(
+                task,
+                timeoutSeconds,
+                java.util.concurrent.TimeUnit.SECONDS
+            )?.token
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting ID token synchronously: ${e.message}", e)
+            null
+        }
+    }
+
+    /**
      * Reloads the current user's data from Firebase.
      */
     suspend fun reloadUser(): FirebaseAuthResult {

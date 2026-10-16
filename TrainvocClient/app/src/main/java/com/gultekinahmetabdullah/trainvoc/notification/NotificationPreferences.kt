@@ -3,16 +3,22 @@ package com.gultekinahmetabdullah.trainvoc.notification
 import android.content.Context
 import android.content.SharedPreferences
 
+import com.gultekinahmetabdullah.trainvoc.repository.PreferencesRepository
+
 /**
  * Manages notification preferences
  *
  * Provides a centralized way to access and update notification settings.
- * All preferences are stored in SharedPreferences.
+ * All preferences are stored in encrypted SharedPreferences.
  */
 class NotificationPreferences(context: Context) {
 
     private val prefs: SharedPreferences =
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        try {
+            PreferencesRepository.getEncryptedSharedPreferences(context)
+        } catch (e: Exception) {
+            context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        }
 
     // Daily Reminder Settings
     var dailyRemindersEnabled: Boolean
@@ -29,9 +35,24 @@ class NotificationPreferences(context: Context) {
     var reminderHour: Int
         get() = prefs.getInt("reminder_hour", 9) // Default 9 AM
         set(value) {
-            prefs.edit().putInt("reminder_hour", value).apply()
+            val coerced = value.coerceIn(0, 23)
+            prefs.edit()
+                .putInt("reminder_hour", coerced)
+                .putString("notification_time", String.format(java.util.Locale.US, "%02d:00", coerced))
+                .apply()
             if (dailyRemindersEnabled) {
                 NotificationScheduler.scheduleDailyReminder(context)
+            }
+        }
+
+    var notificationTime: String
+        get() = prefs.getString("notification_time", null)
+            ?: String.format(java.util.Locale.US, "%02d:00", reminderHour)
+        set(value) {
+            prefs.edit().putString("notification_time", value).apply()
+            val parsedHour = value.substringBefore(":").toIntOrNull()
+            if (parsedHour != null && parsedHour in 0..23) {
+                reminderHour = parsedHour
             }
         }
 

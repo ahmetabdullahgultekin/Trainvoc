@@ -304,9 +304,9 @@ fun MainScreen(
                         onSettings = { navController.navigate(Route.SETTINGS) },
                         onSignIn = { navController.navigate(Route.LOGIN) },
                         onSignOut = {
-                            // Clear user data and navigate to home
-                            val prefs = navController.context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
-                            prefs.edit().clear().apply()
+                            // Clear user session data without wiping global app/device preferences
+                            val repo = com.gultekinahmetabdullah.trainvoc.di.preferencesRepository(navController.context)
+                            repo.clearUserSession()
                             navController.navigate(Route.HOME) {
                                 popUpTo(Route.HOME) { inclusive = true }
                             }
