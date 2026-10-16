@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -79,19 +80,20 @@ fun QuizScreen(
     quizViewModel: QuizViewModel,
     onQuit: (() -> Unit)
 ) {
-    val question by quizViewModel.currentQuestion.collectAsState()
-    val progress by quizViewModel.progress.collectAsState()
-    val isTimeUp by quizViewModel.isTimeOver.collectAsState()
-    val score by quizViewModel.score.collectAsState()
-    val currentStats by quizViewModel.currentWordStats.collectAsState()
-    val quizParameter by quizViewModel.quizParameter.collectAsState()
-    val timeLeft by quizViewModel.timeLeft.collectAsState()
-    val currentQuestionNumber by quizViewModel.currentQuestionNumber.collectAsState()
-    var selectedAnswer by remember { mutableStateOf<Word?>(null) }
-    var isCorrect by remember { mutableStateOf<Boolean?>(null) }
+    val uiState by quizViewModel.uiState.collectAsStateWithLifecycle()
+    val question = uiState.currentQuestion
+    val progress = uiState.progress
+    val isTimeUp = uiState.isTimeOver
+    val score = uiState.score
+    val currentStats = uiState.currentWordStats
+    val quizParameter = uiState.quizParameter
+    val timeLeft = uiState.timeLeft
+    val currentQuestionNumber = uiState.currentQuestionNumber
+    val selectedAnswer = uiState.selectedAnswer
+    val isCorrect = uiState.isCorrect
+    val currentStreak = uiState.currentStreak
     var showExitDialog by remember { mutableStateOf(false) }
     var showStats by rememberSaveable { mutableStateOf(true) } // Show stats by default (fixes #198)
-    var currentStreak by remember { mutableStateOf(0) }
     var triggerConfetti by remember { mutableStateOf(false) }
     var loadingTimeoutReached by remember { mutableStateOf(false) }
 
@@ -124,15 +126,13 @@ fun QuizScreen(
     val haptic = rememberHapticPerformer()
 
     // Auto-advance to next question after answer is checked
-    LaunchedEffect(isCorrect) {
+    LaunchedEffect(isCorrect, selectedAnswer) {
         if (isCorrect != null) {
             // Delay based on answer correctness
             val delayTime = if (isCorrect == true) 1000L else 2000L
             delay(delayTime)
 
-            // Reset state and load next question
-            selectedAnswer = null
-            isCorrect = null
+            // Load next question (which resets selectedAnswer and isCorrect in QuizUiState)
             quizViewModel.loadNextQuestion()
         }
     }
@@ -388,18 +388,17 @@ fun QuizScreen(
                                     isCorrect = isCorrect,
                                     isTimeUp = isTimeUp,
                                     onChoiceClick = { selectedChoice ->
-                                        selectedAnswer = selectedChoice
-                                        isCorrect = quizViewModel.checkAnswer(selectedChoice)
+                                        val result = quizViewModel.checkAnswer(selectedChoice)
+                                        val newStreak = quizViewModel.uiState.value.currentStreak
 
-                                        // Update streak and trigger confetti
-                                        if (isCorrect == true) {
-                                            currentStreak++
+                                        // Trigger haptic feedback and confetti on streak milestones
+                                        if (result == true) {
                                             haptic.success()
 
                                             // Trigger confetti only at streak milestones (3, 5, 10, 15, 20, 25...)
-                                            val isMilestone = currentStreak == 3 ||
-                                                              currentStreak == 5 ||
-                                                              (currentStreak >= 10 && currentStreak % 5 == 0)
+                                            val isMilestone = newStreak == 3 ||
+                                                              newStreak == 5 ||
+                                                              (newStreak >= 10 && newStreak % 5 == 0)
                                             if (isMilestone) {
                                                 triggerConfetti = true
                                                 // Reset confetti trigger after animation
@@ -409,7 +408,6 @@ fun QuizScreen(
                                                 }
                                             }
                                         } else {
-                                            currentStreak = 0
                                             triggerConfetti = false
                                             haptic.error()
                                         }

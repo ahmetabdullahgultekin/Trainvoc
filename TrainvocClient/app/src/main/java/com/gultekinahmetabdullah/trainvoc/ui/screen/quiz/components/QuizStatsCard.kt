@@ -17,8 +17,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -67,9 +67,10 @@ fun QuizStatsCard(
             Column(modifier = Modifier.padding(Spacing.mediumLarge)) {
                 // Quiz statistics section
                 quizParameter?.let { parameter ->
-                    val totalWords by quizViewModel.totalWords.collectAsState()
-                    val learnedWords by quizViewModel.learnedWords.collectAsState()
-                    val progressPercent by quizViewModel.progressPercent.collectAsState()
+                    val uiState by quizViewModel.uiState.collectAsStateWithLifecycle()
+                    val totalWords = uiState.totalWords
+                    val learnedWords = uiState.learnedWords
+                    val progressPercent = uiState.progressPercent
 
                     // Trigger stats collection when parameter or question changes
                     DisposableEffect(parameter, question) {

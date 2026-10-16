@@ -60,22 +60,64 @@
 -keep class com.google.crypto.tink.** { *; }
 -dontwarn com.google.crypto.tink.**
 
-# ===== Jetpack Compose =====
--keep class androidx.compose.** { *; }
--keep @androidx.compose.runtime.Composable class * { *; }
--keepclassmembers class androidx.compose.** {
-    <init>(...);
-}
+# ===== Jetpack Compose & AndroidX =====
+# Compose, Lifecycle, Navigation, and WorkManager supply their own consumer ProGuard
+# rules inside their respective AAR packages. Blanket keep rules are removed to allow
+# R8 full shrinking, inlining, and dead-code elimination.
 -dontwarn androidx.compose.**
-
-# ===== AndroidX =====
--keep class androidx.lifecycle.** { *; }
--keep class androidx.navigation.** { *; }
--keep class androidx.work.** { *; }
 
 # ===== Data Classes & Sealed Classes =====
 -keep class com.gultekinahmetabdullah.trainvoc.classes.** { *; }
 -keepclassmembers class com.gultekinahmetabdullah.trainvoc.classes.** {
+    <init>(...);
+    <fields>;
+}
+
+# ===== Gson DTO Models (Preserve fields for serialization/deserialization) =====
+-keep class com.gultekinahmetabdullah.trainvoc.sync.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.sync.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.offline.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.offline.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.auth.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.auth.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.multiplayer.data.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.multiplayer.data.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.api.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.api.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.data.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.data.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.playgames.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.playgames.** {
+    <init>(...);
+    <fields>;
+}
+
+-keep class com.gultekinahmetabdullah.trainvoc.gdpr.** { *; }
+-keepclassmembers class com.gultekinahmetabdullah.trainvoc.gdpr.** {
     <init>(...);
     <fields>;
 }

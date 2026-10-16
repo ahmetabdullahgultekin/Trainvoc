@@ -23,6 +23,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -127,6 +128,44 @@ class QuizViewModel @Inject constructor(
     private val _progressPercent = MutableStateFlow<Int?>(null)
     val progressPercent: StateFlow<Int?> = _progressPercent
 
+    private val _uiState = MutableStateFlow(QuizUiState())
+    val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
+
+    private var _selectedAnswer: Word? = null
+    private var _isCorrectAnswer: Boolean? = null
+    private var _currentStreakCount: Int = 0
+
+    @Synchronized
+    private fun syncUiState() {
+        savedStateHandle[KEY_SCORE] = _score.value
+        savedStateHandle[KEY_TIME_LEFT] = _timeLeft.value
+        savedStateHandle[KEY_IS_QUIZ_FINISHED] = _isQuizFinished.value
+        savedStateHandle[KEY_IS_TIME_RUNNING] = _isTimeRunning.value
+        savedStateHandle[KEY_IS_ANSWERED] = _isAnswered.value
+
+        _uiState.value = QuizUiState(
+            quiz = _quiz.value,
+            quizParameter = _quizParameter.value,
+            currentQuestion = _currentQuestion.value,
+            currentQuestionNumber = _currentQuestionNumber.value,
+            currentWordStats = _currentWordStats.value,
+            timeLeft = _timeLeft.value,
+            isTimeOver = _isTimeOver.value,
+            progress = _progress.value,
+            score = _score.value,
+            currentStreak = _currentStreakCount,
+            selectedAnswer = _selectedAnswer,
+            isCorrect = _isCorrectAnswer,
+            isTimeRunning = _isTimeRunning.value,
+            isAnswered = _isAnswered.value,
+            isQuizFinished = _isQuizFinished.value,
+            isUserReady = _isUserReady.value,
+            totalWords = _totalWords.value,
+            learnedWords = _learnedWords.value,
+            progressPercent = _progressPercent.value
+        )
+    }
+
     private var quizJob: Job? = null
 
     // Quiz history tracking
@@ -139,37 +178,7 @@ class QuizViewModel @Inject constructor(
     init {
         // Restore state from SavedStateHandle after process death
         restoreState()
-
-        // Observe state changes and save to SavedStateHandle
-        viewModelScope.launch {
-            _score.collect { score ->
-                savedStateHandle[KEY_SCORE] = score
-            }
-        }
-
-        viewModelScope.launch {
-            _timeLeft.collect { timeLeft ->
-                savedStateHandle[KEY_TIME_LEFT] = timeLeft
-            }
-        }
-
-        viewModelScope.launch {
-            _isQuizFinished.collect { isFinished ->
-                savedStateHandle[KEY_IS_QUIZ_FINISHED] = isFinished
-            }
-        }
-
-        viewModelScope.launch {
-            _isTimeRunning.collect { isRunning ->
-                savedStateHandle[KEY_IS_TIME_RUNNING] = isRunning
-            }
-        }
-
-        viewModelScope.launch {
-            _isAnswered.collect { isAnswered ->
-                savedStateHandle[KEY_IS_ANSWERED] = isAnswered
-            }
-        }
+        syncUiState()
     }
 
     /**
@@ -243,6 +252,7 @@ class QuizViewModel @Inject constructor(
                 // Start the quiz
                 _isTimeRunning.value = true
                 _isQuizFinished.value = false
+                syncUiState()
                 // Start the timer
                 while (_timeLeft.value > 0 && !_isQuizFinished.value) {
                     // Wait for the timer to resume if paused (using Flow instead of busy-wait)
@@ -253,6 +263,7 @@ class QuizViewModel @Inject constructor(
                     delay(1000)
                     _timeLeft.value--
                     _progress.value = _timeLeft.value / durationConst.toFloat()
+                    syncUiState()
                     if (_timeLeft.value == 0) {
                         _isTimeOver.value = true
                         checkAnswer(null)
@@ -290,18 +301,22 @@ class QuizViewModel @Inject constructor(
             viewModelScope.launch(dispatchers.io) {
                 _currentQuestion.value?.correctWord?.let { correctWord ->
                     _currentWordStats.value = wordStatisticsService.getWordStats(correctWord)
+                    syncUiState()
                 }
                 addNewQuestions()
             }
             _isTimeRunning.value = true
+            syncUiState()
         } else {
             _currentQuestion.value = null // Quiz finished
+            syncUiState()
         }
     }
 
     fun checkAnswer(choice: Word?): Boolean? {
         val currentQuestion = _currentQuestion.value ?: return null
         val currentStats = _currentWordStats.value ?: return null
+        _selectedAnswer = choice
         pauseQuiz()
         val secondsSpent = durationConst - _timeLeft.value
         viewModelScope.launch(dispatchers.io) {
@@ -311,6 +326,9 @@ class QuizViewModel @Inject constructor(
         if (choice == null) {
             // Skipped - track for history
             skippedCount++
+            _isCorrectAnswer = null
+            _currentStreakCount = 0
+            syncUiState()
             viewModelScope.launch(dispatchers.io) {
                 wordStatisticsService.updateWordStats(
                     currentStats.copy(
@@ -325,6 +343,9 @@ class QuizViewModel @Inject constructor(
             // Correct answer
             _score.value++
             correctCount++
+            _isCorrectAnswer = true
+            _currentStreakCount++
+            syncUiState()
             // Track for history
             questionResults.add(Pair(currentQuestion.correctWord.id, true))
             // Feed the FSRS scheduler (S3 hook; no-op unless srs_engine_enabled).
@@ -342,6 +363,9 @@ class QuizViewModel @Inject constructor(
         } else {
             // Wrong answer
             wrongCount++
+            _isCorrectAnswer = false
+            _currentStreakCount = 0
+            syncUiState()
             // Track for history
             questionResults.add(Pair(currentQuestion.correctWord.id, false))
             // Feed the FSRS scheduler (S3 hook; no-op unless srs_engine_enabled).
@@ -378,6 +402,7 @@ class QuizViewModel @Inject constructor(
         _isTimeRunning.value = false
         _isAnswered.value = true
         _isUserReady.value = false
+        syncUiState()
     }
 
     private fun resetQuestionVariables() {
@@ -385,6 +410,9 @@ class QuizViewModel @Inject constructor(
         _progress.value = progressConst
         _isAnswered.value = false
         _isUserReady.value = true
+        _selectedAnswer = null
+        _isCorrectAnswer = null
+        syncUiState()
     }
 
     private fun resetQuiz() {
@@ -406,6 +434,9 @@ class QuizViewModel @Inject constructor(
         _progressPercent.value = null
         _isTimeOver.value = false
         _currentQuestionNumber.value = 1
+        _selectedAnswer = null
+        _isCorrectAnswer = null
+        _currentStreakCount = 0
         // Reset history tracking
         quizStartTime = 0L
         questionResults.clear()
@@ -414,6 +445,7 @@ class QuizViewModel @Inject constructor(
         skippedCount = 0
         // Cancel the quiz job if it is running
         quizJob?.cancel()
+        syncUiState()
     }
 
     fun finalizeQuiz() {
@@ -521,6 +553,7 @@ class QuizViewModel @Inject constructor(
                     _progressPercent.value = 0
                 }
             }
+            syncUiState()
         }
     }
 

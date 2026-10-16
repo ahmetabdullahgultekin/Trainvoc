@@ -18,6 +18,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.io.File
 
 /**
@@ -33,6 +34,7 @@ import java.io.File
  * so MigrationTestHelper cannot load it under Robolectric).
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class Migration18To19Test {
 
     private val fixedNow = 4_242_000L

@@ -366,6 +366,76 @@ class QuizViewModelTest {
         assertEquals(1.0f, viewModel.progress.value, 0.001f)
     }
 
+    @Test
+    fun `uiState updates atomically with score, streak, and correct state on correct answer`() = runTest {
+        // Arrange
+        setupQuizServiceMock()
+        whenever(wordStatisticsService.getWordStats(any())).thenReturn(testStats)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.startQuiz(QuizParameter.Level(WordLevel.A1), Quiz.Random)
+        advanceUntilIdle()
+
+        // Act
+        val result = viewModel.checkAnswer(testWord)
+        advanceUntilIdle()
+
+        // Assert
+        assertTrue(result == true)
+        val state = viewModel.uiState.value
+        assertEquals(1, state.score)
+        assertEquals(1, state.currentStreak)
+        assertEquals(testWord, state.selectedAnswer)
+        assertEquals(true, state.isCorrect)
+    }
+
+    @Test
+    fun `uiState resets streak and sets isCorrect to false on wrong answer`() = runTest {
+        // Arrange
+        setupQuizServiceMock()
+        whenever(wordStatisticsService.getWordStats(any())).thenReturn(testStats)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.startQuiz(QuizParameter.Level(WordLevel.A1), Quiz.Random)
+        advanceUntilIdle()
+
+        // Act
+        val result = viewModel.checkAnswer(wrongWord)
+        advanceUntilIdle()
+
+        // Assert
+        assertEquals(false, result)
+        val state = viewModel.uiState.value
+        assertEquals(0, state.score)
+        assertEquals(0, state.currentStreak)
+        assertEquals(wrongWord, state.selectedAnswer)
+        assertEquals(false, state.isCorrect)
+    }
+
+    @Test
+    fun `uiState reflects totalWords and learnedWords from collectQuizStats`() = runTest {
+        // Arrange
+        whenever(progressService.getWordCountByLevel("A1")).thenReturn(120)
+        whenever(progressService.getLearnedWordCount("A1")).thenReturn(60)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // Act
+        viewModel.collectQuizStats(QuizParameter.Level(WordLevel.A1))
+        advanceUntilIdle()
+
+        // Assert
+        val state = viewModel.uiState.value
+        assertEquals(120, state.totalWords)
+        assertEquals(60, state.learnedWords)
+        assertEquals(50, state.progressPercent)
+    }
+
     private suspend fun setupQuizServiceMock() {
         whenever(quizService.generateTenQuestions(any(), any())).thenReturn(
             mutableListOf(testQuestion, testQuestion, testQuestion)

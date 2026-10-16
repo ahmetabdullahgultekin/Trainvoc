@@ -8,6 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Regression tests for issue #103: CI-built APKs have no google-services.json,
@@ -21,6 +22,7 @@ import org.robolectric.RobolectricTestRunner
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
+@Config(application = android.app.Application::class)
 class FirebaseAuthRepositoryNoFirebaseTest {
 
     @Test
