@@ -34,7 +34,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class GameWebSocketClient @Inject constructor(
-    private val gson: Gson
+    private val gson: Gson,
+    @javax.inject.Named("trainvoc") baseOkHttpClient: OkHttpClient
 ) {
     companion object {
         private const val TAG = "GameWebSocketClient"
@@ -62,7 +63,7 @@ class GameWebSocketClient @Inject constructor(
     private val _events = MutableSharedFlow<GameEvent>(extraBufferCapacity = 64)
     val events: SharedFlow<GameEvent> = _events.asSharedFlow()
 
-    private val client = OkHttpClient.Builder()
+    private val client = baseOkHttpClient.newBuilder()
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .pingInterval(15, TimeUnit.SECONDS)

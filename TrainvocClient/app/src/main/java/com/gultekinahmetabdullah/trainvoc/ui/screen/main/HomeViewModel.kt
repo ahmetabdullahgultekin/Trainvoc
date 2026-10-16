@@ -12,7 +12,7 @@ import com.gultekinahmetabdullah.trainvoc.gamification.GamificationDao
 import com.gultekinahmetabdullah.trainvoc.gamification.StreakTracking
 import com.gultekinahmetabdullah.trainvoc.gamification.UserAchievement
 import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.LevelProgress
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.ReviewSchedule
 import com.gultekinahmetabdullah.trainvoc.ui.screen.progress.WordStatusCounts
@@ -38,7 +38,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val gamificationDao: GamificationDao,
     private val wordDao: WordDao,
-    private val quizHistoryDao: QuizHistoryDao,
+    private val quizHistoryRepository: IQuizHistoryRepository,
     private val reviewScheduleDao: ReviewScheduleDao,
     private val featureFlags: FeatureFlagManager
 ) : ViewModel() {
@@ -92,12 +92,12 @@ class HomeViewModel @Inject constructor(
 
                 // Load total quiz count (all-time, for Profile display - fixes #188)
                 val totalQuizzesAllTime = try {
-                    quizHistoryDao.getTotalQuizCount()
+                    quizHistoryRepository.getTotalQuizCount()
                 } catch (_: Exception) { 0 }
 
                 // Load last quiz result (for "continue where you left off" - fixes #187)
                 val lastQuiz = try {
-                    quizHistoryDao.getLastQuizResult()
+                    quizHistoryRepository.getLastQuizResult()
                 } catch (_: Exception) { null }
 
                 // Calculate level based on XP (totalScore)

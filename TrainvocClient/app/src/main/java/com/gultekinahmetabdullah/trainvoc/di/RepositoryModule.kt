@@ -79,4 +79,10 @@ abstract class RepositoryBindingModule {
     abstract fun bindPreferencesRepository(
         preferencesRepository: PreferencesRepository
     ): IPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindQuizHistoryRepository(
+        quizHistoryRepository: com.gultekinahmetabdullah.trainvoc.repository.QuizHistoryRepository
+    ): com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
 }

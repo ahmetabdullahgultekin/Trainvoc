@@ -106,18 +106,34 @@ class WordOfDayViewModel @Inject constructor(
     }
 
     /**
-     * Generate a new word of the day by selecting a random word.
+     * Generate a new word of the day using the same deterministic date seed
+     * as WordOfDayWorker (falling back to getRandomWordForNotification).
      */
     private suspend fun generateNewWordOfDay(date: String): WordOfDay? {
-        // Get a random word (prioritize words that haven't been used recently)
-        val randomWord = wordDao.getRandomWordForNotification(
-            includeLearned = true,
-            level = null
-        )
+        val totalWords = try {
+            wordDao.getWordCount()
+        } catch (_: Throwable) {
+            0
+        }
+        val selectedWord = if (totalWords > 0) {
+            val calendar = java.util.Calendar.getInstance()
+            val dayOfYear = calendar.get(java.util.Calendar.DAY_OF_YEAR)
+            val year = calendar.get(java.util.Calendar.YEAR)
+            val seed = (year * 1000 + dayOfYear) % totalWords
+            wordDao.getWordAtOffset(seed) ?: wordDao.getRandomWordForNotification(
+                includeLearned = true,
+                level = null
+            )
+        } else {
+            wordDao.getRandomWordForNotification(
+                includeLearned = true,
+                level = null
+            )
+        }
 
-        return if (randomWord != null) {
+        return if (selectedWord != null) {
             val newEntry = WordOfDay(
-                wordId = randomWord.id,
+                wordId = selectedWord.id,
                 date = date,
                 wasViewed = false
             )

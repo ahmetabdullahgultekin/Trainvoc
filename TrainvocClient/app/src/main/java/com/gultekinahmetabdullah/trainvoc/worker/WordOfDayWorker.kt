@@ -2,12 +2,15 @@ package com.gultekinahmetabdullah.trainvoc.worker
 
 import android.content.Context
 import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.gultekinahmetabdullah.trainvoc.database.AppDatabase
+import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
+import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 
@@ -15,18 +18,21 @@ import java.util.Calendar
  * Worker for word of the day notifications
  *
  * Selects and sends a featured word each day based on:
- * - User's learning level
- * - Words not recently reviewed
- * - Difficulty progression
+ * - Deterministic date algorithm
+ * - Single-row offset query (O(1) memory footprint)
  *
  * Error Handling:
  * - Returns Result.retry() on transient failures (database, network, etc.)
  * - Returns Result.failure() on permanent failures
  * - Logs all errors for debugging
  */
-class WordOfDayWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class WordOfDayWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val wordDao: WordDao,
+    private val wordOfDayDao: com.gultekinahmetabdullah.trainvoc.features.WordOfDayDao,
+    private val notificationPrefs: NotificationPreferences
 ) : CoroutineWorker(context, params) {
 
     companion object {
@@ -38,31 +44,43 @@ class WordOfDayWorker(
         try {
             Log.d(TAG, "Starting word of the day worker")
 
-            val notificationPrefs =
-                com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences.getInstance(applicationContext)
             if (!notificationPrefs.wordOfDayEnabled) {
                 Log.i(TAG, "Word of the day disabled, skipping")
                 return@withContext Result.success()
             }
 
-            // Get database instance
-            val db = AppDatabase.DatabaseBuilder.getInstance(applicationContext)
-            val wordDao = db.wordDao()
-            val allWords = wordDao.getAllWords().first()
+            val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                .format(java.util.Date())
 
-            if (allWords.isEmpty()) {
-                Log.i(TAG, "No words in database, skipping word of the day")
-                return@withContext Result.success()
+            // Check if WordOfDayDao already has an entry for today (shared with WordOfDayViewModel)
+            val existingEntry = wordOfDayDao.getWordOfDay(today)
+            val wordOfDay = if (existingEntry != null) {
+                wordDao.getWordById(existingEntry.wordId)
+            } else {
+                val totalWords = wordDao.getWordCount()
+                if (totalWords == 0) {
+                    Log.i(TAG, "No words in database, skipping word of the day")
+                    return@withContext Result.success()
+                }
+                val calendar = Calendar.getInstance()
+                val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+                val year = calendar.get(Calendar.YEAR)
+                val seed = (year * 1000 + dayOfYear) % totalWords
+                wordDao.getWordAtOffset(seed)?.also { selected ->
+                    wordOfDayDao.insertWordOfDay(
+                        com.gultekinahmetabdullah.trainvoc.features.WordOfDay(
+                            wordId = selected.id,
+                            date = today,
+                            wasViewed = false
+                        )
+                    )
+                }
             }
 
-            // Select word of the day using a deterministic algorithm based on current date
-            // This ensures the same word is shown for the entire day
-            val calendar = Calendar.getInstance()
-            val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
-            val year = calendar.get(Calendar.YEAR)
-            val seed = (year * 1000 + dayOfYear) % allWords.size
-
-            val wordOfDay = allWords[seed]
+            if (wordOfDay == null) {
+                Log.w(TAG, "Could not fetch word of the day for $today")
+                return@withContext Result.retry()
+            }
             Log.d(TAG, "Selected word of the day: ${wordOfDay.word}")
 
             // Send notification

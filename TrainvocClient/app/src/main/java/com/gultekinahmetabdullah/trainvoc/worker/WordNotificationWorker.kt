@@ -2,10 +2,14 @@ package com.gultekinahmetabdullah.trainvoc.worker
 
 import android.content.Context
 import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.gultekinahmetabdullah.trainvoc.database.WordDao
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationHelper
 import com.gultekinahmetabdullah.trainvoc.notification.NotificationPreferences
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Calendar
@@ -18,7 +22,7 @@ import java.util.Calendar
  * - Uses filtered word selection based on user preferences
  * - Sends notifications with action buttons for interactive learning
  *
- * The actual notification building is handled by NotificationHelper.sendWordQuizNotification()
+ * The actual notification building is handled by NotificationHelper.sendWordQuizNotificationAsync()
  * which creates notifications with "I Know It", "Show Answer", and "Skip" buttons.
  *
  * Error Handling:
@@ -26,9 +30,12 @@ import java.util.Calendar
  * - Returns Result.failure() on permanent failures
  * - Logs all errors for debugging
  */
-class WordNotificationWorker(
-    context: Context,
-    params: WorkerParameters
+@HiltWorker
+class WordNotificationWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val wordDao: WordDao,
+    private val prefs: NotificationPreferences
 ) : CoroutineWorker(context, params) {
 
     companion object {
@@ -39,8 +46,6 @@ class WordNotificationWorker(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             Log.d(TAG, "Starting word notification worker")
-
-            val prefs = NotificationPreferences.getInstance(applicationContext)
 
             // Check if notifications are enabled
             if (!prefs.wordQuizEnabled) {
@@ -54,8 +59,8 @@ class WordNotificationWorker(
                 return@withContext Result.success()
             }
 
-            // Send the interactive word quiz notification
-            NotificationHelper.sendWordQuizNotification(applicationContext)
+            // Send the interactive word quiz notification using structured concurrency
+            NotificationHelper.sendWordQuizNotificationAsync(applicationContext, wordDao, prefs)
 
             Log.d(TAG, "Word quiz notification sent successfully")
             Result.success()

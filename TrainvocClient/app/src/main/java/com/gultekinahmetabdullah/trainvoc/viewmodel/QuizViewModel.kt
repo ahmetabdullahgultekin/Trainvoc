@@ -9,14 +9,14 @@ import com.gultekinahmetabdullah.trainvoc.classes.quiz.Quiz
 import com.gultekinahmetabdullah.trainvoc.classes.quiz.QuizParameter
 import com.gultekinahmetabdullah.trainvoc.classes.word.Statistic
 import com.gultekinahmetabdullah.trainvoc.classes.word.Word
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistoryDao
-import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
-import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
-import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
-import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
 import com.gultekinahmetabdullah.trainvoc.core.common.DispatcherProvider
 import com.gultekinahmetabdullah.trainvoc.gamification.GamificationManager
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizHistory
+import com.gultekinahmetabdullah.trainvoc.quiz.QuizQuestionResult
+import com.gultekinahmetabdullah.trainvoc.repository.IProgressService
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizHistoryRepository
+import com.gultekinahmetabdullah.trainvoc.repository.IQuizService
+import com.gultekinahmetabdullah.trainvoc.repository.IWordStatisticsService
 import com.gultekinahmetabdullah.trainvoc.srs.domain.ISrsSchedulerService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -40,7 +40,7 @@ class QuizViewModel @Inject constructor(
     private val quizService: IQuizService,
     private val wordStatisticsService: IWordStatisticsService,
     private val progressService: IProgressService,
-    private val quizHistoryDao: QuizHistoryDao,
+    private val quizHistoryRepository: IQuizHistoryRepository,
     private val gamificationManager: GamificationManager,
     private val srsScheduler: ISrsSchedulerService,
     private val savedStateHandle: SavedStateHandle,
@@ -477,7 +477,7 @@ class QuizViewModel @Inject constructor(
                     accuracy = accuracy
                 )
 
-                val quizId = quizHistoryDao.insertQuizHistory(quizHistory)
+                val quizId = quizHistoryRepository.insertQuizHistory(quizHistory)
 
                 // Save individual question results
                 val results = questionResults.map { (wordId, isCorrect) ->
@@ -487,7 +487,7 @@ class QuizViewModel @Inject constructor(
                         isCorrect = isCorrect
                     )
                 }
-                quizHistoryDao.insertQuestionResults(results)
+                quizHistoryRepository.insertQuestionResults(results)
 
                 Log.d(TAG, "Quiz history saved successfully")
             } catch (e: Exception) {

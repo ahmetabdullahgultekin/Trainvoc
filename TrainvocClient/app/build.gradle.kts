@@ -227,8 +227,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.material3:material3-window-size-class:1.4.0")
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material3.window.size)
 
     // Room Database
     implementation(libs.androidx.room.common)
@@ -293,30 +293,18 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.hilt.android.testing)
-    testImplementation("androidx.work:work-testing:2.10.1")
-    testImplementation("org.robolectric:robolectric:4.14.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:2.3.20")
+    testImplementation(libs.androidx.work.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlin.test)
     // ApplicationProvider/InstrumentationRegistry for Robolectric Room tests
-    testImplementation("androidx.test:core:1.6.1")
+    testImplementation(libs.androidx.test.core)
     kspTest(libs.hilt.compiler)
 
-    // MockK for mocking
-    testImplementation("io.mockk:mockk:1.13.8")
-    testImplementation("io.mockk:mockk-android:1.13.8")
-
-    // mockito-kotlin: several unit tests use org.mockito.kotlin (mock/whenever/verify/any/eq/never).
-    // Declared alongside MockK so the unit-test source set compiles (#222).
+    // Mockito-kotlin for unit testing
     testImplementation(libs.mockito.kotlin)
 
-    // Turbine for Flow testing
-    testImplementation("app.cash.turbine:turbine:1.0.0")
-
     // Truth for better assertions
-    testImplementation("com.google.truth:truth:1.1.5")
-
-    // Hilt testing
-    testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
-    kspTest("com.google.dagger:hilt-compiler:2.48.1")
+    testImplementation(libs.google.truth)
 
     // Android Test dependencies
     androidTestImplementation(libs.androidx.junit)
